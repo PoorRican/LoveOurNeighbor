@@ -1,0 +1,9 @@
+# PyCharm cache (just in case)
+.idea/*
+
+# python bytecode
+*.pyc
+*.pyo
+
+# vim temp files
+*.sw[a-z]
