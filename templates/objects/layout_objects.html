@@ -14,7 +14,7 @@
     <header>
       <div class="md-toolbar-items" layout="row" layout-align="left end">
 
-        <a class="title-shadow-green brand-logo center md-green" href="#home" layout-padding>Love Your Neighbors</a>
+        <a class="title-shadow-orange brand-logo center md-accent" href="#home" layout-padding>Love Your Neighbors</a>
 
         <md-nav-bar ng-hide="mobile" ng-model="currentNavItem" class="md-accent" md-selected-nav-item="currentNavItem" hide-xs hide-sm>
         {%- for _link in links -%}
@@ -68,7 +68,7 @@
             {# TODO: import YouTube and other SM links #}
           </div>
         </div>
-        <div class="sitemap">
+        <div id="sitemap">
           <ul>
             {%- for _link in links -%}
               <li>
@@ -80,7 +80,7 @@
           </ul>
         </div>
         <div class="footer-copyright">
-            2019 Copyright - Love Your Neighbors
+            © 2019 Love Your Neighbors
         </div><!-- ./page-footer -->
       </footer>
 
