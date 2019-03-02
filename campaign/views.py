@@ -23,6 +23,6 @@ def campaign_index(request):
     return HttpResponse(all_news)
 
 
-def campaign_detail(request, post_id):
-    cam = Campaign.objects.get(id=post_id)
+def campaign_detail(request, campaign_id):
+    cam = Campaign.objects.get(id=campaign_id)
     return render(request, "campaign.html", {'cam': cam})

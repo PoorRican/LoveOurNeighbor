@@ -6,8 +6,6 @@ var nav_layout = angular.module('oneDollarApp', ['ngMaterial', 'ngRoute', 'ngPar
 
 nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$log', function($scope , $mdSidenav, $log) {
   // Global variable per session for age confirmation
-  $scope.confirmed = false;
-
   $scope.toggleLeft = buildDelayedToggler('left');
   $scope.toggleRight = buildToggler('right');
   $scope.isOpenRight = function(){
@@ -61,13 +59,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$log', function($s
           $log.debug("close RIGHT is done");
         });
     };
-
-  $scope.confirmation = function () {
-      $scope.confirmed = true;
-  }
 }]);
-
-
 
 
 nav_layout.config(function($routeProvider) {
@@ -82,7 +74,7 @@ nav_layout.config(function($routeProvider) {
         controller  : 'homeController'
     })
     .when('/campaigns', {
-        templateUrl : '/t/archives',
+        templateUrl : '/t/campaigns',
         controller  : 'archiveController'
     })
     .when('/faq', {
@@ -98,21 +90,16 @@ nav_layout.config(function($routeProvider) {
     .when('/campaign/:campaign_id', {
         templateUrl : function (params) {
           return '/campaign/' + params.campaign_id;
-        },
+       },
         controller  : 'campaignCtrl'
     })
-    .when('/news/:article_id', {
-        templateurl : function (params) {
-          return '/news/' + params.article_id;
+    .when('/campaign/news/:post_id', {
+        templateUrl : function (params) {
+          return '/campaign/news/' + params.post_id;
         },
         controller  : 'newsCtrl'
     });
 });
-
-
-
-
-
 
 
 nav_layout.controller('homeController', ['$scope', '$http', '$location',

@@ -9,8 +9,8 @@ urlpatterns = [
     path('news/<int:post_id>', views.news_detail,
          name='news_detail'),
 
-    path('archives', views.campaign_index,
+    path('campaigns', views.campaign_index,
          name='campaign_index'),
-    path('<int:post_id>', views.campaign_detail,
+    path('<int:campaign_id>', views.campaign_detail,
          name='campaign_detail')
 ]

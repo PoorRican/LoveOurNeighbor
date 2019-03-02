@@ -38,5 +38,5 @@ urlpatterns = [
     path('faq', RedirectView.as_view(url='/#/faq'), name='faq'),
 
     # Views for News Posts
-   path('campaign/', include('campaign.urls'))
+    path('campaign/', include('campaign.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

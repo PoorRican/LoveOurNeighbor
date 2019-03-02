@@ -1,3 +1,7 @@
+Overall TODOs:
+    - theres should be some kind of image associated with campaign objects
+    - implement TimelineJS
+
 Pages to Implement:
     - There should be an initial fundraiser page explaining the need, the proposed solution, and the call to action.
     - There should be an About page explaining the group. 

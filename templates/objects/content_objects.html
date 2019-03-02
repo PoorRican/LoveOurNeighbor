@@ -31,7 +31,7 @@
 {% endmacro %}
 
 
-{% macro show_campaign(post) %}
+{% macro show_campaign(post, detail=True) %}
      <div class="col s12 m9 l10 scroll-content">
 
       {# TODO: show image as card #}
@@ -48,9 +48,13 @@
 
         <p class="flow-text">{{ post.content|safe }}</p>
 
-        <md-button class="md-raised md-accent">
-          <a href="#{{ url_for('campaign:campaign_detail', kwargs={'post_id': post.id}) }}">Details</a>
-        </md-button>
+        {% if detail %}
+          <a href="#{{ url_for('campaign:campaign_detail', kwargs={'campaign_id': post.id}) }}">
+            <md-button class="md-raised md-accent">
+              Details
+            </md-button>
+          </a>
+        {% endif %}
       {{ section_close() }}
 
     </div>
@@ -58,7 +62,7 @@
 {% endmacro %}
 
 
-{% macro news_post(post, height=200) %}
+{% macro news_post(post, height=200, detail=True) %}
      <div class="col s12 m9 l10 scroll-content">
 
       {# TODO: group by month and randomly (or scroll) through images per section #}
@@ -72,9 +76,13 @@
 
         <p class="flow-text">{{ post.content|safe }}</p>
 
-        <md-button class="md-raised md-accent">
-         <a href="#{{ url_for('campaign:news_detail', kwargs={'post_id': post.id}) }}">Details</a>
-        </md-button>
+        {% if detail %}
+          <a href="#{{ url_for('campaign:news_detail', kwargs={'post_id': post.id}) }}">
+            <md-button class="md-raised md-accent">
+              Details
+            </md-button>
+          </a>
+        {% endif %}
       {{ section_close() }}
 
     </div>
