@@ -1,4 +1,11 @@
 /** Header Styling **/
+header {
+  position: fixed;
+  z-index: 500;
+  background-color: #8B0053 !important;
+  width: 100%;
+}
+
 nav a.md-unselected {
     color: #EEE !important;
 }
@@ -66,7 +73,13 @@ a:not(section a) {
     box-shadow: none !mportant;
 }
 
+.section .flow-text {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
 #section-info {
+  padding-top: 15px;
   padding-left: 30px;
 
   font-size: 14px;
@@ -75,6 +88,31 @@ a:not(section a) {
 
 #section-info span {
   font-weight: 500;
+}
+
+.progress {
+  height: 50px;
+  border-radius: 50px;
+  background-color: #FBFBFB;
+  border: solid 2px #777;
+}
+.progress .current {
+  background-color: #1F1;
+  padding-left: 10px;
+  padding-right: 10px;
+  line-height: 50px;
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
+  display: inline-block;
+  text-align: center;
+  color: #090;
+}
+
+.progress .remaining {
+  display: inline-block;
+  line-height: 50px;
+  color: #0C0;
+  text-align: center;
 }
 
     /** Parallax **/

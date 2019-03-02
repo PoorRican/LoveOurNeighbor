@@ -9,6 +9,7 @@ def environment(**options):
     env.globals.update({
         'static': static,
         'url_for': reverse,
-        'len': len
+        'len': len,
+        'round': round
     })
     return env

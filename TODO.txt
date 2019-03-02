@@ -1,6 +1,11 @@
 Overall TODOs:
     - theres should be some kind of image associated with campaign objects
     - implement TimelineJS
+    - implement completion diagram
+    - Automatic Post Creation upon reaching milestones
+    - Create dynamic background or something for progress-bar
+    - Dynamic Donation Counter
+    - Dynamic Countdown
 
 Pages to Implement:
     - There should be an initial fundraiser page explaining the need, the proposed solution, and the call to action.

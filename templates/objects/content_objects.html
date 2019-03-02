@@ -31,25 +31,42 @@
 {% endmacro %}
 
 
-{% macro show_campaign(post, detail=True) %}
+{% macro show_campaign(cam, detail=True) %}
      <div class="col s12 m9 l10 scroll-content">
 
       {# TODO: show image as card #}
       {{ section_start("") }}
-        <h1>{{ post.title }}</h1>
+        <h1>{{ cam.title }}</h1>
+
         {# TODO: show countdown as 'days left' #}
+        <h4>Progress:</h4>
+        <div class="progress">
+          {% if cam.donated %}
+          <div class="current" style="width: {{ round((cam.donated / cam.goal) * 100) }}%">
+            <span>
+              ${{ cam.donated }}
+            </span>
+          </div>
+          {% endif %}
+          <div class="remaining" style="width: {{ round(((cam.goal - cam.donated) / cam.goal) * 90) }}%">
+            <span>
+              ${{ cam.goal - cam.donated }}
+            </span>
+          </div>
+        </div>
+
         <p id="section-info">
           <span>Began:</span>&nbsp
-            {{ post.start_date.strftime("%h %d, %Y") }}
+            {{ cam.start_date.strftime("%h %d, %Y") }}
           <br>
           <span>Until:</span>&nbsp
-            {{ post.end_date.strftime("%h %d, %Y") }}
+            {{ cam.end_date.strftime("%h %d, %Y") }}
         </p>
 
-        <p class="flow-text">{{ post.content|safe }}</p>
+        <p class="flow-text">{{ cam.content|safe }}</p>
 
         {% if detail %}
-          <a href="#{{ url_for('campaign:campaign_detail', kwargs={'campaign_id': post.id}) }}">
+          <a href="#{{ url_for('campaign:campaign_detail', kwargs={'campaign_id': cam.id}) }}">
             <md-button class="md-raised md-accent">
               Details
             </md-button>
