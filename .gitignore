@@ -7,3 +7,7 @@
 
 # vim temp files
 *.sw[a-z]
+
+# db stuff
+db.*
+*/migrations/*
