@@ -4,3 +4,6 @@ Pages to Implement:
 
 Planned features:
     - There should / could be a voting system implemented after the first succesful campaign.
+    - Seamless payment: venmo, apple pay, paypal
+    - Mailing list functionality (for backend)
+    - Voting / Video Submission
