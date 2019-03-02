@@ -36,7 +36,7 @@
 
       {# TODO: show image as card #}
       {{ section_start("") }}
-        <h1>{{ cam.title }}</h1>
+        <h1>{{ cam.title.upper() }}</h1>
 
         {# TODO: show countdown as 'days left' #}
         <h4>Progress:</h4>
@@ -85,13 +85,13 @@
       {# TODO: group by month and randomly (or scroll) through images per section #}
       {{ parallax_img(post.img_path, height) }}
       {{ section_start("Month") }}
-        <h1>{{ post.title }}</h1>
+        <h1>{{ post.title.upper() }}</h1>
         <p id="section-info">
           <span>Published:</span>&nbsp
             {{ post.pub_date.strftime("%h %d, %Y") }}
         </p>
 
-        <p class="flow-text">{{ post.content|safe }}</p>
+        <p class="">{{ post.content|safe }}</p>
 
         {% if detail %}
           <a href="#{{ url_for('campaign:news_detail', kwargs={'post_id': post.id}) }}">
