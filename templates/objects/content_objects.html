@@ -1,0 +1,79 @@
+{# templates/objects/layout_objects.html #}
+
+{% macro parallax_img(img, height=100) %}
+
+  <div style='height: {{height}} !important;'>
+    <div ng-parallax class="parallax-img" pattern="'.{{ static(img) }}'" speed="1"></div>
+  </div>
+
+{% endmacro %}
+
+
+{% macro section_start(id) -%}
+
+    {# TODO: experiment w/ z-depth #}
+    <div id="{{ id }}" class="section">
+      <div class="wrapper">
+
+{%- endmacro %}
+
+
+{% macro section_close() -%}
+
+      </div>
+    </div>
+
+{%- endmacro %}
+
+
+{% macro contact_us(txt = "Contact Us") %}
+    <a href="#/about#contact_us">{{ txt }}</a>
+{% endmacro %}
+
+
+{% macro show_campaign(post) %}
+     <div class="col s12 m9 l10 scroll-content">
+
+      {# TODO: show image as card #}
+      {{ section_start("") }}
+        <h1>{{ post.title }}</h1>
+        {# TODO: show countdown as 'days left' #}
+        <h5>
+          Began:&nbsp
+            {{ post.start_date.strftime("%h %d, %Y") }}
+        </h5>
+        <h5>
+          Until:&nbsp
+            {{ post.end_date.strftime("%h %d, %Y") }}
+        </h5>
+
+        <p class="flow-text">{{ post.content|safe }}</p>
+
+        <a href="#{{ url_for('campaign:campaign_detail', kwargs={'post_id': post.id}) }}">Details</a>
+      {{ section_close() }}
+
+    </div>
+
+{% endmacro %}
+
+
+{% macro news_post(post, height=200) %}
+     <div class="col s12 m9 l10 scroll-content">
+
+      {# TODO: group by month and randomly (or scroll) through images per section #}
+      {{ parallax_img(post.img_path, height) }}
+      {{ section_start("Month") }}
+        <h1>{{ post.title }}</h1>
+        <h5>
+          Published:&nbsp
+            {{ post.pub_date.strftime("%h %d, %Y") }}
+        </h5>
+
+        <p class="flow-text">{{ post.content|safe }}</p>
+
+        <a href="#{{ url_for('campaign:news_detail', kwargs={'post_id': post.id}) }}">Details</a>
+      {{ section_close() }}
+
+    </div>
+
+{% endmacro %}

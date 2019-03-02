@@ -1,0 +1,15 @@
+{% import "layout_objects.html" as layout %}
+{% import "content_objects.html" as content %}
+
+    <div>
+    {% for i in about %}
+      {{ content.parallax_img(i.img_path, height=250) }}
+
+      {{ content.section_start(i.title) }}
+
+      <h1>{{ i.title }}</h1>
+      <p>{{ i.content|safe }}</p>
+
+      {{ content.section_close() }}
+
+    {% endfor %}

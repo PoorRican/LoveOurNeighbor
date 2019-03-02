@@ -1,0 +1,87 @@
+{# templates/objects/layout_objects.html #}
+
+{%- set links =
+  [
+    ('home', 'Home'),
+    ('campaigns', 'Timeline'),
+    ('faq', 'FAQ'),
+    ('about', 'About Us')
+  ]
+-%}
+
+{% macro navbar_links() %}
+
+    <header>
+      <div class="md-toolbar-items" layout="row" layout-align="left end">
+
+        <a class="title-shadow-green brand-logo center md-green" href="#home" layout-padding>Love Your Neighbors</a>
+
+        <md-nav-bar ng-hide="mobile" ng-model="currentNavItem" class="md-accent" md-selected-nav-item="currentNavItem" hide-xs hide-sm>
+        {%- for _link in links -%}
+          <md-nav-item md-nav-href="#{{ _link[0] }}" name="{{ _link[1] }}">
+              {{ _link[1] }}
+          </md-nav-item>
+        {%- endfor -%}
+        </md-nav-bar>
+
+        {# Hidden Side Nav Button #}
+        <md-button style="font-size: 2em; margin: auto 15px auto auto;" ng-click="toggleRight()" hide-gt-sm>
+          <i class="fa fa-bars" aria-hidden="true"></i>
+        </md-button>
+      </div>
+    </header>
+
+{% endmacro %}
+
+
+{% macro sidenav() %}
+
+    <md-sidenav class="md-sidenav-right md-whiteframe-4dp" id="sidenav"
+                md-component-id="right" layout-padding layout="column">
+      <md-button ng-click="close()" style="right: -10px; position: absolute; z-index: 1000;">
+        <i class="fa fa-times" aria-hidden="true"></i>
+      </md-button>
+
+      <md-list flex>
+      {%- for _link in links -%}
+        <a href="#{{ _link[0] }}" name="{{ _link[1] }}">
+          <md-list-item class="md-line-1" ng-click="close()">{{ _link[1] }}</md-list-item>
+        </a>
+      {%- endfor -%}
+     </md-list>
+    </md-sidenav>
+
+{% endmacro %}
+
+
+{% macro footer() %}
+
+      <footer class="page-footer">
+        <div class="footer-top">
+          <div class="social-media-links">
+            <a class="waves-effect waves-teal btn-flat">
+              <img src="{{ static('img/igram-icon.png') }}">
+            </a>
+            <a class="waves-effect waves-teal btn-flat">
+              <img src="{{ static('img/facebook-icon.png') }}">
+            </a>
+            {# TODO: import YouTube and other SM links #}
+          </div>
+        </div>
+        <div class="sitemap">
+          <ul>
+            {%- for _link in links -%}
+              <li>
+                <a href="#/{{ _link[0] }}" name="{{ _link[1] }}">
+                  {{ _link[1] }}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+        <div class="footer-copyright">
+            2019 Copyright - Love Your Neighbors
+        </div><!-- ./page-footer -->
+      </footer>
+
+{% endmacro %}

@@ -1,0 +1,44 @@
+{% import "layout_objects.html" as layout %}
+{% import "content_objects.html" as content %}
+{% import "static_objects.html" as static %}
+
+
+
+<html>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="{{ ', '.join(keywords) }}">
+
+  <!-- Facebook OpenGraph meta properties -->
+  <meta property="og:type" content="website" />
+
+
+  <head>
+    <title>{% block title %}1 Dollar Project{% endblock %}</title>
+    {{ static.css() }}
+
+  </head>
+
+  <body ng-app="oneDollarApp">
+
+  <div ng-controller="LayoutCtrl">
+
+    {{ layout.navbar_links() }}
+
+    <md-content id="content" layout="column" layout-align="center top" flex>
+
+      <div ng-view id="globalContainer"></div> 
+
+    </md-content><!-- #/content -->
+
+    {{ layout.footer() }}
+
+    {{ layout.sidenav() }}
+
+  </div><!-- /ng-controller -->
+
+  {{ static.analytics() }}
+  {{ static.js() }}
+
+  </body>
+</html>

@@ -1,0 +1,182 @@
+// Declare single angular module
+
+var nav_layout = angular.module('oneDollarApp', ['ngMaterial', 'ngRoute', 'ngParallax']);
+
+// Layout controller and config //
+
+nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$log', function($scope , $mdSidenav, $log) {
+  // Global variable per session for age confirmation
+  $scope.confirmed = false;
+
+  $scope.toggleLeft = buildDelayedToggler('left');
+  $scope.toggleRight = buildToggler('right');
+  $scope.isOpenRight = function(){
+    return $mdSidenav('right').isOpen();
+  };
+  /**
+   * Supplies a function that will continue to operate until the
+   * time is up.
+   */
+  function debounce(func, wait, context) {
+    var timer;
+    return function debounced() {
+      var context = $scope,
+          args = Array.prototype.slice.call(arguments);
+      $timeout.cancel(timer);
+      timer = $timeout(function() {
+        timer = undefined;
+        func.apply(context, args);
+      }, wait || 10);
+    };
+  }
+  /**
+   * Build handler to open/close a SideNav; when animation finishes
+   * report completion in console
+   */
+  function buildDelayedToggler(navID) {
+    return debounce(function() {
+      // Component lookup should always be available since we are not using `ng-if`
+      $mdSidenav(navID)
+        .toggle()
+        .then(function () {
+          $log.debug("toggle " + navID + " is done");
+        });
+    }, 200);
+  }
+  function buildToggler(navID) {
+    return function() {
+      // Component lookup should always be available since we are not using `ng-if`
+      $mdSidenav(navID)
+        .toggle()
+        .then(function () {
+          $log.debug("toggle " + navID + " is done");
+        });
+    }
+  }
+
+  $scope.close = function () {
+      // Component lookup should always be available since we are not using `ng-if`
+      $mdSidenav('right').close()
+        .then(function () {
+          $log.debug("close RIGHT is done");
+        });
+    };
+
+  $scope.confirmation = function () {
+      $scope.confirmed = true;
+  }
+}]);
+
+
+
+
+nav_layout.config(function($routeProvider) {
+  $routeProvider
+    .when('/', {
+      redirectTo: '/home'
+    })
+
+    // Main Pages
+    .when('/home', {
+        templateUrl : '/t/home',
+        controller  : 'homeController'
+    })
+    .when('/campaigns', {
+        templateUrl : '/t/archives',
+        controller  : 'archiveController'
+    })
+    .when('/faq', {
+        templateUrl : '/t/faq',
+        controller  : 'faqController'
+    })
+    .when('/about', {
+        templateUrl : '/t/about',
+        controller  : 'aboutController'
+    })
+
+    // Media Pages
+    .when('/campaign/:campaign_id', {
+        templateUrl : function (params) {
+          return '/campaign/' + params.campaign_id;
+        },
+        controller  : 'campaignCtrl'
+    })
+    .when('/news/:article_id', {
+        templateurl : function (params) {
+          return '/news/' + params.article_id;
+        },
+        controller  : 'newsCtrl'
+    });
+});
+
+
+
+
+
+
+
+nav_layout.controller('homeController', ['$scope', '$http', '$location',
+  function($scope, $http, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = 'Home';
+
+    ga('send', 'pageview', '/home');
+  }
+]);
+nav_layout.controller('archiveController', ['$scope', '$http', '$location',
+  function($scope, $http, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = 'Archives';
+
+    ga('send', 'pageview', '/campaigns');
+  }
+]);
+nav_layout.controller('faqController', ['$scope', '$http', '$location',
+  function($scope, $http, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = 'FAQ';
+
+    ga('send', 'pageview', '/faq');
+  }
+]);
+nav_layout.controller('aboutController', ['$scope', '$http', '$location',
+  function($scope, $http, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = 'About';
+
+    ga('send', 'pageview', '/about');
+  }
+]);
+
+nav_layout.controller('campaignCtrl', ['$scope', '$http', '$routeParams', '$location',
+  function($scope, $http, $routeParams, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = 'Home';
+
+
+  }
+]);
+nav_layout.controller('newsCtrl', ['$scope', '$http', '$routeParams', '$location',
+  function($scope, $http, $routeParams, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = 'Home';
+
+
+  }
+]);
+
+
+
+nav_layout.config(function($mdThemingProvider) {
+    $mdThemingProvider.theme('default')
+        .primaryPalette('purple')
+        .accentPalette('orange')
+});
+
+// vim:foldmethod=syntax:
