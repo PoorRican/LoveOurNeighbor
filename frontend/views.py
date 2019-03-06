@@ -12,8 +12,9 @@ def root(request):
 
 
 def home(request):
-    all_news = NewsPost.objects.all().reverse()
-    current_campaign = Campaign.objects.all()[0]
+    current_campaign = Campaign.objects.order_by("-end_date")[0]
+    all_news = NewsPost.objects.filter(campaign=current_campaign).reverse()
+
     context = {'all_news': all_news, 'current_campaign': current_campaign}
     return render(request, "home.html", context)
 

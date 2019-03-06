@@ -3,12 +3,14 @@
 
 {{ content.show_campaign(current_campaign) }}
 
-{{ content.news_post(all_news[0], height=250) }}
+{% if len(all_news) %}
+  {{ content.news_post(all_news[0], height=250) }}
 
-{% if len(all_news) > 1 %}
-    {% for i in all_news[1:] %}
+  {% if len(all_news) > 1 %}
+      {% for i in all_news[1:] %}
 
-        {{ content.news_post(i, height=150) }}
+          {{ content.news_post(i, height=150) }}
 
-    {% endfor %}
+      {% endfor %}
+  {% endif %}
 {% endif %}
