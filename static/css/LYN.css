@@ -120,20 +120,16 @@ a:not(section a) {
   border-bottom: solid 1px #FF7100;
   border-top: solid 1px #FF7100;
 }
-
 .scroll-content > .section:last-child {
     box-shadow: none !mportant;
 }
-
 .section h1 {
   font-weight: 300;
   border-bottom: solid 1px #FF7100;
 }
-
 .section h4 {
   font-weight: 400;
 }
-
 .section .flow-text {
   padding-top: 30px;
   margin-bottom: 30px;
@@ -151,7 +147,6 @@ a:not(section a) {
   font-weight: 300;
   border-left: solid 5px #FF7100;
 }
-
 #section-info span {
   font-weight: 500;
 }
@@ -173,7 +168,6 @@ a:not(section a) {
   text-align: center;
   color: #090;
 }
-
 .progress .remaining {
   display: inline-block;
   line-height: 50px;
@@ -186,7 +180,6 @@ a:not(section a) {
 .parallax-container {
   height: 300px;
 }
-
 .parallax-container:first-child {
   height: 500px;
 }
@@ -194,12 +187,10 @@ a:not(section a) {
 .parallax-img {
     zoom: 55%;
 }
-
 @media screen and (max-width: 650px) {
 .parallax-img {
     zoom: 25%;
 }}
-
 @media screen and (min-width: 950px) {
 .parallax-img {
     zoom: 85%;
@@ -227,7 +218,6 @@ footer.page-footer .footer-top:first-child {
   margin-right: 10%;
   margin-bottom: 10px;
 }
-
 footer #sitemap ul {
   font-size: 14px;
   text-align: left !important;
@@ -235,7 +225,6 @@ footer #sitemap ul {
   list-style-type: circle !important;
   color: #EEE !important;
 }
-
 footer #sitemap ul li {
   margin-bottom: 5px;
 }
@@ -244,14 +233,12 @@ footer #sitemap ul li {
   position: absolute;
   right: 0;
 }
-
 .social-media-links a {
   height: 50px;
   width: 50px;
   padding: 5px 5px;
   margin-bottom: 15px;
 }
-
 .social-media-links a img {
   height: 40px;
   width: 40px;
