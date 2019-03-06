@@ -28,6 +28,55 @@ nav a.md-unselected {
   text-shadow: 3px 0 7px #FF7100;
 }
 
+.profile-area {
+  float: right;
+  margin: auto 15px auto auto;
+  border: solid 1px #FF7100;
+  padding: 2px 16px;
+  padding-left: 2px;
+  border-radius: 30px;
+  background-color: rgba(255,255,255,0.2);
+}
+.profile-area .uname {
+  font-size: 22px;
+  margin: auto 10px auto auto;
+}
+.profile-area .login {
+  font-size: 18px;
+}
+.profile-area .logout {
+  font-size: 14px;
+  margin: auto;
+}
+.profile-area .profile-img {
+  border-radius: 20px;
+  height: 2em;
+  padding: 0px;
+}
+
+#sidenav {
+  z-index: 999;
+  color: #8B0053;
+}
+#sidenav a {
+  color: #8B0053;
+}
+#sidenav .top {
+  background-color: #CCC;
+  border-radius: 30px;
+}
+#sidenav .profile-area {
+  color: #FF7100;
+  border: none;
+  background-color: transparent;
+  float: left;
+  margin: 0 6px;
+  padding: 0;
+}
+#sidenav .profile-area a {
+  color: #FF7100;
+}
+
 
 /** Body Styling **/
 body {
@@ -123,7 +172,6 @@ a:not(section a) {
   display: inline-block;
   text-align: center;
   color: #090;
-  min-width: 3%;
 }
 
 .progress .remaining {

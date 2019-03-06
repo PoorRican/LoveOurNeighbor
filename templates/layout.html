@@ -23,7 +23,7 @@
 
   <div ng-controller="LayoutCtrl">
 
-    {{ layout.navbar_links() }}
+    {{ layout.navbar_links(request) }}
 
     <md-content id="content" layout="column" layout-align="center top" flex>
 
@@ -33,7 +33,7 @@
 
     {{ layout.footer() }}
 
-    {{ layout.sidenav() }}
+    {{ layout.sidenav(request) }}
 
   </div><!-- /ng-controller -->
 

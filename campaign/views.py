@@ -26,3 +26,14 @@ def campaign_index(request):
 def campaign_detail(request, campaign_id):
     cam = Campaign.objects.get(id=campaign_id)
     return render(request, "campaign.html", {'cam': cam})
+
+
+def campaign_dynamic(request, campaign_id):
+    """ Returns json containing dynamic attributes of a specified campaign.
+    These attributes are total amount of donations, number of donations, and number of views.
+    """
+
+    cam = Campaign.objects.get(id=campaign_id)
+    json = {'donated': cam.donated,
+            'donations': cam.donations,
+            'views': cam.views}

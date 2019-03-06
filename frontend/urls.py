@@ -23,6 +23,7 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
 
     path('', views.root),
 
@@ -37,6 +38,6 @@ urlpatterns = [
     path('about', RedirectView.as_view(url='/#/about'), name='about'),
     path('faq', RedirectView.as_view(url='/#/faq'), name='faq'),
 
-    # Views for News Posts
+    # Main functionality
     path('campaign/', include('campaign.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

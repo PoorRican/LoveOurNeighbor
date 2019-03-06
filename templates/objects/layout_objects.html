@@ -9,20 +9,41 @@
   ]
 -%}
 
-{% macro navbar_links() %}
+
+{% macro user_widget(request) %}
+
+    {% if request.user.is_authenticated %}
+      <img class="profile-img" src="{{ request.user.profile.avatar_url }}">
+      <span class="uname">
+        {{- request.user.profile.name -}}
+      </span>
+
+      <a class="logout" href="/accounts/logout/">Logout</a>
+    {% else %}
+      <a class="login" href="/accounts/login/">Login</a>
+    {% endif %}
+
+{% endmacro %}
+
+
+{% macro navbar_links(request) %}
 
     <header>
       <div class="md-toolbar-items" layout="row" layout-align="left end">
 
         <a class="title-shadow-orange brand-logo center md-accent" href="#home" layout-padding>Love Your Neighbors</a>
 
-        <md-nav-bar ng-hide="mobile" ng-model="currentNavItem" class="md-accent" md-selected-nav-item="currentNavItem" hide-xs hide-sm>
+        <md-nav-bar ng-model="currentNavItem" class="md-accent" md-selected-nav-item="currentNavItem" hide-xs hide-sm>
         {%- for _link in links -%}
           <md-nav-item md-nav-href="#{{ _link[0] }}" name="{{ _link[1] }}">
               {{ _link[1] }}
           </md-nav-item>
         {%- endfor -%}
         </md-nav-bar>
+
+        <div class="profile-area" hide-xs hide-sm>
+          {{ user_widget(request) }}
+        </div>
 
         {# Hidden Side Nav Button #}
         <md-button style="font-size: 2em; margin: auto 15px auto auto;" ng-click="toggleRight()" hide-gt-sm>
@@ -35,13 +56,19 @@
 {% endmacro %}
 
 
-{% macro sidenav() %}
+{% macro sidenav(request) %}
 
     <md-sidenav class="md-sidenav-right md-whiteframe-4dp" id="sidenav"
                 md-component-id="right" layout-padding layout="column">
-      <md-button ng-click="close()" style="right: -10px; position: absolute; z-index: 1000;">
-        <i class="fa fa-times" aria-hidden="true"></i>
-      </md-button>
+      <div class="top">
+        <div class="profile-area">
+          {{ user_widget(request) }}
+        </div>
+
+        <md-button ng-click="close()" class="pull-right md-icon-button">
+          <i class="fa fa-times" aria-hidden="true"></i>
+        </md-button>
+      </div>
 
       <md-list flex>
       {%- for _link in links -%}

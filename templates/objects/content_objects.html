@@ -56,10 +56,14 @@
         </div>
 
         <p id="section-info">
-          <span>Began:</span>&nbsp
+          <span>Donations:</span>&nbsp;
+            {{ cam.donations.count() }} so far
+            {# TODO: add encouraging/intuitive styling for count #}
+          <br>
+          <span>Began:</span>&nbsp;
             {{ cam.start_date.strftime("%h %d, %Y") }}
           <br>
-          <span>Until:</span>&nbsp
+          <span>Until:</span>&nbsp;
             {{ cam.end_date.strftime("%h %d, %Y") }}
         </p>
 
@@ -87,7 +91,7 @@
       {{ section_start("Month") }}
         <h1>{{ post.title.upper() }}</h1>
         <p id="section-info">
-          <span>Published:</span>&nbsp
+          <span>Published:</span>&nbsp;
             {{ post.pub_date.strftime("%h %d, %Y") }}
         </p>
 
