@@ -3,16 +3,13 @@ Overall TODOs:
     - implement TimelineJS
     - implement completion diagram
     - Automatic Post Creation upon reaching milestones
-    - Create dynamic background or something for progress-bar
-    - Dynamic Donation Counter
+    - Create dynamic background or something for progress-bar. Dynamic update of progress-bar
+    - Dynamic Donation Counter. Dynamic view counter
     - Dynamic Countdown
+    - User registration via django-allauth. Voting system
+    - Video Submission (via splash page w/ submission period)
+    - Implement Braintree for payment
+    - Mailing list functionality
 
 Pages to Implement:
     - There should be an initial fundraiser page explaining the need, the proposed solution, and the call to action.
-    - There should be an About page explaining the group. 
-
-Planned features:
-    - There should / could be a voting system implemented after the first succesful campaign.
-    - Seamless payment: venmo, apple pay, paypal
-    - Mailing list functionality (for backend)
-    - Voting / Video Submission
