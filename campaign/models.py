@@ -163,7 +163,5 @@ def set_initial_user_names(request, user, sociallogin=None, **kwargs):
             picture_url = sociallogin.account.extra_data['picture']
 
     profile = Patron(user=user, avatar_url=picture_url)
+    profile.guess_display_name()
     profile.save()
-
-    user.guess_display_name()
-    user.save()

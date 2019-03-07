@@ -98,6 +98,12 @@ nav_layout.config(function($routeProvider) {
           return '/campaign/news/' + params.post_id;
         },
         controller  : 'newsCtrl'
+    })
+    .when('/accounts/:account_action', {
+        templateUrl : function (params) {
+          return '/accounts/' + params.account_action;
+        },
+        controller  : 'accountCtrl'
     });
 });
 
@@ -145,7 +151,7 @@ nav_layout.controller('campaignCtrl', ['$scope', '$http', '$routeParams', '$loca
 
     $scope.currentNavItem  = 'Home';
 
-
+    ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
   }
 ]);
 nav_layout.controller('newsCtrl', ['$scope', '$http', '$routeParams', '$location',
@@ -154,10 +160,18 @@ nav_layout.controller('newsCtrl', ['$scope', '$http', '$routeParams', '$location
 
     $scope.currentNavItem  = 'Home';
 
-
+    ga('send', 'pageview', '/campaigns/news/' + $routeParams.post_id);
   }
 ]);
+nav_layout.controller('accountCtrl', ['$scope', '$http', '$routeParams', '$location',
+  function($scope, $http, $routeParams, $location) {
+    // TODO: change title block
 
+    $scope.currentNavItem  = null;
+
+    ga('send', 'pageview', '/account/' + $routeParams.account_action);
+  }
+]);
 
 
 nav_layout.config(function($mdThemingProvider) {

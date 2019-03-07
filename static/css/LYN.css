@@ -36,10 +36,12 @@ nav a.md-unselected {
   padding-left: 2px;
   border-radius: 30px;
   background-color: rgba(255,255,255,0.2);
+  min-height: 30px;
 }
 .profile-area .uname {
   font-size: 22px;
   margin: auto 10px auto auto;
+  text-decoration: none;
 }
 .profile-area .login {
   font-size: 18px;
@@ -94,8 +96,8 @@ body {
 
 .wrapper {
   width: 80%;
-  margin-left: 10%;
-  margin-right: 10%;
+  padding-left: 10%;
+  padding-right: 10%;
 }
 
 .page-container {
@@ -111,7 +113,7 @@ a:not(section a) {
 }
 
     /** Section **/
-.section {
+.section, section {
   padding-top: 40px;
   padding-bottom: 40px;
 
@@ -123,14 +125,14 @@ a:not(section a) {
 .scroll-content > .section:last-child {
     box-shadow: none !mportant;
 }
-.section h1 {
+.section h1, section h1 {
   font-weight: 300;
   border-bottom: solid 1px #FF7100;
 }
-.section h4 {
+.section h4, section h4 {
   font-weight: 400;
 }
-.section .flow-text {
+.section .flow-text, section .flow-text {
   padding-top: 30px;
   margin-bottom: 30px;
 

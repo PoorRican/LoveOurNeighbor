@@ -13,14 +13,14 @@
 {% macro user_widget(request) %}
 
     {% if request.user.is_authenticated %}
-      <img class="profile-img" src="{{ request.user.profile.avatar_url }}">
-      <span class="uname">
-        {{- request.user.profile.name -}}
-      </span>
+      <a href="#{{ url_for('user_profile') }}" class="uname">
+        <img class="profile-img" src="{{ request.user.profile.avatar_url }}">
+        <span>{{- request.user.profile.name -}}</span>
+      </a>
 
       <a class="logout" href="/accounts/logout/">Logout</a>
     {% else %}
-      <a class="login" href="/accounts/login/">Login</a>
+      <a class="login" href="#/accounts/login/">Login</a>
     {% endif %}
 
 {% endmacro %}

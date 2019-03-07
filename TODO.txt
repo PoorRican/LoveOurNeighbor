@@ -1,15 +1,18 @@
+Urgent TODO:
+    - Implement Braintree for payment
+
 Overall TODOs:
     - theres should be some kind of image associated with campaign objects
     - implement TimelineJS
-    - implement completion diagram
     - Automatic Post Creation upon reaching milestones
     - Create dynamic background or something for progress-bar. Dynamic update of progress-bar
     - Dynamic Donation Counter. Dynamic view counter
     - Dynamic Countdown
-    - User registration via django-allauth. Voting system
-    - Video Submission (via splash page w/ submission period)
-    - Implement Braintree for payment
+    - Voting system and video Submission (via splash page w/ submission period)
     - Mailing list functionality
+    - Add detailed logging (individual log files: requests, user creation, donation, etc)
+    - Secure logout function (logout on POST, not GET)
+    - Streaming services
 
 Pages to Implement:
     - There should be an initial fundraiser page explaining the need, the proposed solution, and the call to action.

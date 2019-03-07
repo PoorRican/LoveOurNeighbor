@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.twitter',
+    #'allauth.socialaccount.providers.facebook',
+    #'allauth.socialaccount.providers.google',
+    #'allauth.socialaccount.providers.twitter',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -70,16 +70,8 @@ TEMPLATE_LOADERS = (
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': ['templates/', 'templates/objects/'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'environment': 'frontend.jinja2.environment'
-        },
-    },
-    {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates/account/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -89,6 +81,14 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ]
         }
+    },
+    {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': ['templates/', 'templates/objects/'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'environment': 'frontend.jinja2.environment'
+        },
     }
 ]
 
@@ -155,3 +155,4 @@ SITE_ID = 1
 
 # all-auth configuration
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_LOGOUT_ON_GET = True

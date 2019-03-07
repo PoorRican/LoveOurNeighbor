@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from public.models import AboutSection, FaqSection
 from campaign.models import NewsPost, Campaign
@@ -29,3 +30,10 @@ def faq(request):
     faqs = FaqSection.objects.all()
     context = {'faqs': faqs}
     return render(request, "faq.html", context)
+
+
+@login_required
+# change to @verified_email_required
+def profile(request):
+    patron = request.user.profile
+    return render(request, "profile.html", {'patron': patron})
