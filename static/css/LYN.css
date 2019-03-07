@@ -106,7 +106,7 @@ body {
 
 a {
   color: #EEE;
-  decoration: none;
+  text-decoration: none;
 }
 a:not(section a) {
   decoration: none;

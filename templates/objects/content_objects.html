@@ -31,12 +31,32 @@
 {% endmacro %}
 
 
-{% macro show_campaign(cam, detail=True) %}
+{% macro show_campaign(cam, detail=True, request=None) %}
      <div class="col s12 m9 l10 scroll-content">
 
       {# TODO: show image as card #}
       {{ section_start("") }}
         <h1>{{ cam.title.upper() }}</h1>
+
+        <div class="donate">
+          <h3>Donate:</h3>
+          {% set donations = {
+              '$7':  url_for('campaign:create_donation', kwargs={'campaign_id': cam.id, 'amount': 7}),
+              '$17': url_for('campaign:create_donation', kwargs={'campaign_id': cam.id, 'amount': 17}),
+              '$70': url_for('campaign:create_donation', kwargs={'campaign_id': cam.id, 'amount': 70}),
+              'Other': ''
+          } %}
+          {% for amt, _url in donations.items() %}
+            {# TODO: fix this stupid hack #}
+            {% if request and request.user.is_authenticated %}
+              <a href="{{ _url }}">
+            {% else %}
+              <a href="#/accounts/login/">
+            {% endif %}
+              <md-button class="md-raised{% if amt != 'Other' %} md-accent{% endif %}">{{ amt }}</md-button>
+            </a>
+          {% endfor %}
+        </div>
 
         {# TODO: show countdown as 'days left' #}
         <h4>Progress:</h4>
@@ -56,8 +76,8 @@
         </div>
 
         <p id="section-info">
-          <span>Donations:</span>&nbsp;
-            {{ cam.donations.count() }} so far
+          <span>Contributors:</span>&nbsp;
+            {{ cam.donations.count() }} have supported so far
             {# TODO: add encouraging/intuitive styling for count #}
           <br>
           <span>Began:</span>&nbsp;
@@ -68,14 +88,14 @@
         </p>
 
         <p class="flow-text">{{ cam.content|safe }}</p>
-
         {% if detail %}
           <a href="#{{ url_for('campaign:campaign_detail', kwargs={'campaign_id': cam.id}) }}">
             <md-button class="md-raised md-accent">
-              Details
+              See More
             </md-button>
           </a>
         {% endif %}
+
       {{ section_close() }}
 
     </div>

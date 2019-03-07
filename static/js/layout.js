@@ -170,6 +170,7 @@ nav_layout.controller('accountCtrl', ['$scope', '$http', '$routeParams', '$locat
     $scope.currentNavItem  = null;
 
     ga('send', 'pageview', '/account/' + $routeParams.account_action);
+    console.log('account action: ' + $routeParams.account_action);
   }
 ]);
 

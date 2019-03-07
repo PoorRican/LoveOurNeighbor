@@ -1,7 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+import json
 
-from .models import NewsPost, Campaign
+from .models import NewsPost, Campaign, Donation
 
 
 # News Views
@@ -28,12 +30,24 @@ def campaign_detail(request, campaign_id):
     return render(request, "campaign.html", {'cam': cam})
 
 
-def campaign_dynamic(request, campaign_id):
+def campaign_json(request, campaign_id):
     """ Returns json containing dynamic attributes of a specified campaign.
     These attributes are total amount of donations, number of donations, and number of views.
     """
 
     cam = Campaign.objects.get(id=campaign_id)
-    json = {'donated': cam.donated,
-            'donations': cam.donations,
-            'views': cam.views}
+    _donations = len(cam.donations.all())
+    _json = {'donated': cam.donated,
+             'donations': _donations}
+             # TODO: implement `views` in model. 'views': cam.views}
+    return HttpResponse(json.dumps(_json))
+
+
+# Donation views
+@login_required
+def create_donation(request, campaign_id, amount):
+    # TODO: create UI feedback
+    patron = request.user.profile
+    cam = Campaign.objects.get(id=campaign_id)
+    Donation.objects.create(campaign=cam, user=patron, amount=amount)
+    return HttpResponseRedirect('/')
