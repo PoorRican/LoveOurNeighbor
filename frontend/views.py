@@ -14,7 +14,8 @@ def root(request):
 
 def home(request):
     current_campaign = Campaign.objects.order_by("-end_date")[0]
-    all_news = NewsPost.objects.filter(campaign=current_campaign).reverse()
+    all_news = NewsPost.objects.filter(
+                campaign=current_campaign).order_by("-pub_date")
 
     context = {'all_news': all_news, 'current_campaign': current_campaign}
     return render(request, "home.html", context)

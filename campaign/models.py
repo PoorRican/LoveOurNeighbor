@@ -40,8 +40,6 @@ class NewsPost(models.Model):
     title = models.CharField(max_length=100)
     pub_date = models.DateTimeField('date published')
     content = models.TextField()
-    # TODO: change to dynamic image uploading and implement media
-    img_path = models.CharField(default='img/parallax1.jpg', max_length=100)
 
     def __str__(self):
         return self.title

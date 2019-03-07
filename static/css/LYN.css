@@ -36,7 +36,6 @@ nav a.md-unselected {
   padding-left: 2px;
   border-radius: 30px;
   background-color: rgba(255,255,255,0.2);
-  min-height: 30px;
 }
 .profile-area .uname {
   font-size: 22px;
@@ -52,7 +51,7 @@ nav a.md-unselected {
 }
 .profile-area .profile-img {
   border-radius: 20px;
-  height: 2em;
+  height: 1.5em;
   padding: 0px;
 }
 
@@ -114,22 +113,22 @@ a:not(section a) {
 
     /** Section **/
 .section, section {
-  padding-top: 40px;
+  padding-top: 20px;
   padding-bottom: 40px;
 
   color: #EEE;
   background-color: #af005a;
+}
+#News:last-child {
   border-bottom: solid 1px #FF7100;
-  border-top: solid 1px #FF7100;
 }
-.scroll-content > .section:last-child {
-    box-shadow: none !mportant;
-}
-.section h1, section h1 {
+
+.section h1, section h1, .overlay h1 {
   font-weight: 300;
   border-bottom: solid 1px #FF7100;
 }
-.section h4, section h4 {
+.section h4, section h4, .overlay h4,
+.section h3, section h3, .overlay h3 {
   font-weight: 400;
 }
 .section .flow-text, section .flow-text {
@@ -180,10 +179,15 @@ a:not(section a) {
 
     /** Parallax **/
 .parallax-container {
-  height: 300px;
 }
-.parallax-container:first-child {
-  height: 500px;
+.parallax-container .overlay {
+  color: #EEE;
+  height: 100%;
+  background-color: rgba(0,0,0,.6);
+  position: absolute;
+}
+.parallax-container .overlay h1 {
+  padding-top: 15px;
 }
 
 .parallax-img {

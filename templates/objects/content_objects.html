@@ -2,8 +2,9 @@
 
 {% macro parallax_img(img, height=100) %}
 
-  <div style='height: {{height}} !important;'>
-    <div ng-parallax class="parallax-img" pattern="'.{{ static(img) }}'" speed="1"></div>
+  <div class="parallax-container" style='height: {{height}};'>
+    <div ng-parallax class="parallax-img" pattern="'.{{ static(img) }}'" speed="1">
+    </div>
   </div>
 
 {% endmacro %}
@@ -31,60 +32,69 @@
 {% endmacro %}
 
 
-{% macro show_campaign(cam, detail=True, request=None) %}
-     <div class="col s12 m9 l10 scroll-content">
+{% macro show_campaign(cam, height=400, detail=True, request=None) %}
+     <div class="">
 
-      {# TODO: show image as card #}
+      <div class="parallax-container" style='height: {{ height }};'>
+        <div ng-parallax class="parallax-img" pattern="'.{{ static(cam.img_path) }}'" speed="1">
+          <div class="overlay wrapper">
+            {# TODO: put some content in here #}
+            <h1>{{ cam.title.upper() }}</h1>
+
+            <h3>Progress:</h3>
+            <div class="progress">
+              {% if cam.donated %}
+              <div class="current" style="width: {{ round((cam.donated / cam.goal) * 100) }}%">
+                <span>
+                  ${{ cam.donated }}
+                </span>
+              </div>
+              {% endif %}
+              <div class="remaining" style="width: {{ round(((cam.goal - cam.donated) / cam.goal) * 90) }}%">
+                <span>
+                  ${{ cam.goal - cam.donated }}
+                </span>
+              </div>
+            </div>
+
+            <div class="donate">
+              <h3>Donate:</h3>
+              {% set donations = {
+                  '$7':  url_for('campaign:create_donation', kwargs={'campaign_id': cam.id, 'amount': 7}),
+                  '$17': url_for('campaign:create_donation', kwargs={'campaign_id': cam.id, 'amount': 17}),
+                  '$70': url_for('campaign:create_donation', kwargs={'campaign_id': cam.id, 'amount': 70}),
+                  'Other': ''
+              } %}
+              {% for amt, _url in donations.items() %}
+                {# TODO: fix this stupid hack #}
+                {% if request and request.user.is_authenticated %}
+                  <a href="{{ _url }}">
+                {% else %}
+                  <a href="#/accounts/login/">
+                {% endif %}
+                  <md-button class="md-raised{% if amt != 'Other' %} md-accent{% endif %}">{{ amt }}</md-button>
+                </a>
+              {% endfor %}
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+
       {{ section_start("") }}
-        <h1>{{ cam.title.upper() }}</h1>
-
-        <div class="donate">
-          <h3>Donate:</h3>
-          {% set donations = {
-              '$7':  url_for('campaign:create_donation', kwargs={'campaign_id': cam.id, 'amount': 7}),
-              '$17': url_for('campaign:create_donation', kwargs={'campaign_id': cam.id, 'amount': 17}),
-              '$70': url_for('campaign:create_donation', kwargs={'campaign_id': cam.id, 'amount': 70}),
-              'Other': ''
-          } %}
-          {% for amt, _url in donations.items() %}
-            {# TODO: fix this stupid hack #}
-            {% if request and request.user.is_authenticated %}
-              <a href="{{ _url }}">
-            {% else %}
-              <a href="#/accounts/login/">
-            {% endif %}
-              <md-button class="md-raised{% if amt != 'Other' %} md-accent{% endif %}">{{ amt }}</md-button>
-            </a>
-          {% endfor %}
-        </div>
-
         {# TODO: show countdown as 'days left' #}
-        <h4>Progress:</h4>
-        <div class="progress">
-          {% if cam.donated %}
-          <div class="current" style="width: {{ round((cam.donated / cam.goal) * 100) }}%">
-            <span>
-              ${{ cam.donated }}
-            </span>
-          </div>
-          {% endif %}
-          <div class="remaining" style="width: {{ round(((cam.goal - cam.donated) / cam.goal) * 90) }}%">
-            <span>
-              ${{ cam.goal - cam.donated }}
-            </span>
-          </div>
-        </div>
 
         <p id="section-info">
-          <span>Contributors:</span>&nbsp;
-            {{ cam.donations.count() }} have supported so far
-            {# TODO: add encouraging/intuitive styling for count #}
-          <br>
           <span>Began:</span>&nbsp;
             {{ cam.start_date.strftime("%h %d, %Y") }}
           <br>
           <span>Until:</span>&nbsp;
             {{ cam.end_date.strftime("%h %d, %Y") }}
+          <br>
+          <span>Contributors:</span>&nbsp;
+            {{ cam.donations.count() }} have supported so far
+            {# TODO: add encouraging/intuitive styling for count #}
         </p>
 
         <p class="flow-text">{{ cam.content|safe }}</p>
@@ -103,17 +113,15 @@
 {% endmacro %}
 
 
-{% macro news_post(post, height=200, detail=True) %}
-     <div class="col s12 m9 l10 scroll-content">
-
+{% macro news_post(post, detail=True) %}
       {# TODO: group by month and randomly (or scroll) through images per section #}
-      {{ parallax_img(post.img_path, height) }}
-      {{ section_start("Month") }}
-        <h1>{{ post.title.upper() }}</h1>
+      {{ section_start("News") }}
         <p id="section-info">
           <span>Published:</span>&nbsp;
             {{ post.pub_date.strftime("%h %d, %Y") }}
         </p>
+
+        <h1>{{ post.title.upper() }}</h1>
 
         <p class="">{{ post.content|safe }}</p>
 
@@ -125,7 +133,5 @@
           </a>
         {% endif %}
       {{ section_close() }}
-
-    </div>
 
 {% endmacro %}
