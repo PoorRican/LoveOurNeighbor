@@ -17,6 +17,7 @@ class Campaign(models.Model):
     end_date = models.DateField('end date')
 
     goal = models.PositiveIntegerField('goal')
+    views = models.PositiveIntegerField('views', default=0, editable=False)
 
     content = models.TextField()
 

@@ -27,6 +27,8 @@ def campaign_index(request):
 
 def campaign_detail(request, campaign_id):
     cam = Campaign.objects.get(id=campaign_id)
+    cam.views += 1
+    cam.save()
     return render(request, "campaign.html", {'cam': cam})
 
 
@@ -38,8 +40,9 @@ def campaign_json(request, campaign_id):
     cam = Campaign.objects.get(id=campaign_id)
     _donations = len(cam.donations.all())
     _json = {'donated': cam.donated,
-             'donations': _donations}
-             # TODO: implement `views` in model. 'views': cam.views}
+             'donations': _donations,
+             'goal': cam.goal,
+             'views': cam.views}
     return HttpResponse(json.dumps(_json))
 
 

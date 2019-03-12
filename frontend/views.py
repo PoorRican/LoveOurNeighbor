@@ -14,6 +14,8 @@ def root(request):
 
 def home(request):
     current_campaign = Campaign.objects.order_by("-end_date")[0]
+    current_campaign.views += 1
+    current_campaign.save()
     all_news = NewsPost.objects.filter(
                 campaign=current_campaign).order_by("-pub_date")
 

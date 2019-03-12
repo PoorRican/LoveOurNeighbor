@@ -4,13 +4,15 @@ var nav_layout = angular.module('oneDollarApp', ['ngMaterial', 'ngRoute', 'ngPar
 
 // Layout controller and config //
 
-nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$log', function($scope , $mdSidenav, $log) {
-  // Global variable per session for age confirmation
+nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', function($scope , $mdSidenav, $http, $log) {
+
   $scope.toggleLeft = buildDelayedToggler('left');
   $scope.toggleRight = buildToggler('right');
   $scope.isOpenRight = function(){
     return $mdSidenav('right').isOpen();
   };
+
+  $scope.campaign = null;
   /**
    * Supplies a function that will continue to operate until the
    * time is up.
@@ -59,6 +61,14 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$log', function($s
           $log.debug("close RIGHT is done");
         });
     };
+
+
+  $scope.update_campaign = function(cam_id) {
+    $http.get('/campaign/' + cam_id + '/json')
+    .then(function(response) {
+      $scope.campaign = response.data;
+    }, function(response) {});
+  };
 }]);
 
 
@@ -114,6 +124,11 @@ nav_layout.controller('homeController', ['$scope', '$http', '$location',
 
     $scope.currentNavItem  = 'Home';
 
+    $scope.update_campaign(1);
+    setInterval(function() {
+        $scope.update_campaign(1);
+    }, 15000);
+
     ga('send', 'pageview', '/home');
   }
 ]);
@@ -150,6 +165,8 @@ nav_layout.controller('campaignCtrl', ['$scope', '$http', '$routeParams', '$loca
     // TODO: change title block
 
     $scope.currentNavItem  = 'Home';
+
+    $scope.update_campaign(1);
 
     ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
   }
