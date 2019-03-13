@@ -15,6 +15,7 @@ Overall TODOs:
     - Secure logout function (logout on POST, not GET)
     - Streaming services
     - enable dynamic width for progress bar
+    - Implement Toasts (via AngularJS) to show messages from django (`get_messages` in jinja)
 
 Pages to Implement:
     - There should be an initial fundraiser page explaining the need, the proposed solution, and the call to action.
