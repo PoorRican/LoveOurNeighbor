@@ -33,7 +33,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'public.apps.PublicConfig',
-    'campaign.apps.CampaignConfig',
+    'ministry.apps.MinistryConfig',
+    'people.apps.PeopleConfig',
 
     'allauth',
     'allauth.account',
@@ -93,6 +94,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'frontend.wsgi.application'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 # Database
@@ -154,5 +157,13 @@ STATICFILES_DIRS = (
 SITE_ID = 1
 
 # all-auth configuration
+AUTH_USER_MODEL = 'people.User'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_MIN_LENGTH = 3
+# ACCOUNT_EMAIL_VERIFICATION = 'none'  # testing...
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+SOCIALACCOUNT_AUTO_SIGNUP = False  # require social accounts to use the signup form ... I think

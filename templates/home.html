@@ -5,7 +5,7 @@
   {{ content.show_campaign(current_campaign, request=request) }}
 {% endif %}
 
-{% if len(all_news) %}
+{% if all_news %}
   {{ content.news_post(all_news[0]) }}
 
   {% if len(all_news) > 1 %}

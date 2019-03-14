@@ -60,9 +60,9 @@
             <div class="donate">
               <h3>Donate:</h3>
               {% set donations = {
-                  '$7':  url_for('campaign:create_donation', kwargs={'campaign_id': cam.id, 'amount': 7}),
-                  '$17': url_for('campaign:create_donation', kwargs={'campaign_id': cam.id, 'amount': 17}),
-                  '$70': url_for('campaign:create_donation', kwargs={'campaign_id': cam.id, 'amount': 70}),
+                  '$7':  url_for('ministry:create_donation', kwargs={'campaign_id': cam.id, 'amount': 7}),
+                  '$17': url_for('ministry:create_donation', kwargs={'campaign_id': cam.id, 'amount': 17}),
+                  '$70': url_for('ministry:create_donation', kwargs={'campaign_id': cam.id, 'amount': 70}),
                   'Other': ''
               } %}
               {% for amt, _url in donations.items() %}
@@ -101,7 +101,7 @@
 
         <p class="flow-text">{{ cam.content|safe }}</p>
         {% if detail %}
-          <a href="#{{ url_for('campaign:campaign_detail', kwargs={'campaign_id': cam.id}) }}">
+          <a href="#{{ url_for('ministry:campaign_detail', kwargs={'campaign_id': cam.id}) }}">
             <md-button class="md-raised md-accent">
               See More
             </md-button>
@@ -128,7 +128,7 @@
         <p class="">{{ post.content|safe }}</p>
 
         {% if detail %}
-          <a href="#{{ url_for('campaign:news_detail', kwargs={'post_id': post.id}) }}">
+          <a href="#{{ url_for('ministry:news_detail', kwargs={'post_id': post.id}) }}">
             <md-button class="md-raised md-accent">
               Details
             </md-button>

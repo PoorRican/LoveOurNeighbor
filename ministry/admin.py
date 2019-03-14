@@ -1,11 +1,13 @@
 from django.contrib import admin
 
-from .models import NewsPost, Campaign, Patron, Donation
+from .models import MinistryProfile
+from .models import NewsPost, Campaign, Donation
 
 
-# Register your models here.
+admin.site.register(MinistryProfile)
+
+# Frontend Functionality
 admin.site.register(NewsPost)
 admin.site.register(Campaign)
 # somehow make these read-only for production. (for statistics only)
-admin.site.register(Patron)
 admin.site.register(Donation)

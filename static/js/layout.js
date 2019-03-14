@@ -97,17 +97,23 @@ nav_layout.config(function($routeProvider) {
     })
 
     // Media Pages
-    .when('/campaign/:campaign_id', {
+    .when('/ministry/campaign/:campaign_id', {
         templateUrl : function (params) {
           return '/campaign/' + params.campaign_id;
        },
         controller  : 'campaignCtrl'
     })
-    .when('/campaign/news/:post_id', {
+    .when('/ministry/campaign/news/:post_id', {
         templateUrl : function (params) {
           return '/campaign/news/' + params.post_id;
         },
         controller  : 'newsCtrl'
+    })
+    .when('/ministry/:ministry_action', {
+        templateUrl : function (params) {
+          return '/ministry/' + params.ministry_action;
+       },
+        controller  : 'ministryCtrl'
     })
     .when('/accounts/:account_action', {
         templateUrl : function (params) {
@@ -178,6 +184,15 @@ nav_layout.controller('newsCtrl', ['$scope', '$http', '$routeParams', '$location
     $scope.currentNavItem  = 'Home';
 
     ga('send', 'pageview', '/campaigns/news/' + $routeParams.post_id);
+  }
+]);
+nav_layout.controller('ministryCtrl', ['$scope', '$http', '$routeParams', '$location',
+  function($scope, $http, $routeParams, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = null;
+
+    ga('send', 'pageview', '/ministry/' + $routeParams.ministry_action);
   }
 ]);
 nav_layout.controller('accountCtrl', ['$scope', '$http', '$routeParams', '$location',

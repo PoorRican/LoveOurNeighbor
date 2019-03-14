@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from public.models import AboutSection, FaqSection
-from campaign.models import NewsPost, Campaign
+from ministry.models import NewsPost, Campaign
 
 
 seo_keywords = ['new jersey', 'non profit']

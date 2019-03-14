@@ -110,6 +110,10 @@ a {
 a:not(section a) {
   decoration: none;
 }
+.wrapper a {
+  color: #FF7100;
+  text-decoration: underline;
+}
 
     /** Section **/
 .section, section {
