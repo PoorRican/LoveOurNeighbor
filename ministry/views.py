@@ -15,9 +15,10 @@ def create_ministry(request):
     """
     if request.method == 'POST':
         min_form = MinistryEditForm(request.POST)
-        min_form['admin'] = request.user
         if min_form.is_valid():
-            min_form.save()
+            _ministry = min_form.save(commit=False)
+            _ministry.admin = request.user
+            _ministry.save()
             return HttpResponseRedirect('/')
     else:
         _form = MinistryEditForm(initial={'website': 'https://'})
@@ -38,6 +39,7 @@ def ministry_profile(request, ministry):
 
 @login_required
 def like_ministry(request, ministry_id):
+    # TODO: implement "unlike"
     ministry = MinistryProfile.objects.get(id=ministry_id)
     ministry.likes.add(request.user)
     ministry.save()
@@ -52,7 +54,7 @@ def ministry_edit(request, ministry_id):
 
 def ministry_json(request, ministry_id):
     ministry = MinistryProfile.objects.get(id=ministry_id)
-    _json = {'likes': ministry.likes}
+    _json = {'likes': len(ministry.likes.all())}
     return HttpResponse(json.dumps(_json))
 
 
@@ -93,12 +95,13 @@ def campaign_json(request, campaign_id):
              'donations': _donations,
              'goal': cam.goal,
              'views': cam.views,
-             'likes': cam.likes}
+             'likes': len(cam.likes.all())}
     return HttpResponse(json.dumps(_json))
 
 
 @login_required
 def like_campaign(request, campaign_id):
+    # TODO: implement "unlike"
     cam = Campaign.objects.get(id=campaign_id)
     cam.likes.add(request.user)
     cam.save()

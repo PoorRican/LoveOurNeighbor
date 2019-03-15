@@ -189,7 +189,12 @@ a:not(section a) {
   height: 100%;
   background-color: rgba(0,0,0,.6);
   position: absolute;
+  text-decoration: none !important;
 }
+.parallax-container .overlay a {
+  text-decoration: none !important;
+}
+
 .parallax-container .overlay h1 {
   padding-top: 15px;
 }
@@ -205,6 +210,23 @@ a:not(section a) {
 .parallax-img {
     zoom: 85%;
 }}
+
+.like-button {
+  height: 60px;
+  background-color: #EEE;
+  color: #111;
+  max-width: 150px;
+  text-align: center;
+  padding: 20px 10px;
+  margin: 10px 40px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+.like-button span {
+  margin: 0 auto;
+  font-size: 2em;
+  font-weight: 300;
+}
 
 
 /** Footer Styling **/

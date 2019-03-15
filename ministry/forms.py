@@ -16,5 +16,6 @@ class MinistryEditForm(forms.ModelForm):
     class Meta:
         model = MinistryProfile
         fields = ('name', 'address', 'phone_number',
-                  'reps',
+                  'admin', 'reps',
                   'website', 'founded', 'description')
+        exclude = ('admin',)

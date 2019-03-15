@@ -13,7 +13,7 @@ class MinistryProfile(models.Model):
                               on_delete=models.PROTECT)
     reps = models.ManyToManyField(User, blank=True,
                                   related_name='represents')
-    likes = models.ManyToManyField(User, blank=True,
+    likes = models.ManyToManyField(User, blank=True, editable=False,
                                    related_name='likes_m')
 
     address = models.CharField(max_length=256, blank=True, null=True)
@@ -40,7 +40,7 @@ class Campaign(models.Model):
                                  null=True, blank=True,
                                  on_delete=models.PROTECT)
     content = models.TextField()
-    likes = models.ManyToManyField(User, blank=True,
+    likes = models.ManyToManyField(User, blank=True, editable=False,
                                    related_name='likes_c')
 
     # TODO: change to dynamic image uploading and implement media

@@ -5,10 +5,11 @@
 <section class="wrapper">
   {% if start %}
     <h1>New Ministry Profile:</h1>
+    <form method="POST" action="{{ url_for('ministry:create_ministry') }}">
   {% else %}
     <h1>Edit Ministry Profile:</h1>
+    <form method="POST" action="{{ url_for('ministry:edit_ministry') }}">
   {% endif %}
-  <form method="POST" action="{{ url_for('user_profile') }}">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     {{ form.as_p() }}
     <button type="submit">Save</button>

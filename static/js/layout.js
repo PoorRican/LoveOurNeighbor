@@ -63,10 +63,19 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', fu
     };
 
 
-  $scope.update_campaign = function(cam_id) {
-    $http.get('/campaign/' + cam_id + '/json')
+  $scope.update_campaign = function() {
+    var url = document.getElementById("current_campaign_json").value
+    $http.get(url)
     .then(function(response) {
       $scope.campaign = response.data;
+    }, function(response) {});
+  };
+
+
+  $scope.like = function(url) {
+    $http.get(url)
+    .then(function(response) {
+      console.log(response.data);
     }, function(response) {});
   };
 }]);
@@ -99,7 +108,7 @@ nav_layout.config(function($routeProvider) {
     // Media Pages
     .when('/ministry/campaign/:campaign_id', {
         templateUrl : function (params) {
-          return '/campaign/' + params.campaign_id;
+          return '/ministry/campaign/' + params.campaign_id;
        },
         controller  : 'campaignCtrl'
     })
@@ -127,12 +136,11 @@ nav_layout.config(function($routeProvider) {
 nav_layout.controller('homeController', ['$scope', '$http', '$location',
   function($scope, $http, $location) {
     // TODO: change title block
-
     $scope.currentNavItem  = 'Home';
 
-    $scope.update_campaign(1);
+    $scope.update_campaign();
     setInterval(function() {
-        $scope.update_campaign(1);
+        $scope.update_campaign();
     }, 15000);
 
     ga('send', 'pageview', '/home');
@@ -172,7 +180,10 @@ nav_layout.controller('campaignCtrl', ['$scope', '$http', '$routeParams', '$loca
 
     $scope.currentNavItem  = 'Home';
 
-    $scope.update_campaign(1);
+    $scope.update_campaign();
+    setInterval(function() {
+        $scope.update_campaign();
+    }, 15000);
 
     ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
   }

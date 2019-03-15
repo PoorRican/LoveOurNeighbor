@@ -8,7 +8,7 @@
 {# TODO: messages #}
 
 <section class="wrapper">
-  <h1>Your Profile:</h1>
+  <h1>Your Details:</h1>
   <form method="POST" action="{{ url_for('user_profile') }}">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     {{ form.as_p() }}

@@ -13,5 +13,6 @@ def environment(**options):
         'len': len,
         'round': round,
         'get_messages': messages.get_messages,
+        'hasattr': hasattr,
     })
     return env
