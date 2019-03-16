@@ -1,6 +1,5 @@
 Urgent TODO:
     - Implement Braintree for payment
-    - Implement 'Liking' for local account
     - Enable commenting
     - Enable user to user messages
     - Implement `User.first_login` for displaying help-text on profile template
@@ -9,7 +8,6 @@ Overall TODOs:
     - implement TimelineJS
     - Automatic Post Creation upon reaching milestones
     - Create dynamic background or something for progress-bar. Dynamic update of progress-bar
-    - Dynamic Donation Counter. Dynamic view counter
     - Dynamic Countdown
     - Voting system and video Submission (via splash page w/ submission period)
     - Mailing list functionality
@@ -18,6 +16,7 @@ Overall TODOs:
     - enable dynamic width for progress bar
     - Implement Toasts (via AngularJS) to show messages from django (`get_messages` in jinja)
     - Show that a user is associated with a particular ministry via profile and/or name
+    - Fix setInterval existing on other pages
 
 Pages to Implement:
     - There should be an initial fundraiser page explaining the need, the proposed solution, and the call to action.

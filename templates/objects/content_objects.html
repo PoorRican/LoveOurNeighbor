@@ -34,13 +34,19 @@
 
 {% macro show_campaign(cam, height=400, detail=True, request=None) %}
      <div class="">
-      <input type="hidden" id="current_campaign_json" value="{{ url_for("ministry:campaign_json", kwargs={'campaign_id': cam.id}) }}">
+      <input type="hidden" id="current_object_json" value="{{ url_for("ministry:campaign_json", kwargs={'campaign_id': cam.id}) }}">
 
       <div class="parallax-container" style='height: {{ height }};'>
         <div ng-parallax class="parallax-img" pattern="'.{{ static(cam.img_path) }}'" speed="1">
           <div class="overlay wrapper">
             {# TODO: put some content in here #}
             <h1>{{ cam.title.upper() }}</h1>
+
+            <span class="md-subhead">By:
+              <a href="#{{ url_for("ministry:ministry_profile", kwargs={'ministry_id': cam.ministry.id}) }}">
+                {{ cam.ministry }}
+              </a>
+            </span>
 
             <h3>Progress:</h3>
             <div class="progress">
@@ -58,27 +64,33 @@
               </div>
             </div>
 
-            <div class="donate">
-              <h3>Donate:</h3>
+            <div class="donate" flex>
               {% set donations = {
                   '$7':  url_for('ministry:create_donation', kwargs={'campaign_id': cam.id, 'amount': 7}),
                   '$17': url_for('ministry:create_donation', kwargs={'campaign_id': cam.id, 'amount': 17}),
                   '$70': url_for('ministry:create_donation', kwargs={'campaign_id': cam.id, 'amount': 70}),
                   'Other': ''
               } %}
-              {% for amt, _url in donations.items() %}
-                {# TODO: fix this stupid hack #}
-                {% if request and request.user.is_authenticated %}
-                  <a href="{{ _url }}">
-                {% else %}
-                  <a href="#/accounts/login/">
-                {% endif %}
-                  <md-button class="md-raised{% if amt != 'Other' %} md-accent{% endif %}">{{ amt }}</md-button>
+              <div hide-xs>
+                <h3>Donate:</h3>
+                {% for amt, _url in donations.items() %}
+                  {# TODO: fix this stupid hack #}
+                  {% if request and request.user.is_authenticated %}
+                    <a href="{{ _url }}">
+                  {% else %}
+                    <a href="#/accounts/login/">
+                  {% endif %}
+                    <md-button class="md-raised{% if amt != 'Other' %} md-accent{% endif %}">{{ amt }}</md-button>
+                  </a>
+                {% endfor %}
+              </div>
+              <div hide-gt-xs style="padding-top: 20px; padding-left: 20px;">
+                <a href="{{ donations['Other'] }}">
+                  <md-button class="md-raised md-accent">Donate</md-button>
                 </a>
-              {% endfor %}
+              </div>
             </div>
 
-            {{ like_button(cam, request) }}
 
 
           </div>
@@ -88,22 +100,24 @@
       {{ section_start("") }}
         {# TODO: show countdown as 'days left' #}
 
-        <p id="section-info">
-          <span>Began:</span>&nbsp;
-            {{ cam.start_date.strftime("%h %d, %Y") }}
-          <br>
-          <span>Until:</span>&nbsp;
-            {{ cam.end_date.strftime("%h %d, %Y") }}
-          <br>
-          <span>Contributions:</span>&nbsp;
-            {% raw %}{{ object.donations }}{% endraw %} have supported so far
-          <br>
-          <span>Views:</span>&nbsp;
-            {% raw %}{{ object.views }}{% endraw %}
-          <br>
-          <span>Likes:</span>&nbsp;
-            {% raw %}{{ object.likes }}{% endraw %}
-        </p>
+        <div layout-gt-sm="row" layout="column">
+
+          {{ like_button(cam, request) }}
+
+          <p class="section-info">
+            <span>Began:</span>&nbsp;
+              {{ cam.start_date.strftime("%h %d, %Y") }}
+            <br>
+            <span>Until:</span>&nbsp;
+              {{ cam.end_date.strftime("%h %d, %Y") }}
+            <br>
+            <span>Contributions:</span>&nbsp;
+              {% raw %}{{ object.donations }}{% endraw %} have supported so far
+            <br>
+            <span>Views:</span>&nbsp;
+              {% raw %}{{ object.views }}{% endraw %}
+          </p>
+        </div>
 
         <p class="flow-text">{{ cam.content|safe }}</p>
         {% if detail %}
@@ -115,6 +129,99 @@
         {% endif %}
 
       {{ section_close() }}
+
+    </div>
+
+{% endmacro %}
+
+
+{% macro show_ministry(ministry, height=250, detail=True, request=None) %}
+     <div class="">
+      <input type="hidden" id="current_object_json" value="{{ url_for("ministry:ministry_json", kwargs={'ministry_id': ministry.id}) }}">
+
+      <div class="parallax-container" style='height: {{ height }};'>
+        <div ng-parallax class="parallax-img" pattern="'.{{ static(ministry.img_path) }}'" speed="1">
+          <div class="overlay wrapper">
+            {# TODO: put some content in here #}
+            <h1>{{ ministry.name.upper() }}</h1>
+
+            <div layout="row" layout-sm="column">
+
+              {{ like_button(ministry, request) }}
+
+              <div hide-xs hide-sm flex style="margin: auto 0">
+              <p class="section-info">
+                <span># of Projects:</span>&nbsp;
+                  {{ len(ministry.campaigns.all()) }}
+                <br>
+                <span>Total Donations:</span>&nbsp;
+                  {{ ministry.donated }}
+                <br>
+                <span>Views:</span>&nbsp;
+                  {% raw %}{{ object.views }}{% endraw %}
+              </p>
+              </div>
+            </div><!-- /layout -->
+
+          </div>
+        </div>
+      </div>
+
+      {{ section_start("") }}
+
+        <div layout-sm="row">
+          <div hide-gt-sm flex>
+            <h3>Statistics:</h3>
+            <p class="section-info">
+              <span># of Projects:</span>&nbsp;
+                {{ len(ministry.campaigns.all()) }}
+              <br>
+              <span>Total Donations:</span>&nbsp;
+                {{ ministry.donated }}
+              <br>
+              <span>Views:</span>&nbsp;
+                {% raw %}{{ object.views }}{% endraw %}
+            </p>
+          </div><!-- /flex -->
+          <div flex>
+            <h3>Information:</h3>
+            <p class="section-info">
+              <span>Website:</span>&nbsp;
+                <a href="{{ ministry.website }}">{{ ministry.website.split("://")[1] }}</a>
+              <br>
+              {% set info = {
+                  'phone_number': 'Phone',
+                  'address': 'address',
+                  'founded': 'Date Founded',
+                  'created': 'Profile Created'
+              } %}
+              {# TODO: make intuitive date for `created`. eg: "1 year ago" #}
+              {% for attr, str in info.items() %}
+                {% if ministry.__dict__[attr] %}
+                  <span>{{ str }}:</span>&nbsp;
+                    {{ ministry.__dict__[attr] }}
+                  <br>
+                {% endif %}
+              {% endfor %}
+            </p>
+          </div>
+        </div><!-- /row -->
+
+        {% if ministry.description %}
+          <h3>Description:</h3>
+          <p class="flow-text">{{ ministry.description|safe }}</p>
+          {% if detail %}
+            <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': ministry.id}) }}">
+              <md-button class="md-raised md-accent">
+                See More
+              </md-button>
+            </a>
+          {% endif %}
+        {% endif %}
+
+      {{ section_close() }}
+
+      {# TODO: show news and campaigns #}
 
     </div>
 
@@ -150,7 +257,7 @@
     {% if request and not request.user.is_authenticated %}
     <a href="#/accounts/login">
     {% endif %}
-    <div class="like-button"
+    <div class="like-button" flex
       {# TODO: do better object detection here #}
       {% if hasattr(_obj, 'admin') %}
         ng-click="like('{{ url_for('ministry:like_ministry', kwargs={"ministry_id": _obj.id}) }}')"

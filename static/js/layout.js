@@ -13,6 +13,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', fu
   };
 
   $scope.object = {};
+  $scope.update_interval_id = 0;
   /**
    * Supplies a function that will continue to operate until the
    * time is up.
@@ -63,8 +64,8 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', fu
     };
 
 
-  $scope.update_campaign = function() {
-    var url = document.getElementById("current_campaign_json").value
+  $scope.update_object = function() {
+    var url = document.getElementById("current_object_json").value
     $http.get(url)
     .then(function(response) {
       $scope.object = response.data;
@@ -145,9 +146,10 @@ nav_layout.controller('homeController', ['$scope', '$http', '$location',
     // TODO: change title block
     $scope.currentNavItem  = 'Home';
 
-    $scope.update_campaign();
-    setInterval(function() {
-        $scope.update_campaign();
+    if ($scope.update_interval_id) { clearInterval($scope.update_interval_id); }
+    $scope.update_object();
+    $scope.update_interval_id = setInterval(function() {
+        $scope.update_object();
     }, 15000);
 
     ga('send', 'pageview', '/home');
@@ -159,6 +161,8 @@ nav_layout.controller('archiveController', ['$scope', '$http', '$location',
 
     $scope.currentNavItem  = 'Archives';
 
+    clearInterval($scope.update_interval_id);
+
     ga('send', 'pageview', '/campaigns');
   }
 ]);
@@ -168,6 +172,8 @@ nav_layout.controller('faqController', ['$scope', '$http', '$location',
 
     $scope.currentNavItem  = 'FAQ';
 
+    clearInterval($scope.update_interval_id);
+
     ga('send', 'pageview', '/faq');
   }
 ]);
@@ -176,6 +182,8 @@ nav_layout.controller('aboutController', ['$scope', '$http', '$location',
     // TODO: change title block
 
     $scope.currentNavItem  = 'About';
+
+    clearInterval($scope.update_interval_id);
 
     ga('send', 'pageview', '/about');
   }
@@ -187,9 +195,10 @@ nav_layout.controller('campaignCtrl', ['$scope', '$http', '$routeParams', '$loca
 
     $scope.currentNavItem  = 'Home';
 
-    $scope.update_campaign();
+    clearInterval($scope.update_interval_id);
+    $scope.update_object();
     setInterval(function() {
-        $scope.update_campaign();
+        $scope.update_object();
     }, 15000);
 
     ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
@@ -201,6 +210,8 @@ nav_layout.controller('newsCtrl', ['$scope', '$http', '$routeParams', '$location
 
     $scope.currentNavItem  = 'Home';
 
+    clearInterval($scope.update_interval_id);
+
     ga('send', 'pageview', '/campaigns/news/' + $routeParams.post_id);
   }
 ]);
@@ -210,6 +221,13 @@ nav_layout.controller('ministryCtrl', ['$scope', '$http', '$routeParams', '$loca
 
     $scope.currentNavItem  = null;
 
+    clearInterval($scope.update_interval_id);
+    if ($scope.update_interval_id) { clearInterval($scope.update_interval_id); }
+    $scope.update_object();
+    $scope.update_interval_id = setInterval(function() {
+        $scope.update_object();
+    }, 15000);
+
     ga('send', 'pageview', '/ministry/' + $routeParams.ministry_action);
   }
 ]);
@@ -218,6 +236,8 @@ nav_layout.controller('accountCtrl', ['$scope', '$http', '$routeParams', '$locat
     // TODO: change title block
 
     $scope.currentNavItem  = null;
+
+    clearInterval($scope.update_interval_id);
 
     ga('send', 'pageview', '/account/' + $routeParams.account_action);
     console.log('account action: ' + $routeParams.account_action);

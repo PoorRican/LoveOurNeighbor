@@ -27,14 +27,13 @@ def create_ministry(request):
         return render(request, "ministry.html", context)
 
 
-def ministry_profile(request, ministry):
+def ministry_profile(request, ministry_id):
     """ Renders profile for `Ministry` object.
     """
-    if request.method == 'POST':
-        pass
-    else:
-        pass
-    return NotImplemented
+    ministry = MinistryProfile.objects.get(id=ministry_id)
+    ministry.views += 1
+    ministry.save()
+    return render(request, "ministry.html", {'ministry': ministry})
 
 
 @login_required
@@ -49,6 +48,10 @@ def like_ministry(request, ministry_id):
 @login_required
 def ministry_edit(request, ministry_id):
     # TODO: verify that `request.user` is allowed to edit `Ministry`
+    if request.method == 'POST':
+        pass
+    else:
+        pass
     return NotImplemented
 
 
@@ -58,7 +61,8 @@ def ministry_json(request, ministry_id):
     _liked = False
     if request.user.is_authenticated:
         _liked = bool(ministry in request.user.likes_m.all())
-    _json = {'likes': len(ministry.likes.all()),
+    _json = {'views': ministry.views,
+             'likes': len(ministry.likes.all()),
              'liked': _liked}
     return HttpResponse(json.dumps(_json))
 

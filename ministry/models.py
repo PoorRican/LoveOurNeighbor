@@ -15,15 +15,25 @@ class MinistryProfile(models.Model):
                                   related_name='represents')
     likes = models.ManyToManyField(User, blank=True, editable=False,
                                    related_name='likes_m')
+    views = models.PositiveIntegerField('views', default=0, editable=False)
 
     address = models.CharField(max_length=256, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     website = models.URLField()
     founded = models.DateField(blank=True, null=True)
+    created = models.DateField(auto_now_add=True)
     description = models.TextField(blank=True)
+    img_path = models.CharField(default='img/parallax1.jpg', max_length=100)
 
     def __str__(self):
         return self.name
+
+    @property
+    def donated(self):
+        amt = 0
+        for i in self.campaigns.all():
+            amt += i.donated
+        return amt
 
 
 # Website Content

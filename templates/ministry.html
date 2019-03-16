@@ -1,18 +1,4 @@
-{# TODO: display name and profile pic. Enable editing #}
-{# TODO: total donated amount #}
-{# TODO: campaigns involved in #}
+{% import "layout_objects.html" as layout %}
+{% import "content_objects.html" as content %}
 
-<section class="wrapper">
-  {% if start %}
-    <h1>New Ministry Profile:</h1>
-    <form method="POST" action="{{ url_for('ministry:create_ministry') }}">
-  {% else %}
-    <h1>Edit Ministry Profile:</h1>
-    <form method="POST" action="{{ url_for('ministry:edit_ministry') }}">
-  {% endif %}
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    {{ form.as_p() }}
-    <button type="submit">Save</button>
-  </form>
-</section>
-
+    {{ content.show_ministry(ministry, detail=False, request=request) }}

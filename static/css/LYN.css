@@ -142,7 +142,7 @@ a:not(section a) {
   border-top: solid 1px #FF7100;
 }
 
-#section-info {
+.section-info {
   padding-top: 15px;
   padding-left: 20px;
   padding-bottom: 15px;
@@ -198,7 +198,12 @@ a:not(section a) {
 .parallax-container .overlay h1 {
   padding-top: 15px;
 }
+.parallax-container .overlay h1 + span {
+  margin-left: 15px;
+}
 
+
+/**
 .parallax-img {
     zoom: 55%;
 }
@@ -210,17 +215,20 @@ a:not(section a) {
 .parallax-img {
     zoom: 85%;
 }}
+**/
 
 .like-button {
-  height: 60px;
+  height: 60px !important;
+  min-height: 60px !important;
   background-color: #EEE;
   color: #111;
   max-width: 150px;
   text-align: center;
   padding: 20px 10px;
   margin: 10px 40px;
-  margin-top: 20px;
   cursor: pointer;
+  border-radius: 5px;
+  box-sizing: content-box !important;
 }
 .like-button span {
   margin: 0 auto;
