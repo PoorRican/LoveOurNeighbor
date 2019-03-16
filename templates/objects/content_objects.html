@@ -47,13 +47,13 @@
               {% if cam.donated %}
               <div class="current" style="width: {{ round((cam.donated / cam.goal) * 100) }}%">
                 <span>
-                  ${% raw %}{{ campaign.donated }}{% endraw %}
+                  ${% raw %}{{ object.donated }}{% endraw %}
                 </span>
               </div>
               {% endif %}
               <div class="remaining" style="width: {{ round(((cam.goal - cam.donated) / cam.goal) * 90) }}%">
                 <span>
-                  ${% raw %}{{ campaign.goal - campaign.donated }}{% endraw %}
+                  ${% raw %}{{ object.goal - object.donated }}{% endraw %}
                 </span>
               </div>
             </div>
@@ -78,7 +78,7 @@
               {% endfor %}
             </div>
 
-            {{ like_button(cam) }}
+            {{ like_button(cam, request) }}
 
 
           </div>
@@ -96,13 +96,13 @@
             {{ cam.end_date.strftime("%h %d, %Y") }}
           <br>
           <span>Contributions:</span>&nbsp;
-            {% raw %}{{ campaign.donations }}{% endraw %} have supported so far
+            {% raw %}{{ object.donations }}{% endraw %} have supported so far
           <br>
           <span>Views:</span>&nbsp;
-            {% raw %}{{ campaign.views }}{% endraw %}
+            {% raw %}{{ object.views }}{% endraw %}
           <br>
           <span>Likes:</span>&nbsp;
-            {% raw %}{{ campaign.likes }}{% endraw %}
+            {% raw %}{{ object.likes }}{% endraw %}
         </p>
 
         <p class="flow-text">{{ cam.content|safe }}</p>
@@ -145,9 +145,11 @@
 {% endmacro %}
 
 
-{% macro like_button(_obj) %}
-    {# TODO: change styling if already "liked"
-    {# TODO: show feedback #}
+{% macro like_button(_obj, request=None) %}
+    {# TODO: implement "unlike" in django view #}
+    {% if request and not request.user.is_authenticated %}
+    <a href="#/accounts/login">
+    {% endif %}
     <div class="like-button"
       {# TODO: do better object detection here #}
       {% if hasattr(_obj, 'admin') %}
@@ -155,10 +157,15 @@
       {% else %}
         ng-click="like('{{ url_for('ministry:like_campaign', kwargs={"campaign_id": _obj.id}) }}')"
       {% endif %}
-    style="">
-        <span>Like!</span>
+      ng-style="like_style()"
+      style="">
+        <span ng-if="object.liked">Liked</span>
+        <span ng-if="!object.liked">Like!</span>
         <br>
         {# TODO: implement a filter to sum up large numbers #}
-        <small>{{ len(_obj.likes.all()) }} like this</small>
+        <small>{% raw %}{{ object.likes }}{% endraw %} like this</small>
     </div>
+    {% if request and not request.user.is_authenticated %}
+    </a>
+    {% endif %}
 {% endmacro %}

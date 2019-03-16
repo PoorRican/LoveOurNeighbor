@@ -54,7 +54,12 @@ def ministry_edit(request, ministry_id):
 
 def ministry_json(request, ministry_id):
     ministry = MinistryProfile.objects.get(id=ministry_id)
-    _json = {'likes': len(ministry.likes.all())}
+
+    _liked = False
+    if request.user.is_authenticated:
+        _liked = bool(ministry in request.user.likes_m.all())
+    _json = {'likes': len(ministry.likes.all()),
+             'liked': _liked}
     return HttpResponse(json.dumps(_json))
 
 
@@ -91,11 +96,15 @@ def campaign_json(request, campaign_id):
 
     cam = Campaign.objects.get(id=campaign_id)
     _donations = len(cam.donations.all())
+    _liked = False
+    if request.user.is_authenticated:
+        _liked = bool(cam in request.user.likes_c.all())
     _json = {'donated': cam.donated,
              'donations': _donations,
              'goal': cam.goal,
              'views': cam.views,
-             'likes': len(cam.likes.all())}
+             'likes': len(cam.likes.all()),
+             'liked': _liked}
     return HttpResponse(json.dumps(_json))
 
 
@@ -105,7 +114,7 @@ def like_campaign(request, campaign_id):
     cam = Campaign.objects.get(id=campaign_id)
     cam.likes.add(request.user)
     cam.save()
-    return HttpResponse(True)
+    return HttpResponse(json.dumps(True))
 
 
 # Donation views

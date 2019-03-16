@@ -12,7 +12,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', fu
     return $mdSidenav('right').isOpen();
   };
 
-  $scope.campaign = null;
+  $scope.object = {};
   /**
    * Supplies a function that will continue to operate until the
    * time is up.
@@ -67,7 +67,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', fu
     var url = document.getElementById("current_campaign_json").value
     $http.get(url)
     .then(function(response) {
-      $scope.campaign = response.data;
+      $scope.object = response.data;
     }, function(response) {});
   };
 
@@ -75,8 +75,15 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', fu
   $scope.like = function(url) {
     $http.get(url)
     .then(function(response) {
-      console.log(response.data);
+      $scope.object.liked = response.data;
     }, function(response) {});
+  };
+  $scope.like_style = function() {
+    if ($scope.object && $scope.object.liked) {
+      return {'background-color': '#FF7100'};
+    } else {
+      return {'background-color': '#EEE'};
+    }
   };
 }]);
 
