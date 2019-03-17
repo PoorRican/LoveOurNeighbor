@@ -4,7 +4,7 @@ from . import views
 
 app_name = 'ministry'
 urlpatterns = [
-    path('create', views.create_ministry, name='create_ministry'),
+    path('create/new', views.create_ministry, name='create_ministry'),
     path('<int:ministry_id>', views.ministry_profile,
          name='ministry_profile'),
     path('<int:ministry_id>/like', views.like_ministry,
@@ -13,6 +13,8 @@ urlpatterns = [
          name='ministry_json'),
     path('<int:ministry_id>/edit', views.edit_ministry,
          name='edit_ministry'),
+    path('<int:ministry_id>/delete', views.delete_ministry,
+         name='delete_ministry'),
 
     path('news', views.news_index,
          name='news_index'),
@@ -31,6 +33,8 @@ urlpatterns = [
          name='campaign_json'),
     path('campaign/<int:campaign_id>/like', views.like_campaign,
          name='like_campaign'),
+    path('campaign/<int:campaign_id>/delete', views.delete_campaign,
+         name='delete_campaign'),
     path('campaign/<int:campaign_id>/donate/<int:amount>',
          views.create_donation, name='create_donation'),
 ]

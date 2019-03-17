@@ -5,23 +5,45 @@
 <section class="wrapper">
   {% if start %}
     <h1>New Ministry Profile:</h1>
+    <!-- TODO: make link for more information -->
+    <h3>Please note that all ministry profiles are must be approved before they are made public</h3>
+
     <form method="POST" action="{{ url_for('ministry:create_ministry') }}">
+
   {% else %}
     <h1>Edit Ministry Profile:</h1>
+
     <form method="POST" action="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
+
   {% endif %}
+
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
     {{ form.as_p() }}
-    <button type="submit">Save</button>
-    {# TODO: implement delete #}
+
+    <md-button class="md-raised md-primary" type="submit">Save</md-button>
+
+    {% if not start and ministry %}
+
+      <md-button class="md-raised md-warn">
+        <a style="color: #FFF; text-decoration: none;" href="{{ url_for('ministry:delete_ministry', kwargs={'ministry_id': ministry.id}) }}">
+          Delete
+        </a>
+        {# TODO: implement DOUBLE dialog confirmation #}
+      </md-button>
+
+    {% endif %}
+
   </form>
+
 
   {% if not start %}
     {# TODO: differentiate between current and previous fundraisers #}
-    <h3>Campaigns:</h3>
+    <h1>Campaigns:</h1>
     <a href="#{{ url_for('ministry:create_campaign', kwargs={'ministry_id': ministry.id}) }}">
       Create a new fundraiser
     </a>
+
     <ul>
       {% for i in ministry.campaigns.all() %}
         <li>
@@ -31,7 +53,8 @@
         </li>
       {% endfor %}
     </ul>
-    {# TODO: implement delete #}
+
   {% endif %}
+
 </section>
 

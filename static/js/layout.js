@@ -79,6 +79,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', fu
       $scope.object.liked = response.data;
     }, function(response) {});
   };
+
   $scope.like_style = function() {
     if ($scope.object && $scope.object.liked) {
       return {'background-color': '#FF7100'};
@@ -119,6 +120,12 @@ nav_layout.config(function($routeProvider) {
           return '/ministry/campaign/' + params.campaign_id;
        },
         controller  : 'campaignCtrl'
+    })
+    .when('/ministry/campaign/:campaign_id/:campaign_action*', {
+        templateUrl : function (params) {
+          return '/ministry/campaign/' + params.campaign_id + '/' + params.campaign_action;
+       },
+        controller  : 'campaignActionCtrl'
     })
     .when('/ministry/campaign/news/:post_id', {
         templateUrl : function (params) {
@@ -161,6 +168,7 @@ nav_layout.controller('homeController', ['$scope', '$http', '$location',
     ga('send', 'pageview', '/home');
   }
 ]);
+
 nav_layout.controller('archiveController', ['$scope', '$http', '$location',
   function($scope, $http, $location) {
     // TODO: change title block
@@ -172,6 +180,7 @@ nav_layout.controller('archiveController', ['$scope', '$http', '$location',
     ga('send', 'pageview', '/campaigns');
   }
 ]);
+
 nav_layout.controller('faqController', ['$scope', '$http', '$location',
   function($scope, $http, $location) {
     // TODO: change title block
@@ -183,6 +192,7 @@ nav_layout.controller('faqController', ['$scope', '$http', '$location',
     ga('send', 'pageview', '/faq');
   }
 ]);
+
 nav_layout.controller('aboutController', ['$scope', '$http', '$location',
   function($scope, $http, $location) {
     // TODO: change title block
@@ -210,6 +220,19 @@ nav_layout.controller('campaignCtrl', ['$scope', '$http', '$routeParams', '$loca
     ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
   }
 ]);
+
+nav_layout.controller('campaignActionCtrl', ['$scope', '$http', '$routeParams', '$location',
+  function($scope, $http, $routeParams, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = 'Home';
+
+    clearInterval($scope.update_interval_id);
+
+    ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
+  }
+]);
+
 nav_layout.controller('newsCtrl', ['$scope', '$http', '$routeParams', '$location',
   function($scope, $http, $routeParams, $location) {
     // TODO: change title block
@@ -221,6 +244,7 @@ nav_layout.controller('newsCtrl', ['$scope', '$http', '$routeParams', '$location
     ga('send', 'pageview', '/campaigns/news/' + $routeParams.post_id);
   }
 ]);
+
 nav_layout.controller('ministryCtrl', ['$scope', '$http', '$routeParams', '$location',
   function($scope, $http, $routeParams, $location) {
     // TODO: change title block
@@ -238,6 +262,7 @@ nav_layout.controller('ministryCtrl', ['$scope', '$http', '$routeParams', '$loca
     console.log('ministry action: ' + $routeParams.ministry_action);
   }
 ]);
+
 nav_layout.controller('ministryActionCtrl', ['$scope', '$http', '$routeParams', '$location',
   function($scope, $http, $routeParams, $location) {
     // TODO: change title block
@@ -250,6 +275,7 @@ nav_layout.controller('ministryActionCtrl', ['$scope', '$http', '$routeParams', 
     console.log('ministry action: ' + $routeParams.ministry_action + ' of ' + $routeParams.ministry_id);
   }
 ]);
+
 nav_layout.controller('accountCtrl', ['$scope', '$http', '$routeParams', '$location',
   function($scope, $http, $routeParams, $location) {
     // TODO: change title block

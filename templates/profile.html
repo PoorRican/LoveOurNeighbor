@@ -22,6 +22,7 @@
       <ul>
         <li><a href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">{{ ministry }}</a></li>
       </ul>
+      <a href="#{{ url_for('ministry:create_ministry') }}"><p>Create a new ministry</p></a>
     {% endfor %}
 
   {% else %}

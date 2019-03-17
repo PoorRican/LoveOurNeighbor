@@ -17,11 +17,10 @@ def create_ministry(request):
     if request.method == 'POST':
         min_form = MinistryEditForm(request.POST)
         if min_form.is_valid():
-            ministry = min_form.save(commit=False)
-            ministry.admin = request.user
-            ministry.save()
-            _url = '/#%s' % reverse('ministry:ministry_profile',
-                                    kwargs={'ministry_id': ministry.id})
+            _ministry = min_form.save(commit=False)
+            _ministry.admin = request.user
+            _ministry.save()
+            _url = reverse('accounts_profile')
             return HttpResponseRedirect(_url)
     else:
         _form = MinistryEditForm(initial={'website': 'https://'})
@@ -33,7 +32,7 @@ def create_ministry(request):
 @login_required
 def edit_ministry(request, ministry_id):
     ministry = MinistryProfile.objects.get(id=ministry_id)
-    # TODO: set up ministry permissions
+    # TODO: set up some kind of ministry permissions
     if request.user == ministry.admin or request.user in ministry.reps.all():
         if request.method == 'POST':
             _form = MinistryEditForm(request.POST, instance=ministry)
@@ -57,15 +56,8 @@ def edit_ministry(request, ministry_id):
 @login_required
 def delete_ministry(request, ministry_id):
     ministry = MinistryProfile.objects.get(id=ministry_id)
-    # TODO: set up ministry permissions
-    if request.user == ministry.admin:
-        ministry.delete()
-        # return HttpResponse(True)
-    else:
-        # TODO: show error
-        pass
-    _url = '/#%s' % reverse('user_profile')
-    return HttpResponseRedirect(_url)
+    ministry.delete()
+    return HttpResponse(True)
 
 
 def ministry_profile(request, ministry_id):
@@ -75,6 +67,15 @@ def ministry_profile(request, ministry_id):
     ministry.views += 1
     ministry.save()
     return render(request, "ministry.html", {'ministry': ministry})
+
+
+@login_required
+def like_ministry(request, ministry_id):
+    # TODO: implement "unlike"
+    ministry = MinistryProfile.objects.get(id=ministry_id)
+    ministry.likes.add(request.user)
+    ministry.save()
+    return HttpResponse(True)
 
 
 def ministry_json(request, ministry_id):
@@ -87,15 +88,6 @@ def ministry_json(request, ministry_id):
              'likes': len(ministry.likes.all()),
              'liked': _liked}
     return HttpResponse(json.dumps(_json))
-
-
-@login_required
-def like_ministry(request, ministry_id):
-    # TODO: implement "unlike"
-    ministry = MinistryProfile.objects.get(id=ministry_id)
-    ministry.likes.add(request.user)
-    ministry.save()
-    return HttpResponse(True)
 
 
 # News Views
@@ -136,7 +128,7 @@ def create_campaign(request, ministry_id):
 @login_required
 def edit_campaign(request, campaign_id):
     campaign = Campaign.objects.get(id=campaign_id)
-    # TODO: set up permissions
+    # TODO: set up some kind of ministry permissions
     if request.user == campaign.ministry.admin or request.user in campaign.ministry.reps.all():
         if request.method == 'POST':
             _form = CampaignEditForm(request.POST, instance=campaign)
@@ -159,16 +151,9 @@ def edit_campaign(request, campaign_id):
 
 @login_required
 def delete_campaign(request, campaign_id):
-    campaign = Campaign.objects.get(id=campaign_id)
-    # TODO: set up permissions
-    if request.user == campaign.ministry.admin:
-        campaign.delete()
-    else:
-        # TODO: show error
-        pass
-    _url = '/#%s' % reverse('user_profile')
-    # return HttpResponse(json.dumps(True))
-    return HttpResponseRedirect(_url)
+    cam = Campaign.objects.get(id=campaign_id)
+    cam.delete()
+    return HttpResponse(json.dumps(True))
 
 
 def campaign_index(request):

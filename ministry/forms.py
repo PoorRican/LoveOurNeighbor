@@ -34,6 +34,6 @@ class CampaignEditForm(forms.ModelForm):
     class Meta:
         model = Campaign
         fields = ('title', 'start_date', 'end_date',
-                  'goal',
+                  'goal', 'content',
                   # TODO: create ui for editing `img_path`
                   )

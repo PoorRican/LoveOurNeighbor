@@ -4,16 +4,34 @@
 
 <section class="wrapper">
   {% if start %}
-    <h1>New Ministry Profile:</h1>
+    <h1>New Campaign:</h1>
+
     <form method="POST" action="{{ url_for('ministry:create_campaign', kwargs={"ministry_id": ministry.id}) }}">
+
   {% else %}
-    <h1>Edit Ministry Profile:</h1>
+
+    <h1>Edit Campaign:</h1>
+
     <form method="POST" action="{{ url_for('ministry:edit_campaign', kwargs={'campaign_id': campaign.id}) }}">
+
   {% endif %}
+
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
     {{ form.as_p() }}
-    <button type="submit">Save</button>
-    {# TODO: implement delete #}
+
+    <md-button class="md-raised md-primary" type="submit">Save</md-button>
+
+    {% if start and campaign %}
+
+      <md-button class="md-raised md-warn">
+        <a href="{{ url_for('ministry:delete_campaign', kwargs={'campaign_id': campaign.id}) }}">
+          Delete
+        </a>
+        {# TODO: implement DOUBLE dialog confirmation #}
+      </md-button>
+
+    {% endif %}
   </form>
 </section>
 
