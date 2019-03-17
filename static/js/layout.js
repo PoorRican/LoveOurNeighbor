@@ -132,13 +132,13 @@ nav_layout.config(function($routeProvider) {
        },
         controller  : 'ministryCtrl'
     })
-    .when('/ministry/:ministry_id/:ministry_action', {
+    .when('/ministry/:ministry_id/:ministry_action*', {
         templateUrl : function (params) {
           return '/ministry/' + params.ministry_id + '/' + params.ministry_action;
        },
         controller  : 'ministryActionCtrl'
     })
-    .when('/accounts/:account_action', {
+    .when('/accounts/:account_action*', {
         templateUrl : function (params) {
           return '/accounts/' + params.account_action;
         },

@@ -16,7 +16,8 @@ Overall TODOs:
     - enable dynamic width for progress bar
     - Implement Toasts (via AngularJS) to show messages from django (`get_messages` in jinja)
     - Show that a user is associated with a particular ministry via profile and/or name
-    - Fix setInterval existing on other pages
+    - Create more admin like page for Profile management
+    - Implement page history via js
 
 Pages to Implement:
     - There should be an initial fundraiser page explaining the need, the proposed solution, and the call to action.

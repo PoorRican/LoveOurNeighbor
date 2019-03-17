@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 import json
 
-from .forms import MinistryEditForm
+from .forms import MinistryEditForm, CampaignEditForm
 from .models import NewsPost, Campaign, Donation, MinistryProfile
 
 
@@ -26,25 +26,7 @@ def create_ministry(request):
         _form = MinistryEditForm(initial={'website': 'https://'})
         context = {"form": _form,
                    "start": True}
-        return render(request, "ministry_profile.html", context)
-
-
-def ministry_profile(request, ministry_id):
-    """ Renders profile for `Ministry` object.
-    """
-    ministry = MinistryProfile.objects.get(id=ministry_id)
-    ministry.views += 1
-    ministry.save()
-    return render(request, "ministry.html", {'ministry': ministry})
-
-
-@login_required
-def like_ministry(request, ministry_id):
-    # TODO: implement "unlike"
-    ministry = MinistryProfile.objects.get(id=ministry_id)
-    ministry.likes.add(request.user)
-    ministry.save()
-    return HttpResponse(True)
+        return render(request, "ministry_content.html", context)
 
 
 @login_required
@@ -64,11 +46,29 @@ def edit_ministry(request, ministry_id):
             context = {"form": _form,
                        "ministry": ministry,
                        "start": False}
-            return render(request, "ministry_profile.html", context)
+            return render(request, "ministry_content.html", context)
     else:
         print("unauthorized")
         # TODO: have more meaningful error
         return HttpResponseRedirect("/")
+
+
+def ministry_profile(request, ministry_id):
+    """ Renders profile for `Ministry` object.
+    """
+    ministry = MinistryProfile.objects.get(id=ministry_id)
+    ministry.views += 1
+    ministry.save()
+    return render(request, "ministry.html", {'ministry': ministry})
+
+
+@login_required
+def like_ministry(request, ministry_id):
+    # TODO: implement "unlike"
+    ministry = MinistryProfile.objects.get(id=ministry_id)
+    ministry.likes.add(request.user)
+    ministry.save()
+    return HttpResponse(True)
 
 
 def ministry_json(request, ministry_id):
@@ -96,6 +96,52 @@ def news_detail(request, post_id):
 
 
 # Campaign views
+@login_required
+def create_campaign(request, ministry_id):
+    """ Renders form for editing or creating `Ministry` object.
+    """
+    ministry = MinistryProfile.objects.get(id=ministry_id)
+    if request.method == 'POST':
+        cam_form = CampaignEditForm(request.POST)
+        if cam_form.is_valid():
+            cam = cam_form.save(commit=False)
+            cam.ministry = ministry
+            cam.save()
+            _url = '/#%s' % reverse('ministry:campaign_detail',
+                                    kwargs={'campaign_id': cam.id})
+            return HttpResponseRedirect(_url)
+    else:
+        _form = CampaignEditForm()
+        context = {"form": _form,
+                   "start": True,
+                   "ministry": ministry}
+        return render(request, "campaign_content.html", context)
+
+
+@login_required
+def edit_campaign(request, campaign_id):
+    campaign = Campaign.objects.get(id=campaign_id)
+    # TODO: set up some kind of ministry permissions
+    if request.user == campaign.ministry.admin or request.user in campaign.ministry.reps.all():
+        if request.method == 'POST':
+            _form = CampaignEditForm(request.POST, instance=campaign)
+            _form.save()
+            _url = '/#%s' % reverse('ministry:campaign_detail',
+                                    kwargs={'campaign_id': campaign.id})
+            return HttpResponseRedirect(_url)
+        else:
+            print("we got here")
+            _form = CampaignEditForm(instance=campaign)
+            context = {"form": _form,
+                       "campaign": campaign,
+                       "start": False}
+            return render(request, "campaign_content.html", context)
+    else:
+        print("unauthorized")
+        # TODO: have more meaningful error
+        return HttpResponseRedirect("/")
+
+
 def campaign_index(request):
     # TODO: paginate and render
     all_news = NewsPost.objects.all()

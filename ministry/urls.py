@@ -21,6 +21,10 @@ urlpatterns = [
 
     path('campaigns', views.campaign_index,
          name='campaign_index'),
+    path('<int:ministry_id>/campaign/create', views.create_campaign,
+         name='create_campaign'),
+    path('campaign/<int:campaign_id>/edit', views.edit_campaign,
+         name='edit_campaign'),
     path('campaign/<int:campaign_id>', views.campaign_detail,
          name='campaign_detail'),
     path('campaign/<int:campaign_id>/json', views.campaign_json,

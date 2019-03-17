@@ -1,0 +1,37 @@
+{# TODO: display name and profile pic. Enable editing #}
+{# TODO: total donated amount #}
+{# TODO: campaigns involved in #}
+
+<section class="wrapper">
+  {% if start %}
+    <h1>New Ministry Profile:</h1>
+    <form method="POST" action="{{ url_for('ministry:create_ministry') }}">
+  {% else %}
+    <h1>Edit Ministry Profile:</h1>
+    <form method="POST" action="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
+  {% endif %}
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    {{ form.as_p() }}
+    <button type="submit">Save</button>
+    {# TODO: implement delete #}
+  </form>
+
+  {% if not start %}
+    {# TODO: differentiate between current and previous fundraisers #}
+    <h3>Campaigns:</h3>
+    <a href="#{{ url_for('ministry:create_campaign', kwargs={'ministry_id': ministry.id}) }}">
+      Create a new fundraiser
+    </a>
+    <ul>
+      {% for i in ministry.campaigns.all() %}
+        <li>
+          <a href="#{{ url_for('ministry:campaign_detail', kwargs={'campaign_id': i.id}) }}">
+            {{ i }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+    {# TODO: implement delete #}
+  {% endif %}
+</section>
+
