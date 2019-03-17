@@ -6,13 +6,9 @@
 {% endif %}
 
 {% if all_news %}
-  {{ content.news_post(all_news[0]) }}
+    {% for i in all_news %}
 
-  {% if len(all_news) > 1 %}
-      {% for i in all_news[1:] %}
+        {{ content.news_post(i) }}
 
-          {{ content.news_post(i) }}
-
-      {% endfor %}
-  {% endif %}
+    {% endfor %}
 {% endif %}

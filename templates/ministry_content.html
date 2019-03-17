@@ -11,7 +11,18 @@
     <form method="POST" action="{{ url_for('ministry:create_ministry') }}">
 
   {% else %}
-    <h1>Edit Ministry Profile:</h1>
+    <h1>
+
+      Edit Ministry Profile:&nbsp;
+
+      <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': ministry.id}) }}"
+       style="text-decoration: none;">
+        <md-button class="md-raised md-primary">
+          View
+        </md-button>
+      </a>
+
+    </h1>
 
     <form method="POST" action="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
 
@@ -31,6 +42,16 @@
         </a>
         {# TODO: implement DOUBLE dialog confirmation #}
       </md-button>
+
+      <br>
+      <br>
+
+      <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'ministry', 'obj_id': ministry.id}) }}"
+       style="text-decoration: none;">
+        <md-button class="md-raised md-accent">
+          Create News
+        </md-button>
+      </a>
 
     {% endif %}
 

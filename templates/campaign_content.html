@@ -22,14 +22,25 @@
 
     <md-button class="md-raised md-primary" type="submit">Save</md-button>
 
-    {% if start and campaign %}
+    {% if not start and campaign %}
 
       <md-button class="md-raised md-warn">
-        <a href="{{ url_for('ministry:delete_campaign', kwargs={'campaign_id': campaign.id}) }}">
+        <a href="{{ url_for('ministry:delete_campaign', kwargs={'campaign_id': campaign.id}) }}"
+         style="text-decoration: none; color: white;">
           Delete
         </a>
         {# TODO: implement DOUBLE dialog confirmation #}
       </md-button>
+
+      <br>
+      <br>
+
+      <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}"
+       style="text-decoration: none;">
+        <md-button class="md-raised md-accent">
+          Create News
+        </md-button>
+      </a>
 
     {% endif %}
   </form>

@@ -32,9 +32,12 @@
 {% endmacro %}
 
 
-{% macro show_campaign(cam, height=400, detail=True, request=None) %}
+{% macro show_campaign(cam, height=400, detail=True, request=None, AUTH=None) %}
      <div class="">
       <input type="hidden" id="current_object_json" value="{{ url_for("ministry:campaign_json", kwargs={'campaign_id': cam.id}) }}">
+      {% if AUTH == None %}
+        {% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
+      {% endif %}
 
       <div class="parallax-container" style='height: {{ height }};'>
         <div ng-parallax class="parallax-img" pattern="'.{{ static(cam.img_path) }}'" speed="1">
@@ -42,10 +45,16 @@
             {# TODO: put some content in here #}
             <h1>
               {{ cam.title.upper() }}
-              {% if request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
+              {% if AUTH %}
                 <a href="#{{ url_for('ministry:edit_campaign', kwargs={'campaign_id': cam.id}) }}">
                   <md-button class="md-raised md-accent">
                     Edit
+                  </md-button>
+                </a>
+                <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': cam.id}) }}"
+                 style="text-decoration: none;">
+                  <md-button class="md-raised md-primary">
+                    Create News
                   </md-button>
                 </a>
               {% endif %}
@@ -101,7 +110,6 @@
             </div>
 
 
-
           </div>
         </div>
       </div>
@@ -144,9 +152,12 @@
 {% endmacro %}
 
 
-{% macro show_ministry(ministry, height=250, detail=True, request=None) %}
+{% macro show_ministry(ministry, height=250, detail=True, request=None, AUTH=None) %}
      <div class="">
       <input type="hidden" id="current_object_json" value="{{ url_for("ministry:ministry_json", kwargs={'ministry_id': ministry.id}) }}">
+      {% if AUTH == None %}
+        {% set AUTH = request.user == ministry.admin or request.user in ministry.reps.all() %}
+      {% endif %}
 
       <div class="parallax-container" style='height: {{ height }};'>
         <div ng-parallax class="parallax-img" pattern="'.{{ static(ministry.img_path) }}'" speed="1">
@@ -154,7 +165,7 @@
             {# TODO: put some content in here #}
             <h1>
               {{ ministry.name.upper() }}
-              {% if request.user == ministry.admin or request.user in ministry.reps.all() %}
+              {% if AUTH %}
                 <a href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
                   <md-button class="md-raised md-accent">
                     Edit
@@ -246,7 +257,7 @@
 {% endmacro %}
 
 
-{% macro news_post(post, detail=True) %}
+{% macro news_post(post, detail=True, AUTH=None) %}
       {# TODO: group by month and randomly (or scroll) through images per section #}
       {{ section_start("News") }}
         <p id="section-info">
@@ -254,7 +265,24 @@
             {{ post.pub_date.strftime("%h %d, %Y") }}
         </p>
 
-        <h1>{{ post.title.upper() }}</h1>
+        <h1>
+          {{ post.title.upper() }}
+
+          {% if AUTH %}
+            <a style="text-decoration: none;" href="#{{ url_for('ministry:edit_news', kwargs={'post_id': post.id}) }}">
+              <md-button class="md-raised md-accent">
+                Edit
+              </md-button>
+            </a>
+
+            <a style="text-decoration: none;" href="#{{url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
+              <md-button class="md-raised md-warn">
+                Delete
+              </md-button>
+            </a>
+          {% endif %}
+
+        </h1>
 
         <p class="">{{ post.content|safe }}</p>
 

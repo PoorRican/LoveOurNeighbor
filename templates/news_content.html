@@ -1,0 +1,39 @@
+{# TODO: display name and profile pic. Enable editing #}
+{# TODO: total donated amount #}
+{# TODO: campaigns involved in #}
+
+<section class="wrapper">
+  {% if start %}
+    <h1>Create News Post:</h1>
+    <!-- TODO: make link for more information -->
+
+    <form method="POST" action="{{ url_for('ministry:create_news', kwargs=kwargs) }}">
+
+  {% else %}
+    <h1>Edit Ministry Profile:</h1>
+
+    <form method="POST" action="{{ url_for('ministry:edit_news', kwargs={'post_id': post.id}) }}">
+
+  {% endif %}
+
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    {{ form.as_p() }}
+
+    <md-button class="md-raised md-primary" type="submit">Save</md-button>
+
+    {% if not start and post %}
+
+      <md-button class="md-raised md-warn">
+        <a style="color: #FFF; text-decoration: none;" href="{{ url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
+          Delete
+        </a>
+        {# TODO: implement DOUBLE dialog confirmation #}
+      </md-button>
+
+    {% endif %}
+
+  </form>
+
+</section>
+

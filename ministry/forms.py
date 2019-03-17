@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import MinistryProfile, Campaign
+from .models import MinistryProfile, Campaign, NewsPost
 
 
 class MinistryEditForm(forms.ModelForm):
@@ -35,5 +35,22 @@ class CampaignEditForm(forms.ModelForm):
         model = Campaign
         fields = ('title', 'start_date', 'end_date',
                   'goal', 'content',
+                  # TODO: create ui for editing `img_path`
+                  )
+
+
+class NewsEditForm(forms.ModelForm):
+    """Form for viewing and editing name fields in a User object.
+
+    A good reference for Django forms is:
+    http://pydanny.com/core-concepts-django-modelforms.html
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(NewsEditForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = NewsPost
+        fields = ('title', 'content',
                   # TODO: create ui for editing `img_path`
                   )

@@ -252,7 +252,6 @@ nav_layout.controller('ministryCtrl', ['$scope', '$http', '$routeParams', '$loca
     $scope.currentNavItem  = null;
 
     clearInterval($scope.update_interval_id);
-    if ($scope.update_interval_id) { clearInterval($scope.update_interval_id); }
     $scope.update_object();
     $scope.update_interval_id = setInterval(function() {
         $scope.update_object();
