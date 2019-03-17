@@ -20,7 +20,7 @@ class UserEditView(UpdateView):
     form_class = UserEditForm
     template_name = "profile.html"
     view_name = 'user_profile'
-    success_url = '/'
+    success_url = '/accounts/profile'
 
     def get_object(self):
         return self.request.user

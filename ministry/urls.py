@@ -11,6 +11,8 @@ urlpatterns = [
          name='like_ministry'),
     path('<int:ministry_id>/json', views.ministry_json,
          name='ministry_json'),
+    path('<int:ministry_id>/edit', views.edit_ministry,
+         name='edit_ministry'),
 
     path('news', views.news_index,
          name='news_index'),

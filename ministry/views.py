@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 
@@ -19,12 +20,13 @@ def create_ministry(request):
             _ministry = min_form.save(commit=False)
             _ministry.admin = request.user
             _ministry.save()
-            return HttpResponseRedirect('/')
+            _url = reverse('accounts_profile')
+            return HttpResponseRedirect(_url)
     else:
         _form = MinistryEditForm(initial={'website': 'https://'})
         context = {"form": _form,
                    "start": True}
-        return render(request, "ministry.html", context)
+        return render(request, "ministry_profile.html", context)
 
 
 def ministry_profile(request, ministry_id):
@@ -46,13 +48,27 @@ def like_ministry(request, ministry_id):
 
 
 @login_required
-def ministry_edit(request, ministry_id):
-    # TODO: verify that `request.user` is allowed to edit `Ministry`
-    if request.method == 'POST':
-        pass
+def edit_ministry(request, ministry_id):
+    ministry = MinistryProfile.objects.get(id=ministry_id)
+    # TODO: set up some kind of ministry permissions
+    if request.user == ministry.admin or request.user in ministry.reps.all():
+        if request.method == 'POST':
+            _form = MinistryEditForm(request.POST, instance=ministry)
+            _form.save()
+            _url = '/#%s' % reverse('ministry:ministry_profile',
+                                    kwargs={'ministry_id': ministry.id})
+            return HttpResponseRedirect(_url)
+        else:
+            print("we got here")
+            _form = MinistryEditForm(instance=ministry)
+            context = {"form": _form,
+                       "ministry": ministry,
+                       "start": False}
+            return render(request, "ministry_profile.html", context)
     else:
-        pass
-    return NotImplemented
+        print("unauthorized")
+        # TODO: have more meaningful error
+        return HttpResponseRedirect("/")
 
 
 def ministry_json(request, ministry_id):

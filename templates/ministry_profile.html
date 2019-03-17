@@ -8,7 +8,7 @@
     <form method="POST" action="{{ url_for('ministry:create_ministry') }}">
   {% else %}
     <h1>Edit Ministry Profile:</h1>
-    <form method="POST" action="{{ url_for('ministry:edit_ministry') }}">
+    <form method="POST" action="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
   {% endif %}
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     {{ form.as_p() }}

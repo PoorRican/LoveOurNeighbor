@@ -143,7 +143,16 @@
         <div ng-parallax class="parallax-img" pattern="'.{{ static(ministry.img_path) }}'" speed="1">
           <div class="overlay wrapper">
             {# TODO: put some content in here #}
-            <h1>{{ ministry.name.upper() }}</h1>
+            <h1>
+              {{ ministry.name.upper() }}
+              {% if request.user == ministry.admin or request.user in ministry.reps.all() %}
+                <a href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
+                  <md-button class="md-raised md-accent">
+                    Edit
+                  </md-button>
+                </a>
+              {% endif %}
+            </h1>
 
             <div layout="row" layout-sm="column">
 

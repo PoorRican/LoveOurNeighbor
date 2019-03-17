@@ -132,6 +132,12 @@ nav_layout.config(function($routeProvider) {
        },
         controller  : 'ministryCtrl'
     })
+    .when('/ministry/:ministry_id/:ministry_action', {
+        templateUrl : function (params) {
+          return '/ministry/' + params.ministry_id + '/' + params.ministry_action;
+       },
+        controller  : 'ministryActionCtrl'
+    })
     .when('/accounts/:account_action', {
         templateUrl : function (params) {
           return '/accounts/' + params.account_action;
@@ -229,6 +235,19 @@ nav_layout.controller('ministryCtrl', ['$scope', '$http', '$routeParams', '$loca
     }, 15000);
 
     ga('send', 'pageview', '/ministry/' + $routeParams.ministry_action);
+    console.log('ministry action: ' + $routeParams.ministry_action);
+  }
+]);
+nav_layout.controller('ministryActionCtrl', ['$scope', '$http', '$routeParams', '$location',
+  function($scope, $http, $routeParams, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = null;
+
+    clearInterval($scope.update_interval_id);
+
+    ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);
+    console.log('ministry action: ' + $routeParams.ministry_action + ' of ' + $routeParams.ministry_id);
   }
 ]);
 nav_layout.controller('accountCtrl', ['$scope', '$http', '$routeParams', '$location',

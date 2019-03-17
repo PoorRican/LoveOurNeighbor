@@ -14,6 +14,21 @@
     {{ form.as_p() }}
     <button type="submit">Save</button>
   </form>
-  <a href="#{{ url_for('ministry:create_ministry') }}"><p>Would you like to create a profile for your Ministry?</p></a>
+
+  {% if len(request.user.administers.all()) %}
+
+    {% for ministry in request.user.administers.all() %}
+      <h1>Ministries You Administer:</h1>
+      <ul>
+        <li><a href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">{{ ministry }}</a></li>
+      </ul>
+    {% endfor %}
+
+  {% else %}
+
+    <a href="#{{ url_for('ministry:create_ministry') }}"><p>Would you like to create a profile for your Ministry?</p></a>
+
+  {% endif %}
+
 </section>
 
