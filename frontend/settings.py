@@ -153,6 +153,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+MEDIA_ROOT = 'static/media/'
+MEDIA_URL = '/media/'
 
 SITE_ID = 1
 

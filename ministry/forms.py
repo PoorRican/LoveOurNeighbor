@@ -16,7 +16,7 @@ class MinistryEditForm(forms.ModelForm):
     class Meta:
         model = MinistryProfile
         fields = ('name', 'address', 'phone_number',
-                  'admin', 'reps',
+                  'admin', 'reps', 'img_path',
                   'website', 'founded', 'description')
         exclude = ('admin',)
 
@@ -34,7 +34,7 @@ class CampaignEditForm(forms.ModelForm):
     class Meta:
         model = Campaign
         fields = ('title', 'start_date', 'end_date',
-                  'goal', 'content',
+                  'goal', 'content', 'img_path',
                   # TODO: create ui for editing `img_path`
                   )
 

@@ -18,6 +18,7 @@ Overall TODOs:
     - Show that a user is associated with a particular ministry via profile and/or name
     - Create more admin like page for Profile management
     - Implement page history via js
+    - Implement file uploading as 'new upload' and then have `img_path` be an option of selected uploaded files
 
 Pages to Implement:
     - There should be an initial fundraiser page explaining the need, the proposed solution, and the call to action.

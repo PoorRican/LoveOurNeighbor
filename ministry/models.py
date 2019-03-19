@@ -1,7 +1,24 @@
 from datetime import date
+from os import path
 
 from django.db import models
 from people.models import User, UserProfile
+
+
+def ministry_media_dir(instance, filename):
+    """ Helper function that returns dedicated directory for ministry media.
+    This partitions user uploaded content per ministry.
+    """
+    return path.join('ministries', instance.name,
+                     'profile_banners', filename)
+
+
+def campaign_media_dir(instance, filename):
+    """ Helper function that returns dedicated directory for campaign media.
+    This partitions user uploaded content per ministry, per campaign.
+    """
+    return path.join('ministries', instance.ministry.name,
+                     'campaigns', filename)
 
 
 # Backend Functionality
@@ -23,7 +40,8 @@ class MinistryProfile(models.Model):
     founded = models.DateField(blank=True, null=True)
     created = models.DateField(auto_now_add=True)
     description = models.TextField(blank=True)
-    img_path = models.CharField(default='img/parallax1.jpg', max_length=100)
+    img_path = models.ImageField(blank=True, null=True,
+                                 upload_to=ministry_media_dir)
 
     def __str__(self):
         return self.name
@@ -54,7 +72,8 @@ class Campaign(models.Model):
                                    related_name='likes_c')
 
     # TODO: change to dynamic image uploading and implement media
-    img_path = models.CharField(default='img/parallax1.jpg', max_length=100)
+    img_path = models.ImageField(blank=True, null=True,
+                                 upload_to=campaign_media_dir)
 
     @property
     def donated(self):

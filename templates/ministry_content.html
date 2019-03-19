@@ -8,7 +8,7 @@
     <!-- TODO: make link for more information -->
     <h3>Please note that all ministry profiles are must be approved before they are made public</h3>
 
-    <form method="POST" action="{{ url_for('ministry:create_ministry') }}">
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('ministry:create_ministry') }}">
 
   {% else %}
     <h1>
@@ -28,8 +28,10 @@
 
   {% endif %}
 
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <input type="hidden" enctype="multipart/form-data" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
+    {# TODO: show previous images for `img_path` #}
+    {# TODO: have better styling for date selection/input #}
     {{ form.as_p() }}
 
     <md-button class="md-raised md-primary" type="submit">Save</md-button>

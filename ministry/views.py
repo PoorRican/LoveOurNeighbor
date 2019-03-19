@@ -36,13 +36,13 @@ def edit_ministry(request, ministry_id):
     # TODO: set up ministry permissions
     if request.user == ministry.admin or request.user in ministry.reps.all():
         if request.method == 'POST':
-            _form = MinistryEditForm(request.POST, instance=ministry)
+            _form = MinistryEditForm(request.POST, request.FILES,
+                                     instance=ministry)
             _form.save()
             _url = '/#%s' % reverse('ministry:ministry_profile',
                                     kwargs={'ministry_id': ministry.id})
             return HttpResponseRedirect(_url)
         else:
-            print("we got here")
             _form = MinistryEditForm(instance=ministry)
             context = {"form": _form,
                        "ministry": ministry,
@@ -75,6 +75,8 @@ def ministry_profile(request, ministry_id):
     ministry = MinistryProfile.objects.get(id=ministry_id)
     ministry.views += 1
     ministry.save()
+    # TODO: combine QuerySet of campaign and ministry news
+    # TODO: show campaigns via nav-bar in wrapper
     all_news = NewsPost.objects.filter(
                 ministry=ministry).order_by("-pub_date")
     context = {'ministry': ministry,
@@ -171,7 +173,6 @@ def edit_news(request, post_id):
                                     kwargs={'post_id': post.id})
             return HttpResponseRedirect(_url)
         else:
-            print("we got here")
             _form = NewsEditForm(instance=post)
             context = {"form": _form,
                        "post": post,
@@ -248,13 +249,13 @@ def edit_campaign(request, campaign_id):
     # TODO: set up permissions
     if request.user == campaign.ministry.admin or request.user in campaign.ministry.reps.all():
         if request.method == 'POST':
-            _form = CampaignEditForm(request.POST, instance=campaign)
+            _form = CampaignEditForm(request.POST, request.FILES,
+                                     instance=campaign)
             _form.save()
             _url = '/#%s' % reverse('ministry:campaign_detail',
                                     kwargs={'campaign_id': campaign.id})
             return HttpResponseRedirect(_url)
         else:
-            print("we got here")
             _form = CampaignEditForm(instance=campaign)
             context = {"form": _form,
                        "campaign": campaign,

@@ -11,3 +11,6 @@
 # db stuff
 db.*
 */migrations/*
+
+# media stuff
+static/media/*

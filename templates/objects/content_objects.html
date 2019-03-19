@@ -1,14 +1,5 @@
 {# templates/objects/layout_objects.html #}
 
-{% macro parallax_img(img, height=100) %}
-
-  <div class="parallax-container" style='height: {{height}};'>
-    <div ng-parallax class="parallax-img" pattern="'.{{ static(img) }}'" speed="1">
-    </div>
-  </div>
-
-{% endmacro %}
-
 
 {% macro section_start(id) -%}
 
@@ -40,7 +31,7 @@
       {% endif %}
 
       <div class="parallax-container" style='height: {{ height }};'>
-        <div ng-parallax class="parallax-img" pattern="'.{{ static(cam.img_path) }}'" speed="1">
+        <div ng-parallax class="parallax-img" pattern="'.{% if cam.img_path %}{{ static(cam.img_path.url) }}{% endif %}'" speed="1">
           <div class="overlay wrapper">
             {# TODO: put some content in here #}
             <h1>
@@ -160,7 +151,7 @@
       {% endif %}
 
       <div class="parallax-container" style='height: {{ height }};'>
-        <div ng-parallax class="parallax-img" pattern="'.{{ static(ministry.img_path) }}'" speed="1">
+        <div ng-parallax class="parallax-img" pattern="'.{% if ministry.img_path %}{{ static(ministry.img_path.url) }}{% endif %}'" speed="3">
           <div class="overlay wrapper">
             {# TODO: put some content in here #}
             <h1>

@@ -6,18 +6,20 @@
   {% if start %}
     <h1>New Campaign:</h1>
 
-    <form method="POST" action="{{ url_for('ministry:create_campaign', kwargs={"ministry_id": ministry.id}) }}">
+    <form enctype="multipart/form-data" method="POST" action="{{ url_for('ministry:create_campaign', kwargs={"ministry_id": ministry.id}) }}">
 
   {% else %}
 
     <h1>Edit Campaign:</h1>
 
-    <form method="POST" action="{{ url_for('ministry:edit_campaign', kwargs={'campaign_id': campaign.id}) }}">
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('ministry:edit_campaign', kwargs={'campaign_id': campaign.id}) }}">
 
   {% endif %}
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
+    {# TODO: show previous images for `img_path` #}
+    {# TODO: have better styling for date selection/input #}
     {{ form.as_p() }}
 
     <md-button class="md-raised md-primary" type="submit">Save</md-button>
