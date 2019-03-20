@@ -23,7 +23,47 @@
 {% endmacro %}
 
 
-{% macro show_campaign(cam, height=400, detail=True, request=None, AUTH=None) %}
+{% macro comments_section(obj, obj_type, request=None, form=None, csrf_token=None) %}
+  <div class="wrapper" style="padding-left: 15px;">
+    {% if len(obj.comments.all()) %}
+      <h3 style="margin-bottom: 0px; border-bottom: solid 1px #FF7100;">Comments:</h3>
+      <md-list flex>
+        {% for i in obj.comments.all() %}
+          {# TODO: implement this in angular to reduce server overhead #}
+          <md-list-item class="md-2-line">
+            <div class="md-list-item-text" layout="column">
+              <p>{{ i.content }}</p>
+              <div layout="row">
+                <img class="profile-img" src="{{ i.user.profile.avatar_url }}">
+                <div layout="column">
+                  <bold>By: {{ i.user.name }}</bold>
+                  <small>{{ i.pub_date }}</small>
+                </div>
+              </div>
+            </div>
+          </md-list-item>
+        {% endfor %}
+      </md-list>
+    {% endif %}
+
+    <h4 style="margin-bottom: 10px; border-bottom: solid 1px #FF7100;">Post a new comment:</h4>
+    {% if request and request.user.is_authenticated %}
+      <form enctype="multipart/form-data" method="POST" action="{{ url_for("ministry:create_comment", kwargs={'obj_type': obj_type, 'obj_id': obj.id}) }}">
+        <input type="hidden" enctype="multipart/form-data" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        {{ form.as_p() }}
+        <md-button class="md-raised md-primary" type="submit">Post</md-button>
+      </form>
+    {% else %}
+      <a href="#accounts/login" style="text-decoration: none;">
+        <span>Login to Comment</span>
+        <md-button class="md-raised md-accent">Login</md-button>
+      </a>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+
+{% macro show_campaign(cam, height=400, detail=True, request=None, AUTH=None, form=None, csrf_token=None) %}
      <div class="">
       <input type="hidden" id="current_object_json" value="{{ url_for("ministry:campaign_json", kwargs={'campaign_id': cam.id}) }}">
       {% if AUTH == None %}
@@ -136,6 +176,8 @@
           </a>
         {% endif %}
 
+        {{ comments_section(cam, 'campaign', request, form=form, csrf_token=csrf_token) }}
+
       {{ section_close() }}
 
     </div>
@@ -143,7 +185,7 @@
 {% endmacro %}
 
 
-{% macro show_ministry(ministry, height=250, detail=True, request=None, AUTH=None) %}
+{% macro show_ministry(ministry, height=250, detail=True, request=None, AUTH=None, form=None, csrf_token=None) %}
      <div class="">
       <input type="hidden" id="current_object_json" value="{{ url_for("ministry:ministry_json", kwargs={'ministry_id': ministry.id}) }}">
       {% if AUTH == None %}
@@ -239,6 +281,8 @@
           {% endif %}
         {% endif %}
 
+        {{ comments_section(ministry, 'ministry', request, form=form, csrf_token=csrf_token) }}
+
       {{ section_close() }}
 
       {# TODO: show news and campaigns #}
@@ -248,7 +292,7 @@
 {% endmacro %}
 
 
-{% macro news_post(post, detail=True, AUTH=None) %}
+{% macro news_post(post, detail=True, request=None, AUTH=None, form=None, csrf_token=None) %}
       {# TODO: group by month and randomly (or scroll) through images per section #}
       {{ section_start("News") }}
         <p id="section-info">
@@ -284,6 +328,9 @@
             </md-button>
           </a>
         {% endif %}
+
+        {{ comments_section(post, 'news_post', request, form=form, csrf_token=csrf_token) }}
+
       {{ section_close() }}
 
 {% endmacro %}

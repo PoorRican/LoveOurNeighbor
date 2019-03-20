@@ -2,13 +2,13 @@
 {% import "content_objects.html" as content %}
 
 {% if current_campaign %}
-  {{ content.show_campaign(current_campaign, request=request) }}
+  {{ content.show_campaign(current_campaign, request=request, form=form, csrf_token=csrf_token) }}
 {% endif %}
 
 {% if all_news %}
     {% for i in all_news %}
 
-        {{ content.news_post(i) }}
+        {{ content.news_post(i, request=request, form=form, csrf_token=csrf_token) }}
 
     {% endfor %}
 {% endif %}

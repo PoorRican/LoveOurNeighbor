@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 from public.models import AboutSection, FaqSection
 from ministry.models import NewsPost, Campaign
+from ministry.forms import CommentForm
 
 
 seo_keywords = ['new jersey', 'non profit']
@@ -22,7 +23,9 @@ def home(request):
     except IndexError:
         current_campaign, all_news = None, None
 
-    context = {'all_news': all_news, 'current_campaign': current_campaign}
+    context = {'all_news': all_news,
+               'current_campaign': current_campaign,
+               'form': CommentForm()}
     return render(request, "home.html", context)
 
 

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 import json
 
-from .forms import MinistryEditForm, CampaignEditForm, NewsEditForm
+from .forms import MinistryEditForm, CampaignEditForm, NewsEditForm, CommentForm
 from .models import NewsPost, Campaign, Donation, MinistryProfile
 
 
@@ -77,10 +77,15 @@ def ministry_profile(request, ministry_id):
     ministry.save()
     # TODO: combine QuerySet of campaign and ministry news
     # TODO: show campaigns via nav-bar in wrapper
+
     all_news = NewsPost.objects.filter(
                 ministry=ministry).order_by("-pub_date")
+
+    comments = CommentForm()
+
     context = {'ministry': ministry,
                'all_news': all_news,
+               'form': comments,
                }
     return render(request, "ministry.html", context)
 
@@ -215,8 +220,12 @@ def news_detail(request, post_id):
         _reps = post.ministry.reps.all()
     AUTH = bool(request.user == _admin or request.user in _reps)
 
+    comments = CommentForm()
+
     context = {'post': post,
-               'AUTH': AUTH}
+               'AUTH': AUTH,
+               'form': comments,
+               }
     return render(request, "news_post.html", context)
 
 
@@ -291,10 +300,14 @@ def campaign_detail(request, campaign_id):
     cam = Campaign.objects.get(id=campaign_id)
     cam.views += 1
     cam.save()
+
     all_news = NewsPost.objects.filter(
                 campaign=cam).order_by("-pub_date")
+    comments = CommentForm()
+
     context = {'cam': cam,
                'all_news': all_news,
+               'form': comments,
                }
     return render(request, "campaign.html", context)
 
@@ -335,3 +348,56 @@ def create_donation(request, campaign_id, amount):
     cam = Campaign.objects.get(id=campaign_id)
     Donation.objects.create(campaign=cam, user=patron, amount=amount)
     return HttpResponseRedirect('/')
+
+
+# Comment Views
+@login_required
+def create_comment(request, obj_type, obj_id):
+    if request.method == 'POST':
+        obj = None
+
+        if obj_type == 'ministry':
+            obj = MinistryProfile.objects.get(id=obj_id)
+        elif obj_type == 'campaign':
+            obj = Campaign.objects.get(id=obj_id)
+        elif obj_type == 'news_post':
+            obj = NewsPost.objects.get(id=obj_id)
+        else:
+            e = "`obj_type` is neither 'ministry', 'campaign', or 'news_post'"
+            raise ValueError(e)
+
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            setattr(comment, obj_type, obj)
+            comment.user = request.user
+            comment.save()
+
+            if obj_type == 'ministry':
+                _url = '/#%s' % reverse('ministry:ministry_profile',
+                                        kwargs={'ministry_id': obj.id})
+            elif obj_type == 'campaign':
+                _url = '/#%s' % reverse('ministry:campaign_detail',
+                                        kwargs={'campaign_id': obj.id})
+            elif obj_type == 'news_post':
+                if obj.campaign:
+                    _url = '/#%s' % reverse('ministry:campaign_detail',
+                                            kwargs={'campaign_id': obj.campaign.id})
+
+                elif obj.ministry:
+                    _url = '/#%s' % reverse('ministry:ministry_detail',
+                                            kwargs={'ministry_id': obj.ministry.id})
+                else:
+                    e = "Incorrectly formatted NewsPost Object"
+                    raise ValueError(e)
+            else:
+                e = "Unknown error in determining redirect url in 'create_comment'"
+                raise Exception(e)
+
+            return HttpResponseRedirect(_url)
+
+        else:
+            print('i guess the form isnt valid')
+
+    else:
+        print('how did this happen?')

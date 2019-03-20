@@ -49,7 +49,7 @@ nav a.md-unselected {
   font-size: 14px;
   margin: auto;
 }
-.profile-area .profile-img {
+.profile-img {
   border-radius: 20px;
   height: 1.5em;
   padding: 0px;
@@ -234,6 +234,23 @@ a:not(section a) {
   margin: 0 auto;
   font-size: 2em;
   font-weight: 300;
+}
+
+.md-list-item-text * {
+  color: #EEE !important;
+}
+.md-list-item-text p {
+  font-size: 18px !important;
+  font-weight: 300 !important;
+}
+.md-list-item-text small {
+  font-size: 12px;
+  padding-left: 5px;
+}
+.md-list-item-text bold {
+  font-size: 14px;
+  font-weight: 500;
+  padding-left: 5px;
 }
 
 

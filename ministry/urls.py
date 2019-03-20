@@ -41,6 +41,10 @@ urlpatterns = [
          name='like_campaign'),
     path('campaign/<int:campaign_id>/delete', views.delete_campaign,
          name='delete_campaign'),
+
     path('campaign/<int:campaign_id>/donate/<int:amount>',
          views.create_donation, name='create_donation'),
+
+    path('comment/<str:obj_type>/<int:obj_id>/create', views.create_comment,
+         name='create_comment'),
 ]

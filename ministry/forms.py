@@ -1,10 +1,10 @@
 from django import forms
 
-from .models import MinistryProfile, Campaign, NewsPost
+from .models import MinistryProfile, Campaign, NewsPost, Comment
 
 
 class MinistryEditForm(forms.ModelForm):
-    """Form for viewing and editing name fields in a User object.
+    """Form for viewing and editing fields in a MinistryProfile object.
 
     A good reference for Django forms is:
     http://pydanny.com/core-concepts-django-modelforms.html
@@ -22,7 +22,7 @@ class MinistryEditForm(forms.ModelForm):
 
 
 class CampaignEditForm(forms.ModelForm):
-    """Form for viewing and editing name fields in a User object.
+    """Form for viewing and editing fields in a Campaign object.
 
     A good reference for Django forms is:
     http://pydanny.com/core-concepts-django-modelforms.html
@@ -40,7 +40,7 @@ class CampaignEditForm(forms.ModelForm):
 
 
 class NewsEditForm(forms.ModelForm):
-    """Form for viewing and editing name fields in a User object.
+    """Form for viewing and editing fields in a NewsPost object.
 
     A good reference for Django forms is:
     http://pydanny.com/core-concepts-django-modelforms.html
@@ -54,3 +54,22 @@ class NewsEditForm(forms.ModelForm):
         fields = ('title', 'content',
                   # TODO: create ui for editing `img_path`
                   )
+
+
+class CommentForm(forms.ModelForm):
+    """Form for viewing and editing fields in a Comment object.
+
+    A good reference for Django forms is:
+    http://pydanny.com/core-concepts-django-modelforms.html
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(CommentForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Comment
+        fields = ('ministry', 'campaign', 'news_post',
+                  'user',
+                  'content',)
+        exclude = ('ministry', 'campaign', 'news_post',
+                   'user')

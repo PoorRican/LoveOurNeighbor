@@ -3,7 +3,7 @@
 
 {% set AUTH = (request.user == ministry.admin or request.user in ministry.reps.all()) %}
 
-{{ content.show_ministry(ministry, detail=False, request=request, AUTH=AUTH) }}
+{{ content.show_ministry(ministry, detail=False, request=request, AUTH=AUTH, form=form, csrf_token=csrf_token) }}
 
 {% if all_news %}
   <section class="wrapper">
@@ -23,7 +23,7 @@
 
     {% for i in all_news %}
 
-        {{ content.news_post(i, AUTH=AUTH) }}
+        {{ content.news_post(i, AUTH=AUTH, request=request, form=form, csrf_token=csrf_token) }}
 
     {% endfor %}
 {% endif %}
