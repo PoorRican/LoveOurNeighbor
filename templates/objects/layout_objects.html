@@ -41,6 +41,14 @@
         {%- endfor -%}
         </md-nav-bar>
 
+        <div layout="row" class="search-bar">
+          <form name="search" method="GET" ng-submit="get_search()">
+            {# TODO: show icon #}
+            <!--label>Search:&nbsp;</label-->
+            <input ng-model="query" placeholder="Search">
+          </form>
+        </div>
+
         <div class="profile-area" hide-xs hide-sm>
           {{ user_widget(request) }}
         </div>

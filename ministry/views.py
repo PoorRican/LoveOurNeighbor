@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 import json
 
@@ -396,8 +397,42 @@ def create_comment(request, obj_type, obj_id):
 
             return HttpResponseRedirect(_url)
 
-        else:
-            print('i guess the form isnt valid')
 
-    else:
-        print('how did this happen?')
+def search(request, query):
+    # TODO: implement search client-side rendering
+    # search ministry through name, tags, location, and description
+    # search through campaign title, tags, and description
+    # return rendered search page
+    # TODO: somehow normalize capitalization
+    results = []
+
+    try:
+        results.append(MinistryProfile.objects.get(
+                       Q(name__contains=query) |
+                       Q(description__contains=query) |
+                       # TODO: do better geolocation search
+                       Q(address__contains=query)
+                       ))
+    except Exception:
+        pass
+
+    try:
+        results.append(Campaign.objects.get(
+                       Q(title__contains=query) |
+                       Q(content__contains=query)
+                       ))
+    except Exception:
+        pass
+
+    try:
+        results.append(NewsPost.objects.get(
+                       Q(title__contains=query) |
+                       Q(content__contains=query)
+                       ))
+    except Exception:
+        pass
+
+    context = {'results': results,
+               'query': query,
+               }
+    return render(request, "search.html", context)

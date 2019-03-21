@@ -30,7 +30,7 @@ nav a.md-unselected {
 
 .profile-area {
   float: right;
-  margin: auto 15px auto auto;
+  margin: auto 15px auto 0;
   border: solid 1px #FF7100;
   padding: 2px 16px;
   padding-left: 2px;
@@ -76,6 +76,27 @@ nav a.md-unselected {
 }
 #sidenav .profile-area a {
   color: #FF7100;
+}
+
+.search-bar {
+  margin: auto 15px auto auto;
+}
+.search-bar form {
+  margin: auto 0;
+}
+.search-bar form input {
+  background-color: transparent;
+  padding: 2px;
+  border: none;
+  border-bottom: solid 1px #EEE;
+  color: #EEE;
+}
+.search-bar form input:focus {
+  background-color: rgba(255,255,255,0.2);
+  border: solid 1px #EEE;
+}
+.search-bar form ::placeholder { /* Most modern browsers support this now. */
+  color: #EEE !important;
 }
 
 

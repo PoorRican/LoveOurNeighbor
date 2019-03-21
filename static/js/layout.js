@@ -4,7 +4,7 @@ var nav_layout = angular.module('oneDollarApp', ['ngMaterial', 'ngRoute', 'ngPar
 
 // Layout controller and config //
 
-nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', function($scope , $mdSidenav, $http, $log) {
+nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$location', function($scope , $mdSidenav, $http, $log, $location) {
 
   $scope.toggleLeft = buildDelayedToggler('left');
   $scope.toggleRight = buildToggler('right');
@@ -14,6 +14,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', fu
 
   $scope.object = {};
   $scope.update_interval_id = 0;
+  $scope.query = null;
   /**
    * Supplies a function that will continue to operate until the
    * time is up.
@@ -86,6 +87,11 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', fu
     } else {
       return {'background-color': '#EEE'};
     }
+  };
+
+  $scope.get_search = function() {
+    var url = "/ministry/search/" + $scope.query;
+    $location.url(url);
   };
 }]);
 

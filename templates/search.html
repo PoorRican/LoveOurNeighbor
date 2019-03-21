@@ -1,0 +1,35 @@
+{% import "layout_objects.html" as layout %}
+{% import "content_objects.html" as content %}
+
+
+<section class="wrapper">
+  <h1>Search Results for "{{ query }}"</h1>
+  <md-list>
+    {% for i in results %}
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text" layout="column">
+          {% if hasattr(i, 'name') %}
+            {# assume this is a ministry object #}
+              <a href="{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': i.id}) }}">
+                <h3>{{ i.name }}</h3>
+              </a>
+              {# TODO: show other information #}
+              <p>{% if len(i.description) > 100 %}{{ i.description[:100] }}}&#8230;{% else %}{{ i.description }}{% endif %}</p>
+          {% elif hasattr(i, 'start_date') %}
+            {# assume this is a Campaign object #}
+              <a href="{{ url_for('ministry:campaign_detail', kwargs={'campaign_id': i.id}) }}">
+                <h3>{{ i.title }}</h3>
+              </a>
+              <p>{% if len(i.content) > 100 %}{{ i.content[:100] }}}&#8230;{% else %}{{ i.content }}{% endif %}</p>
+          {% elif hasattr(i, 'pub_date') %}
+            {# assume this is a NewsPost object #}
+              <a href="{{ url_for('ministry:news_detail', kwargs={'post_id': i.id}) }}">
+                <h3>{{ i.title }}</h3>
+              </a>
+              <p>{% if len(i.content) > 100 %}{{ i.content[:100] }}}&#8230;{% else %}{{ i.content }}{% endif %}</p>
+          {% endif %}
+        </div><!-- /.md-list-item-text -->
+      </md-list-item>
+    {% endfor %}
+  </md-list>
+</section>

@@ -47,4 +47,6 @@ urlpatterns = [
 
     path('comment/<str:obj_type>/<int:obj_id>/create', views.create_comment,
          name='create_comment'),
+
+    path('search/<str:query>', views.search, name='search'),
 ]
