@@ -24,7 +24,7 @@
 
     </h1>
 
-    <form method="POST" action="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
 
   {% endif %}
 

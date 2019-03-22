@@ -14,7 +14,7 @@ Overall TODOs:
     - Add detailed logging (individual log files: requests, user creation, donation, etc)
     - Secure logout function (logout on POST, not GET)
     - enable dynamic width for progress bar
-    - Implement Toasts (via AngularJS) to show messages from django (`get_messages` in jinja)
+    - Implement Toasts (via AngularJS) to show messages from django (`get_messages`). Pass via hidden input objects and fetch via js `getElementById`
     - Show that a user is associated with a particular ministry via profile and/or name
     - Create more admin like page for Profile management
     - Implement page history via js
