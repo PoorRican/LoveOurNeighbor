@@ -294,7 +294,8 @@
 
 {% macro news_post(post, detail=True, request=None, AUTH=None, form=None, csrf_token=None) %}
       {# TODO: group by month and randomly (or scroll) through images per section #}
-      {{ section_start("News") }}
+    <div class="section">
+      <article class="wrapper">
         <p id="section-info">
           <span>Published:</span>&nbsp;
             {{ post.pub_date.strftime("%h %d, %Y") }}
@@ -319,6 +320,15 @@
 
         </h1>
 
+        {% if post.campaign %}
+          <h6>
+            <span>For:&nbsp;</span>
+            <a href="#{{ url_for('ministry:campaign_detail', kwargs={'campaign_id': post.campaign.id}) }}">
+              {{ post.campaign }}
+            </a>
+          </h6>
+        {% endif %}
+
         <p class="">{{ post.content|safe }}</p>
 
         {% if detail %}
@@ -331,7 +341,8 @@
 
         {{ comments_section(post, 'news_post', request, form=form, csrf_token=csrf_token) }}
 
-      {{ section_close() }}
+      </article>
+    </div>
 
 {% endmacro %}
 
@@ -339,7 +350,7 @@
 {% macro like_button(_obj, request=None) %}
     {# TODO: implement "unlike" in django view #}
     {% if request and not request.user.is_authenticated %}
-    <a href="#/accounts/login">
+    <a href="#/accounts/login" style="text-decoration: none;">
     {% endif %}
     <div class="like-button" flex
       {# TODO: do better object detection here #}

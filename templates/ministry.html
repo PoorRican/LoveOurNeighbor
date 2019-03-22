@@ -6,7 +6,7 @@
 {{ content.show_ministry(ministry, detail=False, request=request, AUTH=AUTH, form=form, csrf_token=csrf_token) }}
 
 {% if all_news %}
-  <section class="wrapper">
+  <div class="section wrapper">
     {# TODO: show nav-bar to switch between campaigns and news #}
     <h1>
       News
@@ -19,7 +19,7 @@
         </a>
       {% endif %}
     </h1>
-  </section>
+  </div>
 
     {% for i in all_news %}
 

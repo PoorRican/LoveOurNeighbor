@@ -19,6 +19,7 @@ Overall TODOs:
     - Create more admin like page for Profile management
     - Implement page history via js
     - Implement file uploading as 'new upload' and then have `img_path` be an option of selected uploaded files
+    - Dynamically create comment forms to enable parent/child commenting
 
 Pages to Implement:
     - There should be an initial fundraiser page explaining the need, the proposed solution, and the call to action.

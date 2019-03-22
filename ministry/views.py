@@ -118,8 +118,15 @@ def ministry_profile(request, ministry_id):
     # TODO: combine QuerySet of campaign and ministry news
     # TODO: show campaigns via nav-bar in wrapper
 
-    all_news = NewsPost.objects.filter(
-                ministry=ministry).order_by("-pub_date")
+    all_news = []
+    all_news.extend(NewsPost.objects.filter(ministry=ministry))
+    _c = ministry.campaigns.all()
+    if len(_c):
+        for i in _c:
+            _np = i.news.all()
+            if len(_np):
+                all_news.extend(_np)
+    all_news.sort(key=lambda np: np.pub_date, reverse=True)
 
     comments = CommentForm()
 
