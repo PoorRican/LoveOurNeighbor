@@ -8,7 +8,7 @@ from django.urls import reverse
 import json
 
 from .forms import MinistryEditForm, CampaignEditForm, NewsEditForm, CommentForm
-from .models import NewsPost, Campaign, Donation, MinistryProfile
+from .models import NewsPost, Campaign, MinistryProfile
 
 
 # Ministry Views
@@ -431,15 +431,6 @@ def like_campaign(request, campaign_id):
 
 
 # Other views
-@login_required
-def create_donation(request, campaign_id, amount):
-    # TODO: create UI feedback
-    patron = request.user.profile
-    cam = Campaign.objects.get(id=campaign_id)
-    Donation.objects.create(campaign=cam, user=patron, amount=amount)
-    return HttpResponseRedirect('/')
-
-
 @login_required
 def create_comment(request, obj_type, obj_id):
     if request.method == 'POST':

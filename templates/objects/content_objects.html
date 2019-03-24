@@ -49,7 +49,7 @@
     <h4 style="margin-bottom: 10px; border-bottom: solid 1px #FF7100;">Post a new comment:</h4>
     {% if request and request.user.is_authenticated %}
       <form enctype="multipart/form-data" method="POST" action="{{ url_for("ministry:create_comment", kwargs={'obj_type': obj_type, 'obj_id': obj.id}) }}">
-        <input type="hidden" enctype="multipart/form-data" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
         {{ form.as_p() }}
         <md-button class="md-raised md-primary" type="submit">Post</md-button>
       </form>
@@ -114,30 +114,14 @@
             </div>
 
             <div class="donate" flex>
-              {% set donations = {
-                  '$7':  url_for('ministry:create_donation', kwargs={'campaign_id': cam.id, 'amount': 7}),
-                  '$17': url_for('ministry:create_donation', kwargs={'campaign_id': cam.id, 'amount': 17}),
-                  '$70': url_for('ministry:create_donation', kwargs={'campaign_id': cam.id, 'amount': 70}),
-                  'Other': ''
-              } %}
-              <div hide-xs>
-                <h3>Donate:</h3>
-                {% for amt, _url in donations.items() %}
-                  {# TODO: fix this stupid hack #}
-                  {% if request and request.user.is_authenticated %}
-                    <a href="{{ _url }}">
-                  {% else %}
-                    <a href="#/accounts/login/">
-                  {% endif %}
-                    <md-button class="md-raised{% if amt != 'Other' %} md-accent{% endif %}">{{ amt }}</md-button>
-                  </a>
-                {% endfor %}
-              </div>
-              <div hide-gt-xs style="padding-top: 20px; padding-left: 20px;">
-                <a href="{{ donations['Other'] }}">
-                  <md-button class="md-raised md-accent">Donate</md-button>
-                </a>
-              </div>
+              {# TODO: create anonymous donations #}
+              {% if request.user.is_authenticated %}
+                <a href="#{{ url_for('donation:select_payment', kwargs={'campaign_id': cam.id}) }}" style="text-decoration: none">
+              {% else %}
+                <a href="#/accounts/login" style="text-decoration: none">
+              {% endif %}
+                <md-button class="md-raised md-accent">Donate</md-button>
+              </a>
             </div>
 
 

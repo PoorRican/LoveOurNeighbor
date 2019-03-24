@@ -1,0 +1,18 @@
+{# TODO: user should be able to enter donation amount and other details here #}
+{# TODO: use POST data to go to either braintree_payment or coinbase_payment #}
+
+<section class="wrapper">
+
+  <h1>Enter Donation Details</h1>
+
+  <form method="POST" action="{{ url_for('donation:select_payment', kwargs={'campaign_id': campaign_id}) }}">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    {{ form.as_p() }}
+    {# TODO: somehow style the select elements #}
+
+    <md-button class="md-raised md-accent" type="submit">Continue</md-button>
+
+  </form>
+
+</section>

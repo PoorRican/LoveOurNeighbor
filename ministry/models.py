@@ -79,7 +79,9 @@ class Campaign(models.Model):
     def donated(self):
         amt = 0
         for i in self.donations.all():
-            amt += i.amount
+            # don't count unpayed donations
+            if i.payment:
+                amt += i.amount
         return amt
 
     def __str__(self):
@@ -97,20 +99,6 @@ class NewsPost(models.Model):
 
     def __str__(self):
         return self.title
-
-
-class Donation(models.Model):
-    campaign = models.ForeignKey(Campaign, related_name="donations",
-                                 on_delete=models.PROTECT)
-    user = models.ForeignKey(UserProfile, related_name="donations",
-                             on_delete=models.PROTECT)
-    # amount = models.PositiveSmallIntegerField(default=0, editable=False)
-    amount = models.PositiveSmallIntegerField(default=0)
-    date = models.DateTimeField('date / time', auto_now_add=True)
-    # TODO: somehow store tx id and other info
-
-    def __str__(self):
-        return "$%d for %s" % (self.amount, self.campaign)
 
 
 class Comment(models.Model):

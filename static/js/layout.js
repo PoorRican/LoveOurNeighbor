@@ -120,7 +120,13 @@ nav_layout.config(function($routeProvider) {
         controller  : 'aboutController'
     })
 
-    // Media Pages
+    // Main Functionality
+    .when('/donation/:donation_action*', {
+        templateUrl : function (params) {
+          return '/donation/' + params.donation_action;
+       },
+        controller  : 'donationCtrl'
+    })
     .when('/ministry/campaign/:campaign_id', {
         templateUrl : function (params) {
           return '/ministry/campaign/' + params.campaign_id;
@@ -248,6 +254,19 @@ nav_layout.controller('newsCtrl', ['$scope', '$http', '$routeParams', '$location
     clearInterval($scope.update_interval_id);
 
     ga('send', 'pageview', '/campaigns/news/' + $routeParams.post_id);
+  }
+]);
+
+nav_layout.controller('donationCtrl', ['$scope', '$http', '$routeParams', '$location',
+  function($scope, $http, $routeParams, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = null;
+
+    clearInterval($scope.update_interval_id);
+
+    ga('send', 'pageview', '/donation/' + $routeParams.donation_action);
+    console.log('donation action: ' + $routeParams.donation_action);
   }
 ]);
 
