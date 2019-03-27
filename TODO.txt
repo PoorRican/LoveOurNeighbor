@@ -1,8 +1,6 @@
 Urgent TODO:
     - Implement Braintree for payment
-    - Enable commenting
     - Enable user to user messages
-    - Implement `User.first_login` for displaying help-text on profile template
 
 Overall TODOs:
     - implement TimelineJS
@@ -21,6 +19,10 @@ Overall TODOs:
     - Implement file uploading as 'new upload' and then have `img_path` be an option of selected uploaded files
     - Dynamically create comment forms to enable parent/child commenting
     - Implement donation guestbook-like functionality. "people who have donated have said:"
+    - Implement `User.first_login` for displaying help-text on profile template
 
-Pages to Implement:
-    - There should be an initial fundraiser page explaining the need, the proposed solution, and the call to action.
+Functionality TODOs:
+    - How does FB manage pages as user functionality?:
+        - when commenting
+        - logging in 'as user' (is there a separate login?)
+        - admin management
