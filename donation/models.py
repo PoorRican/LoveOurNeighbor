@@ -100,6 +100,13 @@ class Donation(models.Model):
         developing over time because the `Payment` object
         holds transaction details.
 
+
+    TODO: self-deleting `Donation` objects would be ideal,
+        since `Donation` objects without payment attributes
+        are both useless and can be abused (spam). Duplicates
+        can also be checked for.
+
+
     Attributes
     ==========
     campaign: `Campaign` object
@@ -134,7 +141,8 @@ class Donation(models.Model):
     user = models.ForeignKey(UserProfile, related_name="donations",
                              on_delete=models.PROTECT)
     payment = models.OneToOneField(Payment, related_name='donation',
-                                   on_delete=models.PROTECT)
+                                   on_delete=models.PROTECT,
+                                   null=True, blank=True)
 
     def __str__(self):
         return "$%d for %s" % (self.amount, self.campaign)
@@ -145,4 +153,9 @@ class Donation(models.Model):
 
     @property
     def amount(self):
-        return self.payment.amount
+        """ If there is no payment, do not include amount.
+        """
+        if self.payment:
+            return self.payment.amount
+        else:
+            return 0

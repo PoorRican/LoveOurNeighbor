@@ -24,3 +24,4 @@ Overall TODOs:
     - Implement `User.first_login` for displaying help-text on profile template
     - Enable viewing website 'as ministry' editable from `user_widget` in nav bar
     - Enable commenting 'as ministry' editable from comment form.
+    - Self-deleting `Donation` objects (after a few hours) when there is no payment. This can be expanded to moderator (for comments, etc)

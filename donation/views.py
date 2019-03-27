@@ -21,14 +21,12 @@ def select_payment(request, campaign_id):
         user = request.user.profile
         campaign = Campaign.objects.get(id=campaign_id)
         _data = request.POST
-        print(_data)
         donation = Donation.objects.create(campaign=campaign,
-                                           user=user,
-                                           amount=_data['amount'])
+                                           user=user,)
         if _data['payment_type'] == 'cc':
             _url = reverse('donation:cc_payment',
                            kwargs={'donation_id': donation.id})
-        if _data['payment_type'] == 'cb':
+        elif _data['payment_type'] == 'cb':
             _url = reverse('donation:coinbase_payment',
                            kwargs={'donation_id': donation.id})
         elif _data['payment_type'] == 'bt':
