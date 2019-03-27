@@ -24,9 +24,9 @@
 
 
 {% macro comments_section(obj, obj_type, request=None, form=None, csrf_token=None) %}
-  <div class="wrapper" style="padding-left: 15px;">
+  <div class="comments_section wrapper">
     {% if len(obj.comments.all()) %}
-      <h3 style="margin-bottom: 0px; border-bottom: solid 1px #FF7100;">Comments:</h3>
+      <h3>Comments:</h3>
       <md-list flex>
         {% for i in obj.comments.all() %}
           {# TODO: implement this in angular to reduce server overhead #}
@@ -45,21 +45,25 @@
         {% endfor %}
       </md-list>
     {% endif %}
-
-    <h4 style="margin-bottom: 10px; border-bottom: solid 1px #FF7100;">Post a new comment:</h4>
-    {% if request and request.user.is_authenticated %}
-      <form enctype="multipart/form-data" method="POST" action="{{ url_for("ministry:create_comment", kwargs={'obj_type': obj_type, 'obj_id': obj.id}) }}">
-        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        {{ form.as_p() }}
-        <md-button class="md-raised md-primary" type="submit">Post</md-button>
-      </form>
-    {% else %}
-      <a href="#accounts/login" style="text-decoration: none;">
-        <span>Login to Comment</span>
-        <md-button class="md-raised md-accent">Login</md-button>
-      </a>
-    {% endif %}
-  </div>
+    <div class="new_comment">
+      {# TODO: use js to dynamically hide this #}
+      {% if request and request.user.is_authenticated %}
+        <form enctype="multipart/form-data" method="POST" style="display: none;"
+            action="{{ url_for("ministry:create_comment", kwargs={'obj_type': obj_type, 'obj_id': obj.id}) }}">
+          <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+          {{ form.as_p() }}
+          <md-button class="md-raised md-primary" type="submit">Post</md-button>
+          <md-button class="md-raised md-warn" ng-click="hide_new_comment($event)">Cancel</md-button>
+        </form>
+        <md-button class="md-raised md-primary" ng-click="unhide_new_comment($event)">Comment</md-button>
+      {% else %}
+        <a href="#accounts/login" style="text-decoration: none;">
+          <span>Login to Comment</span>
+          <md-button class="md-raised md-accent">Login</md-button>
+        </a>
+      {% endif %}
+    </div><!-- /.new_comment -->
+  </div><!-- /.comment_form -->
 {% endmacro %}
 
 

@@ -1,6 +1,8 @@
 Urgent TODO:
     - Implement Braintree for payment
     - Enable user to user messages
+    - Implement custom django widgets for managing users as reps/admins. Enable multiple admins, and permissions.
+    - Implement intuitive UI icons with tooltips.
 
 Overall TODOs:
     - implement TimelineJS
@@ -20,9 +22,5 @@ Overall TODOs:
     - Dynamically create comment forms to enable parent/child commenting
     - Implement donation guestbook-like functionality. "people who have donated have said:"
     - Implement `User.first_login` for displaying help-text on profile template
-
-Functionality TODOs:
-    - How does FB manage pages as user functionality?:
-        - when commenting
-        - logging in 'as user' (is there a separate login?)
-        - admin management
+    - Enable viewing website 'as ministry' editable from `user_widget` in nav bar
+    - Enable commenting 'as ministry' editable from comment form.
