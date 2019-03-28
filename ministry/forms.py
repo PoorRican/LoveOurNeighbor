@@ -3,9 +3,6 @@ from django import forms
 from .models import MinistryProfile, Campaign, NewsPost, Comment
 
 
-DATE_SEL = ('Year', 'Month', 'Day')
-
-
 class MinistryEditForm(forms.ModelForm):
     """Form for viewing and editing fields in a MinistryProfile object.
 
@@ -22,13 +19,15 @@ class MinistryEditForm(forms.ModelForm):
                   'name', 'address', 'phone_number', 'website', 'founded',
                   'admin', 'reps', 'description')
         exclude = ('admin',)
-        widgets = {'founded': forms.SelectDateWidget(empty_label=DATE_SEL),
-                   'description': forms.Textarea(attrs={'rows': 20,
+        widgets = {'description': forms.Textarea(attrs={'rows': 20,
                                                         'cols': 80}),
                    'address': forms.Textarea(attrs={'rows': 3,
                                                     'cols': 30}),
                    }
-        labels = {'img_path': 'Banner Image'}
+        labels = {'img_path': 'Banner Image',
+                  'founded': 'Date Founded',
+                  'phone_number': 'Phone'
+                  }
 
 
 class CampaignEditForm(forms.ModelForm):
@@ -47,11 +46,10 @@ class CampaignEditForm(forms.ModelForm):
                   'img_path', 'content',
                   # TODO: create ui for editing `img_path`
                   )
-        widgets = {'start_date': forms.SelectDateWidget(empty_label=DATE_SEL),
-                   'end_date': forms.SelectDateWidget(empty_label=DATE_SEL),
-                   'content': forms.Textarea(),
+        widgets = {'content': forms.Textarea(),
                    }
-        labels = {'img_path': 'Banner Image'}
+        labels = {'img_path': 'Banner Image',
+                  'goal': 'Donation Goal'}
 
 
 class NewsEditForm(forms.ModelForm):

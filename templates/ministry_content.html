@@ -25,42 +25,89 @@
     </h1>
 
     <form method="POST" enctype="multipart/form-data" action="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
+      <input type="hidden" id="current_object_json" value="{{ url_for("ministry:ministry_json", kwargs={'ministry_id': ministry.id}) }}">
 
   {% endif %}
 
     <input type="hidden" enctype="multipart/form-data" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    {# TODO: show previous images for `img_path` #}
-    {# TODO: have better styling for date selection/input #}
-    {{ form.as_p() }}
+    <div layout="column" layout-padding class="md-inline-form">
+      <h3>Ministry Details:</h3>
+      <md-input-container>
+        {# TODO: ensure that all ministry titles are unique #}
+        {{ form.name.label_tag() }}
+        {{ form.name }}
+      </md-input-container>
+      <md-input-container>
+        {{ form.address.label_tag() }}
+        {# TODO: render custom address input #}
+        {{ form.address }}
+      </md-input-container>
 
-    <md-button class="md-raised md-primary" type="submit">Save</md-button>
+      <div layout-gt-sm="row" layout-padding>
+        <md-input-container flex-gt-sm="50">
+          {{ form.phone_number.label_tag() }}
+          {# TODO: render styled phone number input for international phone numbers #}
+          {{ form.phone_number }}
+        </md-input-container>
+        <md-input-container flex-gt-sm="50">
+          {{ form.website.label_tag() }}
+          {{ form.website }}
+        </md-input-container>
+      </div>
+      <div layout="row">
+        <h5>{{ form.founded.label }}</h5>
+        <input type="hidden" name="{{ form.founded.name }}" value="{% raw %}{{ object.founded | date:'yyyy-MM-dd' }}{% endraw %}">
+        <md-input-container>
+        <md-datepicker id="{{ form.founded.id_for_label }}" ng-model="object.founded" md-placeholder="Enter date founded" md-open-on-focus hide-sm hide-xs></md-datepicker>
+        <input type="date" ng-model="object.founded" hide-gt-sm>
+        <div class="hint">When did your ministry start?</div>
+        </md-input-container>
+      </div>
 
-    {% if not start and ministry %}
+      <h3>Profile Content:</h3>
+      {# TODO: show custom file selector displaying previous images #}
+      {{ form.img_path.label_tag() }}
+      {{ form.img_path }}
+      <md-input-container>
+        {# TODO: render WYSIWYG editor #}
+        {{ form.description.label_tag() }}
+        {{ form.description }}
+        <div class="hint">Describe yourself</div>
+      </md-input-container>
 
-      <md-button class="md-raised md-warn">
-        <a style="color: #FFF; text-decoration: none;" href="{{ url_for('ministry:delete_ministry', kwargs={'ministry_id': ministry.id}) }}">
-          Delete
-        </a>
-        {# TODO: implement DOUBLE dialog confirmation #}
-      </md-button>
+      <h3>Administration:</h3>
+      <md-input-container>
+        {{ form.reps }}
+      </md-input-container>
 
-      <br>
-      <br>
+      <div id="form_buttons" layout="row">
+        <md-button class="md-raised md-primary" type="submit" flex>Save</md-button>
 
-      <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'ministry', 'obj_id': ministry.id}) }}"
-       style="text-decoration: none;">
-        <md-button class="md-raised md-accent">
-          Create News
-        </md-button>
-      </a>
+        {% if not start and ministry %}
+          <md-button class="md-raised md-warn" flex-gt-sm="25">
+            <a style="color: #FFF; text-decoration: none;" href="{{ url_for('ministry:delete_ministry', kwargs={'ministry_id': ministry.id}) }}">
+              Delete
+            </a>
+            {# TODO: implement DOUBLE dialog confirmation #}
+          </md-button>
+        {% endif %}
+      </div><!-- /#form_buttons -->
 
-    {% endif %}
+    </div><!-- /.md-inline-form -->
 
   </form>
 
 
   {% if not start %}
+
+    <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'ministry', 'obj_id': ministry.id}) }}"
+     style="text-decoration: none;">
+      <md-button class="md-raised md-accent">
+        Create News
+      </md-button>
+    </a>
+
     {# TODO: differentiate between current and previous fundraisers #}
     <h1>Campaigns:</h1>
     <a href="#{{ url_for('ministry:create_campaign', kwargs={'ministry_id': ministry.id}) }}">

@@ -18,20 +18,32 @@
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    {{ form.as_p() }}
+    <div layout="column" layout-padding class="md-inline-form">
+      <md-input-container>
+        {# TODO: ensure that all ministry titles are unique #}
+        {{ form.title.label_tag() }}
+        {{ form.title }}
+      </md-input-container>
 
-    <md-button class="md-raised md-primary" type="submit">Save</md-button>
+      <md-input-container>
+        {# TODO: render WYSIWYG editor #}
+        {{ form.content.label_tag() }}
+        {{ form.content }}
+      </md-input-container>
 
-    {% if not start and post %}
+      <md-button class="md-raised md-primary" type="submit">Save</md-button>
 
-      <md-button class="md-raised md-warn">
-        <a style="color: #FFF; text-decoration: none;" href="{{ url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
-          Delete
-        </a>
-        {# TODO: implement DOUBLE dialog confirmation #}
-      </md-button>
+      {% if not start and post %}
 
-    {% endif %}
+        <md-button class="md-raised md-warn">
+          <a style="color: #FFF; text-decoration: none;" href="{{ url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
+            Delete
+          </a>
+          {# TODO: implement DOUBLE dialog confirmation #}
+        </md-button>
+
+      {% endif %}
+    </div>
 
   </form>
 

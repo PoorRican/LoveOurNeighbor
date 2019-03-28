@@ -75,7 +75,18 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$
     }
     $http.get(url)
     .then(function(response) {
-      $scope.object = response.data;
+      var data = response.data;
+      if (data.founded) {
+        data.founded = new Date(data.founded);
+        console.log(data.founded);
+      };
+      if (data.start_date) {
+        data.start_date = new Date(data.start_date);
+      };
+      if (data.end_date) {
+        data.end_date = new Date(data.end_date);
+      };
+      $scope.object = data;
     }, function(response) {});
   };
 
@@ -285,6 +296,10 @@ nav_layout.controller('campaignActionCtrl', ['$scope', '$http', '$routeParams', 
 
     $scope.currentNavItem  = 'Home';
 
+    if ($routeParams.campaign_action == 'edit') {
+      $scope.update_object();
+    }
+
     clearInterval($scope.update_interval_id);
 
     ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
@@ -341,6 +356,10 @@ nav_layout.controller('ministryActionCtrl', ['$scope', '$http', '$routeParams', 
 
     clearInterval($scope.update_interval_id);
 
+    if ($routeParams.ministry_action == 'edit') {
+      $scope.update_object();
+    }
+
     ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);
     console.log('ministry action: ' + $routeParams.ministry_action + ' of ' + $routeParams.ministry_id);
   }
@@ -362,8 +381,9 @@ nav_layout.controller('accountCtrl', ['$scope', '$http', '$routeParams', '$locat
 
 nav_layout.config(function($mdThemingProvider) {
     $mdThemingProvider.theme('default')
-        .primaryPalette('purple')
-        .accentPalette('orange')
+        .primaryPalette('orange')
+        .accentPalette('purple')
+        .dark()
 });
 
 // vim:foldmethod=syntax:

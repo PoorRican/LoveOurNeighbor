@@ -6,10 +6,15 @@ from django.shortcuts import render
 from django.urls import reverse
 
 import json
+from datetime import datetime
 
 from .forms import MinistryEditForm, CampaignEditForm, NewsEditForm, CommentForm
 from .models import NewsPost, Campaign, MinistryProfile
 
+strptime = datetime.strptime
+
+P_TIME = '%Y-%m-%d'             # when reading/parsing date objects
+F_TIME = '%Y-%m-%dT23:59:59'    # when writing date objects (for JSON)
 
 # Ministry Views
 @login_required
@@ -41,13 +46,14 @@ def edit_ministry(request, ministry_id):
             if request.method == 'POST':
                 _form = MinistryEditForm(request.POST, request.FILES,
                                          instance=ministry)
-                _form.save()
+                if _form.is_valid():
+                    _form.save()
 
-                _w = 'Edit successful!'
-                messages.add_message(request, messages.INFO, _w)
+                    _w = 'Edit successful!'
+                    messages.add_message(request, messages.INFO, _w)
 
-                _url = reverse('ministry:ministry_profile',
-                               kwargs={'ministry_id': ministry_id})
+                    _url = reverse('ministry:ministry_profile',
+                                   kwargs={'ministry_id': ministry_id})
             else:
                 _form = MinistryEditForm(instance=ministry)
                 context = {"form": _form,
@@ -144,6 +150,7 @@ def ministry_json(request, ministry_id):
     if request.user.is_authenticated:
         _liked = bool(ministry in request.user.likes_m.all())
     _json = {'views': ministry.views,
+             'founded': ministry.founded.strftime(F_TIME),
              'likes': len(ministry.likes.all()),
              'liked': _liked}
     return HttpResponse(json.dumps(_json))
@@ -312,13 +319,14 @@ def edit_campaign(request, campaign_id):
             if request.method == 'POST':
                 _form = CampaignEditForm(request.POST, request.FILES,
                                          instance=campaign)
-                _form.save()
+                if _form.is_valid():
+                    _form.save()
 
-                _w = 'Edit successful!'
-                messages.add_message(request, messages.INFO, _w)
+                    _w = 'Edit successful!'
+                    messages.add_message(request, messages.INFO, _w)
 
-                _url = reverse('ministry:campaign_detail',
-                               kwargs={'campaign_id': campaign_id})
+                    _url = reverse('ministry:campaign_detail',
+                                   kwargs={'campaign_id': campaign_id})
             else:
                 _form = CampaignEditForm(instance=campaign)
                 context = {"form": _form,
@@ -413,6 +421,8 @@ def campaign_json(request, campaign_id):
     if request.user.is_authenticated:
         _liked = bool(cam in request.user.likes_c.all())
     _json = {'donated': cam.donated,
+             'start_date': cam.start_date.strftime('%Y-%m-%dT23:59:59'),
+             'end_date': cam.end_date.strftime('%Y-%m-%dT23:59:59'),
              'donations': _donations,
              'goal': cam.goal,
              'views': cam.views,

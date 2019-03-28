@@ -13,38 +13,92 @@
     <h1>Edit Campaign:</h1>
 
     <form method="POST" enctype="multipart/form-data" action="{{ url_for('ministry:edit_campaign', kwargs={'campaign_id': campaign.id}) }}">
+      <input type="hidden" id="current_object_json" value="{{ url_for("ministry:campaign_json", kwargs={'campaign_id': campaign.id}) }}">
 
   {% endif %}
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    {# TODO: show previous images for `img_path` #}
-    {# TODO: have better styling for date selection/input #}
-    {{ form.as_p() }}
+    <div layout="column" layout-padding class="md-inline-form">
+      <h3>Details:</h3>
+      <md-input-container>
+        {# TODO: ensure that all ministry titles are unique #}
+        {{ form.title.label_tag() }}
+        {{ form.title }}
+      </md-input-container>
 
-    <md-button class="md-raised md-primary" type="submit">Save</md-button>
-
-    {% if not start and campaign %}
-
-      <md-button class="md-raised md-warn">
-        <a href="{{ url_for('ministry:delete_campaign', kwargs={'campaign_id': campaign.id}) }}"
-         style="text-decoration: none; color: white;">
-          Delete
-        </a>
-        {# TODO: implement DOUBLE dialog confirmation #}
-      </md-button>
+      <md-input-container>
+        {{ form.goal.label_tag() }}
+        {{ form.goal }}
+      </md-input-container>
 
       <br>
-      <br>
+      <div layout-gt-sm="row" layout-padding>
+        <div>
+          <input type="hidden" name="{{ form.start_date.name }}" value="{% raw %}{{ object.start_date | date:'yyyy-MM-dd' }}{% endraw %}">
 
-      <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}"
-       style="text-decoration: none;">
-        <md-button class="md-raised md-accent">
-          Create News
-        </md-button>
-      </a>
+          <div hide-gt-sm>
+            <h5 hide-gt-sm>{{ form.start_date.label }}</h5>
+            <input type="date" ng-model="object.start_date">
+          </div>
 
-    {% endif %}
+          <div hide-sm hide-xs>
+            <md-subheader>{{ form.start_date.label }}</md-subheader>
+            <md-calendar id="{{ form.start_date.id_for_label }}" ng-model="object.start_date"></md-datepicker>
+          </div>
+
+        </div>
+        <div>
+          <input type="hidden" name="{{ form.end_date.name }}" value="{% raw %}{{ object.end_date | date:'yyyy-MM-dd' }}{% endraw %}">
+
+          <div hide-gt-sm>
+            <h5>{{ form.end_date.label }}</h5>
+            <input type="date" ng-model="object.end_date">
+          </div>
+
+          <div hide-sm hide-xs>
+            <md-subheader>{{ form.end_date.label }}</md-subheader>
+            <md-calendar id="{{ form.end_date.id_for_label }}" ng-model="object.end_date"></md-datepicker>
+          </div>
+        </div>
+      </div>
+
+      <h3>Content:</h3>
+      {# TODO: show custom file selector displaying previous images #}
+      {{ form.img_path.label_tag() }}
+      {{ form.img_path }}
+      <md-input-container>
+        {# TODO: render WYSIWYG editor #}
+        {{ form.content.label_tag() }}
+        {{ form.content }}
+      </md-input-container>
+
+      <div id="form_buttons" layout="row">
+        <md-button class="md-raised md-primary" type="submit" flex>Save</md-button>
+
+        {% if not start and campaign %}
+          <md-button class="md-raised md-warn" flex-gt-sm="25">
+            <a style="color: #FFF; text-decoration: none;" href="{{ url_for('ministry:delete_campaign', kwargs={'campaign_id': campaign.id}) }}">
+              Delete
+            </a>
+            {# TODO: implement DOUBLE dialog confirmation #}
+          </md-button>
+        {% endif %}
+      </div><!-- /#form_buttons -->
+
+    </div><!-- /.md-inline-form -->
   </form>
+
+
+  {% if not start %}
+
+    <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}"
+     style="text-decoration: none;">
+      <md-button class="md-raised md-accent">
+        Create News
+      </md-button>
+    </a>
+
+  {% endif %}
 </section>
 

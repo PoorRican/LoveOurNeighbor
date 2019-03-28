@@ -8,11 +8,37 @@
 {# TODO: messages #}
 
 <section class="wrapper">
-  <h1>Your Details:</h1>
   <form method="POST" action="{{ url_for('user_profile') }}">
+    <h1>
+      Your Details:&nbsp;
+      <md-button type="submit" class="md-raised md-primary">Save Changes</md-button>
+    </h1>
+
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    {{ form.as_p() }}
-    <button type="submit">Save</button>
+
+    <div layout="column" layout-padding class="md-inline-form">
+
+      <div layout-gt-sm="row">
+        <md-input-container>
+          {# TODO: render WYSIWYG editor #}
+          {{ form.first_name.label_tag() }}
+          {{ form.first_name }}
+        </md-input-container>
+        <md-input-container>
+          {# TODO: render WYSIWYG editor #}
+          {{ form.last_name.label_tag() }}
+          {{ form.last_name }}
+        </md-input-container>
+      </div>
+
+      <md-input-container>
+        {# TODO: render WYSIWYG editor #}
+        {{ form.display_name.label_tag() }}
+        {{ form.display_name }}
+        <div class="hint">Tell us what we should call you!</div>
+      </md-input-container>
+
+    </div>
   </form>
 
   {% if len(request.user.administers.all()) %}
