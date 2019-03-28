@@ -3,6 +3,15 @@ Urgent TODO:
     - Enable user to user messages
     - Implement custom django widgets for managing users as reps/admins. Enable multiple admins, and permissions.
     - Implement intuitive UI icons with tooltips.
+    - Implement tagging
+    - Enable search filtering:
+        - by object type
+        - by location
+        - by tags
+    - Enable anonymous donations (must capture email). Enable user creation via donate page. Enable user creation via email link. Enable cookie persistence for returning users.
+    - Get rid of plain html links:
+        - incorrect login or invalid sign up
+    - WYSIWYG Editor for Text Input (import this from oligoptica)
 
 Overall TODOs:
     - implement TimelineJS
@@ -25,3 +34,8 @@ Overall TODOs:
     - Enable viewing website 'as ministry' editable from `user_widget` in nav bar
     - Enable commenting 'as ministry' editable from comment form.
     - Self-deleting `Donation` objects (after a few hours) when there is no payment. This can be expanded to moderator (for comments, etc)
+    - Social media links for ministries
+    - Clear comment form when canceled
+    - Style payment selection to show icons next to radio buttons
+    - Ability to add multiple media items to NewsPost
+    - Gallery for ministries/campaigns of aggregated media

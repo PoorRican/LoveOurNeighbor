@@ -3,6 +3,9 @@ from django import forms
 from .models import MinistryProfile, Campaign, NewsPost, Comment
 
 
+DATE_SEL = ('Year', 'Month', 'Day')
+
+
 class MinistryEditForm(forms.ModelForm):
     """Form for viewing and editing fields in a MinistryProfile object.
 
@@ -15,10 +18,17 @@ class MinistryEditForm(forms.ModelForm):
 
     class Meta:
         model = MinistryProfile
-        fields = ('name', 'address', 'phone_number',
-                  'admin', 'reps', 'img_path',
-                  'website', 'founded', 'description')
+        fields = ('img_path',
+                  'name', 'address', 'phone_number', 'website', 'founded',
+                  'admin', 'reps', 'description')
         exclude = ('admin',)
+        widgets = {'founded': forms.SelectDateWidget(empty_label=DATE_SEL),
+                   'description': forms.Textarea(attrs={'rows': 20,
+                                                        'cols': 80}),
+                   'address': forms.Textarea(attrs={'rows': 3,
+                                                    'cols': 30}),
+                   }
+        labels = {'img_path': 'Banner Image'}
 
 
 class CampaignEditForm(forms.ModelForm):
@@ -33,10 +43,15 @@ class CampaignEditForm(forms.ModelForm):
 
     class Meta:
         model = Campaign
-        fields = ('title', 'start_date', 'end_date',
-                  'goal', 'content', 'img_path',
+        fields = ('title', 'start_date', 'end_date', 'goal',
+                  'img_path', 'content',
                   # TODO: create ui for editing `img_path`
                   )
+        widgets = {'start_date': forms.SelectDateWidget(empty_label=DATE_SEL),
+                   'end_date': forms.SelectDateWidget(empty_label=DATE_SEL),
+                   'content': forms.Textarea(),
+                   }
+        labels = {'img_path': 'Banner Image'}
 
 
 class NewsEditForm(forms.ModelForm):
@@ -54,6 +69,8 @@ class NewsEditForm(forms.ModelForm):
         fields = ('title', 'content',
                   # TODO: create ui for editing `img_path`
                   )
+        widgets = {'content': forms.Textarea(attrs={'rows': 20,
+                                                    'cols': 80})}
 
 
 class CommentForm(forms.ModelForm):

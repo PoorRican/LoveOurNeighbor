@@ -5,7 +5,7 @@
 
   <h1>Enter Donation Details</h1>
 
-  <form method="POST" action="{{ url_for('donation:select_payment', kwargs={'campaign_id': campaign_id}) }}">
+  <form method="POST" action="{{ url_for('donation:select_payment', kwargs={'campaign_id': campaign_id}) }}" class="payment_select">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
     {{ form.as_p() }}
