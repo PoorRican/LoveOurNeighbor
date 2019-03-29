@@ -32,15 +32,22 @@
     <input type="hidden" enctype="multipart/form-data" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
     <div layout="column" layout-padding class="md-inline-form">
-      <h3>Ministry Details:</h3>
+      <h3>
+        <md-icon>
+          <i class="material-icons">info</i>
+        </md-icon>&nbsp;
+        Ministry Details:
+      </h3>
       <md-input-container>
         {# TODO: ensure that all ministry titles are unique #}
         {{ form.name.label_tag() }}
+        <md-icon><i class="material-icons">group</i></md-icon>
         {{ form.name }}
       </md-input-container>
       <md-input-container>
         {{ form.address.label_tag() }}
         {# TODO: render custom address input #}
+        <md-icon><i class="material-icons">place</i></md-icon>
         {{ form.address }}
       </md-input-container>
 
@@ -48,46 +55,82 @@
         <md-input-container flex-gt-sm="50">
           {{ form.phone_number.label_tag() }}
           {# TODO: render styled phone number input for international phone numbers #}
+          <md-icon><i class="material-icons">phone</i></md-icon>
           {{ form.phone_number }}
         </md-input-container>
         <md-input-container flex-gt-sm="50">
           {{ form.website.label_tag() }}
+          <md-icon><i class="material-icons">explore</i></md-icon>
           {{ form.website }}
         </md-input-container>
       </div>
       <div layout="row">
-        <h5>{{ form.founded.label }}</h5>
+        <h5 style="font-weight: 400">
+          {{ form.founded.label }}:
+        </h5>
         <input type="hidden" name="{{ form.founded.name }}" value="{% raw %}{{ object.founded | date:'yyyy-MM-dd' }}{% endraw %}">
         <md-input-container>
-        <md-datepicker id="{{ form.founded.id_for_label }}" ng-model="object.founded" md-placeholder="Enter date founded" md-open-on-focus hide-sm hide-xs></md-datepicker>
-        <input type="date" ng-model="object.founded" hide-gt-sm>
-        <div class="hint">When did your ministry start?</div>
+          <md-icon><i class="material-icons">cake</i></md-icon>
+          <md-datepicker md-hide-icons="calendar" id="{{ form.founded.id_for_label }}" ng-model="object.founded" md-placeholder="Enter date founded" md-open-on-focus hide-sm hide-xs></md-datepicker>
+          <div class="hint">When did this ministry start?</div>
+          <input type="date" ng-model="object.founded" hide-gt-sm>
         </md-input-container>
       </div>
+      <br>
 
-      <h3>Profile Content:</h3>
-      {# TODO: show custom file selector displaying previous images #}
-      {{ form.img_path.label_tag() }}
-      {{ form.img_path }}
+      <md-divider></md-divider>
+
+      <h3>
+        <md-icon>
+          <i class="material-icons">description</i>
+        </md-icon>&nbsp;
+        Profile Content:
+      </h3>
       <md-input-container>
         {# TODO: render WYSIWYG editor #}
+        <md-icon><i class="material-icons">subject</i></md-icon>
         {{ form.description.label_tag() }}
         {{ form.description }}
         <div class="hint">Describe yourself</div>
       </md-input-container>
+      {# TODO: show custom file selector displaying previous images #}
+      <div layout-gt-sm="row" layout-padding>
+        <md-icon style="margin: 0"><i class="material-icons">image</i></md-icon>
+        {{ form.img_path.label_tag() }}
+        {{ form.img_path }}
+      </div>
 
-      <h3>Administration:</h3>
+      <md-divider></md-divider>
+
+      <h3>
+        <md-icon>
+          <i class="material-icons">lock</i>
+        </md-icon>&nbsp;
+        Administration:
+      </h3>
       <md-input-container>
+        <div layout-gt-sm="row" layout-padding>
+          <h5>
+            <md-icon><i class="material-icons">group_add</i></md-icon>
+            {{ form.reps.label }}:
+          </h5>
         {{ form.reps }}
+        </div>
       </md-input-container>
 
       <div id="form_buttons" layout="row">
-        <md-button class="md-raised md-primary" type="submit" flex>Save</md-button>
+        <md-button style="position: fixed; bottom: 75; right: 10%;" class="md-fab md-primary" type="submit">
+          <md-icon>
+            <i class="material-icons">save</i>
+          </md-icon>
+        </md-button>
 
         {% if not start and ministry %}
-          <md-button class="md-raised md-warn" flex-gt-sm="25">
+          <md-button class="md-icon-button md-raised md-warn">
             <a style="color: #FFF; text-decoration: none;" href="{{ url_for('ministry:delete_ministry', kwargs={'ministry_id': ministry.id}) }}">
-              Delete
+              <md-icon>
+                <i class="material-icons">delete</i>
+              </md-icon>
             </a>
             {# TODO: implement DOUBLE dialog confirmation #}
           </md-button>
@@ -104,7 +147,10 @@
     <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'ministry', 'obj_id': ministry.id}) }}"
      style="text-decoration: none;">
       <md-button class="md-raised md-accent">
-        Create News
+        Create News&nbsp;
+        <md-icon>
+          <i class="material-icons">note_add</i>
+        </md-icon>
       </md-button>
     </a>
 

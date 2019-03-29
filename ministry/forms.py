@@ -26,6 +26,7 @@ class MinistryEditForm(forms.ModelForm):
                    }
         labels = {'img_path': 'Banner Image',
                   'founded': 'Date Founded',
+                  'reps': 'Representatives',
                   'phone_number': 'Phone'
                   }
 

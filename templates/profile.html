@@ -8,35 +8,41 @@
 {# TODO: messages #}
 
 <section class="wrapper">
+  <h1>Your Details:</h1>
   <form method="POST" action="{{ url_for('user_profile') }}">
-    <h1>
-      Your Details:&nbsp;
-      <md-button type="submit" class="md-raised md-primary">Save Changes</md-button>
-    </h1>
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    <div layout="column" layout-padding class="md-inline-form">
+    <div layout="row" layout-padding>
 
-      <div layout-gt-sm="row">
+      <div layout="column" layout-padding class="md-inline-form">
+        <div layout-gt-sm="row">
+          <md-input-container style="margin: 0">
+            {# TODO: render WYSIWYG editor #}
+            {{ form.first_name.label_tag() }}
+            {{ form.first_name }}
+          </md-input-container>
+          <md-input-container style="margin: 0">
+            {# TODO: render WYSIWYG editor #}
+            {{ form.last_name.label_tag() }}
+            {{ form.last_name }}
+          </md-input-container>
+        </div>
+
         <md-input-container>
           {# TODO: render WYSIWYG editor #}
-          {{ form.first_name.label_tag() }}
-          {{ form.first_name }}
-        </md-input-container>
-        <md-input-container>
-          {# TODO: render WYSIWYG editor #}
-          {{ form.last_name.label_tag() }}
-          {{ form.last_name }}
+          <md-icon><i class="material-icons">face</i></md-icon>
+          {{ form.display_name.label_tag() }}
+          {{ form.display_name }}
+          <div class="hint">Tell us what we should call you!</div>
         </md-input-container>
       </div>
 
-      <md-input-container>
-        {# TODO: render WYSIWYG editor #}
-        {{ form.display_name.label_tag() }}
-        {{ form.display_name }}
-        <div class="hint">Tell us what we should call you!</div>
-      </md-input-container>
+      <div layout="column" layout-align="end bottom" layout-padding>
+        <md-button type="submit" class="md-icon-button md-fab md-primary">
+          <i class="material-icons">save</i>
+        </md-button>
+      </div>
 
     </div>
   </form>

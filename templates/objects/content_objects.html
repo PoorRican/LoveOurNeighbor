@@ -25,8 +25,8 @@
 
 {% macro comments_section(obj, obj_type, request=None, form=None, csrf_token=None) %}
   <div class="comments_section wrapper">
+    <h3>Comments:</h3>
     {% if len(obj.comments.all()) %}
-      <h3>Comments:</h3>
       <md-list flex>
         {% for i in obj.comments.all() %}
           {# TODO: implement this in angular to reduce server overhead #}
@@ -44,7 +44,11 @@
           </md-list-item>
         {% endfor %}
       </md-list>
+    {% else %}
+      <p class="md-caption">Be the first to comment</p>
     {% endif %}
+    <md-divider></md-divider>
+    <br>
     <div class="new_comment">
       {# TODO: use js to dynamically hide this #}
       {% if request and request.user.is_authenticated %}
@@ -52,10 +56,19 @@
             action="{{ url_for("ministry:create_comment", kwargs={'obj_type': obj_type, 'obj_id': obj.id}) }}">
           <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
           {{ form.as_p() }}
-          <md-button class="md-raised md-primary" type="submit">Post</md-button>
-          <md-button class="md-raised md-warn" ng-click="hide_new_comment($event)">Cancel</md-button>
+          <md-button class="md-raised md-primary" type="submit">
+            Comment&nbsp;
+            <md-icon>
+              <i class="material-icons">send</i>
+            </md-icon>
+          </md-button>
+          <md-button class="md-icon-button md-warn" ng-click="hide_new_comment($event)">
+            <i class="material-icons">cancel</i>
+          </md-button>
         </form>
-        <md-button class="md-raised md-primary" ng-click="unhide_new_comment($event)">Comment</md-button>
+        <md-button class="md-icon-button md-raised md-primary" ng-click="unhide_new_comment($event)">
+          <i class="material-icons">add_comment</i>
+        </md-button>
       {% else %}
         <a href="#accounts/login" style="text-decoration: none;">
           <span>Login to Comment</span>
@@ -82,14 +95,19 @@
               {{ cam.title.upper() }}
               {% if AUTH %}
                 <a href="#{{ url_for('ministry:edit_campaign', kwargs={'campaign_id': cam.id}) }}">
-                  <md-button class="md-raised md-accent">
-                    Edit
+                  <md-button class="md-icon-button md-raised md-accent">
+                    <md-icon>
+                      <i class="material-icons">create</i>
+                    </md-icon>
                   </md-button>
                 </a>
                 <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': cam.id}) }}"
                  style="text-decoration: none;">
-                  <md-button class="md-raised md-primary">
-                    Create News
+                  <md-button class="md-primary">
+                    New Post&nbsp;
+                    <md-icon>
+                      <i class="material-icons">note_add</i>
+                    </md-icon>
                   </md-button>
                 </a>
               {% endif %}
@@ -117,6 +135,8 @@
               </div>
             </div>
 
+            <br>
+
             <div class="donate" flex>
               {# TODO: create anonymous donations #}
               {% if request.user.is_authenticated %}
@@ -124,7 +144,12 @@
               {% else %}
                 <a href="#/accounts/login" style="text-decoration: none">
               {% endif %}
-                <md-button class="md-raised md-accent">Donate</md-button>
+                <md-button class="md-raised md-accent">
+                  Donate
+                  <md-icon>
+                    <i class="material-icons">redeem</i>
+                  </md-icon>
+                </md-button>
               </a>
             </div>
 
@@ -158,8 +183,11 @@
         <p class="flow-text">{{ cam.content|safe }}</p>
         {% if detail %}
           <a href="#{{ url_for('ministry:campaign_detail', kwargs={'campaign_id': cam.id}) }}">
-            <md-button class="md-raised md-accent">
-              See More
+            <md-button class="md-accent md-raised">
+              Link to this&nbsp;
+              <md-icon>
+                <i class="material-icons">link</i>
+              </md-icon>
             </md-button>
           </a>
         {% endif %}
@@ -188,8 +216,8 @@
               {{ ministry.name.upper() }}
               {% if AUTH %}
                 <a href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
-                  <md-button class="md-raised md-accent">
-                    Edit
+                  <md-button class="md-icon-button md-raised md-accent">
+                    <i class="material-icons">create</i>
                   </md-button>
                 </a>
               {% endif %}
@@ -285,8 +313,18 @@
     <div class="section">
       <article class="wrapper">
         <p id="section-info">
-          <span>Published:</span>&nbsp;
-            {{ post.pub_date.strftime("%h %d, %Y") }}
+          <span>Published:</span>&nbsp;{{ post.pub_date.strftime("%h %d, %Y") }}
+          {% if detail %}
+            <a href="#{{ url_for('ministry:news_detail', kwargs={'post_id': post.id}) }}">
+              <md-button class="md-raised md-accent">
+                Link to news&nbsp;
+                <md-icon>
+                  <i class="material-icons">link</i>
+                </md-icon>
+              </md-button>
+            </a>
+          {% endif %}
+
         </p>
 
         <h1>
@@ -294,14 +332,18 @@
 
           {% if AUTH %}
             <a style="text-decoration: none;" href="#{{ url_for('ministry:edit_news', kwargs={'post_id': post.id}) }}">
-              <md-button class="md-raised md-accent">
-                Edit
+              <md-button class="md-icon-button md-raised md-accent">
+                <md-icon>
+                <i class="material-icons">create</i>
+                </md-icon>
               </md-button>
             </a>
 
             <a style="text-decoration: none;" href="#{{url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
-              <md-button class="md-raised md-warn">
-                Delete
+              <md-button class="md-icon-button md-raised md-warn">
+                <md-icon>
+                  <i class="material-icons">delete</i>
+                </md-icon>
               </md-button>
             </a>
           {% endif %}
@@ -318,14 +360,6 @@
         {% endif %}
 
         <p class="">{{ post.content|safe }}</p>
-
-        {% if detail %}
-          <a href="#{{ url_for('ministry:news_detail', kwargs={'post_id': post.id}) }}">
-            <md-button class="md-raised md-accent">
-              Details
-            </md-button>
-          </a>
-        {% endif %}
 
         {{ comments_section(post, 'news_post', request, form=form, csrf_token=csrf_token) }}
 
@@ -349,9 +383,11 @@
       {% endif %}
       ng-style="like_style()"
       style="">
-        <span ng-if="object.liked">Liked</span>
-        <span ng-if="!object.liked">Like!</span>
-        <br>
+        <div style="text-height: 36px !important;">
+          <span ng-if="object.liked"><i class="material-icons" style="font-size: 1.7em;">favorite</i></span>
+          <span ng-if="!object.liked"><i class="material-icons" style="font-size: 1.7em;">favorite_border</i></span>
+          <br>
+        </div>
         {# TODO: implement a filter to sum up large numbers #}
         <small>{% raw %}{{ object.likes }}{% endraw %} like this</small>
     </div>

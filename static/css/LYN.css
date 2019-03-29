@@ -240,12 +240,12 @@ a:not(section a) {
 
 .like-button {
   height: 60px !important;
-  min-height: 60px !important;
+  min-height: 80px !important;
   background-color: #EEE;
   color: #111;
   max-width: 150px;
   text-align: center;
-  padding: 20px 10px;
+  padding: 10px 5px;
   margin: 10px 40px;
   cursor: pointer;
   border-radius: 5px;
