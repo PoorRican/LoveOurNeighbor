@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 from .forms import MinistryEditForm, CampaignEditForm, NewsEditForm, CommentForm
-from .models import NewsPost, Campaign, MinistryProfile
+from .models import NewsPost, Campaign, MinistryProfile, Tag
 
 strptime = datetime.strptime
 
@@ -23,13 +23,23 @@ def create_ministry(request):
     """
     if request.method == 'POST':
         min_form = MinistryEditForm(request.POST)
-        if min_form.is_valid():
+
+        if min_form.is_valid():        # implement a custom `TagField`
             ministry = min_form.save(commit=False)
             ministry.admin = request.user
             ministry.save()
-            _url = '/#%s' % reverse('ministry:ministry_profile',
-                                    kwargs={'ministry_id': ministry.id})
-            return HttpResponseRedirect(_url)
+
+            # process tags
+            _tags = min_form['tags'].value().lower().split(',')
+            if _tags:
+                # TODO: have smart tag selection (tags selected by description)
+                for t in _tags:
+                    _t, _ = Tag.objects.get_or_create(name=t)
+                    ministry.tags.add(_t)
+            ministry.save()
+        _url = '/#%s' % reverse('ministry:ministry_profile',
+                                kwargs={'ministry_id': ministry.id})
+        return HttpResponseRedirect(_url)
     else:
         _form = MinistryEditForm(initial={'website': 'https://'})
         context = {"form": _form,
@@ -48,6 +58,15 @@ def edit_ministry(request, ministry_id):
                                          instance=ministry)
                 if _form.is_valid():
                     _form.save()
+
+                    # process tags
+                    _tags = _form['tags'].value().lower().split(',')
+                    if _tags:
+                        # TODO: have smart tag selection (tags selected by description)
+                        for t in _tags:
+                            _t, _ = Tag.objects.get_or_create(name=t)
+                            ministry.tags.add(_t)
+                    ministry.save()
 
                     _w = 'Edit successful!'
                     messages.add_message(request, messages.INFO, _w)
@@ -146,11 +165,14 @@ def ministry_profile(request, ministry_id):
 def ministry_json(request, ministry_id):
     ministry = MinistryProfile.objects.get(id=ministry_id)
 
-    _liked = False
+    _liked, _founded = False, ''
     if request.user.is_authenticated:
         _liked = bool(ministry in request.user.likes_m.all())
+    if ministry.founded:
+        _founded = ministry.founded.strftime(F_TIME)
+
     _json = {'views': ministry.views,
-             'founded': ministry.founded.strftime(F_TIME),
+             'founded': _founded,
              'likes': len(ministry.likes.all()),
              'liked': _liked}
     return HttpResponse(json.dumps(_json))
@@ -299,6 +321,15 @@ def create_campaign(request, ministry_id):
             cam = cam_form.save(commit=False)
             cam.ministry = ministry
             cam.save()
+
+            _tags = cam_form['tags'].value().lower().split(',')
+            if _tags:
+                # TODO: have smart tag selection (tags selected by description)
+                for t in _tags:
+                    _t, _ = Tag.objects.get_or_create(name=t)
+                    cam.tags.add(_t)
+            cam.save()
+
             _url = '/#%s' % reverse('ministry:campaign_detail',
                                     kwargs={'campaign_id': cam.id})
             return HttpResponseRedirect(_url)
@@ -320,7 +351,15 @@ def edit_campaign(request, campaign_id):
                 _form = CampaignEditForm(request.POST, request.FILES,
                                          instance=campaign)
                 if _form.is_valid():
-                    _form.save()
+                    cam = _form.save()
+
+                    _tags = _form['tags'].value().lower().split(',')
+                    if _tags:
+                        # TODO: have smart tag selection (tags selected by description)
+                        for t in _tags:
+                            _t, _ = Tag.objects.get_or_create(name=t)
+                            cam.tags.add(_t)
+                    cam.save()
 
                     _w = 'Edit successful!'
                     messages.add_message(request, messages.INFO, _w)

@@ -41,6 +41,7 @@
 
       <br>
       <div layout-gt-sm="row" layout-padding>
+        {# TODO: validate that dates have been entered #}
         <div>
           <input type="hidden" name="{{ form.start_date.name }}" value="{% raw %}{{ object.start_date | date:'yyyy-MM-dd' }}{% endraw %}">
 
@@ -51,7 +52,7 @@
 
           <div hide-sm hide-xs>
             <md-subheader>{{ form.start_date.label }}</md-subheader>
-            <md-calendar id="{{ form.start_date.id_for_label }}" ng-model="object.start_date"></md-datepicker>
+            <md-calendar required id="{{ form.start_date.id_for_label }}" ng-model="object.start_date"></md-datepicker>
           </div>
 
         </div>
@@ -65,7 +66,7 @@
 
           <div hide-sm hide-xs>
             <md-subheader>{{ form.end_date.label }}</md-subheader>
-            <md-calendar id="{{ form.end_date.id_for_label }}" ng-model="object.end_date"></md-datepicker>
+            <md-calendar required id="{{ form.end_date.id_for_label }}" ng-model="object.end_date"></md-datepicker>
           </div>
         </div>
       </div>
@@ -74,9 +75,7 @@
       <md-divider></md-divider>
 
       <h3>
-        <md-icon>
-          <i class="material-icons">description</i>
-        </md-icon>&nbsp;
+        <md-icon><i class="material-icons">description</i></md-icon>&nbsp;
         Content:
       </h3>
       {# TODO: show custom file selector displaying previous images #}
@@ -90,6 +89,13 @@
         <md-icon><i class="material-icons">subject</i></md-icon>
         {{ form.content.label_tag() }}
         {{ form.content }}
+        <div class="hint">Describe the project!</div>
+      </md-input-container>
+      <md-input-container>
+        {{ form.tags.label_tag() }}
+        <md-icon><i class="material-icons">class</i></md-icon>
+        {{ form.tags }}
+        <div class="hint">Tags must be single words (or enclosed by quotes), separated by commas</div>
       </md-input-container>
 
       <div id="form_buttons" layout="row">

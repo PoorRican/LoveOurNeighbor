@@ -21,6 +21,14 @@ def campaign_media_dir(instance, filename):
                      'campaigns', filename)
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=20)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
 # Backend Functionality
 class MinistryProfile(models.Model):
     name = models.CharField(max_length=100)
@@ -39,9 +47,11 @@ class MinistryProfile(models.Model):
     website = models.URLField()
     founded = models.DateField(blank=True, null=True)
     created = models.DateField(auto_now_add=True)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, null=True)
     img_path = models.ImageField(blank=True, null=True,
                                  upload_to=ministry_media_dir)
+    tags = models.ManyToManyField(Tag, related_name='campaigns',
+                                  blank=True,)
 
     def __str__(self):
         return self.name
@@ -74,6 +84,8 @@ class Campaign(models.Model):
     # TODO: change to dynamic image uploading and implement media
     img_path = models.ImageField(blank=True, null=True,
                                  upload_to=campaign_media_dir)
+    tags = models.ManyToManyField(Tag, related_name='ministries',
+                                  blank=True,)
 
     @property
     def donated(self):

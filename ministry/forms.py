@@ -9,15 +9,24 @@ class MinistryEditForm(forms.ModelForm):
     A good reference for Django forms is:
     http://pydanny.com/core-concepts-django-modelforms.html
     """
+    tags = forms.CharField(max_length=256, required=False)
 
     def __init__(self, *args, **kwargs):
-        super(MinistryEditForm, self).__init__(*args, **kwargs)
+        tags = ''
+        if 'instance' in kwargs:
+            tags = ', '.join([str(i) for i in kwargs['instance'].tags.all()])
+        initial = {'tags': tags}
+        if 'initial' in kwargs:
+            initial = {**kwargs['initial'], **initial}
+            del kwargs['initial']
+        super(MinistryEditForm, self).__init__(*args, **kwargs,
+                                               initial=initial)
 
     class Meta:
         model = MinistryProfile
         fields = ('img_path',
                   'name', 'address', 'phone_number', 'website', 'founded',
-                  'admin', 'reps', 'description')
+                  'admin', 'reps', 'description',)
         exclude = ('admin',)
         widgets = {'description': forms.Textarea(attrs={'rows': 20,
                                                         'cols': 80}),
@@ -27,7 +36,7 @@ class MinistryEditForm(forms.ModelForm):
         labels = {'img_path': 'Banner Image',
                   'founded': 'Date Founded',
                   'reps': 'Representatives',
-                  'phone_number': 'Phone'
+                  'phone_number': 'Phone',
                   }
 
 
@@ -37,9 +46,17 @@ class CampaignEditForm(forms.ModelForm):
     A good reference for Django forms is:
     http://pydanny.com/core-concepts-django-modelforms.html
     """
+    tags = forms.CharField(max_length=256, required=False)
 
     def __init__(self, *args, **kwargs):
-        super(CampaignEditForm, self).__init__(*args, **kwargs)
+        tags = ''
+        if 'instance' in kwargs:
+            tags = ', '.join([str(i) for i in kwargs['instance'].tags.all()])
+        initial = {'tags': tags}
+        if 'initial' in kwargs:
+            initial = {**kwargs['initial'], **initial}
+        super(CampaignEditForm, self).__init__(*args, **kwargs,
+                                               initial=initial)
 
     class Meta:
         model = Campaign

@@ -86,6 +86,12 @@
         </md-icon>&nbsp;
         Profile Content:
       </h3>
+      {# TODO: show custom file selector displaying previous images #}
+      <div layout-gt-sm="row" layout-padding>
+        <md-icon style="margin: 0"><i class="material-icons">image</i></md-icon>
+        {{ form.img_path.label_tag() }}
+        {{ form.img_path }}
+      </div>
       <md-input-container>
         {# TODO: render WYSIWYG editor #}
         <md-icon><i class="material-icons">subject</i></md-icon>
@@ -93,12 +99,12 @@
         {{ form.description }}
         <div class="hint">Describe yourself</div>
       </md-input-container>
-      {# TODO: show custom file selector displaying previous images #}
-      <div layout-gt-sm="row" layout-padding>
-        <md-icon style="margin: 0"><i class="material-icons">image</i></md-icon>
-        {{ form.img_path.label_tag() }}
-        {{ form.img_path }}
-      </div>
+      <md-input-container>
+        {{ form.tags.label_tag() }}
+        <md-icon><i class="material-icons">class</i></md-icon>
+        {{ form.tags }}
+        <div class="hint">Tags must be single words (or enclosed by quotes), separated by commas</div>
+      </md-input-container>
 
       <md-divider></md-divider>
 
