@@ -132,6 +132,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$
     .then(function(response) {
       $scope.object.liked = response.data;
     }, function(response) {});
+    $scope.update_object();
   };
 
   $scope.like_style = function() {

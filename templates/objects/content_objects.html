@@ -161,9 +161,13 @@
       {{ section_start("") }}
         {# TODO: show countdown as 'days left' #}
 
+        <div hide-sm hide-xs>{{ tag_chips(cam) }}<br></div>
+
         <div layout-gt-sm="row" layout="column">
 
           {{ like_button(cam, request) }}
+
+          <div hide-gt-sm>{{ tag_chips(cam) }}</div>
 
           <p class="section-info">
             <span>Began:</span>&nbsp;
@@ -227,18 +231,19 @@
 
               {{ like_button(ministry, request) }}
 
-              <div hide-xs hide-sm flex style="margin: auto 0">
-              <p class="section-info">
-                <span># of Projects:</span>&nbsp;
-                  {{ len(ministry.campaigns.all()) }}
-                <br>
-                <span>Total Donations:</span>&nbsp;
-                  {{ ministry.donated }}
-                <br>
-                <span>Views:</span>&nbsp;
-                  {% raw %}{{ object.views }}{% endraw %}
-              </p>
+              <div hide-xs hide-sm flex="30" style="margin: auto 0">
+                <p class="section-info">
+                  <span># of Projects:</span>&nbsp;
+                    {{ len(ministry.campaigns.all()) }}
+                  <br>
+                  <span>Total Donations:</span>&nbsp;
+                    {{ ministry.donated }}
+                  <br>
+                  <span>Views:</span>&nbsp;
+                    {% raw %}{{ object.views }}{% endraw %}
+                </p>
               </div>
+
             </div><!-- /layout -->
 
           </div>
@@ -247,20 +252,21 @@
 
       {{ section_start("") }}
 
+        {% if ministry.description %}
+          <h3>Description:</h3>
+          <p class="flow-text">{{ ministry.description|safe }}</p>
+          {% if detail %}
+            <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': ministry.id}) }}">
+              <md-button class="md-raised md-accent">
+                See More
+              </md-button>
+            </a>
+          {% endif %}
+        {% endif %}
+
+        {{ tag_chips(ministry) }}
+
         <div layout-sm="row">
-          <div hide-gt-sm flex>
-            <h3>Statistics:</h3>
-            <p class="section-info">
-              <span># of Projects:</span>&nbsp;
-                {{ len(ministry.campaigns.all()) }}
-              <br>
-              <span>Total Donations:</span>&nbsp;
-                {{ ministry.donated }}
-              <br>
-              <span>Views:</span>&nbsp;
-                {% raw %}{{ object.views }}{% endraw %}
-            </p>
-          </div><!-- /flex -->
           <div flex>
             <h3>Ministry Information:</h3>
             <p class="section-info">
@@ -281,21 +287,22 @@
                   <br>
                 {% endif %}
               {% endfor %}
-            </p>
-          </div>
+            </p><!-- /.section-info -->
+          </div><!-- /flex -->
+          <div hide-gt-sm flex>
+            <h3>Statistics:</h3>
+            <p class="section-info">
+              <span># of Projects:</span>&nbsp;
+                {{ len(ministry.campaigns.all()) }}
+              <br>
+              <span>Total Donations:</span>&nbsp;
+                {{ ministry.donated }}
+              <br>
+              <span>Views:</span>&nbsp;
+                {% raw %}{{ object.views }}{% endraw %}
+            </p><!-- /.section-info -->
+          </div><!-- /flex -->
         </div><!-- /row -->
-
-        {% if ministry.description %}
-          <h3>Description:</h3>
-          <p class="flow-text">{{ ministry.description|safe }}</p>
-          {% if detail %}
-            <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': ministry.id}) }}">
-              <md-button class="md-raised md-accent">
-                See More
-              </md-button>
-            </a>
-          {% endif %}
-        {% endif %}
 
         {{ comments_section(ministry, 'ministry', request, form=form, csrf_token=csrf_token) }}
 
@@ -394,4 +401,17 @@
     {% if request and not request.user.is_authenticated %}
     </a>
     {% endif %}
+{% endmacro %}
+
+
+{% macro tag_chips(obj) %}
+  {% if len(obj.tags.all()) %}
+    <h3 style="margin: 5px 0;">Tags:</h3>
+    <md-chips>
+      {% for i in obj.tags.all() %}
+        {# TODO: link to search query showing related objects #}
+        <md-chip>{{ i.name }}</md-chip>
+      {% endfor %}
+    </md-chips>
+  {% endif %}
 {% endmacro %}
