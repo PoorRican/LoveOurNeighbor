@@ -38,7 +38,7 @@
         </md-input-container>
       </div>
 
-      <div layout="column" layout-align="end bottom" layout-padding>
+      <div layout="row" layout-align="end center" layout-padding>
         <md-button type="submit" class="md-icon-button md-fab md-primary">
           <i class="material-icons">save</i>
         </md-button>
@@ -48,14 +48,15 @@
   </form>
 
   {% if len(request.user.administers.all()) %}
+    <h1>Ministries You Administer:</h1>
 
+    <ul>
     {% for ministry in request.user.administers.all() %}
-      <h1>Ministries You Administer:</h1>
-      <ul>
         <li><a href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">{{ ministry }}</a></li>
-      </ul>
-      <a href="#{{ url_for('ministry:create_ministry') }}"><p>Create a new ministry</p></a>
     {% endfor %}
+    </ul>
+
+    <a href="#{{ url_for('ministry:create_ministry') }}"><p>Create a new ministry</p></a>
 
   {% else %}
 

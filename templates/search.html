@@ -8,22 +8,30 @@
     {% for i in results %}
       <md-list-item class="md-2-line">
         <div class="md-list-item-text" layout="column">
-          {% if hasattr(i, 'name') %}
+          {% if hasattr(i, 'reps') %}
             {# assume this is a ministry object #}
-              <a href="{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': i.id}) }}">
+              <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': i.id}) }}">
                 <h3>{{ i.name }}</h3>
               </a>
               {# TODO: show other information #}
-              <p>{% if len(i.description) > 100 %}{{ i.description[:100] }}}&#8230;{% else %}{{ i.description }}{% endif %}</p>
+              <p>
+                {% if i.description and len(i.description) > 100 %}
+                  {{ i.description[:100]|safe }}}&#8230;
+                {% elif i.description %}
+                  {{ i.description }}
+                {% else %}
+                  <italics>No description here yet</italics>
+                {% endif %}
+              </p>
           {% elif hasattr(i, 'start_date') %}
             {# assume this is a Campaign object #}
-              <a href="{{ url_for('ministry:campaign_detail', kwargs={'campaign_id': i.id}) }}">
+              <a href="#{{ url_for('ministry:campaign_detail', kwargs={'campaign_id': i.id}) }}">
                 <h3>{{ i.title }}</h3>
               </a>
-              <p>{% if len(i.content) > 100 %}{{ i.content[:100] }}}&#8230;{% else %}{{ i.content }}{% endif %}</p>
+              <p>{% if len(i.content) > 100 %}{{ i.content[:100]|safe }}}&#8230;{% else %}{{ i.content }}{% endif %}</p>
           {% elif hasattr(i, 'pub_date') %}
             {# assume this is a NewsPost object #}
-              <a href="{{ url_for('ministry:news_detail', kwargs={'post_id': i.id}) }}">
+              <a href="#{{ url_for('ministry:news_detail', kwargs={'post_id': i.id}) }}">
                 <h3>{{ i.title }}</h3>
               </a>
               <p>{% if len(i.content) > 100 %}{{ i.content[:100] }}}&#8230;{% else %}{{ i.content }}{% endif %}</p>
