@@ -34,6 +34,12 @@ def create_ministry(request):
             if _tags:
                 # TODO: have smart tag selection (tags selected by description)
                 for t in _tags:
+                    if not len(t):
+                        continue
+                    elif t[0] == ' ':
+                        t = t[1:]
+                    elif t[-1] == ' ':
+                        t = t[:-1]
                     _t, _ = Tag.objects.get_or_create(name=t)
                     ministry.tags.add(_t)
             ministry.save()
@@ -174,17 +180,9 @@ def ministry_json(request, ministry_id):
     _json = {'views': ministry.views,
              'founded': _founded,
              'likes': len(ministry.likes.all()),
-             'liked': _liked}
+             'liked': _liked,
+             'tags': [i.name for i in ministry.tags.all()]}
     return HttpResponse(json.dumps(_json))
-
-
-@login_required
-def like_ministry(request, ministry_id):
-    # TODO: implement "unlike"
-    ministry = MinistryProfile.objects.get(id=ministry_id)
-    ministry.likes.add(request.user)
-    ministry.save()
-    return HttpResponse(True)
 
 
 # News Views
@@ -466,20 +464,12 @@ def campaign_json(request, campaign_id):
              'goal': cam.goal,
              'views': cam.views,
              'likes': len(cam.likes.all()),
-             'liked': _liked}
+             'liked': _liked,
+             'tags': [i.name for i in cam.tags.all()]}
     return HttpResponse(json.dumps(_json))
 
 
-@login_required
-def like_campaign(request, campaign_id):
-    # TODO: implement "unlike"
-    cam = Campaign.objects.get(id=campaign_id)
-    cam.likes.add(request.user)
-    cam.save()
-    return HttpResponse(json.dumps(True))
-
-
-# Other views
+# User Interaction
 @login_required
 def create_comment(request, obj_type, obj_id):
     if request.method == 'POST':
@@ -526,6 +516,25 @@ def create_comment(request, obj_type, obj_id):
             return HttpResponseRedirect(_url)
 
 
+@login_required
+def like_ministry(request, ministry_id):
+    # TODO: implement "unlike"
+    ministry = MinistryProfile.objects.get(id=ministry_id)
+    ministry.likes.add(request.user)
+    ministry.save()
+    return HttpResponse(True)
+
+
+@login_required
+def like_campaign(request, campaign_id):
+    # TODO: implement "unlike"
+    cam = Campaign.objects.get(id=campaign_id)
+    cam.likes.add(request.user)
+    cam.save()
+    return HttpResponse(json.dumps(True))
+
+
+# Other Views
 def search(request, query):
     # TODO: implement search client-side rendering
     # search ministry through name, tags, location, and description
@@ -564,3 +573,10 @@ def search(request, query):
                'query': query,
                }
     return render(request, "search.html", context)
+
+
+def tags_json(request):
+    tags = Tag.objects.all()
+    _json = [t.name for t in tags]
+    _json.sort()
+    return HttpResponse(json.dumps(_json))

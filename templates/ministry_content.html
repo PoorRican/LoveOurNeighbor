@@ -99,11 +99,27 @@
         {{ form.description }}
         <div class="hint">Describe yourself</div>
       </md-input-container>
-      <md-input-container>
-        {{ form.tags.label_tag() }}
+      <md-input-contaiter>
         <md-icon><i class="material-icons">class</i></md-icon>
-        {{ form.tags }}
-        <div class="hint">Tags must be single words (or enclosed by quotes), separated by commas</div>
+        {{ form.tags.label_tag() }}
+        <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
+        <md-chips ng-model="object.tags" md-autocomplete-snap
+                  md-transform-chip="transformChip($chip)"
+                  md-separator-keys="separatorKeys">
+          <md-autocomplete
+              md-search-text="tagText"
+              md-items="tag in tagSearch(tagText)"
+              md-item-text="tag"
+              md-min-length="1">
+            <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
+          </md-autocomplete>
+          <md-chip-template>
+            <span>
+              <span>{% raw %}{{ $chip }}{% endraw %}</span>
+            </span>
+          </md-chip-template>
+        </md-chips>
+        <div class="hint">Select from existing tags, or create new ones by entering a comma.</div>
       </md-input-container>
 
       <md-divider></md-divider>

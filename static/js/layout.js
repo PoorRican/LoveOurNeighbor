@@ -4,7 +4,9 @@ var nav_layout = angular.module('oneDollarApp', ['ngMaterial', 'ngRoute', 'ngPar
 
 // Layout controller and config //
 
-nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$location', function($scope , $mdSidenav, $http, $log, $location) {
+nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$location', '$mdConstant', function($scope , $mdSidenav, $http, $log, $location, $mdConstant) {
+
+  $scope.separatorKeys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA];
 
   $scope.toggleLeft = buildDelayedToggler('left');
   $scope.toggleRight = buildToggler('right');
@@ -70,7 +72,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$
       var url = document.getElementById("current_object_json").value;
     }
     catch(e) {
-      $log.error("no value 'current_object_json' on page...");
+      $log.warn("no value 'current_object_json' on page...");
       return null;
     }
     $http.get(url)
@@ -78,7 +80,6 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$
       var data = response.data;
       if (data.founded) {
         data.founded = new Date(data.founded);
-        console.log(data.founded);
       };
       if (data.start_date) {
         data.start_date = new Date(data.start_date);
@@ -87,9 +88,44 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$
         data.end_date = new Date(data.end_date);
       };
       $scope.object = data;
-    }, function(response) {});
+    }, function(response) {
+      $log.warn('Could not fetch tag list. (Wrong URL?)')});
   };
 
+  /**
+   * Return the proper object when the append is called.
+   */
+  $scope.transformChip = function (chip) {
+    // If it is an object, it's already a known chip
+    if (angular.isObject(chip)) {
+      return chip;
+    }
+
+    // Otherwise, create a new one
+    return chip;
+  };
+
+  $scope.get_tags = function() {
+    var url = '/ministry/tags/all';
+    $http.get(url)
+    .then(function(response) {
+      var data = response.data;
+      $scope.available_tags = data;
+    }, function(response) {
+      $log.warn('Could not fetch tag list. (Wrong URL?)')});
+  };
+
+  $scope.tagSearch = function(query) {
+    function createTagFilter(query) {
+      var loweredQuery = query.toLowerCase();
+
+      return function filterFn(tag) {
+        return (tag.indexOf(loweredQuery) === 0);
+      };
+    };
+
+    return query ? $scope.available_tags.filter(createTagFilter(query)) : [];
+  };
 
   $scope.like = function(url) {
     $http.get(url)
@@ -226,7 +262,7 @@ nav_layout.config(function($routeProvider) {
 nav_layout.controller('homeController', ['$scope', '$http', '$location',
   function($scope, $http, $location) {
     // TODO: change title block
-    $scope.currentNavItem  = 'Home';
+    $scope.currentNavItem = 'Home';
 
     if ($scope.update_interval_id) { clearInterval($scope.update_interval_id); }
     $scope.update_object();
@@ -242,7 +278,7 @@ nav_layout.controller('archiveController', ['$scope', '$http', '$location',
   function($scope, $http, $location) {
     // TODO: change title block
 
-    $scope.currentNavItem  = 'Archives';
+    $scope.currentNavItem = 'Archives';
 
     clearInterval($scope.update_interval_id);
 
@@ -254,7 +290,7 @@ nav_layout.controller('faqController', ['$scope', '$http', '$location',
   function($scope, $http, $location) {
     // TODO: change title block
 
-    $scope.currentNavItem  = 'FAQ';
+    $scope.currentNavItem = 'FAQ';
 
     clearInterval($scope.update_interval_id);
 
@@ -266,7 +302,7 @@ nav_layout.controller('aboutController', ['$scope', '$http', '$location',
   function($scope, $http, $location) {
     // TODO: change title block
 
-    $scope.currentNavItem  = 'About';
+    $scope.currentNavItem = 'About';
 
     clearInterval($scope.update_interval_id);
 
@@ -278,7 +314,7 @@ nav_layout.controller('campaignCtrl', ['$scope', '$http', '$routeParams', '$loca
   function($scope, $http, $routeParams, $location) {
     // TODO: change title block
 
-    $scope.currentNavItem  = 'Home';
+    $scope.currentNavItem = 'Home';
 
     clearInterval($scope.update_interval_id);
     $scope.update_object();
@@ -294,10 +330,11 @@ nav_layout.controller('campaignActionCtrl', ['$scope', '$http', '$routeParams', 
   function($scope, $http, $routeParams, $location) {
     // TODO: change title block
 
-    $scope.currentNavItem  = 'Home';
+    $scope.currentNavItem = 'Home';
 
-    if ($routeParams.campaign_action == 'edit') {
+    if ($routeParams.campaign_action == 'edit' || $routeParams.campaign_action == 'create') {
       $scope.update_object();
+      $scope.get_tags();
     }
 
     clearInterval($scope.update_interval_id);
@@ -310,7 +347,7 @@ nav_layout.controller('newsCtrl', ['$scope', '$http', '$routeParams', '$location
   function($scope, $http, $routeParams, $location) {
     // TODO: change title block
 
-    $scope.currentNavItem  = 'Home';
+    $scope.currentNavItem = 'Home';
 
     clearInterval($scope.update_interval_id);
 
@@ -322,7 +359,7 @@ nav_layout.controller('donationCtrl', ['$scope', '$http', '$routeParams', '$loca
   function($scope, $http, $routeParams, $location) {
     // TODO: change title block
 
-    $scope.currentNavItem  = null;
+    $scope.currentNavItem = null;
 
     clearInterval($scope.update_interval_id);
 
@@ -335,7 +372,7 @@ nav_layout.controller('ministryCtrl', ['$scope', '$http', '$routeParams', '$loca
   function($scope, $http, $routeParams, $location) {
     // TODO: change title block
 
-    $scope.currentNavItem  = null;
+    $scope.currentNavItem = null;
 
     clearInterval($scope.update_interval_id);
     $scope.update_object();
@@ -352,12 +389,13 @@ nav_layout.controller('ministryActionCtrl', ['$scope', '$http', '$routeParams', 
   function($scope, $http, $routeParams, $location) {
     // TODO: change title block
 
-    $scope.currentNavItem  = null;
+    $scope.currentNavItem = null;
 
     clearInterval($scope.update_interval_id);
 
-    if ($routeParams.ministry_action == 'edit') {
+    if ($routeParams.ministry_action == 'edit' || $routeParams.ministry_action == 'edit') {
       $scope.update_object();
+      $scope.get_tags();
     }
 
     ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);
