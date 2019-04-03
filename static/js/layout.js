@@ -4,7 +4,7 @@ var nav_layout = angular.module('oneDollarApp', ['ngMaterial', 'ngRoute', 'ngPar
 
 // Layout controller and config //
 
-nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$location', '$mdConstant', function($scope , $mdSidenav, $http, $log, $location, $mdConstant) {
+nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http', '$log', '$location', '$mdConstant', function($scope, $interval, $mdSidenav, $http, $log, $location, $mdConstant) {
   $scope.separatorKeys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA];
 
   $scope.toggleLeft = buildDelayedToggler('left');
@@ -18,9 +18,47 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$
   }
 
 
-  $scope.object = {};
-  $scope.update_interval_id = 0;
   $scope.query = null;
+
+
+  var update_interval_id = 0;
+  $scope.object = {};
+
+  $scope.stop_update = function() {
+    if (angular.isDefined(update_interval_id)) {
+      $interval.cancel(update_interval_id);
+      update_interval_id = undefined;
+    };
+  };
+  $scope.update_object_periodically = function() {
+    $scope.update_object();
+    update_interval_id = $interval($scope.update_object, 15000);
+  };
+  $scope.update_object = function() {
+    try {
+      var url = document.getElementById("current_object_json").value;
+    }
+    catch(e) {
+      $log.warn("no value 'current_object_json' on page...");
+      return null;
+    }
+    $http.get(url)
+    .then(function(response) {
+      var data = response.data;
+      if (data.founded) {
+        data.founded = new Date(data.founded);
+      };
+      if (data.start_date) {
+        data.start_date = new Date(data.start_date);
+      };
+      if (data.end_date) {
+        data.end_date = new Date(data.end_date);
+      };
+      $scope.object = data;
+    }, function(response) {
+      $log.warn('Could not fetch tag list. (Wrong URL?)')});
+  };
+
 
   /**
    * Supplies a function that will continue to operate until the
@@ -70,32 +108,6 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$
           $log.debug("close RIGHT is done");
         });
     };
-
-
-  $scope.update_object = function() {
-    try {
-      var url = document.getElementById("current_object_json").value;
-    }
-    catch(e) {
-      $log.warn("no value 'current_object_json' on page...");
-      return null;
-    }
-    $http.get(url)
-    .then(function(response) {
-      var data = response.data;
-      if (data.founded) {
-        data.founded = new Date(data.founded);
-      };
-      if (data.start_date) {
-        data.start_date = new Date(data.start_date);
-      };
-      if (data.end_date) {
-        data.end_date = new Date(data.end_date);
-      };
-      $scope.object = data;
-    }, function(response) {
-      $log.warn('Could not fetch tag list. (Wrong URL?)')});
-  };
 
   /**
    * Return the proper object when the append is called.
@@ -278,11 +290,11 @@ nav_layout.controller('homeController', ['$scope', '$http', '$location',
     // TODO: change title block
     $scope.currentNavItem = 'Home';
 
-    if ($scope.update_interval_id) { clearInterval($scope.update_interval_id); }
-    $scope.update_object();
-    $scope.update_interval_id = setInterval(function() {
-        $scope.update_object();
-    }, 15000);
+    $scope.update_object_periodically();
+    $scope.$on('$destroy', function() {
+      // Make sure that the interval is destroyed too
+      $scope.stop_update();
+    });
 
     ga('send', 'pageview', '/home');
   }
@@ -294,8 +306,6 @@ nav_layout.controller('archiveController', ['$scope', '$http', '$location',
 
     $scope.currentNavItem = 'Archives';
 
-    clearInterval($scope.update_interval_id);
-
     ga('send', 'pageview', '/campaigns');
   }
 ]);
@@ -305,8 +315,6 @@ nav_layout.controller('faqController', ['$scope', '$http', '$location',
     // TODO: change title block
 
     $scope.currentNavItem = 'FAQ';
-
-    clearInterval($scope.update_interval_id);
 
     ga('send', 'pageview', '/faq');
   }
@@ -318,8 +326,6 @@ nav_layout.controller('aboutController', ['$scope', '$http', '$location',
 
     $scope.currentNavItem = 'About';
 
-    clearInterval($scope.update_interval_id);
-
     ga('send', 'pageview', '/about');
   }
 ]);
@@ -330,11 +336,11 @@ nav_layout.controller('campaignCtrl', ['$scope', '$http', '$routeParams', '$loca
 
     $scope.currentNavItem = 'Home';
 
-    clearInterval($scope.update_interval_id);
-    $scope.update_object();
-    setInterval(function() {
-        $scope.update_object();
-    }, 15000);
+    $scope.update_object_periodically();
+    $scope.$on('$destroy', function() {
+      // Make sure that the interval is destroyed too
+      $scope.stop_update();
+    });
 
     ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
   }
@@ -351,19 +357,14 @@ nav_layout.controller('campaignActionCtrl', ['$scope', '$http', '$routeParams', 
       $scope.get_tags();
     }
 
-    clearInterval($scope.update_interval_id);
-
     ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
   }
 ]);
 
-nav_layout.controller('newsCtrl', ['$scope', '$http', '$routeParams', '$location',
-  function($scope, $http, $routeParams, $location) {
+nav_layout.controller('newsCtrl', ['$scope', '$http', '$routeParams', '$location', function($scope, $http, $routeParams, $location) {
     // TODO: change title block
 
     $scope.currentNavItem = 'Home';
-
-    clearInterval($scope.update_interval_id);
 
     ga('send', 'pageview', '/campaigns/news/' + $routeParams.post_id);
   }
@@ -374,8 +375,6 @@ nav_layout.controller('donationCtrl', ['$scope', '$http', '$routeParams', '$loca
     // TODO: change title block
 
     $scope.currentNavItem = null;
-
-    clearInterval($scope.update_interval_id);
 
     ga('send', 'pageview', '/donation/' + $routeParams.donation_action);
     console.log('donation action: ' + $routeParams.donation_action);
@@ -388,11 +387,11 @@ nav_layout.controller('ministryCtrl', ['$scope', '$http', '$routeParams', '$loca
 
     $scope.currentNavItem = null;
 
-    clearInterval($scope.update_interval_id);
-    $scope.update_object();
-    $scope.update_interval_id = setInterval(function() {
-        $scope.update_object();
-    }, 15000);
+    $scope.update_object_periodically();
+    $scope.$on('$destroy', function() {
+      // Make sure that the interval is destroyed too
+      $scope.stop_update();
+    });
 
     ga('send', 'pageview', '/ministry/' + $routeParams.ministry_action);
     console.log('ministry action: ' + $routeParams.ministry_action);
@@ -404,8 +403,6 @@ nav_layout.controller('ministryActionCtrl', ['$scope', '$http', '$routeParams', 
     // TODO: change title block
 
     $scope.currentNavItem = null;
-
-    clearInterval($scope.update_interval_id);
 
     if ($routeParams.ministry_action == 'edit' || $routeParams.ministry_action == 'edit') {
       $scope.update_object();
@@ -427,8 +424,6 @@ nav_layout.controller('accountCtrl', ['$scope', '$http', '$routeParams', '$locat
 
     $scope.currentNavItem  = null;
 
-    clearInterval($scope.update_interval_id);
-
     ga('send', 'pageview', '/account/' + $routeParams.account_action);
     console.log('account action: ' + $routeParams.account_action);
   }
@@ -439,8 +434,6 @@ nav_layout.controller('peopleCtrl', ['$scope', '$http', '$route', '$routeParams'
     // TODO: change title block
 
     $scope.currentNavItem  = null;
-
-    clearInterval($scope.update_interval_id);
 
     if ($routeParams.people_action == 'alias/logout') {
       $location.url('/accounts/profile');
