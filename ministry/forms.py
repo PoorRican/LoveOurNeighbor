@@ -24,7 +24,7 @@ class MinistryEditForm(forms.ModelForm):
 
     class Meta:
         model = MinistryProfile
-        fields = ('img_path',
+        fields = ('banner_img',
                   'name', 'address', 'phone_number', 'website', 'founded',
                   'admin', 'reps', 'description',)
         exclude = ('admin',)
@@ -61,13 +61,12 @@ class CampaignEditForm(forms.ModelForm):
     class Meta:
         model = Campaign
         fields = ('title', 'start_date', 'end_date', 'goal',
-                  'img_path', 'content',
+                  'banner_img', 'content',
                   # TODO: create ui for editing `img_path`
                   )
         widgets = {'content': forms.Textarea(),
                    }
-        labels = {'img_path': 'Banner Image',
-                  'goal': 'Donation Goal'}
+        labels = {'goal': 'Donation Goal'}
 
 
 class NewsEditForm(forms.ModelForm):

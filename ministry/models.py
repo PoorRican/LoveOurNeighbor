@@ -2,23 +2,31 @@ from datetime import date
 from os import path
 
 from django.db import models
-from people.models import User, UserProfile
+from people.models import User
 
 
-def ministry_media_dir(instance, filename):
+def ministry_banner_dir(instance, filename):
     """ Helper function that returns dedicated directory for ministry media.
     This partitions user uploaded content per ministry.
     """
     return path.join('ministries', instance.name,
-                     'profile_banners', filename)
+                     'banners', filename)
 
 
-def campaign_media_dir(instance, filename):
+def ministry_profile_image_dir(instance, filename):
+    """ Helper function that returns dedicated directory for ministry media.
+    This partitions user uploaded content per ministry.
+    """
+    return path.join('ministries', instance.name,
+                     'images', filename)
+
+
+def campaign_banner_dir(instance, filename):
     """ Helper function that returns dedicated directory for campaign media.
     This partitions user uploaded content per ministry, per campaign.
     """
     return path.join('ministries', instance.ministry.name,
-                     'campaigns', filename)
+                     'campaign_banners', filename)
 
 
 class Tag(models.Model):
@@ -48,8 +56,11 @@ class MinistryProfile(models.Model):
     founded = models.DateField(blank=True, null=True)
     created = models.DateField(auto_now_add=True)
     description = models.TextField(blank=True, null=True)
-    img_path = models.ImageField(blank=True, null=True,
-                                 upload_to=ministry_media_dir)
+    profile_img = models.ImageField('Profile Image',
+                                    default='ministries/blank_profile.jpg',
+                                    upload_to=ministry_profile_image_dir)
+    banner_img = models.ImageField('Banner Image', blank=True, null=True,
+                                   upload_to=ministry_banner_dir)
     tags = models.ManyToManyField(Tag, related_name='campaigns',
                                   blank=True,)
 
@@ -75,15 +86,14 @@ class Campaign(models.Model):
     views = models.PositiveIntegerField('views', default=0, editable=False)
 
     ministry = models.ForeignKey(MinistryProfile, related_name='campaigns',
-                                 null=True, blank=True,
                                  on_delete=models.CASCADE)
     content = models.TextField()
     likes = models.ManyToManyField(User, blank=True, editable=False,
                                    related_name='likes_c')
 
     # TODO: change to dynamic image uploading and implement media
-    img_path = models.ImageField(blank=True, null=True,
-                                 upload_to=campaign_media_dir)
+    banner_img = models.ImageField('Banner Image', blank=True, null=True,
+                                   upload_to=campaign_banner_dir)
     tags = models.ManyToManyField(Tag, related_name='ministries',
                                   blank=True,)
 

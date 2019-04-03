@@ -1,20 +1,19 @@
 from hashlib import md5
 
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import UserManager
 from django.core.mail import send_mail
+from django.db import models
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
-from django.dispatch import receiver
-
-try:
-    from django.utils.encoding import force_text
-except ImportError:
-    from django.utils.encoding import force_unicode as force_text
+from django.utils.encoding import force_text
 
 from allauth.account.signals import user_signed_up
+
+
+BLANK_AVATAR = 'https://gravatar.com/avatar/blank'
 
 
 class MyUserManager(UserManager):
@@ -66,6 +65,11 @@ class User(AbstractBaseUser, PermissionsMixin):
                                                 'active. Unselect this instead of deleting accounts.'))
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     first_login = models.BooleanField(_('first login'), default=True)
+    logged_in_as = models.ForeignKey('ministry.MinistryProfile',
+                                     blank=True, null=True,
+                                     on_delete=models.PROTECT,
+                                     related_name='+')
+    # TODO: implement `limit_choices_to` to select users in .reps/admin
 
     objects = MyUserManager()
 
@@ -143,7 +147,7 @@ class UserProfile(models.Model):
     # b) in this UserProfile model
     # c) in a table of it's own to track multiple pictures, with the
     #    "current" avatar as a foreign key in User or UserProfile.
-    avatar_url = models.CharField(max_length=256, blank=True, null=True)
+    avatar_url = models.CharField(max_length=256, default=BLANK_AVATAR)
 
     def __str__(self):
         return force_text(self.user.email)

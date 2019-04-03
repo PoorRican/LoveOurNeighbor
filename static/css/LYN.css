@@ -33,7 +33,6 @@ nav a.md-unselected {
   margin: auto 15px auto 0;
   border: solid 1px #FF7100;
   padding: 2px 16px;
-  padding-left: 2px;
   border-radius: 30px;
   background-color: rgba(255,255,255,0.2);
 }
@@ -56,7 +55,7 @@ nav a.md-unselected {
 }
 
 #sidenav {
-  z-index: 999;
+  z-index: 250;
   color: #8B0053;
 }
 #sidenav a {
@@ -357,7 +356,7 @@ footer #sitemap ul li {
   -moz-animation:fadeIn ease-in 1;
   animation:fadeIn ease-in 1;
 
-  -webkit-animation-fill-mode:forwards;  
+  -webkit-animation-fill-mode:forwards;
   -moz-animation-fill-mode:forwards;
   animation-fill-mode:forwards;
 

@@ -31,7 +31,6 @@ Overall TODOs:
     - Dynamically create comment forms to enable parent/child commenting
     - Implement donation guestbook-like functionality. "people who have donated have said:"
     - Implement `User.first_login` for displaying help-text on profile template
-    - Enable viewing website 'as ministry' editable from `user_widget` in nav bar
     - Enable commenting 'as ministry' editable from comment form.
     - Self-deleting `Donation` objects (after a few hours) when there is no payment. This can be expanded to moderator (for comments, etc)
     - Social media links for ministries
@@ -39,3 +38,8 @@ Overall TODOs:
     - Style payment selection to show icons next to radio buttons
     - Ability to add multiple media items to NewsPost
     - Gallery for ministries/campaigns of aggregated media
+    - Javascript is becoming atrocious. Make this better! (basically make full use of REST and dump page templates. Every element should be a template returnable by django or something)
+        - User alias functionality should not reload page twice (to refresh name in header)
+
+Long-term TODOs:
+    - Angular is going to be defunct soon. Convert website to angular.io (there is a Material library for angular.io)

@@ -5,7 +5,6 @@ var nav_layout = angular.module('oneDollarApp', ['ngMaterial', 'ngRoute', 'ngPar
 // Layout controller and config //
 
 nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$location', '$mdConstant', function($scope , $mdSidenav, $http, $log, $location, $mdConstant) {
-
   $scope.separatorKeys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA];
 
   $scope.toggleLeft = buildDelayedToggler('left');
@@ -13,10 +12,16 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$
   $scope.isOpenRight = function(){
     return $mdSidenav('right').isOpen();
   };
+  $scope.profileMenuOpen = false;
+  $scope.openProfileMenuDown = function() {
+    $scope.profileMenuOpen = !($scope.profileMenuOpen);
+  }
+
 
   $scope.object = {};
   $scope.update_interval_id = 0;
   $scope.query = null;
+
   /**
    * Supplies a function that will continue to operate until the
    * time is up.
@@ -190,7 +195,9 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$mdSidenav', '$http', '$log', '$
 }]);
 
 
-nav_layout.config(function($routeProvider) {
+nav_layout.config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
+  $locationProvider.hashPrefix('');
+
   $routeProvider
     .when('/', {
       redirectTo: '/home'
@@ -256,8 +263,14 @@ nav_layout.config(function($routeProvider) {
           return '/accounts/' + params.account_action;
         },
         controller  : 'accountCtrl'
+    })
+    .when('/people/:people_action*', {
+        templateUrl : function (params) {
+          return '/people/' + params.people_action;
+        },
+        controller  : 'peopleCtrl'
     });
-});
+}]);
 
 
 nav_layout.controller('homeController', ['$scope', '$http', '$location',
@@ -398,6 +411,10 @@ nav_layout.controller('ministryActionCtrl', ['$scope', '$http', '$routeParams', 
       $scope.update_object();
       $scope.get_tags();
     }
+    if ($routeParams.ministry_action == 'login') {
+      $location.url('/ministry/' + $routeParams.ministry_id);
+      location.reload();
+    }
 
     ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);
     console.log('ministry action: ' + $routeParams.ministry_action + ' of ' + $routeParams.ministry_id);
@@ -414,6 +431,23 @@ nav_layout.controller('accountCtrl', ['$scope', '$http', '$routeParams', '$locat
 
     ga('send', 'pageview', '/account/' + $routeParams.account_action);
     console.log('account action: ' + $routeParams.account_action);
+  }
+]);
+
+nav_layout.controller('peopleCtrl', ['$scope', '$http', '$route', '$routeParams', '$location',
+  function($scope, $http, $route, $routeParams, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = null;
+
+    clearInterval($scope.update_interval_id);
+
+    if ($routeParams.people_action == 'alias/logout') {
+      $location.url('/accounts/profile');
+      location.reload();
+    }
+
+    ga('send', 'pageview', '/people/' + $routeParams.people_action);
   }
 ]);
 

@@ -22,7 +22,7 @@ def create_ministry(request):
     """ Renders form for editing or creating `Ministry` object.
     """
     if request.method == 'POST':
-        min_form = MinistryEditForm(request.POST)
+        min_form = MinistryEditForm(request.POST, request.FILES,)
 
         if min_form.is_valid():        # implement a custom `TagField`
             ministry = min_form.save(commit=False)
@@ -166,6 +166,34 @@ def ministry_profile(request, ministry_id):
                'form': comments,
                }
     return render(request, "ministry.html", context)
+
+
+@login_required
+def login_as_ministry(request, ministry_id):
+    ministry = MinistryProfile.objects.get(id=ministry_id)
+    if request.user == ministry.admin or request.user in ministry.reps.all():
+        print(ministry)
+        request.user.logged_in_as = ministry
+        request.user.save()
+
+        #print('User: %s logged in as %s' % (request.user.name, request.user.profile.logged_in_as.name))
+        print(request.user.logged_in_as)
+
+        _w = 'Logged in as %s!' % ministry.name
+        messages.add_message(request, messages.INFO, _w)
+
+        return HttpResponseRedirect(reverse('ministry:ministry_profile',
+                                            kwargs={'ministry_id': ministry_id}
+                                            ))
+    else:
+        # we shouldn't really get here, but redirect to originating page
+        _w = 'You do not have permission to do this.'
+        messages.add_message(request, messages.WARNING, _w)
+
+        # cause a redirect loop as deterrant
+        return HttpResponseRedirect(reverse('ministry:login_as_ministry',
+                                            kwargs={'ministry_id': ministry_id}
+                                            ))
 
 
 def ministry_json(request, ministry_id):
@@ -314,12 +342,13 @@ def create_campaign(request, ministry_id):
     """
     ministry = MinistryProfile.objects.get(id=ministry_id)
     if request.method == 'POST':
-        cam_form = CampaignEditForm(request.POST)
+        cam_form = CampaignEditForm(request.POST, request.FILES)
         if cam_form.is_valid():
             cam = cam_form.save(commit=False)
             cam.ministry = ministry
             cam.save()
 
+            # process tags
             _tags = cam_form['tags'].value().lower().split(',')
             if _tags:
                 # TODO: have smart tag selection (tags selected by description)

@@ -10,17 +10,91 @@
 %}
 
 
-{% macro user_widget(request) %}
+{% macro user_widget(request, sidenav=False) %}
 
     {% if request.user.is_authenticated %}
-      <a href="#{{ url_for('user_profile') }}" class="uname">
-        <img class="profile-img" src="{{ request.user.profile.avatar_url }}">
-        <span>{{- request.user.profile.name -}}</span>
-      </a>
+      <div layout="row">
+        <md-list>
+          {% if request.user.logged_in_as %}
 
-      <a class="logout" href="/accounts/logout/">Logout</a>
+            <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': request.user.logged_in_as.id}) }}">
+              <md-list-item class="md-1-line">
+                <img class="md-avatar" src="{{ static(request.user.logged_in_as.profile_img.url) }}">
+                <span>{{- request.user.logged_in_as.name -}}</span>
+              </md-list-item>
+            </a>
+
+          {% else %}
+
+            <a href="#{{ url_for('user_profile') }}">
+              <md-list-item class="md-1-line">
+                <img class="md-avatar" src="{{ request.user.profile.avatar_url }}">
+                <span>{{- request.user.profile.name -}}</span>
+              </md-list-item>
+            </a>
+
+          {% endif %}
+        </md-list>
+
+        {% if not sidenav %}
+          <md-menu md-position-mode="target-right bottom" ng-cloak>
+            <md-button ng-click="$mdMenu.open($event)" class="md-icon-button">
+              <md-icon md-menu-origin>
+                <i class="material-icons">arrow_drop_down</i>
+              </md-icon>
+            </md-button>
+            <md-menu-content width="4" style="overflow-y: hidden; z-index: 300;">
+              <md-menu-item>
+                {% if request.user.logged_in_as %}
+                  <md-button ng-href="#{{ url_for('people:be_me_again') }}">
+                    Your Profile
+                  </md-button>
+                {% else %}
+                  <md-button ng-href="#{{ url_for('user_profile') }}">
+                    Your Profile
+                  </md-button>
+                {% endif %}
+
+              </md-menu-item>
+              {% if len(request.user.administers.all()) %}
+                <md-menu-divider></md-menu-divider>
+                {% for ministry in request.user.administers.all() %}
+                  <md-menu-item>
+                    <md-button ng-href="#{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}">
+                      {{ ministry }}
+                    </md-button>
+                    <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}" class="md-icon-button">
+                      <i class="material-icons">settings</i>
+                    </md-button>
+                  </md-menu-item>
+                {% endfor %}
+                <md-menu-divider></md-menu-divider>
+              {% endif %}
+              <md-menu-item>
+                <md-button ng-href="/accounts/logout/">
+                  Logout
+                </md-button>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+
+
+        {% elif sidenav %}
+          {# TODO: there needs to be separate rendering of ministryprofile selection for mobile #}
+        {% endif %}
+
+
+      </div><!-- /.layout-row -->
     {% else %}
-      <a class="login" href="#/accounts/login/">Login</a>
+
+      <div layout="row">
+        <md-list>
+          <md-list-item class="md-1-line">
+            <md-button ng-href="#/accounts/login/">Login</md-button>
+          </md-list-item>
+        </md-list>
+      </div>
+
     {% endif %}
 
 {% endmacro %}
@@ -28,14 +102,14 @@
 
 {% macro navbar_links(request) %}
 
-    <header>
-      <div class="md-toolbar-items" layout="row" layout-align="left end">
+    <md-toolbar class="md-primary" ng-cloak>
+      <div class="md-toolbar-tools" layout="row" layout-align="left end">
 
         <a class="title-shadow-orange brand-logo center md-accent" href="#home" layout-padding>Love Your Neighbors</a>
 
-        <md-nav-bar ng-model="currentNavItem" class="md-accent" md-selected-nav-item="currentNavItem" hide-xs hide-sm>
+        <md-nav-bar ng-model="currentNavItem" class="" md-selected-nav-item="currentNavItem" hide-xs hide-sm>
         {%- for _link in links -%}
-          <md-nav-item md-nav-href="#{{ _link[0] }}" name="{{ _link[1] }}">
+          <md-nav-item md-nav-href="{{ _link[0] }}" name="{{ _link[1] }}">
               {{ _link[1] }}
           </md-nav-item>
         {%- endfor -%}
@@ -49,7 +123,7 @@
           </form>
         </div>
 
-        <div class="profile-area" hide-xs hide-sm>
+        <div hide-xs hide-sm>
           {{ user_widget(request) }}
         </div>
 
@@ -58,8 +132,7 @@
           <i class="fa fa-bars" aria-hidden="true"></i>
         </md-button>
       </div>
-    </header>
-    <div style="height: 40px;"></div>
+    </md-toolbar>
 
 {% endmacro %}
 
@@ -67,20 +140,21 @@
 {% macro sidenav(request) %}
 
     <md-sidenav class="md-sidenav-right md-whiteframe-4dp" id="sidenav"
-                md-component-id="right" layout-padding layout="column">
+                md-component-id="right" layout-padding layout="column" ng-cloak>
       <div class="top">
-        <div class="profile-area">
-          {{ user_widget(request) }}
-        </div>
-
         <md-button ng-click="close()" class="pull-right md-icon-button">
           <i class="fa fa-times" aria-hidden="true"></i>
         </md-button>
+
+        <div class="profile-area">
+          {{ user_widget(request, sidenav=True) }}
+        </div>
+
       </div>
 
       <md-list flex>
       {%- for _link in links -%}
-        <a href="#{{ _link[0] }}" name="{{ _link[1] }}">
+        <a href="{{ _link[0] }}" name="{{ _link[1] }}">
           <md-list-item class="md-line-1" ng-click="close()">{{ _link[1] }}</md-list-item>
         </a>
       {%- endfor -%}
@@ -92,7 +166,7 @@
 
 {% macro footer() %}
 
-      <footer class="page-footer">
+      <footer class="page-footer" ng-cloak>
         <div class="footer-top">
           <div class="social-media-links">
             <a class="waves-effect waves-teal btn-flat">

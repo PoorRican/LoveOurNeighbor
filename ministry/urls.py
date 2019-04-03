@@ -7,6 +7,8 @@ urlpatterns = [
     path('create/new', views.create_ministry, name='create_ministry'),
     path('<int:ministry_id>', views.ministry_profile,
          name='ministry_profile'),
+    path('<int:ministry_id>/login', views.login_as_ministry,
+         name='login_as_ministry'),
     path('<int:ministry_id>/like', views.like_ministry,
          name='like_ministry'),
     path('<int:ministry_id>/json', views.ministry_json,

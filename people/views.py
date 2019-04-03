@@ -1,6 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.dispatch import receiver
+from django.http import HttpResponseRedirect
 from django.views.generic.edit import UpdateView
+from django.urls import reverse
+
+from allauth.account.signals import user_logged_in
 
 from .forms import UserEditForm
 
@@ -32,3 +37,27 @@ class UserEditView(UpdateView):
 
 
 user_profile = login_required(UserEditView.as_view())
+
+
+@receiver(user_logged_in)
+def clear_previous_ministry_login(request, user, *args, **kwargs):
+    """ Automatically clears alias of last MinistryProfile alias.
+
+    This performs the same functionality as `be_me_again`
+    """
+    user.logged_in_as = None
+    user.save()
+
+
+@login_required
+def be_me_again(request):
+    """ Allows User to interact as themselves.
+    This 'logs out' of the last MinistryProfile they were using as an alias.
+
+    This performs the same functionality as `clear_previous_ministry_login`
+
+    This is initiated after deliberate user action
+    """
+    request.user.logged_in_as = None
+    request.user.save()
+    return HttpResponseRedirect(reverse('user_profile'))
