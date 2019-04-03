@@ -266,18 +266,18 @@ a:not(section a) {
   border-bottom: solid 1px #FF7100;
 }
 
-.md-list-item-text * {
+.comment.md-list-item-text * {
   color: #EEE !important;
 }
-.md-list-item-text p {
+.comment.md-list-item-text p {
   font-size: 18px !important;
   font-weight: 300 !important;
 }
-.md-list-item-text small {
+.comment.md-list-item-text small {
   font-size: 12px;
   padding-left: 5px;
 }
-.md-list-item-text bold {
+.comment.md-list-item-text bold {
   font-size: 14px;
   font-weight: 500;
   padding-left: 5px;
@@ -295,6 +295,45 @@ md-input-container .hint {
   transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
   /* Set our own color */
   color: lightgrey;
+}
+
+.md-item-text.compact {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.contact-item {
+  box-sizing: border-box;
+}
+.contact-item .md-list-item-text {
+  padding: 14px 0;
+  max-width: 190px;
+}
+.contact-item .md-list-item-text h3 {
+  margin: 0 !important;
+  padding: 0;
+  line-height: 1.2em !important;
+}
+.contact-item .md-list-item-text h3,
+.contact-item .md-list-item-text p {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+/**  overflow: hidden;*/
+}
+
+md-content.rep_requests {
+  min-width: 400px;
+}
+md-content.rep_requests input {
+  min-width: 400px;
+}
+md-list.available_contacts {
+  height: 250px;
+  overflow: hidden;
+}
+@media (min-width: 960px) {
+  .contact-item {
+    float: left;
+    width: 33%; }
 }
 
 

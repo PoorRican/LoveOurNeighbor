@@ -10,23 +10,16 @@ class MinistryEditForm(forms.ModelForm):
     http://pydanny.com/core-concepts-django-modelforms.html
     """
     tags = forms.CharField(max_length=256, required=False)
+    reps = forms.CharField(max_length=1024, required=False)
 
     def __init__(self, *args, **kwargs):
-        tags = ''
-        if 'instance' in kwargs:
-            tags = ', '.join([str(i) for i in kwargs['instance'].tags.all()])
-        initial = {'tags': tags}
-        if 'initial' in kwargs:
-            initial = {**kwargs['initial'], **initial}
-            del kwargs['initial']
-        super(MinistryEditForm, self).__init__(*args, **kwargs,
-                                               initial=initial)
+        super(MinistryEditForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = MinistryProfile
         fields = ('banner_img',
                   'name', 'address', 'phone_number', 'website', 'founded',
-                  'admin', 'reps', 'description',)
+                  'admin', 'description',)
         exclude = ('admin',)
         widgets = {'description': forms.Textarea(attrs={'rows': 20,
                                                         'cols': 80}),

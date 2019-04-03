@@ -8,13 +8,34 @@ from django.urls import reverse
 import json
 from datetime import datetime
 
+from people.models import User
+
 from .forms import MinistryEditForm, CampaignEditForm, NewsEditForm, CommentForm
 from .models import NewsPost, Campaign, MinistryProfile, Tag
+
 
 strptime = datetime.strptime
 
 P_TIME = '%Y-%m-%d'             # when reading/parsing date objects
 F_TIME = '%Y-%m-%dT23:59:59'    # when writing date objects (for JSON)
+
+
+def process_tags(obj, tag_str):
+    _tags = tag_str.lower().split(',')
+    if _tags:
+        # TODO: have smart tag selection (tags selected by description)
+        for t in _tags:
+            if not len(t):
+                continue
+            elif t[0] == ' ':
+                t = t[1:]
+            elif t[-1] == ' ':
+                t = t[:-1]
+            if t:
+                _t, _ = Tag.objects.get_or_create(name=t)
+                obj.tags.add(_t)
+    obj.save()
+
 
 # Ministry Views
 @login_required
@@ -29,20 +50,8 @@ def create_ministry(request):
             ministry.admin = request.user
             ministry.save()
 
-            # process tags
-            _tags = min_form['tags'].value().lower().split(',')
-            if _tags:
-                # TODO: have smart tag selection (tags selected by description)
-                for t in _tags:
-                    if not len(t):
-                        continue
-                    elif t[0] == ' ':
-                        t = t[1:]
-                    elif t[-1] == ' ':
-                        t = t[:-1]
-                    _t, _ = Tag.objects.get_or_create(name=t)
-                    ministry.tags.add(_t)
-            ministry.save()
+            process_tags(ministry, min_form['tags'].value())
+
         _url = '/#%s' % reverse('ministry:ministry_profile',
                                 kwargs={'ministry_id': ministry.id})
         return HttpResponseRedirect(_url)
@@ -65,14 +74,12 @@ def edit_ministry(request, ministry_id):
                 if _form.is_valid():
                     _form.save()
 
-                    # process tags
-                    _tags = _form['tags'].value().lower().split(',')
-                    if _tags:
-                        # TODO: have smart tag selection (tags selected by description)
-                        for t in _tags:
-                            _t, _ = Tag.objects.get_or_create(name=t)
-                            ministry.tags.add(_t)
-                    ministry.save()
+                    process_tags(ministry, _form['tags'].value())
+                    for r in json.loads(_form['reps'].value()):
+                        # TODO: notify user
+                        u = User.objects.get(email=r['email'])
+                        ministry.reps.add(u)
+                        ministry.requests.remove(u)
 
                     _w = 'Edit successful!'
                     messages.add_message(request, messages.INFO, _w)
@@ -196,19 +203,58 @@ def login_as_ministry(request, ministry_id):
                                             ))
 
 
+@login_required
+def request_to_be_rep(request, ministry_id):
+    """ Enables newly created users request to be a ministry representative.
+
+    Users who request this status have no permissions until authorization
+        is approved by the ministry admin.
+    """
+    ministry = MinistryProfile.objects.get(id=ministry_id)
+    if not(request.user == ministry.admin or request.user in ministry.reps.all()):
+        # TODO: create notification to `ministry.admin`
+        ministry.requests.add(request.user)
+        ministry.save()
+
+        _w = "Your request has been submitted to %s" % ministry.name
+        messages.add_message(request, messages.INFO, _w)
+
+    else:
+        _w = "You're already associated with %s" % ministry.name
+        messages.add_message(request, messages.ERROR, _w)
+
+    return HttpResponseRedirect(reverse('ministry:ministry_profile',
+                                        kwargs={'ministry_id': ministry_id}))
+
+
 def ministry_json(request, ministry_id):
     ministry = MinistryProfile.objects.get(id=ministry_id)
 
     _liked, _founded = False, ''
+    _requests, _reps = [], []
     if request.user.is_authenticated:
         _liked = bool(ministry in request.user.likes_m.all())
     if ministry.founded:
         _founded = ministry.founded.strftime(F_TIME)
+    if len(ministry.requests.all()):
+        for i in ministry.requests.all():
+            _requests.append({'name': i.name,
+                              'email': i.email,
+                              'img': i.profile.avatar_url,
+                              })
+    if len(ministry.reps.all()):
+        for i in ministry.reps.all():
+            _reps.append({'name': i.name,
+                          'email': i.email,
+                          'img': i.profile.avatar_url,
+                          })
 
     _json = {'views': ministry.views,
              'founded': _founded,
              'likes': len(ministry.likes.all()),
              'liked': _liked,
+             'requests': _requests,
+             'reps': _reps,
              'tags': [i.name for i in ministry.tags.all()]}
     return HttpResponse(json.dumps(_json))
 
@@ -349,13 +395,7 @@ def create_campaign(request, ministry_id):
             cam.save()
 
             # process tags
-            _tags = cam_form['tags'].value().lower().split(',')
-            if _tags:
-                # TODO: have smart tag selection (tags selected by description)
-                for t in _tags:
-                    _t, _ = Tag.objects.get_or_create(name=t)
-                    cam.tags.add(_t)
-            cam.save()
+            process_tags(cam, cam_form['tags'].value())
 
             _url = '/#%s' % reverse('ministry:campaign_detail',
                                     kwargs={'campaign_id': cam.id})
@@ -380,13 +420,7 @@ def edit_campaign(request, campaign_id):
                 if _form.is_valid():
                     cam = _form.save()
 
-                    _tags = _form['tags'].value().lower().split(',')
-                    if _tags:
-                        # TODO: have smart tag selection (tags selected by description)
-                        for t in _tags:
-                            _t, _ = Tag.objects.get_or_create(name=t)
-                            cam.tags.add(_t)
-                    cam.save()
+                    process_tags(cam, _form['tags'].value())
 
                     _w = 'Edit successful!'
                     messages.add_message(request, messages.INFO, _w)

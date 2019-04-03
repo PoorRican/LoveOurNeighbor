@@ -144,6 +144,22 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
     return query ? $scope.available_tags.filter(createTagFilter(query)) : [];
   };
 
+  $scope.contactSearch = function(query) {
+    /**
+     * Create filter function for a query string
+     */
+    function createContactFilter(query) {
+      var lowercaseQuery = query.toLowerCase();
+
+      return function filterFn(contact) {
+        return (contact.name.toLowerCase().indexOf(lowercaseQuery) === 0) ||
+            (contact.email.toLowerCase().indexOf(lowercaseQuery) === 0);
+      };
+    };
+
+      return query ? $scope.object.requests.filter(createContactFilter(query)) : [];
+  };
+
   $scope.like = function(url) {
     $http.get(url)
     .then(function(response) {

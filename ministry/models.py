@@ -42,27 +42,38 @@ class MinistryProfile(models.Model):
     name = models.CharField(max_length=100)
     verified = models.BooleanField(default=False)
 
+    # Administration
     admin = models.ForeignKey(User, related_name='administers',
                               on_delete=models.PROTECT)
     reps = models.ManyToManyField(User, blank=True,
                                   related_name='represents')
+    requests = models.ManyToManyField(User, blank=True,
+                                      related_name='rep_requests')
+    # TODO: allow the admin to enter rep emails before User creation
+    # I guess this would be best implemented by proto-User class
+    # this would also solve the problem of allowing donations without sign-up
+
+    # User Interaction
     likes = models.ManyToManyField(User, blank=True, editable=False,
                                    related_name='likes_m')
     views = models.PositiveIntegerField('views', default=0, editable=False)
 
+    # Ministry Details
     address = models.CharField(max_length=256, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     website = models.URLField()
     founded = models.DateField(blank=True, null=True)
     created = models.DateField(auto_now_add=True)
+
+    # Ministry Content
     description = models.TextField(blank=True, null=True)
+    tags = models.ManyToManyField(Tag, related_name='campaigns',
+                                  blank=True,)
     profile_img = models.ImageField('Profile Image',
                                     default='ministries/blank_profile.jpg',
                                     upload_to=ministry_profile_image_dir)
     banner_img = models.ImageField('Banner Image', blank=True, null=True,
                                    upload_to=ministry_banner_dir)
-    tags = models.ManyToManyField(Tag, related_name='campaigns',
-                                  blank=True,)
 
     def __str__(self):
         return self.name

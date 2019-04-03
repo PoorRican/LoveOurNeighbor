@@ -30,7 +30,7 @@
       <md-list flex>
         {% for i in obj.comments.all() %}
           {# TODO: implement this in angular to reduce server overhead #}
-          <md-list-item class="md-2-line">
+          <md-list-item class="md-2-line comment">
             <div class="md-list-item-text" layout="column">
               <p>{{ i.content }}</p>
               <div layout="row">
@@ -218,12 +218,30 @@
             {# TODO: put some content in here #}
             <h1>
               {{ ministry.name.upper() }}
-              {% if AUTH %}
-                <a href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
-                  <md-button class="md-icon-button md-raised md-accent">
-                    <i class="material-icons">create</i>
+              {% if request.user.is_authenticated %}
+                <md-menu>
+                  <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
+                    <md-icon>
+                      <i class="material-icons">arrow_drop_down</i>
+                    </md-icon>
                   </md-button>
-                </a>
+                  <md-menu-content>
+                    <md-menu-item>
+                    {% if AUTH %}
+                      <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
+                        <md-icon>
+                          <i class="material-icons">create</i>
+                        </md-icon>
+                        Edit
+                      </md-button>
+                    {% elif not AUTH %}
+                      <md-button ng-href="#{{ url_for('ministry:request_to_be_rep', kwargs={'ministry_id': ministry.id}) }}">
+                        Request to be a representative
+                      </md-button>
+                    {% endif %}
+                    </md-menu-item>
+                  </md-menu-centent>
+                </md-menu>
               {% endif %}
             </h1>
 

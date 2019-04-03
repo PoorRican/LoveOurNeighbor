@@ -122,23 +122,55 @@
         <div class="hint">Select from existing tags, or create new ones by entering a comma.</div>
       </md-input-container>
 
-      <md-divider></md-divider>
+      {% if not start %}
+        {# uncreated MinistryProfile objects should have no rep functionality yet #}
+        <md-divider></md-divider>
 
-      <h3>
-        <md-icon>
-          <i class="material-icons">lock</i>
-        </md-icon>&nbsp;
-        Administration:
-      </h3>
-      <md-input-container>
-        <div layout-gt-sm="row" layout-padding>
-          <h5>
-            <md-icon><i class="material-icons">group_add</i></md-icon>
-            {{ form.reps.label }}:
-          </h5>
-        {{ form.reps }}
-        </div>
-      </md-input-container>
+        <h3>
+          <md-icon>
+            <i class="material-icons">lock</i>
+          </md-icon>&nbsp;
+          Administration:
+        </h3>
+          <md-content layout="column" class="md-padding autocomplete rep_requests">
+            <input type="hidden" name="{{ form.reps.name }}" value="{% raw %}{{ object.reps }}{% endraw %}">
+            <label>
+              <md-icon><i class="material-icons">group_add</i></md-icon>
+              {{ form.reps.label }}:
+            </label>
+            <md-contact-chips ng-model="object.reps"
+                              md-contacts="contactSearch($query)"
+                              md-require-match="true"
+                              md-contact-name="name"
+                              md-contact-image="img"
+                              md-contact-email="email"
+                              placeholder="Select by name or email"
+                              secondary-placeholder="Add another representative">
+            </md-contact-chips>
+            {# TODO: enable dynamic UI #}
+            {# TODO: button to clear all pending requests #}
+            <md-list class="available_contacts">
+              <md-subheader>
+                Representative Requests
+              </md-subheader>
+              {% if len(ministry.requests.all()) %}
+                <md-list-item class="md-2-line contact-item" ng-repeat="(index, contact) in object.requests">
+                  {% raw %}
+                    <img class="md-avatar" ng-src="{{ contact.img }}">
+                    <div class="md-list-item-text compact">
+                      <h3>{{ contact.name }}</h3>
+                      <p>{{ contact.email }}</p>
+                    </div>
+                  {% endraw %}
+                </md-list-item>
+              {% else %}
+                <md-list-item class="md-1-line">
+                  <h3>There are no requests to show</h3>
+                </md-list-item>
+              {% endif %}
+            </md-list>
+          </md-content>
+      {% endif %}
 
       <div id="form_buttons" layout="row">
         <md-button style="position: fixed; bottom: 75; right: 10%;" class="md-fab md-primary" type="submit">
