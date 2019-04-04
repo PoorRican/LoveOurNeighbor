@@ -1,17 +1,22 @@
 Urgent TODO:
     - Implement Braintree for payment
     - Enable user to user messages
-    - Implement custom django widgets for managing users as reps/admins. Enable multiple admins, and permissions.
-    - Implement intuitive UI icons with tooltips.
-    - Implement tagging
     - Enable search filtering:
         - by object type
         - by location
         - by tags
     - Enable anonymous donations (must capture email). Enable user creation via donate page. Enable user creation via email link. Enable cookie persistence for returning users.
+    - Dynamically create comment forms to enable parent/child commenting
+    - Enable commenting 'as ministry' editable from comment form.
     - Get rid of plain html links:
         - incorrect login or invalid sign up
     - WYSIWYG Editor for Text Input (import this from oligoptica)
+    - Convert News post to Card (from Angular Material)
+    - Gallery for ministries/campaigns of aggregated media
+    - Ability to add multiple media items to NewsPost
+    - Implement Toasts (via AngularJS) to show messages from django (`get_messages`). Pass via hidden input objects and fetch via js `getElementById`
+    - Implement file uploading as 'new upload' and then have `img_path` be an option of selected uploaded files
+    - Social media links for ministries
 
 Overall TODOs:
     - implement TimelineJS
@@ -23,21 +28,14 @@ Overall TODOs:
     - Add detailed logging (individual log files: requests, user creation, donation, etc)
     - Secure logout function (logout on POST, not GET)
     - enable dynamic width for progress bar
-    - Implement Toasts (via AngularJS) to show messages from django (`get_messages`). Pass via hidden input objects and fetch via js `getElementById`
-    - Show that a user is associated with a particular ministry via profile and/or name
     - Create more admin like page for Profile management
     - Implement page history via js
-    - Implement file uploading as 'new upload' and then have `img_path` be an option of selected uploaded files
-    - Dynamically create comment forms to enable parent/child commenting
     - Implement donation guestbook-like functionality. "people who have donated have said:"
     - Implement `User.first_login` for displaying help-text on profile template
-    - Enable commenting 'as ministry' editable from comment form.
     - Self-deleting `Donation` objects (after a few hours) when there is no payment. This can be expanded to moderator (for comments, etc)
-    - Social media links for ministries
     - Clear comment form when canceled
     - Style payment selection to show icons next to radio buttons
-    - Ability to add multiple media items to NewsPost
-    - Gallery for ministries/campaigns of aggregated media
+    - Enable multiple admins, and permissions.
     - Javascript is becoming atrocious. Make this better! (basically make full use of REST and dump page templates. Every element should be a template returnable by django or something)
         - User alias functionality should not reload page twice (to refresh name in header)
 
