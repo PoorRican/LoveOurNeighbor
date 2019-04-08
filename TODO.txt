@@ -2,7 +2,6 @@ Urgent TODO:
     - Implement Braintree for payment
     - Enable user to user messages
     - Enable search filtering:
-        - by object type
         - by location
         - by tags
     - Enable anonymous donations (must capture email). Enable user creation via donate page. Enable user creation via email link. Enable cookie persistence for returning users.

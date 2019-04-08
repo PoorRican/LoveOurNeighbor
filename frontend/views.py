@@ -20,12 +20,17 @@ def home(request):
         current_campaign.save()
         all_news = NewsPost.objects.filter(
                     campaign=current_campaign).order_by("-pub_date")
+        _admin = current_campaign.ministry.admin
+        _reps = current_campaign.ministry.reps
+        AUTH = bool(request.user == _admin or request.user in _reps)
     except IndexError:
         current_campaign, all_news = None, None
 
     context = {'all_news': all_news,
                'current_campaign': current_campaign,
-               'form': CommentForm()}
+               'form': CommentForm(),
+               'AUTH': AUTH,
+               }
     return render(request, "home.html", context)
 
 

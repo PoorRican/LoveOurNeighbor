@@ -8,7 +8,7 @@
 {% if all_news %}
     {% for i in all_news %}
 
-        {{ content.news_post(i, request=request, form=form, csrf_token=csrf_token) }}
+        {{ content.news_post(i, request=request, AUTH=AUTH, form=form, csrf_token=csrf_token) }}
 
     {% endfor %}
 {% endif %}

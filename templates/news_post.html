@@ -1,7 +1,7 @@
 {% import "layout_objects.html" as layout %}
 {% import "content_objects.html" as content %}
 
-    {{ content.news_post(post, detail=False, AUTH=AUTH, request=request, form=form, csrf_token=csrf_token) }}
+    {{ content.news_post(post, AUTH=AUTH, request=request, form=form, csrf_token=csrf_token) }}
 
 <!-- Google Analytics Virtual Pageview -->
 <script>ga('send', 'pageview', 'news_post')</script>

@@ -338,43 +338,55 @@
 {% endmacro %}
 
 
-{% macro news_post(post, detail=True, request=None, AUTH=None, form=None, csrf_token=None) %}
+{% macro news_post(post, request=None, AUTH=None, form=None, csrf_token=None) %}
       {# TODO: group by month and randomly (or scroll) through images per section #}
     <div class="section">
       <article class="wrapper">
         <p id="section-info">
           <span>Published:</span>&nbsp;{{ post.pub_date.strftime("%h %d, %Y") }}
-          {% if detail %}
-            <md-button ng-href="#{{ url_for('ministry:news_detail', kwargs={'post_id': post.id}) }}" class="md-raised md-accent">
-              Link to news&nbsp;
-              <md-icon>
-                <i class="material-icons">link</i>
-              </md-icon>
-            </md-button>
-          {% endif %}
 
         </p>
 
         <h1>
           {{ post.title.upper() }}
 
-          {% if AUTH %}
-            <a style="text-decoration: none;" href="#{{ url_for('ministry:edit_news', kwargs={'post_id': post.id}) }}">
-              <md-button class="md-icon-button md-raised md-accent">
-                <md-icon>
-                <i class="material-icons">create</i>
-                </md-icon>
-              </md-button>
-            </a>
+          <md-menu>
+            <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
+              <md-icon>
+                <i class="material-icons">arrow_drop_down</i>
+              </md-icon>
+            </md-button>
+            <md-menu-content>
+              {% if AUTH %}
+                <md-menu-item>
+                  <md-button ng-href="#{{ url_for('ministry:edit_news', kwargs={'post_id': post.id}) }}">
+                    <md-icon>
+                    <i class="material-icons">create</i>
+                    </md-icon>&nbsp;
+                    Edit News Post
+                  </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                  <md-button ng-href="#{{url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
+                    <md-icon>
+                      <i class="material-icons">delete</i>
+                    </md-icon>&nbsp;
+                    Delete News Post
+                  </md-button>
+                </md-menu-item>
+                <md-menu-divider></md-menu-divider>
+              {% endif %}
 
-            <a style="text-decoration: none;" href="#{{url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
-              <md-button class="md-icon-button md-raised md-warn">
-                <md-icon>
-                  <i class="material-icons">delete</i>
-                </md-icon>
-              </md-button>
-            </a>
-          {% endif %}
+              <md-menu-item>
+                <md-button ng-href="#{{ url_for('ministry:news_detail', kwargs={'post_id': post.id}) }}">
+                  <md-icon>
+                    <i class="material-icons">link</i>
+                  </md-icon>&nbsp;
+                  Link to news
+                </md-button>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
 
         </h1>
 
