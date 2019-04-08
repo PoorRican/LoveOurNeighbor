@@ -17,10 +17,11 @@ Urgent TODO:
     - Implement Toasts (via AngularJS) to show messages from django (`get_messages`). Pass via hidden input objects and fetch via js `getElementById`
     - Implement file uploading as 'new upload' and then have `img_path` be an option of selected uploaded files
     - Social media links for ministries
+    - Map displaying ministry location
 
 Overall TODOs:
     - implement TimelineJS
-    - Automatic Post Creation upon reaching milestones
+    - Automatic Post Creation upon reaching milestones (email notification to admin email & should be a setting and editable)
     - Create dynamic background or something for progress-bar. Dynamic update of progress-bar
     - Dynamic Countdown
     - Voting system and video Submission (via splash page w/ submission period)

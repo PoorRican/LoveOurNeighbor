@@ -50,5 +50,6 @@ urlpatterns = [
          name='create_comment'),
 
     path('search/<str:query>', views.search, name='search'),
+    path('search/<str:query>/json', views.search_json, name='search_json'),
     path('tags/all', views.tags_json, name='tags_json'),
 ]

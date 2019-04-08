@@ -90,6 +90,7 @@ class MinistryProfile(models.Model):
 class Campaign(models.Model):
     title = models.CharField(max_length=100)
 
+    pub_date = models.DateTimeField('date created', auto_now_add=True)
     start_date = models.DateField('start date', default=date.today)
     end_date = models.DateField('end date')
 

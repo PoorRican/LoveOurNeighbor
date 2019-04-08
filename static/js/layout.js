@@ -428,6 +428,11 @@ nav_layout.controller('ministryActionCtrl', ['$scope', '$http', '$routeParams', 
       $location.url('/ministry/' + $routeParams.ministry_id);
       location.reload();
     }
+    if ($routeParams.ministry_id == 'search') {
+      $scope.update_object();
+      $scope.filtered_results = $scope.object.results;
+      console.log($scope.object.results);
+    }
 
     ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);
     console.log('ministry action: ' + $routeParams.ministry_action + ' of ' + $routeParams.ministry_id);

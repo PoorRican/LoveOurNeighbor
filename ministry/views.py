@@ -37,6 +37,73 @@ def process_tags(obj, tag_str):
     obj.save()
 
 
+def serialize_ministry(ministry):
+    _founded = ''
+    _requests, _reps = [], []
+    if ministry.founded:
+        _founded = ministry.founded.strftime(F_TIME)
+    if len(ministry.requests.all()):
+        for i in ministry.requests.all():
+            _requests.append({'name': i.name,
+                              'email': i.email,
+                              'img': i.profile.avatar_url,
+                              })
+    if len(ministry.reps.all()):
+        for i in ministry.reps.all():
+            _reps.append({'name': i.name,
+                          'email': i.email,
+                          'img': i.profile.avatar_url,
+                          })
+
+    return {'id': ministry.id,
+            'name': ministry.name,
+            'views': ministry.views,
+            'founded': _founded,
+            'likes': len(ministry.likes.all()),
+            'requests': _requests,
+            'description': ministry.description,
+            'reps': _reps,
+            'tags': [i.name for i in ministry.tags.all()],
+            }
+
+
+def serialize_campaign(cam):
+    _donations = len(cam.donations.all())
+
+    return {'id': cam.id,
+            'title': cam.title,
+            'donated': cam.donated,
+            'start_date': cam.start_date.strftime(F_TIME),
+            'end_date': cam.end_date.strftime(F_TIME),
+            'pub_date': cam.pub_date.strftime(F_TIME),
+            'donations': _donations,
+            'goal': cam.goal,
+            'views': cam.views,
+            'likes': len(cam.likes.all()),
+            'content': cam.content,
+            'tags': [i.name for i in cam.tags.all()]
+            }
+
+
+def serialize_newspost(post):
+    parent = {}
+    if post.ministry:
+        parent['type'] = 'ministry'
+        parent['name'] = post.ministry.name
+        parent['id'] = post.ministry.id
+    if post.campaign:
+        parent['type'] = 'campaign'
+        parent['name'] = post.campaign.title
+        parent['id'] = post.campaign.id
+
+    return {'id': post.id,
+            'title': post.name,
+            'pub_date': post.pub_date.strftime('%Y-%m-%dT%H:%M:%S'),
+            'content': post.content,
+            'parent': parent,
+            }
+
+
 # Ministry Views
 @login_required
 def create_ministry(request):
@@ -230,32 +297,14 @@ def request_to_be_rep(request, ministry_id):
 def ministry_json(request, ministry_id):
     ministry = MinistryProfile.objects.get(id=ministry_id)
 
-    _liked, _founded = False, ''
-    _requests, _reps = [], []
+    _liked = False
     if request.user.is_authenticated:
         _liked = bool(ministry in request.user.likes_m.all())
-    if ministry.founded:
-        _founded = ministry.founded.strftime(F_TIME)
-    if len(ministry.requests.all()):
-        for i in ministry.requests.all():
-            _requests.append({'name': i.name,
-                              'email': i.email,
-                              'img': i.profile.avatar_url,
-                              })
-    if len(ministry.reps.all()):
-        for i in ministry.reps.all():
-            _reps.append({'name': i.name,
-                          'email': i.email,
-                          'img': i.profile.avatar_url,
-                          })
 
-    _json = {'views': ministry.views,
-             'founded': _founded,
-             'likes': len(ministry.likes.all()),
-             'liked': _liked,
-             'requests': _requests,
-             'reps': _reps,
-             'tags': [i.name for i in ministry.tags.all()]}
+    _json = serialize_ministry(ministry)
+    _json['liked'] = _liked
+    del _json['description']        # remove to tx less data
+
     return HttpResponse(json.dumps(_json))
 
 
@@ -516,19 +565,15 @@ def campaign_json(request, campaign_id):
     """
 
     cam = Campaign.objects.get(id=campaign_id)
-    _donations = len(cam.donations.all())
+
     _liked = False
     if request.user.is_authenticated:
         _liked = bool(cam in request.user.likes_c.all())
-    _json = {'donated': cam.donated,
-             'start_date': cam.start_date.strftime('%Y-%m-%dT23:59:59'),
-             'end_date': cam.end_date.strftime('%Y-%m-%dT23:59:59'),
-             'donations': _donations,
-             'goal': cam.goal,
-             'views': cam.views,
-             'likes': len(cam.likes.all()),
-             'liked': _liked,
-             'tags': [i.name for i in cam.tags.all()]}
+
+    _json = serialize_campaign(cam)
+    _json['liked'] = _liked
+    del _json['content']        # remove to tx less data
+
     return HttpResponse(json.dumps(_json))
 
 
@@ -599,43 +644,110 @@ def like_campaign(request, campaign_id):
 
 # Other Views
 def search(request, query):
-    # TODO: implement search client-side rendering
-    # search ministry through name, tags, location, and description
-    # search through campaign title, tags, and description
-    # return rendered search page
-    # TODO: somehow normalize capitalization
-    results = []
-
-    try:
-        results.append(MinistryProfile.objects.get(
-                       Q(name__contains=query) |
-                       Q(description__contains=query) |
-                       # TODO: do better geolocation search
-                       Q(address__contains=query)
-                       ))
-    except Exception:
-        pass
-
-    try:
-        results.append(Campaign.objects.get(
-                       Q(title__contains=query) |
-                       Q(content__contains=query)
-                       ))
-    except Exception:
-        pass
-
-    try:
-        results.append(NewsPost.objects.get(
-                       Q(title__contains=query) |
-                       Q(content__contains=query)
-                       ))
-    except Exception:
-        pass
-
-    context = {'results': results,
+    context = {
                'query': query,
                }
     return render(request, "search.html", context)
+
+
+def search_json(request, query):
+    tags, addresses = [], []
+    starting, ending = [], []
+    posted = []
+
+    mins, _mins = [], []
+    for i in MinistryProfile.objects.filter(name__contains=query):
+        try:
+            for m in i:
+                _mins.append(m)
+        except TypeError:
+            _mins.append(i)
+    for i in MinistryProfile.objects.filter(description__contains=query):
+        try:
+            for m in i:
+                _mins.append(m)
+        except TypeError:
+            _mins.append(i)
+    for i in MinistryProfile.objects.filter(address__contains=query):
+        # TODO: do better geolocation search
+        try:
+            for m in i:
+                _mins.append(m)
+        except TypeError:
+            _mins.append(i)
+    for i in _mins:
+        _ministry = serialize_ministry(i)
+
+        _ministry['type'] = 'minsitry'
+        _ministry['url'] = reverse('ministry:ministry_profile',
+                                   kwargs={'ministry_id': i.id})
+        mins.append(_ministry)
+
+        # process metadata
+        if i.address not in addresses:
+            # TODO: extrapolate general location from address
+            addresses.append(i.address)
+        for t in i.tags.all():
+            if t not in tags:
+                tags.append(t.name)
+
+    cams, _cams = [], []
+    for i in Campaign.objects.filter(title__contains=query):
+        try:
+            for c in i:
+                _cams.append(c)
+        except TypeError:
+            _cams.append(i)
+    for i in Campaign.objects.filter(content__contains=query):
+        try:
+            for c in i:
+                _cams.append(c)
+        except TypeError:
+            _cams.append(i)
+    for i in _cams:
+        _campaign = serialize_campaign(i)
+        _campaign['type'] = 'campaign'
+        _campaign['url'] = reverse('ministry:campaign_detail',
+                                   kwargs={'campaign_id': i.id})
+        cams.append(_campaign)
+
+        # process metadata
+        for t in i.tags.all():
+            if t not in tags:
+                tags.append(t.name)
+        if i.start_date not in starting:
+            starting.append(i.start_date.strftime(F_TIME))
+        if i.end_date not in ending:
+            ending.append(i.end_date.strftime(F_TIME))
+
+    posts, _posts = [], []
+    for i in NewsPost.objects.filter(title__contains=query):
+        for np in i:
+            _posts.append(np)
+    for i in NewsPost.objects.filter(content__contains=query):
+        for np in i:
+            _posts.append(np)
+    for i in _posts:
+        _post = serialize_newspost(i)
+        _post['type'] = 'post'
+        _post['url'] = reverse('ministry:news_detail',
+                               kwargs={'post_id': i.id})
+        posts.append(_post)
+
+        # process metadata
+        posted.append(i.pub_date.strftime(F_TIME))
+
+    _json = {'tags': tags,
+             'locations': addresses,
+             'starting': starting,
+             'ending': ending,
+             'posted': posted,
+             'count': (len(mins) + len(cams) + len(posts)),
+             'ministries': mins,
+             'campaigns': cams,
+             'posts': posts,
+             }
+    return HttpResponse(json.dumps(_json))
 
 
 def tags_json(request):
