@@ -5,9 +5,19 @@
 <section class="wrapper">
   <input type="hidden" id="current_object_json" value="{{ url_for("ministry:search_json", kwargs={'query': query}) }}">
   <h1>Found {% raw %}{{ object.count }}{% endraw %} Results for "{{ query }}"</h1>
-  <md-list>
-      <md-list-item ng-repeat="item in object.ministries" class="md-2-line">
-        <div class="md-list-item-text" layout="column">
+  <div layout="row">
+    <div flex="20">
+      <div>
+        <h4>Types:</h4>
+        <md-checkbox ng-model="filter_types.ministry">Ministries</md-checkbox>
+        <md-checkbox ng-model="filter_types.campaign">Campaigns</md-checkbox>
+        <md-checkbox ng-model="filter_types.post">News Posts</md-checkbox>
+      </div>
+    </div>
+    <div flex="80" layout="column">
+      <md-list>
+        <md-list-item ng-repeat="item in object.ministries" ng-if="filter_types.ministry" class="md-2-line">
+          <div class="md-list-item-text" layout="column">
             {% raw %}
               <a href="#{{ item.url }}">
                 <h3>{{ item.name }}</h3>
@@ -15,11 +25,10 @@
               <p ng-if="item.description">{{ item.description }}</p>
               <p ng-hide="item.description">Theres on description yet</p>
             {% endraw %}
-          </div>
-        </div><!-- /.md-list-item-text -->
-      </md-list-item>
-      <md-list-item ng-repeat="item in object.campaigns" class="md-2-line">
-        <div class="md-list-item-text" layout="column">
+          </div><!-- /.md-list-item-text -->
+        </md-list-item>
+        <md-list-item ng-if="filter_types.campaign" ng-repeat="item in object.campaigns" class="md-2-line">
+          <div class="md-list-item-text" layout="column">
             {% raw %}
               <a href="#{{ item.url }}">
                 <h3>{{ item.title }}</h3>
@@ -27,11 +36,10 @@
               <p ng-if="item.content">{{ item.content }}</p>
               <p ng-hide="item.content">Theres on description yet</p>
             {% endraw %}
-          </div>
-        </div><!-- /.md-list-item-text -->
-      </md-list-item>
-      <md-list-item ng-repeat="item in object.posts" class="md-2-line">
-        <div class="md-list-item-text" layout="column">
+          </div><!-- /.md-list-item-text -->
+        </md-list-item>
+        <md-list-item ng-if="filter_types.post" ng-repeat="item in object.posts" class="md-2-line">
+          <div class="md-list-item-text" layout="column">
             {% raw %}
               <a href="#{{ item.url }}">
                 <h3>{{ item.title }}</h3>
@@ -39,8 +47,9 @@
               <p ng-if="item.content">{{ item.content }}</p>
               <p ng-hide="item.content">Theres on description yet</p>
             {% endraw %}
-          </div>
-        </div><!-- /.md-list-item-text -->
-      </md-list-item>
-  </md-list>
+          </div><!-- /.md-list-item-text -->
+        </md-list-item>
+      </md-list>
+    </div>
+  </div>
 </section>

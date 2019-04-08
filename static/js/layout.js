@@ -430,8 +430,11 @@ nav_layout.controller('ministryActionCtrl', ['$scope', '$http', '$routeParams', 
     }
     if ($routeParams.ministry_id == 'search') {
       $scope.update_object();
-      $scope.filtered_results = $scope.object.results;
-      console.log($scope.object.results);
+      $scope.filter_types = {
+          'ministry': true,
+          'campaign': true,
+          'post': true
+      };
     }
 
     ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);
