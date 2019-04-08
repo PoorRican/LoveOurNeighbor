@@ -1,6 +1,4 @@
-{# TODO: display name and profile pic. Enable editing #}
-{# TODO: total donated amount #}
-{# TODO: campaigns involved in #}
+{% import "content_objects.html" as content %}
 
 <section class="wrapper">
   {% if start %}
@@ -28,7 +26,13 @@
       <md-input-container>
         {# TODO: render WYSIWYG editor #}
         {{ form.content.label_tag() }}
-        {{ form.content }}
+
+        {% if start %}
+          {{ content.wysiwyg_editor(form.content.name) }}
+        {% else %}
+          {{ content.wysiwyg_editor(form.content.name, post.content) }}
+        {% endif %}
+
       </md-input-container>
 
       <md-button class="md-raised md-primary" type="submit">Save</md-button>

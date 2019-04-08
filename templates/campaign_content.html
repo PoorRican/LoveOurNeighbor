@@ -1,6 +1,4 @@
-{# TODO: display name and profile pic. Enable editing #}
-{# TODO: total donated amount #}
-{# TODO: campaigns involved in #}
+{% import "content_objects.html" as content %}
 
 <section class="wrapper">
   {% if start %}
@@ -89,7 +87,8 @@
         {# TODO: render WYSIWYG editor #}
         <md-icon><i class="material-icons">subject</i></md-icon>
         {{ form.content.label_tag() }}
-        {{ form.content }}
+        {{ content.wysiwyg_editor(form.content.name, campaign.content) }}
+        <br>
         <div class="hint">Describe the project!</div>
       </md-input-container>
       <md-input-contaiter>

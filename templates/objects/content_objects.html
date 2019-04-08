@@ -448,3 +448,10 @@
     </md-chips>
   {% endif %}
 {% endmacro %}
+
+
+{% macro wysiwyg_editor(name, content='') %}
+  {# SECURITY NOTE: it seems to be that it is possible to bypass sanitation. However AngularJS seems to inhibit the browser from loading embedded content. #}
+  <input name="{{ name }}" id="styledContent" type="hidden" value="{{ content }}">
+  <trix-editor style="min-height: 20em"input="styledContent"></trix-editor>
+{% endmacro %}

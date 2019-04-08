@@ -1,3 +1,5 @@
+{% import "content_objects.html" as content %}
+
 {# TODO: display name and profile pic. Enable editing #}
 {# TODO: total donated amount #}
 {# TODO: campaigns involved in #}
@@ -96,7 +98,8 @@
         {# TODO: render WYSIWYG editor #}
         <md-icon><i class="material-icons">subject</i></md-icon>
         {{ form.description.label_tag() }}
-        {{ form.description }}
+        {{ content.wysiwyg_editor(form.description.name, ministry.description) }}
+        <br>
         <div class="hint">Describe yourself</div>
       </md-input-container>
       <md-input-contaiter>

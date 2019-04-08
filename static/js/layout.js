@@ -1,6 +1,7 @@
 // Declare single angular module
 
-var nav_layout = angular.module('oneDollarApp', ['ngMaterial', 'ngRoute', 'ngParallax']);
+var nav_layout = angular.module('oneDollarApp',
+  ['ngMaterial', 'ngRoute', 'ngParallax']);
 
 // Layout controller and config //
 
