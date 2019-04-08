@@ -97,7 +97,7 @@ def serialize_newspost(post):
         parent['id'] = post.campaign.id
 
     return {'id': post.id,
-            'title': post.name,
+            'title': post.title,
             'pub_date': post.pub_date.strftime('%Y-%m-%dT%H:%M:%S'),
             'content': post.content,
             'parent': parent,
@@ -722,11 +722,17 @@ def search_json(request, query):
 
     posts, _posts = [], []
     for i in NewsPost.objects.filter(title__contains=query):
-        for np in i:
-            _posts.append(np)
+        try:
+            for np in i:
+                _posts.append(np)
+        except TypeError:
+            _posts.append(i)
     for i in NewsPost.objects.filter(content__contains=query):
-        for np in i:
-            _posts.append(np)
+        try:
+            for np in i:
+                _posts.append(np)
+        except TypeError:
+            _posts.append(i)
     for i in _posts:
         _post = serialize_newspost(i)
         _post['type'] = 'post'

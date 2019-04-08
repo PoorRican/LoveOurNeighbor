@@ -34,7 +34,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
     $scope.update_object();
     update_interval_id = $interval($scope.update_object, 15000);
   };
-  $scope.update_object = function() {
+  $scope.update_object = function(f=null) {
     try {
       var url = document.getElementById("current_object_json").value;
     }
@@ -54,7 +54,12 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
       if (data.end_date) {
         data.end_date = new Date(data.end_date);
       };
+
       $scope.object = data;
+
+      if (f) {
+        f();
+      };
     }, function(response) {
       $log.warn('Could not fetch tag list. (Wrong URL?)')});
   };
@@ -429,12 +434,23 @@ nav_layout.controller('ministryActionCtrl', ['$scope', '$http', '$routeParams', 
       location.reload();
     }
     if ($routeParams.ministry_id == 'search') {
-      $scope.update_object();
       $scope.filter_types = {
-          'ministry': true,
-          'campaign': true,
-          'post': true
+          'ministry': false,
+          'campaign': false,
+          'post': false,
       };
+      function populate_filter_selection() {
+        if ($scope.object.ministries.length) {
+          $scope.filter_types['ministry'] = true;
+        };
+        if ($scope.object.campaigns.length) {
+          $scope.filter_types['campaign'] = true;
+        };
+        if ($scope.object.posts.length) {
+          $scope.filter_types['post'] = true;
+        };
+      };
+      $scope.update_object(populate_filter_selection);
     }
 
     ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);

@@ -9,9 +9,24 @@
     <div flex="20">
       <div>
         <h4>Types:</h4>
-        <md-checkbox ng-model="filter_types.ministry">Ministries</md-checkbox>
-        <md-checkbox ng-model="filter_types.campaign">Campaigns</md-checkbox>
-        <md-checkbox ng-model="filter_types.post">News Posts</md-checkbox>
+        <md-checkbox ng-model="filter_types.ministry" ng-disabled="!(object.ministries.length)">
+          {% raw %}
+            Ministries
+            ({{ object.ministries.length }})&nbsp;
+          {% endraw %}
+        </md-checkbox>
+        <md-checkbox ng-model="filter_types.campaign" ng-disabled="!(object.campaigns.length)">
+          {% raw %}
+            Campaigns
+            ({{ object.campaigns.length }})&nbsp;
+          {% endraw %}
+        </md-checkbox>
+        <md-checkbox ng-model="filter_types.post" ng-disabled="!(object.posts.length)">
+          {% raw %}
+            News Posts
+            ({{ object.posts.length }})&nbsp;
+          {% endraw %}
+        </md-checkbox>
       </div>
     </div>
     <div flex="80" layout="column">

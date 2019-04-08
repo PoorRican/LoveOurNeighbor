@@ -18,6 +18,7 @@ Urgent TODO:
     - Implement file uploading as 'new upload' and then have `img_path` be an option of selected uploaded files
     - Social media links for ministries
     - Map displaying ministry location
+    - Search function is fidgety when navigating (sometimes does not fetch json)
 
 Overall TODOs:
     - implement TimelineJS
