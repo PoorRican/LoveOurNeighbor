@@ -58,6 +58,11 @@
               </md-menu-item>
               {% if len(request.user.administers.all()) %}
                 <md-menu-divider></md-menu-divider>
+                <md-menu-item>
+                  <md-button disabled>
+                    Ministries You Represent:
+                  </md-button>
+                </md-menu-item>
                 {% for ministry in request.user.administers.all() %}
                   <md-menu-item>
                     <md-button ng-href="#{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}">
