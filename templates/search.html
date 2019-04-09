@@ -1,9 +1,8 @@
 <section class="wrapper">
-  <input type="hidden" id="current_object_json" value="{{ url_for("ministry:search_json", kwargs={'query': query}) }}">
   <h1>Found {% raw %}{{ object.count }}{% endraw %} Results for "{{ query }}"</h1>
   <div layout="row">
     <div flex="20">
-      <div>
+      <section>
         <h4>Types:</h4>
         <md-checkbox ng-model="filter_types.ministry" ng-disabled="!(object.ministries.length)">
           {% raw %}
@@ -23,7 +22,7 @@
             ({{ object.posts.length }})&nbsp;
           {% endraw %}
         </md-checkbox>
-      </div>
+      </section>
     </div>
     <div flex="80" layout="column">
       <md-list>
@@ -33,7 +32,7 @@
               <a href="#{{ item.url }}">
                 <h3>{{ item.name }}</h3>
               </a>
-              <p ng-if="item.description">{{ item.description }}</p>
+              <p ng-if="item.description">{{ item.description | stripHTML }}</p>
               <p ng-hide="item.description">Theres on description yet</p>
             {% endraw %}
           </div><!-- /.md-list-item-text -->
@@ -44,7 +43,7 @@
               <a href="#{{ item.url }}">
                 <h3>{{ item.title }}</h3>
               </a>
-              <p ng-if="item.content">{{ item.content }}</p>
+              <p ng-if="item.content">{{ item.content |stripHTML }}</p>
               <p ng-hide="item.content">Theres on description yet</p>
             {% endraw %}
           </div><!-- /.md-list-item-text -->
@@ -55,7 +54,7 @@
               <a href="#{{ item.url }}">
                 <h3>{{ item.title }}</h3>
               </a>
-              <p ng-if="item.content">{{ item.content }}</p>
+              <p ng-if="item.content">{{ item.content | stripHTML}}</p>
               <p ng-hide="item.content">Theres on description yet</p>
             {% endraw %}
           </div><!-- /.md-list-item-text -->

@@ -49,4 +49,5 @@ urlpatterns = [
     path('ministry/', include('ministry.urls')),
     path('donation/', include('donation.urls')),
     path('people/', include('people.urls')),
+    path('search/', include('search.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

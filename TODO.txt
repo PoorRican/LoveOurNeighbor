@@ -9,7 +9,6 @@ Urgent TODO:
     - Enable commenting 'as ministry' editable from comment form.
     - Get rid of plain html links:
         - incorrect login or invalid sign up
-    - WYSIWYG Editor for Text Input (import this from oligoptica)
     - Convert News post to Card (from Angular Material)
     - Gallery for ministries/campaigns of aggregated media
     - Ability to add multiple media items to NewsPost

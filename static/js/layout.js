@@ -35,14 +35,16 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
     $scope.update_object();
     update_interval_id = $interval($scope.update_object, 15000);
   };
-  $scope.update_object = function(f=null) {
-    try {
-      var url = document.getElementById("current_object_json").value;
-    }
-    catch(e) {
-      $log.warn("no value 'current_object_json' on page...");
-      return null;
-    }
+  $scope.update_object = function(url=null, f=null) {
+    if (url == null) {
+      try {
+        url = document.getElementById("current_object_json").value;
+      }
+      catch(e) {
+        $log.warn("no value 'current_object_json' on page...");
+        return null;
+      }
+    };
     $http.get(url)
     .then(function(response) {
       var data = response.data;
@@ -183,7 +185,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
   };
 
   $scope.get_search = function() {
-    var url = "/ministry/search/" + $scope.query;
+    var url = "/search/" + $scope.query;
     $location.url(url);
   };
 
@@ -303,8 +305,21 @@ nav_layout.config(['$locationProvider', '$routeProvider', function($locationProv
           return '/people/' + params.people_action;
         },
         controller  : 'peopleCtrl'
+    })
+    .when('/search/:query/', {
+        templateUrl : function (params) {
+          return '/search/' + params.query;
+       },
+        controller  : 'searchCtrl'
     });
+
 }]);
+
+nav_layout.filter('stripHTML', function() {
+  return function(text) {
+    return  text ? String(text).replace(/<[^>]+>/gm, '  ') : '  ';
+  };
+});
 
 
 nav_layout.controller('homeController', ['$scope', '$http', '$location',
@@ -434,25 +449,6 @@ nav_layout.controller('ministryActionCtrl', ['$scope', '$http', '$routeParams', 
       $location.url('/ministry/' + $routeParams.ministry_id);
       location.reload();
     }
-    if ($routeParams.ministry_id == 'search') {
-      $scope.filter_types = {
-          'ministry': false,
-          'campaign': false,
-          'post': false,
-      };
-      function populate_filter_selection() {
-        if ($scope.object.ministries.length) {
-          $scope.filter_types['ministry'] = true;
-        };
-        if ($scope.object.campaigns.length) {
-          $scope.filter_types['campaign'] = true;
-        };
-        if ($scope.object.posts.length) {
-          $scope.filter_types['post'] = true;
-        };
-      };
-      $scope.update_object(populate_filter_selection);
-    }
 
     ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);
     console.log('ministry action: ' + $routeParams.ministry_action + ' of ' + $routeParams.ministry_id);
@@ -485,6 +481,35 @@ nav_layout.controller('peopleCtrl', ['$scope', '$http', '$route', '$routeParams'
   }
 ]);
 
+nav_layout.controller('searchCtrl', ['$scope', '$http', '$route', '$routeParams', '$location',
+  function($scope, $http, $route, $routeParams, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = null;
+
+    $scope.filter_types = {
+        'ministry': false,
+        'campaign': false,
+        'post': false,
+    };
+    function populate_filter_selection() {
+      if ($scope.object.ministries.length) {
+        $scope.filter_types['ministry'] = true;
+      };
+      if ($scope.object.campaigns.length) {
+        $scope.filter_types['campaign'] = true;
+      };
+      if ($scope.object.posts.length) {
+        $scope.filter_types['post'] = true;
+      };
+    };
+    var url = '/search/' + $routeParams.query + '/json';
+    $scope.update_object(url=url, f=populate_filter_selection);
+
+    ga('send', 'pageview', '/search/' + $routeParams.query);
+  }
+]);
+
 
 nav_layout.config(function($mdThemingProvider) {
     $mdThemingProvider.theme('default')
@@ -493,4 +518,4 @@ nav_layout.config(function($mdThemingProvider) {
         .dark()
 });
 
-// vim:foldmethod=syntax:
+// vim:foldmethod=syntax shiftwidth=2 tabstop=2:
