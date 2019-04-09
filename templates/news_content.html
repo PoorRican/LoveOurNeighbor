@@ -1,4 +1,4 @@
-{% import "content_objects.html" as content %}
+{% import "parts.html" as parts %}
 
 <section class="wrapper">
   {% if start %}
@@ -28,9 +28,9 @@
         {{ form.content.label_tag() }}
 
         {% if start %}
-          {{ content.wysiwyg_editor(form.content.name) }}
+          {{ parts.wysiwyg_editor(form.content.name) }}
         {% else %}
-          {{ content.wysiwyg_editor(form.content.name, post.content) }}
+          {{ parts.wysiwyg_editor(form.content.name, post.content) }}
         {% endif %}
 
       </md-input-container>
@@ -53,3 +53,6 @@
 
 </section>
 
+
+<!-- Google Analytics Virtual Pageview -->
+<script>ga('send', 'pageview', 'news post edit')</script>

@@ -86,7 +86,9 @@ TEMPLATES = [
     },
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': ['templates/', 'templates/objects/'],
+        'DIRS': ['templates/',
+                 'templates/objects/',
+                 ],
         'APP_DIRS': True,
         'OPTIONS': {
             'environment': 'frontend.jinja2.environment'

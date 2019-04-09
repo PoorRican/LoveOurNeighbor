@@ -1,6 +1,9 @@
-{% import "layout_objects.html" as layout %}
-{% import "content_objects.html" as content %}
-{% import "static_objects.html" as static %}
+{# vim: foldmethod=marker ft=jinja
+
+    templates/layout.html
+
+#}
+{% import "layout_parts.html" as layout %}
 
 
 
@@ -14,8 +17,15 @@
 
 
   <head>
-    <title>{% block title %}Love Our Neighbors{% endblock %}</title>
-    {{ static.css() }}
+    <title>Love Our Neighbors</title>
+
+    {# {{{ CSS Imports #}
+    <link rel="stylesheet" href="{{ static('css/LYN.css') }}" type="text/css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.1.0/trix.css">
+    {# }}} #}
 
   </head>
 
@@ -37,8 +47,50 @@
 
   </div><!-- /ng-controller -->
 
-  {{ static.analytics() }}
-  {{ static.js() }}
+  {# {{{ Google Analytics #}
+  <!-- Globalr site tag (gtag.js) - Google Analytics -->
+  {% set GA_TRACKING_ID = "UA-135736820-1" %}
+
+  <script async src=https://www.googletagmanager.com/gtag/js?id={{ GA_TRACKING_ID }}"></script>
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', '{{ GA_TRACKING_ID }}', 'auto');
+  </script>
+  {# }}} #}
+
+  {# {{{ AngularJS #}
+  <!-- Angular Material requires Angular.js Libraries -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-route.js"></script>
+
+  <!-- Angular Material Library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
+  {# }}} #}
+
+  {# {{{ Other JS #}
+  <!-- WYSIWYG Editor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.1.0/trix.js"></script>
+
+  {# Local Scripts #}
+  {%- set scripts =
+    [
+      'jquery-2.1.1.min.js',
+      'ngParallax.min.js',
+      'layout.js',
+    ]
+  -%}
+
+  {%- for s in scripts %}
+      <script type="text/javascript" src="{{ static("js/%s" % s) }}"></script>
+  {% endfor -%}
+  {# }}} #}
 
   </body>
 </html>

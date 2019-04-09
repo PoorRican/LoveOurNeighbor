@@ -1,7 +1,3 @@
-{% import "layout_objects.html" as layout %}
-{% import "content_objects.html" as content %}
-
-
 <section class="wrapper">
   <input type="hidden" id="current_object_json" value="{{ url_for("ministry:search_json", kwargs={'query': query}) }}">
   <h1>Found {% raw %}{{ object.count }}{% endraw %} Results for "{{ query }}"</h1>
@@ -68,3 +64,7 @@
     </div>
   </div>
 </section>
+
+
+<!-- Google Analytics Virtual Pageview -->
+<script>ga('send', 'pageview', 'search')</script>

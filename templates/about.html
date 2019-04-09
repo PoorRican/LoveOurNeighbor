@@ -1,15 +1,21 @@
-{% import "layout_objects.html" as layout %}
-{% import "content_objects.html" as content %}
+{% import "parts.html" as parts %}
 
     <div>
     {% for i in about %}
-      {{ content.parallax_img(i.img_path, height=250) }}
+      <div class="parallax-container" style='height: 250;'>
+        <div ng-parallax class="parallax-img" pattern="'.{% if i.img_path %}{{ static(i.img_path) }}{% endif %}'" speed="1">
+        </div>
+      </div>
 
-      {{ content.section_start(i.title) }}
+      {{ parts.section_start(i.title) }}
 
       <h1>{{ i.title }}</h1>
       <p>{{ i.content|safe }}</p>
 
-      {{ content.section_close() }}
+      {{ parts.section_close() }}
 
     {% endfor %}
+
+
+<!-- Google Analytics Virtual Pageview -->
+<script>ga('send', 'pageview', 'about')</script>

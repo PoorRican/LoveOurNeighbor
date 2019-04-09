@@ -1,85 +1,12 @@
-{# templates/objects/layout_objects.html #}
+{# vim: ft=jinja foldmethod=marker:
+
+    templates/objects/content/render_objects.html
+
+#}
+{% import "parts.html" as parts %}
 
 
-{% macro section_start(id) -%}
-
-    {# TODO: experiment w/ z-depth #}
-    <div id="{{ id }}" class="section">
-      <div class="wrapper">
-
-{%- endmacro %}
-
-
-{% macro section_close() -%}
-
-      </div>
-    </div>
-
-{%- endmacro %}
-
-
-{% macro contact_us(txt = "Contact Us") %}
-    <a href="#/about#contact_us">{{ txt }}</a>
-{% endmacro %}
-
-
-{% macro comments_section(obj, obj_type, request=None, form=None, csrf_token=None) %}
-  <div class="comments_section wrapper">
-    <h3>Comments:</h3>
-    {% if len(obj.comments.all()) %}
-      <md-list flex>
-        {% for i in obj.comments.all() %}
-          {# TODO: implement this in angular to reduce server overhead #}
-          <md-list-item class="md-2-line comment">
-            <div class="md-list-item-text" layout="column">
-              <p>{{ i.content }}</p>
-              <div layout="row">
-                <img class="profile-img" src="{{ i.user.profile.avatar_url }}">
-                <div layout="column">
-                  <bold>By: {{ i.user.name }}</bold>
-                  <small>{{ i.pub_date }}</small>
-                </div>
-              </div>
-            </div>
-          </md-list-item>
-        {% endfor %}
-      </md-list>
-    {% else %}
-      <p class="md-caption">Be the first to comment</p>
-    {% endif %}
-    <md-divider></md-divider>
-    <br>
-    <div class="new_comment">
-      {# TODO: use js to dynamically hide this #}
-      {% if request and request.user.is_authenticated %}
-        <form enctype="multipart/form-data" method="POST" style="display: none;"
-            action="{{ url_for("ministry:create_comment", kwargs={'obj_type': obj_type, 'obj_id': obj.id}) }}">
-          <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-          {{ form.as_p() }}
-          <md-button class="md-raised md-primary" type="submit">
-            Comment&nbsp;
-            <md-icon>
-              <i class="material-icons">send</i>
-            </md-icon>
-          </md-button>
-          <md-button class="md-icon-button md-warn" ng-click="hide_new_comment($event)">
-            <i class="material-icons">cancel</i>
-          </md-button>
-        </form>
-        <md-button class="md-icon-button md-raised md-primary" ng-click="unhide_new_comment($event)">
-          <i class="material-icons">add_comment</i>
-        </md-button>
-      {% else %}
-        <a href="#accounts/login" style="text-decoration: none;">
-          <span>Login to Comment</span>
-          <md-button class="md-raised md-accent">Login</md-button>
-        </a>
-      {% endif %}
-    </div><!-- /.new_comment -->
-  </div><!-- /.comment_form -->
-{% endmacro %}
-
-
+{# {{{ Campaign Render Macro #}
 {% macro show_campaign(cam, height=400, detail=True, request=None, AUTH=None, form=None, csrf_token=None) %}
      <div class="">
       <input type="hidden" id="current_object_json" value="{{ url_for("ministry:campaign_json", kwargs={'campaign_id': cam.id}) }}">
@@ -87,12 +14,14 @@
         {% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
       {% endif %}
 
+      {# {{{ Top Section Overlay #}
       <div class="parallax-container" style='height: {{ height }};'>
         <div ng-parallax class="parallax-img" pattern="'.{% if cam.banner_img %}{{ static(cam.banner_img.url) }}{% endif %}'" speed="1">
           <div class="overlay wrapper">
             {# TODO: put some content in here #}
             <h1>
               {{ cam.title.upper() }}
+              {# {{{ Action Menu #}
               {% if AUTH %}
                 <md-menu>
                   <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
@@ -120,6 +49,7 @@
                   </md-menu-content>
                 </md-menu>
               {% endif %}
+              {# }}} #}
             </h1>
 
             <span class="md-subhead">By:
@@ -166,17 +96,18 @@
           </div>
         </div>
       </div>
+      {# }}} #}
 
-      {{ section_start("") }}
+      {{ parts.section_start("") }}
         {# TODO: show countdown as 'days left' #}
 
-        <div hide-sm hide-xs>{{ tag_chips(cam) }}<br></div>
+        <div hide-sm hide-xs>{{ parts.tag_chips(cam) }}<br></div>
 
         <div layout-gt-sm="row" layout="column">
 
-          {{ like_button(cam, request) }}
+          {{ parts.like_button(cam, request) }}
 
-          <div hide-gt-sm>{{ tag_chips(cam) }}</div>
+          <div hide-gt-sm>{{ parts.tag_chips(cam) }}</div>
 
           <p class="section-info">
             <span>Began:</span>&nbsp;
@@ -203,15 +134,17 @@
           </md-button>
         {% endif %}
 
-        {{ comments_section(cam, 'campaign', request, form=form, csrf_token=csrf_token) }}
+        {{ parts.comments_section(cam, 'campaign', request, form=form, csrf_token=csrf_token) }}
 
-      {{ section_close() }}
+      {{ parts.section_close() }}
 
     </div>
 
 {% endmacro %}
+{# }}} #}
 
 
+{# {{{ MinistryProfile Macro #}
 {% macro show_ministry(ministry, height=250, detail=True, request=None, AUTH=None, form=None, csrf_token=None) %}
      <div class="">
       <input type="hidden" id="current_object_json" value="{{ url_for("ministry:ministry_json", kwargs={'ministry_id': ministry.id}) }}">
@@ -219,12 +152,14 @@
         {% set AUTH = request.user == ministry.admin or request.user in ministry.reps.all() %}
       {% endif %}
 
+      {# {{{ Top Section Overlay #}
       <div class="parallax-container" style='height: {{ height }};'>
         <div ng-parallax class="parallax-img" pattern="'.{% if ministry.banner_img %}{{ static(ministry.banner_img.url) }}{% endif %}'" speed="3">
           <div class="overlay wrapper">
             {# TODO: put some content in here #}
             <h1>
               {{ ministry.name.upper() }}
+              {# {{{ Action Menu #}
               {% if request.user.is_authenticated %}
                 <md-menu>
                   <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
@@ -250,11 +185,12 @@
                   </md-menu-centent>
                 </md-menu>
               {% endif %}
+              {# }}} #}
             </h1>
 
             <div layout="row" layout-sm="column">
 
-              {{ like_button(ministry, request) }}
+              {{ parts.like_button(ministry, request) }}
 
               <div hide-xs hide-sm flex="30" style="margin: auto 0">
                 <p class="section-info">
@@ -274,8 +210,9 @@
           </div>
         </div>
       </div>
+      {# }}} #}
 
-      {{ section_start("") }}
+      {{ parts.section_start("") }}
 
         {% if ministry.description %}
           <h3>Description:</h3>
@@ -287,7 +224,7 @@
           {% endif %}
         {% endif %}
 
-        {{ tag_chips(ministry) }}
+        {{ parts.tag_chips(ministry) }}
 
         <div layout-sm="row">
           <div flex>
@@ -327,29 +264,32 @@
           </div><!-- /flex -->
         </div><!-- /row -->
 
-        {{ comments_section(ministry, 'ministry', request, form=form, csrf_token=csrf_token) }}
+        {{ parts.comments_section(ministry, 'ministry', request, form=form, csrf_token=csrf_token) }}
 
-      {{ section_close() }}
+      {{ parts.section_close() }}
 
       {# TODO: show news and campaigns #}
 
     </div>
 
 {% endmacro %}
+{# }}} #}
 
 
+{# {{{ NewsPost Render Macro #}
 {% macro news_post(post, request=None, AUTH=None, form=None, csrf_token=None) %}
-      {# TODO: group by month and randomly (or scroll) through images per section #}
+    {# TODO: group by month and randomly (or scroll) through images per section #}
     <div class="section">
       <article class="wrapper">
+
         <p id="section-info">
           <span>Published:</span>&nbsp;{{ post.pub_date.strftime("%h %d, %Y") }}
-
         </p>
 
         <h1>
           {{ post.title.upper() }}
 
+          {# {{{ Action Menu #}
           <md-menu>
             <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
               <md-icon>
@@ -387,6 +327,7 @@
               </md-menu-item>
             </md-menu-content>
           </md-menu>
+          {# }}} #}
 
         </h1>
 
@@ -401,57 +342,10 @@
 
         <p class="">{{ post.content|safe }}</p>
 
-        {{ comments_section(post, 'news_post', request, form=form, csrf_token=csrf_token) }}
+        {{ parts.comments_section(post, 'news_post', request, form=form, csrf_token=csrf_token) }}
 
       </article>
     </div>
 
 {% endmacro %}
-
-
-{% macro like_button(_obj, request=None) %}
-    {# TODO: implement "unlike" in django view #}
-    {% if request and not request.user.is_authenticated %}
-    <a href="#/accounts/login" style="text-decoration: none;">
-    {% endif %}
-    <div class="like-button" flex
-      {# TODO: do better object detection here #}
-      {% if hasattr(_obj, 'admin') %}
-        ng-click="like('{{ url_for('ministry:like_ministry', kwargs={"ministry_id": _obj.id}) }}')"
-      {% else %}
-        ng-click="like('{{ url_for('ministry:like_campaign', kwargs={"campaign_id": _obj.id}) }}')"
-      {% endif %}
-      ng-style="like_style()"
-      style="">
-        <div style="text-height: 36px !important;">
-          <span ng-if="object.liked"><i class="material-icons" style="font-size: 1.7em;">favorite</i></span>
-          <span ng-if="!object.liked"><i class="material-icons" style="font-size: 1.7em;">favorite_border</i></span>
-          <br>
-        </div>
-        {# TODO: implement a filter to sum up large numbers #}
-        <small>{% raw %}{{ object.likes }}{% endraw %} like this</small>
-    </div>
-    {% if request and not request.user.is_authenticated %}
-    </a>
-    {% endif %}
-{% endmacro %}
-
-
-{% macro tag_chips(obj) %}
-  {% if len(obj.tags.all()) %}
-    <h3 style="margin: 5px 0;">Tags:</h3>
-    <md-chips>
-      {% for i in obj.tags.all() %}
-        {# TODO: link to search query showing related objects #}
-        <md-chip>{{ i.name }}</md-chip>
-      {% endfor %}
-    </md-chips>
-  {% endif %}
-{% endmacro %}
-
-
-{% macro wysiwyg_editor(name, content='') %}
-  {# SECURITY NOTE: it seems to be that it is possible to bypass sanitation. However AngularJS seems to inhibit the browser from loading embedded content. #}
-  <input name="{{ name }}" id="styledContent" type="hidden" value="{{ content }}">
-  <trix-editor style="min-height: 20em"input="styledContent"></trix-editor>
-{% endmacro %}
+{# }}} #}

@@ -1,5 +1,4 @@
-{% import "layout_objects.html" as layout %}
-{% import "content_objects.html" as content %}
+{% import "content.html" as content %}
 
 {% if current_campaign %}
   {{ content.show_campaign(current_campaign, request=request, form=form, csrf_token=csrf_token) }}
@@ -12,3 +11,7 @@
 
     {% endfor %}
 {% endif %}
+
+
+<!-- Google Analytics Virtual Pageview -->
+<script>ga('send', 'pageview', 'home')</script>

@@ -1,4 +1,4 @@
-{% import "content_objects.html" as content %}
+{% import "parts.html" as parts %}
 
 <section class="wrapper">
   {% if start %}
@@ -87,7 +87,7 @@
         {# TODO: render WYSIWYG editor #}
         <md-icon><i class="material-icons">subject</i></md-icon>
         {{ form.content.label_tag() }}
-        {{ content.wysiwyg_editor(form.content.name, campaign.content) }}
+        {{ parts.wysiwyg_editor(form.content.name, campaign.content) }}
         <br>
         <div class="hint">Describe the project!</div>
       </md-input-container>
@@ -151,3 +151,6 @@
   {% endif %}
 </section>
 
+
+<!-- Google Analytics Virtual Pageview -->
+<script>ga('send', 'pageview', 'campaign edit')</script>

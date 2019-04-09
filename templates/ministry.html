@@ -1,5 +1,4 @@
-{% import "layout_objects.html" as layout %}
-{% import "content_objects.html" as content %}
+{% import "content.html" as content %}
 
 {% set AUTH = (request.user == ministry.admin or request.user in ministry.reps.all()) %}
 

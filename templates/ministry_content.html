@@ -1,4 +1,4 @@
-{% import "content_objects.html" as content %}
+{% import "parts.html" as parts %}
 
 {# TODO: display name and profile pic. Enable editing #}
 {# TODO: total donated amount #}
@@ -98,7 +98,7 @@
         {# TODO: render WYSIWYG editor #}
         <md-icon><i class="material-icons">subject</i></md-icon>
         {{ form.description.label_tag() }}
-        {{ content.wysiwyg_editor(form.description.name, ministry.description) }}
+        {{ parts.wysiwyg_editor(form.description.name, ministry.description) }}
         <br>
         <div class="hint">Describe yourself</div>
       </md-input-container>
@@ -231,3 +231,6 @@
 
 </section>
 
+
+<!-- Google Analytics Virtual Pageview -->
+<script>ga('send', 'pageview', 'ministry edit')</script>

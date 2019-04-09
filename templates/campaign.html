@@ -1,5 +1,4 @@
-{% import "layout_objects.html" as layout %}
-{% import "content_objects.html" as content %}
+{% import "content.html" as content %}
 
 {% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
 
@@ -10,12 +9,9 @@
     <h1>
       News
       {% if AUTH %}
-        <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': cam.id}) }}"
-         style="text-decoration: none;">
-          <md-button class="md-raised md-primary">
-            Create News
-          </md-button>
-        </a>
+        <md-button class="md-raised md-primary" href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': cam.id}) }}">
+          Create News
+        </md-button>
       {% endif %}
     </h1>
   </div>
@@ -25,7 +21,9 @@
     {{ content.news_post(i, AUTH=AUTH, request=request, form=form, csrf_token=csrf_token) }}
 
   {% endfor %}
+
 {% endif %}
+
 
 <!-- Google Analytics Virtual Pageview -->
 <script>ga('send', 'pageview', 'campaign')</script>
