@@ -78,10 +78,11 @@ nav a.md-unselected {
 }
 
 .search-bar {
-  margin: auto 15px auto auto;
+  margin: auto 0 auto auto;
 }
 .search-bar form {
   margin: auto 0;
+  overflow: hidden;
 }
 .search-bar form input {
   background-color: transparent;
@@ -90,11 +91,12 @@ nav a.md-unselected {
   border-bottom: solid 1px #EEE;
   color: #EEE;
 }
+
 .search-bar form input:focus {
   background-color: rgba(255,255,255,0.2);
-  border: solid 1px #EEE;
+  outline: none;
 }
-.search-bar form ::placeholder { /* Most modern browsers support this now. */
+.search-bar form ::placeholder {
   color: #EEE !important;
 }
 

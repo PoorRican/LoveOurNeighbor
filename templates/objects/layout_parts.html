@@ -1,4 +1,6 @@
-{# templates/objects/layout_objects.html #}
+{# vim: foldmethod=marker tabstop=2 shiftwidth=2:
+    templates/objects/layout_objects.html
+#}
 
 {% set links =
   [
@@ -10,14 +12,14 @@
 %}
 
 
+{# {{{ User Widget Macro #}
 {% macro user_widget(request, sidenav=False) %}
 
     {% if request.user.is_authenticated %}
       <div layout="row">
-        <md-list>
           {% if request.user.logged_in_as %}
 
-            <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': request.user.logged_in_as.id}) }}">
+            <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': request.user.logged_in_as.id}) }}"{% if sidenav %} ng-click="close()"{% endif %}>
               <md-list-item class="md-1-line">
                 <img class="md-avatar" src="{{ static(request.user.logged_in_as.profile_img.url) }}">
                 <span>{{- request.user.logged_in_as.name -}}</span>
@@ -26,7 +28,7 @@
 
           {% else %}
 
-            <a href="#{{ url_for('user_profile') }}">
+            <a href="#{{ url_for('user_profile') }}"{% if sidenav %} ng-click="close()"{% endif %}>
               <md-list-item class="md-1-line">
                 <img class="md-avatar" src="{{ request.user.profile.avatar_url }}">
                 <span>{{- request.user.profile.name -}}</span>
@@ -34,8 +36,8 @@
             </a>
 
           {% endif %}
-        </md-list>
 
+        {# {{{ Profile Menu #}
         {% if not sidenav %}
           <md-menu md-position-mode="target-right bottom" ng-cloak>
             <md-button ng-click="$mdMenu.open($event)" class="md-icon-button">
@@ -87,6 +89,7 @@
         {% elif sidenav %}
           {# TODO: there needs to be separate rendering of ministryprofile selection for mobile #}
         {% endif %}
+        {# }}} #}
 
 
       </div><!-- /.layout-row -->
@@ -95,7 +98,7 @@
       <div layout="row">
         <md-list>
           <md-list-item class="md-1-line">
-            <md-button ng-href="#/accounts/login/">Login</md-button>
+            <md-button ng-href="#/accounts/login/"{% if sidenav %} ng-click="close()"{% endif %}>Login</md-button>
           </md-list-item>
         </md-list>
       </div>
@@ -103,8 +106,10 @@
     {% endif %}
 
 {% endmacro %}
+{# }}} #}
 
 
+{# {{{ Navbar Macro #}
 {% macro navbar_links(request) %}
 
     <md-toolbar class="md-primary" ng-cloak>
@@ -120,55 +125,76 @@
         {%- endfor -%}
         </md-nav-bar>
 
-        <div layout="row" class="search-bar">
-          <form name="search" method="GET" ng-submit="get_search()">
-            {# TODO: show icon #}
-            <!--label>Search:&nbsp;</label-->
-            <input ng-model="query" placeholder="Search">
-          </form>
-        </div>
+        {{ searchbar() }}
 
         <div hide-xs hide-sm>
           {{ user_widget(request) }}
         </div>
 
         {# Hidden Side Nav Button #}
-        <md-button style="font-size: 2em; margin: auto 15px auto auto;" ng-click="toggleRight()" hide-gt-sm>
-          <i class="fa fa-bars" aria-hidden="true"></i>
+        <md-button class="md-icon-button" style="font-size: 1em; margin: auto 15px auto auto;" ng-click="toggleRight()" hide-gt-sm>
+          <md-icon>
+            <i class="material-icons" aria-hidden="true">menu</i>
+          </md-icon>
         </md-button>
       </div>
     </md-toolbar>
 
 {% endmacro %}
+{# }}} #}
 
 
+{# {{{ Sidenav Macro #}
 {% macro sidenav(request) %}
 
-    <md-sidenav class="md-sidenav-right md-whiteframe-4dp" id="sidenav"
-                md-component-id="right" layout-padding layout="column" ng-cloak>
-      <div class="top">
-        <md-button ng-click="close()" class="pull-right md-icon-button">
-          <i class="fa fa-times" aria-hidden="true"></i>
-        </md-button>
+  <md-sidenav class="md-sidenav-right md-whiteframe-4dp" id="sidenav"
+              md-component-id="right" layout="column" ng-cloak>
 
-        <div class="profile-area">
-          {{ user_widget(request, sidenav=True) }}
-        </div>
+    <md-toolbar layout="row">
+      <div class="md-toolbar-tools">
 
+      <div class="profile-area" ng-hide="searching" flex=70>
+        {{ user_widget(request, sidenav=True) }}
       </div>
 
-      <md-list flex>
-      {%- for _link in links -%}
-        <a href="{{ _link[0] }}" name="{{ _link[1] }}">
-          <md-list-item class="md-line-1" ng-click="close()">{{ _link[1] }}</md-list-item>
-        </a>
-      {%- endfor -%}
-     </md-list>
-    </md-sidenav>
+      <md-button ng-hide="searching" ng-click="searching = !searching" class="md-icon-button">
+        <md-icon><i class="material-icons">search</i></md-icon>
+      </md-button>
+      <md-button ng-hide="!searching" ng-click="get_search()" class="md-icon-button">
+        <md-icon><i class="material-icons" style="color: white;">search</i></md-icon>
+      </md-button>
+      <div ng-if="searching" flex=70>
+        {{ searchbar(sidenav=True) }}
+      </div>
+
+      <md-button ng-hide="!searching" ng-click="searching = !searching" class="md-icon-button">
+        <md-icon><i class="material-icons">cancel</i></md-icon>
+      </md-button>
+      <md-button ng-if="!searching" ng-click="close()" class="md-icon-button">
+        <md-icon>
+          <i class="material-icons" aria-hidden="true">close</i>
+        </md-icon>
+      </md-button>
+      </div>
+    </md-toolbar>
+
+
+
+    <md-list flex>
+    {%- for _link in links -%}
+      <a href="{{ _link[0] }}" name="{{ _link[1] }}">
+        <md-list-item class="md-line-1" ng-click="close()">{{ _link[1] }}</md-list-item>
+      </a>
+    {%- endfor -%}
+    </md-list>
+
+  </md-sidenav>
 
 {% endmacro %}
+{# }}} #}
 
 
+{# {{{ Footer Macro #}
 {% macro footer() %}
 
       <footer class="md-primary" ng-cloak>
@@ -202,3 +228,20 @@
       </footer>
 
 {% endmacro %}
+{# }}} #}
+
+
+{# {{{ Searchbar Macro #}
+{% macro searchbar(sidenav=False) %}
+  <div layout="row" class="search-bar" {% if not sidenav %}hide-xs hide-sm{% endif %}>
+    <form name="search" method="GET" ng-submit="get_search(query)">
+      {% if not sidenav %}
+      <md-icon>
+        <i class="material-icons" style="color: white">search</i>
+      </md-icon>
+      {% endif %}
+      <input ng-model="query" placeholder="Search">
+    </form>
+  </div>
+{% endmacro %}
+{# }}} #}

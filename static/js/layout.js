@@ -184,9 +184,15 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
     }
   };
 
-  $scope.get_search = function() {
-    var url = "/search/" + $scope.query;
-    $location.url(url);
+  $scope.get_search = function(q=null) {
+    if (q == null & $scope.query) { var q = $scope.query; };
+    var url = "/search/" + q;
+    if (q!=null) {
+      $location.url(url);
+      $scope.close();
+    } else {
+      $scope.close();
+    }
   };
 
   /** Controls the display of new comment forms on the page.
