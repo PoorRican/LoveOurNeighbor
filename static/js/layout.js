@@ -36,7 +36,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
     update_interval_id = $interval($scope.update_object, 15000);
   };
   $scope.update_object = function(url=null, f=null) {
-    if (url == null) {
+    if (url == null | angular.isNumber(url)) {
       try {
         url = document.getElementById("current_object_json").value;
       }
@@ -60,7 +60,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
 
       $scope.object = data;
 
-      if (f) {
+      if (angular.isFunction(f)) {
         f();
       };
     }, function(response) {
@@ -504,7 +504,7 @@ nav_layout.controller('searchCtrl', ['$scope', '$http', '$route', '$routeParams'
       };
     };
     var url = '/search/' + $routeParams.query + '/json';
-    $scope.update_object(url=url, f=populate_filter_selection);
+    $scope.update_object(url, populate_filter_selection);
 
     ga('send', 'pageview', '/search/' + $routeParams.query);
   }
@@ -515,7 +515,6 @@ nav_layout.config(function($mdThemingProvider) {
     $mdThemingProvider.theme('default')
         .primaryPalette('orange')
         .accentPalette('purple')
-        .dark()
 });
 
 // vim:foldmethod=syntax shiftwidth=2 tabstop=2:

@@ -109,8 +109,6 @@ body {
   text-rendering: optimizeLegibility;
 
   height: auto !important;
-  color: #EEE !important;
-  background-color: #8B0053 !important;
 }
 
 .wrapper {
@@ -139,9 +137,6 @@ a:not(section a) {
 .section, section {
   padding-top: 20px;
   padding-bottom: 40px;
-
-  color: #EEE;
-  background-color: #af005a;
 }
 #News:last-child {
   border-bottom: solid 1px #FF7100;
@@ -320,6 +315,9 @@ md-input-container .hint {
 /**  overflow: hidden;*/
 }
 
+#content {
+  min-height: 80%;
+}
 md-content.rep_requests {
   min-width: 400px;
 }
@@ -338,16 +336,21 @@ md-list.available_contacts {
 
 
 /** Footer Styling **/
-footer.page-footer {
+footer {
+  background-color: #8B0053 !important;
+}
+
+.page-footer {
   padding: 20px;
   position: relative;
   bottom: 0;
 
   font-size: 12px;
   text-align: right;
+  color: #EEE;
 }
 @media screen and (min-width: 850px) {
-  footer {
+  .page-footer {
     width: 80%;
     margin: auto;
   }

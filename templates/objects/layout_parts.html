@@ -110,7 +110,7 @@
     <md-toolbar class="md-primary" ng-cloak>
       <div class="md-toolbar-tools" layout="row" layout-align="left end">
 
-        <a class="title-shadow-orange brand-logo center md-accent" href="#home" layout-padding>Love Your Neighbors</a>
+        <a class="title-shadow-orange brand-logo center md-accent md-hue-2" href="#home" layout-padding>Love Our Neighbor</a>
 
         <md-nav-bar ng-model="currentNavItem" class="" md-selected-nav-item="currentNavItem" hide-xs hide-sm>
         {%- for _link in links -%}
@@ -171,32 +171,34 @@
 
 {% macro footer() %}
 
-      <footer class="page-footer" ng-cloak>
-        <div class="footer-top">
-          <div class="social-media-links">
-            <a class="waves-effect waves-teal btn-flat">
-              <img src="{{ static('img/igram-icon.png') }}">
-            </a>
-            <a class="waves-effect waves-teal btn-flat">
-              <img src="{{ static('img/facebook-icon.png') }}">
-            </a>
-            {# TODO: import YouTube and other SM links #}
+      <footer class="md-primary" ng-cloak>
+        <div class="page-footer">
+          <div class="footer-top">
+            <div class="social-media-links">
+              <a class="waves-effect waves-teal btn-flat">
+                <img src="{{ static('img/igram-icon.png') }}">
+              </a>
+              <a class="waves-effect waves-teal btn-flat">
+                <img src="{{ static('img/facebook-icon.png') }}">
+              </a>
+              {# TODO: import YouTube and other SM links #}
+            </div>
           </div>
+          <div id="sitemap">
+            <ul>
+              {%- for _link in links -%}
+                <li>
+                  <a href="#/{{ _link[0] }}" name="{{ _link[1] }}">
+                    {{ _link[1] }}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+          <div class="footer-copyright">
+              © 2019 Love Your Neighbors
+          </div><!-- ./page-footer -->
         </div>
-        <div id="sitemap">
-          <ul>
-            {%- for _link in links -%}
-              <li>
-                <a href="#/{{ _link[0] }}" name="{{ _link[1] }}">
-                  {{ _link[1] }}
-                </a>
-              </li>
-            {%- endfor -%}
-          </ul>
-        </div>
-        <div class="footer-copyright">
-            © 2019 Love Your Neighbors
-        </div><!-- ./page-footer -->
       </footer>
 
 {% endmacro %}
