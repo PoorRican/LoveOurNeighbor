@@ -67,7 +67,7 @@ class MinistryProfile(models.Model):
 
     # Ministry Content
     description = models.TextField(blank=True, null=True)
-    tags = models.ManyToManyField(Tag, related_name='campaigns',
+    tags = models.ManyToManyField(Tag, related_name='ministries',
                                   blank=True,)
     profile_img = models.ImageField('Profile Image',
                                     default='ministries/blank_profile.jpg',
@@ -106,7 +106,7 @@ class Campaign(models.Model):
     # TODO: change to dynamic image uploading and implement media
     banner_img = models.ImageField('Banner Image', blank=True, null=True,
                                    upload_to=campaign_banner_dir)
-    tags = models.ManyToManyField(Tag, related_name='ministries',
+    tags = models.ManyToManyField(Tag, related_name='campaigns',
                                   blank=True,)
 
     @property

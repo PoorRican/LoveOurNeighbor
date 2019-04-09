@@ -121,7 +121,7 @@
     <md-chips>
       {% for i in obj.tags.all() %}
         {# TODO: link to search query showing related objects #}
-        <md-chip>{{ i.name }}</md-chip>
+        <md-chip ng-click="goto('{{ url_for('search:search_tag', kwargs={'tag_name': i.name}) }}')">{{ i.name }}</md-chip>
       {% endfor %}
     </md-chips>
   {% endif %}

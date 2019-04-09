@@ -41,3 +41,4 @@ Overall TODOs:
 
 Long-term TODOs:
     - Angular is going to be defunct soon. Convert website to angular.io (there is a Material library for angular.io)
+    - Have Tags tab showing new and popular objects per tag

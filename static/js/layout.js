@@ -68,6 +68,11 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
   };
 
 
+  $scope.goto = function (url) {
+    $location.url(url);
+  };
+
+
   /**
    * Supplies a function that will continue to operate until the
    * time is up.
@@ -317,6 +322,12 @@ nav_layout.config(['$locationProvider', '$routeProvider', function($locationProv
           return '/search/' + params.query;
        },
         controller  : 'searchCtrl'
+    })
+    .when('/search/tag/:query/', {
+        templateUrl : function (params) {
+          return '/search/tag/' + params.query;
+       },
+        controller  : 'searchTagCtrl'
     });
 
 }]);
@@ -513,6 +524,35 @@ nav_layout.controller('searchCtrl', ['$scope', '$http', '$route', '$routeParams'
     $scope.update_object(url, populate_filter_selection);
 
     ga('send', 'pageview', '/search/' + $routeParams.query);
+  }
+]);
+
+nav_layout.controller('searchTagCtrl', ['$scope', '$http', '$route', '$routeParams', '$location',
+  function($scope, $http, $route, $routeParams, $location) {
+    // TODO: change title block
+
+    $scope.currentNavItem  = null;
+
+    $scope.filter_types = {
+        'ministry': false,
+        'campaign': false,
+        'post': false,
+    };
+    function populate_filter_selection() {
+      if ($scope.object.ministries.length) {
+        $scope.filter_types['ministry'] = true;
+      };
+      if ($scope.object.campaigns.length) {
+        $scope.filter_types['campaign'] = true;
+      };
+      if ($scope.object.posts.length) {
+        $scope.filter_types['post'] = true;
+      };
+    };
+    var url = '/search/tag/' + $routeParams.query + '/json';
+    $scope.update_object(url, populate_filter_selection);
+
+    ga('send', 'pageview', '/search/tag/' + $routeParams.query);
   }
 ]);
 
