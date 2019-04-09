@@ -22,7 +22,7 @@
             <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': request.user.logged_in_as.id}) }}"{% if sidenav %} ng-click="close()"{% endif %}>
               <md-list-item class="md-1-line">
                 <img class="md-avatar" src="{{ static(request.user.logged_in_as.profile_img.url) }}">
-                <span>{{- request.user.logged_in_as.name -}}</span>
+                <span class="uname">{{- request.user.logged_in_as.name -}}</span>
               </md-list-item>
             </a>
 
