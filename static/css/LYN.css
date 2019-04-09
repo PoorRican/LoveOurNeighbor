@@ -126,7 +126,7 @@ body {
   padding-left: 10%;
   padding-right: 10%;
 }
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 1080px) {
   .wrapper {
     width: 90%;
     padding-left: 5%;
@@ -311,7 +311,7 @@ md-input-container .hint {
   line-height: 14px;
   transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
   /* Set our own color */
-  color: lightgrey;
+  color: dimgrey;
 }
 
 .md-item-text.compact {
@@ -338,7 +338,7 @@ md-input-container .hint {
 }
 
 #content {
-  min-height: 80%;
+  min-height: 90%;
 }
 md-content.rep_requests {
   min-width: 400px;
