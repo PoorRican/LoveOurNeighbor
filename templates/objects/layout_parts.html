@@ -58,16 +58,42 @@
                 {% endif %}
 
               </md-menu-item>
+
               {% if len(request.user.administers.all()) %}
+                <md-menu-divider></md-menu-divider>
+                <md-menu-item>
+                  <md-button disabled>
+                    Ministries You Administer:
+                  </md-button>
+                </md-menu-item>
+                {% for ministry in request.user.administers.all() %}
+                  {% set ALIAS = (request.user.logged_in_as == ministry) %}
+                  <md-menu-item>
+                    <md-button ng-href="#{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"{% if ALIAS %} class="md-primary"{% endif %}>
+                      {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
+                      {{ ministry }}
+                    </md-button>
+                    <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}" class="md-icon-button">
+                      <md-icon>
+                        <i class="material-icons">settings</i>
+                      </md-icon>
+                    </md-button>
+                  </md-menu-item>
+                {% endfor %}
+              {% endif %}
+
+              {% if len(request.user.represents.all()) %}
                 <md-menu-divider></md-menu-divider>
                 <md-menu-item>
                   <md-button disabled>
                     Ministries You Represent:
                   </md-button>
                 </md-menu-item>
-                {% for ministry in request.user.administers.all() %}
-                  <md-menu-item>
-                    <md-button ng-href="#{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}">
+                {% for ministry in request.user.represents.all() %}
+                  {% set ALIAS = (request.user.logged_in_as == ministry) %}
+                  <md-menu-item >
+                    <md-button ng-href="#{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"{% if ALIAS %} class="md-primary"{% endif %}>
+                      {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
                       {{ ministry }}
                     </md-button>
                     <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}" class="md-icon-button">
@@ -75,8 +101,9 @@
                     </md-button>
                   </md-menu-item>
                 {% endfor %}
-                <md-menu-divider></md-menu-divider>
               {% endif %}
+
+              <md-menu-divider></md-menu-divider>
               <md-menu-item>
                 <md-button ng-href="/accounts/logout/">
                   Logout
@@ -87,7 +114,14 @@
 
 
         {% elif sidenav %}
-          {# TODO: there needs to be separate rendering of ministryprofile selection for mobile #}
+          <md-button ng-click="switching = !switching" class="md-icon-button" style="margin-top: auto; margin-bottom: auto;">
+            <md-icon ng-if="!switching" md-menu-origin>
+              <i class="material-icons">arrow_drop_down</i>
+            </md-icon>
+            <md-icon ng-if="switching" md-menu-origin>
+              <i class="material-icons">arrow_drop_up</i>
+            </md-icon>
+          </md-button>
         {% endif %}
         {# }}} #}
 
@@ -178,7 +212,71 @@
       </div>
     </md-toolbar>
 
+    <md-list ng-if="switching" layout="column" ng-click="close()">
+      <md-list-item class="md-line-1">
+        {% if request.user.logged_in_as %}
+          <md-button ng-href="#{{ url_for('people:be_me_again') }}">
+            Your Profile
+          </md-button>
+        {% else %}
+          <md-button ng-href="#{{ url_for('user_profile') }}">
+            Your Profile
+          </md-button>
+        {% endif %}
+      </md-list-item>
 
+      {% if len(request.user.administers.all()) %}
+        <md-divider></md-divider>
+        <md-list-item class="md-line-1">
+          <md-button disabled>
+            Ministries You Administer:
+          </md-button>
+        </md-list-item>
+        {% for ministry in request.user.administers.all() %}
+          {% set ALIAS = (request.user.logged_in_as == ministry) %}
+          <md-list-item class="md-line-1">
+            <md-button ng-href="#{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"{% if ALIAS %} class="md-primary"{% endif %}>
+              {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
+              {{ ministry }}
+            </md-button>
+            <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}" class="md-icon-button">
+              <i class="material-icons">settings</i>
+            </md-button>
+          </md-list-item>
+        {% endfor %}
+      {% endif %}
+
+      {% if len(request.user.represents.all()) %}
+        <md-divider></md-divider>
+        <md-list-item class="md-line-1">
+          <md-button disabled>
+            Ministries You Represent:
+          </md-button>
+        </md-list-item>
+        {% for ministry in request.user.represents.all() %}
+          {% set ALIAS = (request.user.logged_in_as == ministry) %}
+          <md-list-item class="md-line-1">
+            <md-button ng-href="#{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"{% if ALIAS %} class="md-primary"{% endif %}>
+              {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
+              {{ ministry }}
+            </md-button>
+            <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}" class="md-icon-button">
+              <i class="material-icons">settings</i>
+            </md-button>
+          </md-list-item>
+        {% endfor %}
+
+      {% endif %}
+
+      <md-divider></md-divider>
+      <md-list-item class="md-line-1">
+        <md-button ng-href="/accounts/logout/">
+          Logout
+        </md-button>
+      </md-list-item>
+    </md-list>
+
+    <md-divider></md-divider>
 
     <md-list flex>
     {%- for _link in links -%}
