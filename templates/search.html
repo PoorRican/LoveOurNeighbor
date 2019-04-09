@@ -1,8 +1,8 @@
 <section class="wrapper">
   <h1>Found {% raw %}{{ object.count }}{% endraw %} Results for "{{ query }}"</h1>
-  <div layout="row">
-    <div flex="20">
-      <section>
+  <div layout-gt-sm="row" layout="column">
+    <div>
+      <section layout="column">
         <md-subheader>Types:</md-subheader>
         <md-checkbox ng-model="filter_types.ministry" ng-disabled="!(object.ministries.length)">
           {% raw %}
@@ -23,10 +23,28 @@
           {% endraw %}
         </md-checkbox>
       </section>
+      <section>
+        <md-subheader>Location:</md-subheader>
+        <div layout="column">
+          <h5>Within {% raw %}{{ distance }}{% endraw %} miles</h5>
+          <md-slider-container>
+            <md-slider flex md-discrete
+                       ng-model="distance"
+                       ng-hide="objects.distances.max"
+                       min="{% raw %}{{ object.distances.min }}{% endraw %}"
+                       max="{% raw %}{{ object.distances.max }}{% endraw %}"
+                       step="1" aria-label="default"></md-slider>
+          <md-input-container hide-gt-sm>
+            <input type="number" ng-model="distance">
+          </md-input-container>
+          </md-slider-container>
+        </div>
+      </section>
     </div>
-    <div flex="80" layout="column">
+    <div layout="column">
       <md-list>
-        <md-list-item ng-repeat="item in object.ministries" ng-if="filter_types.ministry" class="md-2-line">
+        <md-list-item ng-if="filter_types.ministry" class="md-2-line"
+                      ng-repeat="item in object.ministries | withinDistance: distance">
           <div class="md-list-item-text" layout="column">
             {% raw %}
               <a href="#{{ item.url }}">
@@ -37,7 +55,8 @@
             {% endraw %}
           </div><!-- /.md-list-item-text -->
         </md-list-item>
-        <md-list-item ng-if="filter_types.campaign" ng-repeat="item in object.campaigns" class="md-2-line">
+        <md-list-item ng-if="filter_types.campaign" class="md-2-line"
+                      ng-repeat="item in object.campaigns | withinDistance: distance">
           <div class="md-list-item-text" layout="column">
             {% raw %}
               <a href="#{{ item.url }}">
@@ -48,7 +67,8 @@
             {% endraw %}
           </div><!-- /.md-list-item-text -->
         </md-list-item>
-        <md-list-item ng-if="filter_types.post" ng-repeat="item in object.posts" class="md-2-line">
+        <md-list-item ng-if="filter_types.post" class="md-2-line"
+                      ng-repeat="item in object.posts | withinDistance: distance">
           <div class="md-list-item-text" layout="column">
             {% raw %}
               <a href="#{{ item.url }}">

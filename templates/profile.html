@@ -36,6 +36,16 @@
           {{ form.display_name }}
           <div class="hint">Tell us what we should call you!</div>
         </md-input-container>
+
+        <md-input-container>
+          {# TODO: render WYSIWYG editor #}
+          <md-icon><i class="material-icons">face</i></md-icon>
+          {{ form.location.label_tag() }}
+          {{ form.location }}
+          <div class="hint">Where are you?</div>
+          {# TODO: show hint that this can be country, state, or city #}
+          {# TODO: show dialog on what this is used for #}
+        </md-input-container>
       </div>
 
       <div layout="row" layout-align="end center" layout-padding>

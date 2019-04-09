@@ -69,7 +69,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                                      blank=True, null=True,
                                      on_delete=models.PROTECT,
                                      related_name='+')
-    # TODO: implement `limit_choices_to` to select users in .reps/admin
+    location = models.CharField(max_length=256, blank=True, null=True)
 
     objects = MyUserManager()
 

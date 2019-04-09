@@ -60,6 +60,7 @@ class MinistryProfile(models.Model):
 
     # Ministry Details
     address = models.CharField(max_length=256, blank=True, null=True)
+    # TODO: enable multiple addresses
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     website = models.URLField()
     founded = models.DateField(blank=True, null=True)

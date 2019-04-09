@@ -98,7 +98,11 @@
         {# TODO: render WYSIWYG editor #}
         <md-icon><i class="material-icons">subject</i></md-icon>
         {{ form.description.label_tag() }}
+        {% if start %}
+        {{ parts.wysiwyg_editor(form.description.name, '') }}
+        {% else%}
         {{ parts.wysiwyg_editor(form.description.name, ministry.description) }}
+        {% endif %}
         <br>
         <div class="hint">Describe yourself</div>
       </md-input-container>

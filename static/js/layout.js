@@ -5,6 +5,8 @@ var nav_layout = angular.module('oneDollarApp',
 
 // Layout controller and config //
 
+
+
 nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http', '$log', '$location', '$mdConstant', function($scope, $interval, $mdSidenav, $http, $log, $location, $mdConstant) {
   $scope.separatorKeys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA];
 
@@ -66,6 +68,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
     }, function(response) {
       $log.warn('Could not fetch tag list. (Wrong URL?)')});
   };
+
 
 
   $scope.goto = function (url) {
@@ -199,6 +202,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
       $scope.close();
     }
   };
+
 
   /** Controls the display of new comment forms on the page.
    *
@@ -335,6 +339,20 @@ nav_layout.config(['$locationProvider', '$routeProvider', function($locationProv
 nav_layout.filter('stripHTML', function() {
   return function(text) {
     return  text ? String(text).replace(/<[^>]+>/gm, '  ') : '  ';
+  };
+});
+nav_layout.filter('withinDistance', function() {
+  return function(items, distance) {
+    if (items) {
+      var results = [];
+      var r = 0;
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].distance < distance) {
+          results[r++] = items[i];
+        };
+      };
+      return results;
+    };
   };
 });
 
@@ -504,11 +522,7 @@ nav_layout.controller('searchCtrl', ['$scope', '$http', '$route', '$routeParams'
 
     $scope.currentNavItem  = null;
 
-    $scope.filter_types = {
-        'ministry': false,
-        'campaign': false,
-        'post': false,
-    };
+    $scope.filter_types = blankFilterTypes();
     function populate_filter_selection() {
       if ($scope.object.ministries.length) {
         $scope.filter_types['ministry'] = true;
@@ -519,7 +533,12 @@ nav_layout.controller('searchCtrl', ['$scope', '$http', '$route', '$routeParams'
       if ($scope.object.posts.length) {
         $scope.filter_types['post'] = true;
       };
+      if ($scope.object.distances.max) {
+        $scope.filter_types['distance'] = $scope.object.distances.max;
+        $scope.distance = $scope.object.distances.max;
+      };
     };
+
     var url = '/search/' + $routeParams.query + '/json';
     $scope.update_object(url, populate_filter_selection);
 
@@ -533,11 +552,7 @@ nav_layout.controller('searchTagCtrl', ['$scope', '$http', '$route', '$routePara
 
     $scope.currentNavItem  = null;
 
-    $scope.filter_types = {
-        'ministry': false,
-        'campaign': false,
-        'post': false,
-    };
+    $scope.filter_types = blankFilterTypes();
     function populate_filter_selection() {
       if ($scope.object.ministries.length) {
         $scope.filter_types['ministry'] = true;
@@ -548,7 +563,12 @@ nav_layout.controller('searchTagCtrl', ['$scope', '$http', '$route', '$routePara
       if ($scope.object.posts.length) {
         $scope.filter_types['post'] = true;
       };
+      if ($scope.object.distances.max) {
+        $scope.filter_types['distance'] = $scope.object.distances.max;
+        $scope.distance = $scope.object.distances.max;
+      };
     };
+
     var url = '/search/tag/' + $routeParams.query + '/json';
     $scope.update_object(url, populate_filter_selection);
 
@@ -562,5 +582,15 @@ nav_layout.config(function($mdThemingProvider) {
         .primaryPalette('orange')
         .accentPalette('purple')
 });
+
+function blankFilterTypes() {
+  return {
+        'ministry': false,
+        'campaign': false,
+        'post': false,
+        'distance': 0,
+  };
+};
+
 
 // vim:foldmethod=syntax shiftwidth=2 tabstop=2:

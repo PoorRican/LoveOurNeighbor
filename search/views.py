@@ -8,9 +8,11 @@ import json
 from ministry.models import NewsPost, Campaign, MinistryProfile, Tag
 from ministry.views import serialize_ministry, serialize_campaign, serialize_newspost, F_TIME
 
+from explore.models import calc_distance
 
-def serialize_objects(ministries=[], campaigns=[], posts=[]):
-    tags, addresses = [], []
+
+def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
+    tags, addresses, distances = [], [], []
     starting, ending = [], []
     posted = []
 
@@ -21,6 +23,11 @@ def serialize_objects(ministries=[], campaigns=[], posts=[]):
         _ministry['type'] = 'minsitry'
         _ministry['url'] = reverse('ministry:ministry_profile',
                                    kwargs={'ministry_id': i.id})
+        if request:
+            _dist = calc_distance(request, i.address)
+            _ministry['distance'] = _dist
+            distances.append(_dist)
+
         _mins.append(_ministry)
 
         # process metadata
@@ -37,6 +44,11 @@ def serialize_objects(ministries=[], campaigns=[], posts=[]):
         _campaign['type'] = 'campaign'
         _campaign['url'] = reverse('ministry:campaign_detail',
                                    kwargs={'campaign_id': i.id})
+        if request:
+            _dist = calc_distance(request, i.ministry.address)
+            _campaign['distance'] = _dist
+            distances.append(_dist)
+
         _cams.append(_campaign)
 
         # process metadata
@@ -54,20 +66,37 @@ def serialize_objects(ministries=[], campaigns=[], posts=[]):
         _post['type'] = 'post'
         _post['url'] = reverse('ministry:news_detail',
                                kwargs={'post_id': i.id})
+        if request:
+            _addr = ''
+            if i.ministry:
+                _addr = i.ministry.address
+            elif i.campaign:
+                _addr = i.campaign.ministry.address
+            _dist = calc_distance(request, _addr)
+            _post['distance'] = _dist
+            distances.append(_dist)
+
         _posts.append(_post)
 
         # process metadata
         posted.append(i.pub_date.strftime(F_TIME))
 
+    # process batch metadata
+    if distances:
+        distances.sort()
+        distances = {'min': round(distances[0]),
+                     'max': round(distances[-1])+1}
+
     return {'tags': tags,
             'locations': addresses,
+            'distances': distances,
             'starting': starting,
             'ending': ending,
             'posted': posted,
             'count': (len(_mins) + len(_cams) + len(_posts)),
             'ministries': _mins,
             'campaigns': _cams,
-            'posts': posts,
+            'posts': _posts,
             }
 
 
@@ -109,9 +138,13 @@ def search_json(request, query):
         except TypeError:
             posts.append(i)
 
-    return HttpResponse(json.dumps(serialize_objects(ministries=ministries,
-                                                     campaigns=campaigns,
-                                                     posts=posts)))
+    _args = {'request': request,
+             'ministries': ministries,
+             'campaigns': campaigns,
+             'posts': posts,
+             }
+
+    return HttpResponse(json.dumps(serialize_objects(**_args)))
 
 
 def search_tag(request, tag_name):
@@ -124,7 +157,8 @@ def search_tag(request, tag_name):
 def tag_json(request, tag_name):
     objects = Tag.objects.get(name=tag_name)
 
-    _args = {'ministries': objects.ministries.all(),
+    _args = {'request': request,
+             'ministries': objects.ministries.all(),
              'campaigns': objects.campaigns.all(),
              }
 
