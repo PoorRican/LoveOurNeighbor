@@ -2,6 +2,8 @@ from datetime import date
 from os import path
 
 from django.db import models
+
+from explore.models import GeoLocation
 from people.models import User
 
 
@@ -85,6 +87,22 @@ class MinistryProfile(models.Model):
         for i in self.campaigns.all():
             amt += i.donated
         return amt
+
+    @property
+    def location(self):
+        if self.address:
+            gl, _ = GeoLocation.objects.get_or_create(ministry=self)
+            if _:
+                gl.location = self.address
+            return gl
+        else:
+            return None
+
+    @location.setter
+    def location(self, location):
+        gl, _ = GeoLocation.objects.get_or_create(ministry=self)
+        gl.location = location
+        gl.save()
 
 
 # Website Content

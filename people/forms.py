@@ -15,7 +15,8 @@ class UserEditForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'display_name', 'location')
+        fields = ('first_name', 'last_name', 'display_name', '_location')
+        labels = {'_location': 'Location'}
 
 
 class UserAdminForm(forms.ModelForm):

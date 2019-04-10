@@ -24,7 +24,7 @@ def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
         _ministry['url'] = reverse('ministry:ministry_profile',
                                    kwargs={'ministry_id': i.id})
         if request:
-            _dist = calc_distance(request, i.address)
+            _dist = calc_distance(request, i.location)
             _ministry['distance'] = _dist
             distances.append(_dist)
 
@@ -45,7 +45,7 @@ def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
         _campaign['url'] = reverse('ministry:campaign_detail',
                                    kwargs={'campaign_id': i.id})
         if request:
-            _dist = calc_distance(request, i.ministry.address)
+            _dist = calc_distance(request, i.ministry.location)
             _campaign['distance'] = _dist
             distances.append(_dist)
 
@@ -69,9 +69,9 @@ def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
         if request:
             _addr = ''
             if i.ministry:
-                _addr = i.ministry.address
+                _addr = i.ministry.location
             elif i.campaign:
-                _addr = i.campaign.ministry.address
+                _addr = i.campaign.ministry.location
             _dist = calc_distance(request, _addr)
             _post['distance'] = _dist
             distances.append(_dist)

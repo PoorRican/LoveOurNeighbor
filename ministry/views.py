@@ -115,6 +115,8 @@ def create_ministry(request):
         if min_form.is_valid():        # implement a custom `TagField`
             ministry = min_form.save(commit=False)
             ministry.admin = request.user
+            if ministry.address:
+                ministry.location = ministry.address
             ministry.save()
 
             process_tags(ministry, min_form['tags'].value())
@@ -139,7 +141,10 @@ def edit_ministry(request, ministry_id):
                 _form = MinistryEditForm(request.POST, request.FILES,
                                          instance=ministry)
                 if _form.is_valid():
-                    _form.save()
+                    _min = _form.save(commit=False)
+                    if _min.address:
+                        _min.location = _min.address
+                    _min.save()
 
                     process_tags(ministry, _form['tags'].value())
                     for r in json.loads(_form['reps'].value()):

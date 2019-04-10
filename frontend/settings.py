@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'ministry.apps.MinistryConfig',
     'people.apps.PeopleConfig',
     'donation.apps.DonationConfig',
+    'explore.apps.ExploreConfig',
 
     'allauth',
     'allauth.account',

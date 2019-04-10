@@ -12,6 +12,8 @@ from django.utils.encoding import force_text
 
 from allauth.account.signals import user_signed_up
 
+from explore.models import GeoLocation
+
 
 BLANK_AVATAR = 'https://gravatar.com/avatar/blank'
 
@@ -69,7 +71,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                                      blank=True, null=True,
                                      on_delete=models.PROTECT,
                                      related_name='+')
-    location = models.CharField(max_length=256, blank=True, null=True)
+    _location = models.CharField(max_length=256, blank=True, null=True)
 
     objects = MyUserManager()
 
@@ -128,6 +130,22 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def natural_key(self):
         return (self.email,)
+
+    @property
+    def location(self):
+        if self._location:
+            gl, _ = GeoLocation.objects.get_or_create(user=self)
+            if _:
+                gl.location = self._location
+            return gl
+        else:
+            return None
+
+    @location.setter
+    def location(self, location):
+        gl, _ = GeoLocation.objects.get_or_create(user=self)
+        gl.location = location
+        gl.save()
 
 
 class UserProfile(models.Model):

@@ -17,6 +17,7 @@ Urgent TODO:
     - Social media links for ministries
     - Map displaying ministry location (via 'explore' tab)
     - Implement OneToOneField for storing pickled geopy object for user locations and MinistryProfile addresses
+    - Truncate long ministry/profile names in nav bar header and 'h' elements/content
 
 Overall TODOs:
     - implement TimelineJS
