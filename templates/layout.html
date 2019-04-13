@@ -75,22 +75,27 @@
   {# }}} #}
 
   {# {{{ Other JS #}
-  <!-- WYSIWYG Editor -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.1.0/trix.js"></script>
-
   {# Local Scripts #}
   {%- set scripts =
     [
       'jquery-2.1.1.min.js',
       'ngParallax.min.js',
       'layout.js',
+      'filters.js',
+      'routes.js',
+      'controllers.js',
     ]
   -%}
 
   {%- for s in scripts %}
       <script type="text/javascript" src="{{ static("js/%s" % s) }}"></script>
   {% endfor -%}
+
+  <!-- WYSIWYG Editor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.1.0/trix.js"></script>
   {# }}} #}
+
+
 
   </body>
 </html>
