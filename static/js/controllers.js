@@ -7,223 +7,259 @@ function blankFilterTypes() {
   };
 };
 
-nav_layout.controller('homeController', ['$scope', '$http', '$location',
-  function($scope, $http, $location) {
-    // TODO: change title block
-    $scope.currentNavItem = 'Home';
+// Top-Level View Controllers
+nav_layout.controller('homeController', homeController);
 
-    $scope.update_object_periodically();
-    $scope.$on('$destroy', function() {
-      // Make sure that the interval is destroyed too
-      $scope.stop_update();
-    });
+homeController.$inject = ['$scope', '$http', '$location'];
 
-    ga('send', 'pageview', '/home');
+function homeController($scope, $http, $location) {
+  // TODO: change title block
+  $scope.currentNavItem = 'Home';
+
+  $scope.update_object_periodically();
+  $scope.$on('$destroy', function() {
+    // Make sure that the interval is destroyed too
+    $scope.stop_update();
+  });
+
+  ga('send', 'pageview', '/home');
+};
+
+nav_layout.controller('faqController', faqController);
+
+faqController.$inject = ['$scope', '$http', '$location'];
+
+function faqController($scope, $http, $location) {
+  // TODO: change title block
+
+  $scope.currentNavItem = 'FAQ';
+
+  ga('send', 'pageview', '/faq');
+};
+
+
+nav_layout.controller('aboutController', aboutController);
+
+aboutController.$inject = ['$scope', '$http', '$location'];
+
+function aboutController($scope, $http, $location) {
+  // TODO: change title block
+
+  $scope.currentNavItem = 'About';
+
+  ga('send', 'pageview', '/about');
+}
+
+
+// Object Controllers
+
+nav_layout.controller('campaignCtrl', campaignCtrl);
+
+campaignCtrl.$inject = ['$scope', '$http', '$routeParams', '$location'];
+
+function campaignCtrl($scope, $http, $routeParams, $location) {
+  // TODO: change title block
+
+  $scope.currentNavItem = 'Home';
+
+  $scope.update_object_periodically();
+  $scope.$on('$destroy', function() {
+    // Make sure that the interval is destroyed too
+    $scope.stop_update();
+  });
+
+  ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
+}
+
+
+nav_layout.controller('campaignActionCtrl', campaignActionCtrl);
+
+campaignActionCtrl.$inject = ['$scope', '$http', '$routeParams', '$location'];
+
+function campaignActionCtrl($scope, $http, $routeParams, $location) {
+  // TODO: change title block
+
+  $scope.currentNavItem = 'Home';
+
+  if ($routeParams.campaign_action == 'edit' || $routeParams.campaign_action == 'create') {
+    $scope.update_object();
+    $scope.get_tags();
   }
-]);
 
-nav_layout.controller('archiveController', ['$scope', '$http', '$location',
-  function($scope, $http, $location) {
-    // TODO: change title block
+  ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
+};
 
-    $scope.currentNavItem = 'Archives';
 
-    ga('send', 'pageview', '/campaigns');
-  }
-]);
+nav_layout.controller('newsCtrl', newsCtrl);
 
-nav_layout.controller('faqController', ['$scope', '$http', '$location',
-  function($scope, $http, $location) {
-    // TODO: change title block
+newsCtrl.$inject = ['$scope', '$http', '$routeParams', '$location'];
 
-    $scope.currentNavItem = 'FAQ';
+function newsCtrl($scope, $http, $routeParams, $location) {
+  // TODO: change title block
 
-    ga('send', 'pageview', '/faq');
-  }
-]);
+  $scope.currentNavItem = 'Home';
 
-nav_layout.controller('aboutController', ['$scope', '$http', '$location',
-  function($scope, $http, $location) {
-    // TODO: change title block
+  ga('send', 'pageview', '/campaigns/news/' + $routeParams.post_id);
+};
 
-    $scope.currentNavItem = 'About';
 
-    ga('send', 'pageview', '/about');
-  }
-]);
+nav_layout.controller('donationCtrl', donationCtrl);
 
-nav_layout.controller('campaignCtrl', ['$scope', '$http', '$routeParams', '$location',
-  function($scope, $http, $routeParams, $location) {
-    // TODO: change title block
+donationCtrl.$inject = ['$scope', '$http', '$routeParams', '$location'];
 
-    $scope.currentNavItem = 'Home';
+function donationCtrl($scope, $http, $routeParams, $location) {
+  // TODO: change title block
 
-    $scope.update_object_periodically();
-    $scope.$on('$destroy', function() {
-      // Make sure that the interval is destroyed too
-      $scope.stop_update();
-    });
+  $scope.currentNavItem = null;
 
-    ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
-  }
-]);
+  ga('send', 'pageview', '/donation/' + $routeParams.donation_action);
+  console.log('donation action: ' + $routeParams.donation_action);
+};
 
-nav_layout.controller('campaignActionCtrl', ['$scope', '$http', '$routeParams', '$location',
-  function($scope, $http, $routeParams, $location) {
-    // TODO: change title block
 
-    $scope.currentNavItem = 'Home';
+nav_layout.controller('ministryCtrl', ministryCtrl);
 
-    if ($routeParams.campaign_action == 'edit' || $routeParams.campaign_action == 'create') {
-      $scope.update_object();
-      $scope.get_tags();
+ministryCtrl.$inject = ['$scope', '$http', '$routeParams', '$location']
+
+function ministryCtrl($scope, $http, $routeParams, $location) {
+  // TODO: change title block
+
+  $scope.currentNavItem = null;
+
+  $scope.update_object_periodically();
+  $scope.$on('$destroy', function() {
+    // Make sure that the interval is destroyed too
+    $scope.stop_update();
+  });
+
+  ga('send', 'pageview', '/ministry/' + $routeParams.ministry_action);
+  console.log('ministry action: ' + $routeParams.ministry_action);
+};
+
+
+nav_layout.controller('ministryActionCtrl', ministryActionCtrl);
+
+ministryActionCtrl.$inject = ['$scope', '$timeout', '$http', '$routeParams', '$location', 'tagService'];
+
+function ministryActionCtrl($scope, $timeout, $http, $routeParams, $location, tagService) {
+  // TODO: change title block
+
+  $scope.currentNavItem = null;
+
+  if ($routeParams.ministry_action == 'edit' || $routeParams.ministry_action == 'edit') {
+    $scope.filter_tags = filter_tags;
+
+    tagService.get();
+    $scope.update_object();
+
+    function filter_tags(q) {
+      return tagService.search(q);
     }
-
-    ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
   }
-]);
-
-nav_layout.controller('newsCtrl', ['$scope', '$http', '$routeParams', '$location', function($scope, $http, $routeParams, $location) {
-    // TODO: change title block
-
-    $scope.currentNavItem = 'Home';
-
-    ga('send', 'pageview', '/campaigns/news/' + $routeParams.post_id);
+  if ($routeParams.ministry_action == 'login') {
+    $location.url('/ministry/' + $routeParams.ministry_id);
+    location.reload();
   }
-]);
 
-nav_layout.controller('donationCtrl', ['$scope', '$http', '$routeParams', '$location',
-  function($scope, $http, $routeParams, $location) {
-    // TODO: change title block
+  ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);
+  console.log('ministry action: ' + $routeParams.ministry_action + ' of ' + $routeParams.ministry_id);
+};
 
-    $scope.currentNavItem = null;
 
-    ga('send', 'pageview', '/donation/' + $routeParams.donation_action);
-    console.log('donation action: ' + $routeParams.donation_action);
+nav_layout.controller('accountCtrl', accountCtrl);
+
+accountCtrl.$inject = ['$scope', '$http', '$routeParams', '$location'];
+
+function accountCtrl($scope, $http, $routeParams, $location) {
+  // TODO: change title block
+
+  $scope.currentNavItem  = null;
+
+  ga('send', 'pageview', '/account/' + $routeParams.account_action);
+  console.log('account action: ' + $routeParams.account_action);
+};
+
+nav_layout.controller('peopleCtrl', peopleCtrl);
+
+peopleCtrl.$inject = ['$scope', '$http', '$route', '$routeParams', '$location']
+
+function peopleCtrl($scope, $http, $route, $routeParams, $location) {
+  // TODO: change title block
+
+  $scope.currentNavItem  = null;
+
+  if ($routeParams.people_action == 'alias/logout') {
+    $location.url('/accounts/profile');
+    location.reload();
   }
-]);
 
-nav_layout.controller('ministryCtrl', ['$scope', '$http', '$routeParams', '$location',
-  function($scope, $http, $routeParams, $location) {
-    // TODO: change title block
+  ga('send', 'pageview', '/people/' + $routeParams.people_action);
+};
 
-    $scope.currentNavItem = null;
 
-    $scope.update_object_periodically();
-    $scope.$on('$destroy', function() {
-      // Make sure that the interval is destroyed too
-      $scope.stop_update();
-    });
+// Search Controllers
 
-    ga('send', 'pageview', '/ministry/' + $routeParams.ministry_action);
-    console.log('ministry action: ' + $routeParams.ministry_action);
-  }
-]);
+nav_layout.controller('searchCtrl', searchCtrl);
 
-nav_layout.controller('ministryActionCtrl', ['$scope', '$http', '$routeParams', '$location',
-  function($scope, $http, $routeParams, $location) {
-    // TODO: change title block
+searchCtrl.$inject = ['$scope', '$http', '$route', '$routeParams', '$location'];
 
-    $scope.currentNavItem = null;
+function searchCtrl($scope, $http, $route, $routeParams, $location) {
+  // TODO: change title block
 
-    if ($routeParams.ministry_action == 'edit' || $routeParams.ministry_action == 'edit') {
-      $scope.update_object();
-      $scope.get_tags();
-    }
-    if ($routeParams.ministry_action == 'login') {
-      $location.url('/ministry/' + $routeParams.ministry_id);
-      location.reload();
-    }
+  $scope.currentNavItem  = null;
 
-    ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);
-    console.log('ministry action: ' + $routeParams.ministry_action + ' of ' + $routeParams.ministry_id);
-  }
-]);
-
-nav_layout.controller('accountCtrl', ['$scope', '$http', '$routeParams', '$location',
-  function($scope, $http, $routeParams, $location) {
-    // TODO: change title block
-
-    $scope.currentNavItem  = null;
-
-    ga('send', 'pageview', '/account/' + $routeParams.account_action);
-    console.log('account action: ' + $routeParams.account_action);
-  }
-]);
-
-nav_layout.controller('peopleCtrl', ['$scope', '$http', '$route', '$routeParams', '$location',
-  function($scope, $http, $route, $routeParams, $location) {
-    // TODO: change title block
-
-    $scope.currentNavItem  = null;
-
-    if ($routeParams.people_action == 'alias/logout') {
-      $location.url('/accounts/profile');
-      location.reload();
-    }
-
-    ga('send', 'pageview', '/people/' + $routeParams.people_action);
-  }
-]);
-
-nav_layout.controller('searchCtrl', ['$scope', '$http', '$route', '$routeParams', '$location',
-  function($scope, $http, $route, $routeParams, $location) {
-    // TODO: change title block
-
-    $scope.currentNavItem  = null;
-
-    $scope.filter_types = blankFilterTypes();
-    function populate_filter_selection() {
-      if ($scope.object.ministries.length) {
-        $scope.filter_types['ministry'] = true;
-      };
-      if ($scope.object.campaigns.length) {
-        $scope.filter_types['campaign'] = true;
-      };
-      if ($scope.object.posts.length) {
-        $scope.filter_types['post'] = true;
-      };
-      if ($scope.object.distances.max) {
-        $scope.filter_types['distance'] = $scope.object.distances.max;
-        $scope.distance = $scope.object.distances.max;
-      };
+  $scope.filter_types = blankFilterTypes();
+  function populate_filter_selection() {
+    if ($scope.object.ministries.length) {
+      $scope.filter_types['ministry'] = true;
     };
-
-    var url = '/search/' + $routeParams.query + '/json';
-    $scope.update_object(url, populate_filter_selection);
-
-    ga('send', 'pageview', '/search/' + $routeParams.query);
-  }
-]);
-
-nav_layout.controller('searchTagCtrl', ['$scope', '$http', '$route', '$routeParams', '$location',
-  function($scope, $http, $route, $routeParams, $location) {
-    // TODO: change title block
-
-    $scope.currentNavItem  = null;
-
-    $scope.filter_types = blankFilterTypes();
-    function populate_filter_selection() {
-      if ($scope.object.ministries.length) {
-        $scope.filter_types['ministry'] = true;
-      };
-      if ($scope.object.campaigns.length) {
-        $scope.filter_types['campaign'] = true;
-      };
-      if ($scope.object.posts.length) {
-        $scope.filter_types['post'] = true;
-      };
-      if ($scope.object.distances.max) {
-        $scope.filter_types['distance'] = $scope.object.distances.max;
-        $scope.distance = $scope.object.distances.max;
-      };
+    if ($scope.object.campaigns.length) {
+      $scope.filter_types['campaign'] = true;
     };
+    if ($scope.object.posts.length) {
+      $scope.filter_types['post'] = true;
+    };
+    if ($scope.object.distances.max) {
+      $scope.filter_types['distance'] = $scope.object.distances.max;
+      $scope.distance = $scope.object.distances.max;
+    };
+  };
 
-    var url = '/search/tag/' + $routeParams.query + '/json';
-    $scope.update_object(url, populate_filter_selection);
+  var url = '/search/' + $routeParams.query + '/json';
+  $scope.update_object(url, populate_filter_selection);
 
-    ga('send', 'pageview', '/search/tag/' + $routeParams.query);
-  }
-]);
+  ga('send', 'pageview', '/search/' + $routeParams.query);
+};
+
+nav_layout.controller('searchTagCtrl', searchTagCtrl);
+searchTagCtrl.$inject = ['$scope', '$http', '$route', '$routeParams', '$location'];
+function searchTagCtrl($scope, $http, $route, $routeParams, $location) {
+  // TODO: change title block
+
+  $scope.currentNavItem  = null;
+
+  $scope.filter_types = blankFilterTypes();
+  function populate_filter_selection() {
+    if ($scope.object.ministries.length) {
+      $scope.filter_types['ministry'] = true;
+    };
+    if ($scope.object.campaigns.length) {
+      $scope.filter_types['campaign'] = true;
+    };
+    if ($scope.object.posts.length) {
+      $scope.filter_types['post'] = true;
+    };
+    if ($scope.object.distances.max) {
+      $scope.filter_types['distance'] = $scope.object.distances.max;
+      $scope.distance = $scope.object.distances.max;
+    };
+  };
+
+  var url = '/search/tag/' + $routeParams.query + '/json';
+  $scope.update_object(url, populate_filter_selection);
+
+  ga('send', 'pageview', '/search/tag/' + $routeParams.query);
+};
+
 
 // vim:foldmethod=syntax shiftwidth=2 tabstop=2:

@@ -15,12 +15,6 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
   $scope.isOpenRight = function(){
     return $mdSidenav('right').isOpen();
   };
-  $scope.profileMenuOpen = false;
-  $scope.openProfileMenuDown = function() {
-    $scope.profileMenuOpen = !($scope.profileMenuOpen);
-  }
-
-
   $scope.query = null;
 
 
@@ -138,27 +132,6 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
     return chip;
   };
 
-  $scope.get_tags = function() {
-    var url = '/ministry/tags/all';
-    $http.get(url)
-    .then(function(response) {
-      var data = response.data;
-      $scope.available_tags = data;
-    }, function(response) {
-      $log.warn('Could not fetch tag list. (Wrong URL?)')});
-  };
-
-  $scope.tagSearch = function(query) {
-    function createTagFilter(query) {
-      var loweredQuery = query.toLowerCase();
-
-      return function filterFn(tag) {
-        return (tag.indexOf(loweredQuery) === 0);
-      };
-    };
-
-    return query ? $scope.available_tags.filter(createTagFilter(query)) : [];
-  };
 
   $scope.contactSearch = function(query) {
     /**
@@ -251,5 +224,6 @@ nav_layout.config(function($mdThemingProvider) {
         .primaryPalette('orange')
         .accentPalette('purple')
 });
+
 
 // vim:foldmethod=syntax shiftwidth=2 tabstop=2:

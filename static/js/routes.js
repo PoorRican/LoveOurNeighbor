@@ -11,10 +11,6 @@ nav_layout.config(['$locationProvider', '$routeProvider', function($locationProv
         templateUrl : '/t/home',
         controller  : 'homeController'
     })
-    .when('/campaigns', {
-        templateUrl : '/t/campaigns',
-        controller  : 'archiveController'
-    })
     .when('/faq', {
         templateUrl : '/t/faq',
         controller  : 'faqController'
@@ -87,5 +83,6 @@ nav_layout.config(['$locationProvider', '$routeProvider', function($locationProv
     });
 
 }]);
+
 
 // vim:foldmethod=syntax shiftwidth=2 tabstop=2:

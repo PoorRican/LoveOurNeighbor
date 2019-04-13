@@ -115,7 +115,7 @@
                   md-separator-keys="separatorKeys">
           <md-autocomplete
               md-search-text="tagText"
-              md-items="tag in tagSearch(tagText)"
+              md-items="tag in filter_tags(tagText)"
               md-item-text="tag"
               md-min-length="1">
             <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
