@@ -212,6 +212,7 @@
       </div>
     </md-toolbar>
 
+    {% if request.user.is_authenticated %}
     <md-list ng-if="switching" layout="column" ng-click="close()">
       <md-list-item class="md-line-1">
         {% if request.user.logged_in_as %}
@@ -277,6 +278,9 @@
     </md-list>
 
     <md-divider></md-divider>
+
+    {% endif %}
+
 
     <md-list flex>
     {%- for _link in links -%}
