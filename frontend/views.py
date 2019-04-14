@@ -21,7 +21,7 @@ def home(request):
         all_news = NewsPost.objects.filter(
                     campaign=current_campaign).order_by("-pub_date")
         _admin = current_campaign.ministry.admin
-        _reps = current_campaign.ministry.reps
+        _reps = current_campaign.ministry.reps.all()
         AUTH = bool(request.user == _admin or request.user in _reps)
     except IndexError:
         current_campaign, all_news = None, None
