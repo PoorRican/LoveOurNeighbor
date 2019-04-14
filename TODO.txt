@@ -18,9 +18,11 @@ Urgent TODO:
     - Map displaying ministry location (via 'explore' tab)
     - Implement OneToOneField for storing pickled geopy object for user locations and MinistryProfile addresses
     - Truncate long ministry/profile names in nav bar header and 'h' elements/content
+    - Fix on Mobile:
+        - banner uploads
+        - WYSIWYG Editor
 
 Overall TODOs:
-    - implement TimelineJS
     - Automatic Post Creation upon reaching milestones (email notification to admin email & should be a setting and editable)
     - Create dynamic background or something for progress-bar. Dynamic update of progress-bar
     - Dynamic Countdown
@@ -37,8 +39,8 @@ Overall TODOs:
     - Clear comment form when canceled
     - Style payment selection to show icons next to radio buttons
     - Enable multiple admins, and permissions.
-    - Javascript is becoming atrocious. Make this better! (basically make full use of REST and dump page templates. Every element should be a template returnable by django or something)
-        - User alias functionality should not reload page twice (to refresh name in header)
+    - User alias functionality should not reload page twice (to refresh name in header)
+    - Enable "unlike" functionality
 
 Long-term TODOs:
     - Angular is going to be defunct soon. Convert website to angular.io (there is a Material library for angular.io)

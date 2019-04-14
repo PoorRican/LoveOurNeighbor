@@ -70,12 +70,12 @@
         <h5 style="font-weight: 400">
           {{ form.founded.label }}:
         </h5>
-        <input type="hidden" name="{{ form.founded.name }}" value="{% raw %}{{ object.founded | date:'yyyy-MM-dd' }}{% endraw %}">
+        <input type="hidden" name="{{ form.founded.name }}" value="{% raw %}{{ object().founded | date:'yyyy-MM-dd' }}{% endraw %}">
         <md-input-container>
           <md-icon><i class="material-icons">cake</i></md-icon>
-          <md-datepicker md-hide-icons="calendar" id="{{ form.founded.id_for_label }}" ng-model="object.founded" md-placeholder="Enter date founded" md-open-on-focus hide-sm hide-xs></md-datepicker>
+          <md-datepicker md-hide-icons="calendar" id="{{ form.founded.id_for_label }}" ng-model="object().founded" md-placeholder="Enter date founded" md-open-on-focus hide-sm hide-xs></md-datepicker>
           <div class="hint">When did this ministry start?</div>
-          <input type="date" ng-model="object.founded" hide-gt-sm>
+          <input type="date" ng-model="object().founded" hide-gt-sm>
         </md-input-container>
       </div>
       <br>
@@ -95,7 +95,6 @@
         {{ form.banner_img }}
       </div>
       <md-input-container>
-        {# TODO: render WYSIWYG editor #}
         <md-icon><i class="material-icons">subject</i></md-icon>
         {{ form.description.label_tag() }}
         {% if start %}
@@ -109,13 +108,13 @@
       <md-input-contaiter>
         <md-icon><i class="material-icons">class</i></md-icon>
         {{ form.tags.label_tag() }}
-        <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
-        <md-chips ng-model="object.tags" md-autocomplete-snap
-                  md-transform-chip="transformChip($chip)"
-                  md-separator-keys="separatorKeys">
+        <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object().tags.join(', ') }}{% endraw %}">
+        <md-chips ng-model="object().tags" md-autocomplete-snap
+                  md-transform-chip="tagService.transform_chip($chip)"
+                  md-separator-keys="tagService.separatorKeys">
           <md-autocomplete
               md-search-text="tagText"
-              md-items="tag in tagSearch(tagText)"
+              md-items="tag in filter_tags(tagText)"
               md-item-text="tag"
               md-min-length="1">
             <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
@@ -140,13 +139,13 @@
           Administration:
         </h3>
           <md-content layout="column" class="md-padding autocomplete rep_requests">
-            <input type="hidden" name="{{ form.reps.name }}" value="{% raw %}{{ object.reps }}{% endraw %}">
+            <input type="hidden" name="{{ form.reps.name }}" value="{% raw %}{{ object().reps }}{% endraw %}">
             <label>
               <md-icon><i class="material-icons">group_add</i></md-icon>
               {{ form.reps.label }}:
             </label>
-            <md-contact-chips ng-model="object.reps"
-                              md-contacts="contactSearch($query)"
+            <md-contact-chips ng-model="object().reps"
+                              md-contacts="filter_users($query)"
                               md-require-match="true"
                               md-contact-name="name"
                               md-contact-image="img"
@@ -154,14 +153,13 @@
                               placeholder="Select by name or email"
                               secondary-placeholder="Add another representative">
             </md-contact-chips>
-            {# TODO: enable dynamic UI #}
             {# TODO: button to clear all pending requests #}
             <md-list class="available_contacts">
               <md-subheader>
                 Representative Requests
               </md-subheader>
               {% if len(ministry.requests.all()) %}
-                <md-list-item class="md-2-line contact-item" ng-repeat="(index, contact) in object.requests">
+                <md-list-item class="md-2-line contact-item" ng-repeat="(index, contact) in object().requests">
                   {% raw %}
                     <img class="md-avatar" ng-src="{{ contact.img }}">
                     <div class="md-list-item-text compact">
