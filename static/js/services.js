@@ -248,14 +248,16 @@ function sideNavService($interval, $log, $mdSidenav) {
 
 nav_layout.factory('tagService', tagService);
 
-tagService.$inject = ['$http', '$log'];
+tagService.$inject = ['$http', '$log', '$mdConstant'];
 
-function tagService($http, $log) {
+function tagService($http, $log, $mdConstant) {
+  var separatorKeys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA];
   var available_tags = {};
 
   var service = {
     fetch: fetch,
     search: search,
+    separatorKeys: separatorKeys,
     transform_chip: transform_chip
   }
   return service;

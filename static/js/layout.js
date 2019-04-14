@@ -6,10 +6,9 @@ var nav_layout = angular.module('loveOurNeighborApp',
 // Layout controller and config //
 nav_layout.controller('LayoutCtrl', LayoutCtrl);
 
-LayoutCtrl.$inject = ['$scope', '$mdConstant', 'searchBarService', 'commentService', 'sideNavService'];
+LayoutCtrl.$inject = ['$scope', 'searchBarService', 'commentService', 'sideNavService'];
 
-function LayoutCtrl($scope, $mdConstant, searchBarService, commentService, sideNavService) {
-  $scope.separatorKeys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA];
+function LayoutCtrl($scope, searchBarService, commentService, sideNavService) {
 
   $scope.sidenav = sideNavService;
 

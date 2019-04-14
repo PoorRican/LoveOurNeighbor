@@ -79,7 +79,7 @@ function campaignActionCtrl($scope, $routeParams, tagService, objectService) {
   if ($routeParams.campaign_action == 'edit' || $routeParams.campaign_action == 'create') {
     $scope.object = objectService.get;
     $scope.filter_tags = tagService.search;
-    $scope.transform_chip = tagService.transform_chip;
+    $scope.tag_service = tagService;
 
     objectService.fetch();
     tagService.fetch();
@@ -151,7 +151,7 @@ function ministryActionCtrl($scope, $routeParams, tagService, userFilterService,
     $scope.object = objectService.get;
     $scope.filter_users = userFilterService.search;
     $scope.filter_tags = tagService.search;
-    $scope.transform_chip = tagService.transform_chip;
+    $scope.tagService = tagService;
 
     tagService.fetch();
     objectService.fetch();

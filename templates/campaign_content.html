@@ -96,8 +96,8 @@
         {{ form.tags.label_tag() }}
         <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object().tags.join(', ') }}{% endraw %}">
         <md-chips ng-model="object().tags" md-autocomplete-snap
-                  md-transform-chip="transform_chip($chip)"
-                  md-separator-keys="separatorKeys">
+                  md-transform-chip="tagService.transform_chip($chip)"
+                  md-separator-keys="tagService.separatorKeys">
           <md-autocomplete
               md-search-text="tagText"
               md-items="tag in filter_tags(tagText)"
