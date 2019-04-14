@@ -18,7 +18,7 @@
       <div layout="row">
           {% if request.user.logged_in_as %}
 
-            <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': request.user.logged_in_as.id}) }}"{% if sidenav %} ng-click="close()"{% endif %}>
+            <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': request.user.logged_in_as.id}) }}"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>
               <md-list-item class="md-1-line">
                 <img class="md-avatar" src="{{ static(request.user.logged_in_as.profile_img.url) }}">
                 <span class="uname">{{- request.user.logged_in_as.name -}}</span>
@@ -27,7 +27,7 @@
 
           {% else %}
 
-            <a href="#{{ url_for('user_profile') }}"{% if sidenav %} ng-click="close()"{% endif %}>
+            <a href="#{{ url_for('user_profile') }}"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>
               <md-list-item class="md-1-line">
                 <img class="md-avatar" src="{{ request.user.profile.avatar_url }}">
                 <span>{{- request.user.profile.name -}}</span>
@@ -131,7 +131,7 @@
       <div layout="row">
         <md-list>
           <md-list-item class="md-1-line">
-            <md-button ng-href="#/accounts/login/"{% if sidenav %} ng-click="close()"{% endif %}>Login</md-button>
+            <md-button ng-href="#/accounts/login/"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>Login</md-button>
           </md-list-item>
         </md-list>
       </div>
@@ -165,7 +165,7 @@
         </div>
 
         {# Hidden Side Nav Button #}
-        <md-button class="md-icon-button" style="font-size: 1em; margin: auto 15px auto auto;" ng-click="toggleRight()" hide-gt-sm>
+        <md-button class="md-icon-button" style="font-size: 1em; margin: auto 15px auto auto;" ng-click="sidenav.toggleRight()" hide-gt-sm>
           <md-icon>
             <i class="material-icons" aria-hidden="true">menu</i>
           </md-icon>
@@ -203,7 +203,7 @@
       <md-button ng-hide="!searching" ng-click="searching = !searching" class="md-icon-button">
         <md-icon><i class="material-icons">cancel</i></md-icon>
       </md-button>
-      <md-button ng-if="!searching" ng-click="close()" class="md-icon-button">
+      <md-button ng-if="!searching" ng-click="sidenav.close()" class="md-icon-button">
         <md-icon>
           <i class="material-icons" aria-hidden="true">close</i>
         </md-icon>
@@ -211,7 +211,7 @@
       </div>
     </md-toolbar>
 
-    <md-list ng-if="switching" layout="column" ng-click="close()">
+    <md-list ng-if="switching" layout="column" ng-click="sidenav.close()">
       <md-list-item class="md-line-1">
         {% if request.user.logged_in_as %}
           <md-button ng-href="#{{ url_for('people:be_me_again') }}">
@@ -280,7 +280,7 @@
     <md-list flex>
     {%- for _link in links -%}
       <a href="{{ _link[0] }}" name="{{ _link[1] }}">
-        <md-list-item class="md-line-1" ng-click="close()">{{ _link[1] }}</md-list-item>
+        <md-list-item class="md-line-1" ng-click="sidenav.close()">{{ _link[1] }}</md-list-item>
       </a>
     {%- endfor -%}
     </md-list>

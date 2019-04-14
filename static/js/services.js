@@ -1,3 +1,57 @@
+nav_layout.factory('commentService', commentService);
+
+function commentService() {
+  var service = {
+    hide: hide,
+    show: show
+  };
+  return service;
+
+  /** Controls the display of new comment forms on the page.
+   *
+   *  All elements of 'new_comment' are styled (forms hidden, buttons shown).
+   *  Then the targeted comment form is shown and the button is hidden.
+   *  This ensures that only a single form is shown at a time.
+   *
+   *  TODO: comment form should be dynamically created instead of hardcoded
+   **/
+  function show(event) {
+    // reset all 'new_comment' divs to default styling
+    reset();
+
+    // style selected form and button respectively
+    if ($(event.target).parent().parent()[0].classList.value.includes("wrapper")) {
+      // clicked button and not inner text. therefore, dont unpack as many parent elements
+      $(event.target).parent().children().css('display', 'block');
+      $(event.target).css('display', 'none');
+    } else {
+      $(event.target).parent().parent().children().css('display', 'block');
+      $(event.target).parent().css('display', 'none');
+    };
+  };
+
+  function hide(event) {
+    // hide selected form and button respectively
+    if ($(event.target).parent().parent().parent()[0].classList.value.includes("wrapper")) {
+      // clicked button and not inner text. therefore, dont unpack as many parent elements
+      $(event.target).parent().parent().children().css('display', 'block');
+      $(event.target).parent().css('display', 'none');
+    } else {
+      $(event.target).parent().parent().parent().children().css('display', 'block');
+      $(event.target).parent().parent().css('display', 'none');
+    };
+  };
+
+  function reset() {
+    var new_comment_divs = document.getElementsByClassName('new_comment');
+    for (d = 0; d < new_comment_divs.length; d++) {
+      new_comment_divs[d].children[0].style.display = 'none';
+      new_comment_divs[d].children[1].style.display = 'block';
+    }
+  };
+};
+
+
 nav_layout.factory('objectService', objectService);
 
 objectService.$inject = ['$http', '$interval', '$log'];
@@ -92,8 +146,10 @@ function likeButtonService($http, $log, objectService) {
 
 
 nav_layout.factory('searchBarService', searchBarService);
-searchBarService.$inject = ['$location'];
-function searchBarService($location) {
+
+searchBarService.$inject = ['$location', 'sideNavService'];
+
+function searchBarService($location, sideNavService) {
   var service = {
     search: search,
   }
@@ -103,6 +159,9 @@ function searchBarService($location) {
     var url = "/search/" + q;
     if (q != '') {
       $location.url(url);
+      sideNavService.close();
+    } else {
+      sideNavService.close();
     };
   };
 
@@ -151,6 +210,40 @@ function searchFilteringService(objectService) {
     return filter_types;
   };
 };
+
+
+nav_layout.factory('sideNavService', sideNavService);
+
+sideNavService.$inject = ['$interval', '$log', '$mdSidenav'];
+
+function sideNavService($interval, $log, $mdSidenav) {
+
+  var service = {
+    close: close,
+    toggleRight: buildToggler('right')
+  }
+  return service
+
+  function buildToggler(navID) {
+    return function() {
+      // Component lookup should always be available since we are not using `ng-if`
+      $mdSidenav(navID)
+        .toggle()
+        .then(function () {
+          $log.debug("toggle " + navID + " is done");
+        });
+    }
+  }
+
+  function close() {
+    // Component lookup should always be available since we are not using `ng-if`
+    $mdSidenav('right').close()
+      .then(function () {
+        $log.debug("close RIGHT is done");
+      });
+  };
+;
+ }
 
 
 nav_layout.factory('tagService', tagService);

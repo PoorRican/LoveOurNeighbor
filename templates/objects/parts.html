@@ -66,11 +66,11 @@
               <i class="material-icons">send</i>
             </md-icon>
           </md-button>
-          <md-button class="md-icon-button md-warn" ng-click="hide_new_comment($event)">
+          <md-button class="md-icon-button md-warn" ng-click="comment.hide($event)">
             <i class="material-icons">cancel</i>
           </md-button>
         </form>
-        <md-button class="md-icon-button md-raised md-primary" ng-click="unhide_new_comment($event)">
+        <md-button class="md-icon-button md-raised md-primary" ng-click="comment.show($event)">
           <i class="material-icons">add_comment</i>
         </md-button>
       {% else %}
