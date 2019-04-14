@@ -1,25 +1,25 @@
 <section class="wrapper">
-  <h1>Found {% raw %}{{ object.count }}{% endraw %} Results for "{{ query }}"</h1>
+  <h1>Found {% raw %}{{ object().count }}{% endraw %} Results for "{{ query }}"</h1>
   <div layout-gt-sm="row" layout="column">
     <div>
       <section layout="column">
         <md-subheader>Types:</md-subheader>
-        <md-checkbox ng-model="filter_types.ministry" ng-disabled="!(object.ministries.length)">
+        <md-checkbox ng-model="filter_types.ministry" ng-disabled="!(object().ministries.length)">
           {% raw %}
             Ministries
-            ({{ object.ministries.length }})&nbsp;
+            ({{ object().ministries.length }})&nbsp;
           {% endraw %}
         </md-checkbox>
-        <md-checkbox ng-model="filter_types.campaign" ng-disabled="!(object.campaigns.length)">
+        <md-checkbox ng-model="filter_types.campaign" ng-disabled="!(object().campaigns.length)">
           {% raw %}
             Campaigns
-            ({{ object.campaigns.length }})&nbsp;
+            ({{ object().campaigns.length }})&nbsp;
           {% endraw %}
         </md-checkbox>
-        <md-checkbox ng-model="filter_types.post" ng-disabled="!(object.posts.length)">
+        <md-checkbox ng-model="filter_types.post" ng-disabled="!(object().posts.length)">
           {% raw %}
             News Posts
-            ({{ object.posts.length }})&nbsp;
+            ({{ object().posts.length }})&nbsp;
           {% endraw %}
         </md-checkbox>
       </section>
@@ -30,9 +30,9 @@
           <md-slider-container>
             <md-slider flex md-discrete
                        ng-model="distance"
-                       ng-hide="objects.distances.max"
-                       min="{% raw %}{{ object.distances.min }}{% endraw %}"
-                       max="{% raw %}{{ object.distances.max }}{% endraw %}"
+                       ng-hide="objects().distances.max"
+                       min="{% raw %}{{ object().distances.min }}{% endraw %}"
+                       max="{% raw %}{{ object().distances.max }}{% endraw %}"
                        step="1" aria-label="default"></md-slider>
           <md-input-container hide-gt-sm>
             <input type="number" ng-model="distance">
@@ -44,7 +44,7 @@
     <div layout="column">
       <md-list>
         <md-list-item ng-if="filter_types.ministry" class="md-2-line"
-                      ng-repeat="item in object.ministries | withinDistance: distance">
+                      ng-repeat="item in object().ministries | withinDistance: distance">
           <div class="md-list-item-text" layout="column">
             {% raw %}
               <a href="#{{ item.url }}">
@@ -56,7 +56,7 @@
           </div><!-- /.md-list-item-text -->
         </md-list-item>
         <md-list-item ng-if="filter_types.campaign" class="md-2-line"
-                      ng-repeat="item in object.campaigns | withinDistance: distance">
+                      ng-repeat="item in object().campaigns | withinDistance: distance">
           <div class="md-list-item-text" layout="column">
             {% raw %}
               <a href="#{{ item.url }}">
@@ -68,7 +68,7 @@
           </div><!-- /.md-list-item-text -->
         </md-list-item>
         <md-list-item ng-if="filter_types.post" class="md-2-line"
-                      ng-repeat="item in object.posts | withinDistance: distance">
+                      ng-repeat="item in object().posts | withinDistance: distance">
           <div class="md-list-item-text" layout="column">
             {% raw %}
               <a href="#{{ item.url }}">

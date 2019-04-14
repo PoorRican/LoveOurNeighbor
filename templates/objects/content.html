@@ -63,13 +63,13 @@
               {% if cam.donated %}
               <div class="current" style="width: {{ round((cam.donated / cam.goal) * 100) }}%">
                 <span>
-                  ${% raw %}{{ object.donated }}{% endraw %}
+                  ${% raw %}{{ object().donated }}{% endraw %}
                 </span>
               </div>
               {% endif %}
               <div class="remaining" style="width: {{ round(((cam.goal - cam.donated) / cam.goal) * 90) }}%">
                 <span>
-                  ${% raw %}{{ object.goal - object.donated }}{% endraw %}
+                  ${% raw %}{{ object().goal - object().donated }}{% endraw %}
                 </span>
               </div>
             </div>
@@ -117,10 +117,10 @@
               {{ cam.end_date.strftime("%h %d, %Y") }}
             <br>
             <span>Contributions:</span>&nbsp;
-              {% raw %}{{ object.donations }}{% endraw %} have supported so far
+              {% raw %}{{ object().donations }}{% endraw %} have supported so far
             <br>
             <span>Views:</span>&nbsp;
-              {% raw %}{{ object.views }}{% endraw %}
+              {% raw %}{{ object().views }}{% endraw %}
           </p>
         </div>
 
@@ -201,7 +201,7 @@
                     {{ ministry.donated }}
                   <br>
                   <span>Views:</span>&nbsp;
-                    {% raw %}{{ object.views }}{% endraw %}
+                    {% raw %}{{ object().views }}{% endraw %}
                 </p>
               </div>
 
@@ -259,7 +259,7 @@
                 {{ ministry.donated }}
               <br>
               <span>Views:</span>&nbsp;
-                {% raw %}{{ object.views }}{% endraw %}
+                {% raw %}{{ object().views }}{% endraw %}
             </p><!-- /.section-info -->
           </div><!-- /flex -->
         </div><!-- /row -->

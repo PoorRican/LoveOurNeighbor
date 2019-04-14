@@ -331,7 +331,7 @@
 {# {{{ Searchbar Macro #}
 {% macro searchbar(sidenav=False) %}
   <div layout="row" class="search-bar" {% if not sidenav %}hide-xs hide-sm{% endif %}>
-    <form name="search" method="GET" ng-submit="get_search(query)">
+    <form method="GET" ng-submit="search(query)">
       {% if not sidenav %}
       <md-icon>
         <i class="material-icons" style="color: white">search</i>

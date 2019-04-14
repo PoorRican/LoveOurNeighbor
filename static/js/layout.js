@@ -4,10 +4,7 @@ var nav_layout = angular.module('oneDollarApp',
   ['ngMaterial', 'ngRoute', 'ngParallax']);
 
 // Layout controller and config //
-
-
-
-nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http', '$log', '$location', '$mdConstant', function($scope, $interval, $mdSidenav, $http, $log, $location, $mdConstant) {
+nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http', '$log', '$location', '$mdConstant', 'searchBarService', function($scope, $interval, $mdSidenav, $http, $log, $location, $mdConstant, searchBarService) {
   $scope.separatorKeys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA];
 
   $scope.toggleLeft = buildDelayedToggler('left');
@@ -15,55 +12,8 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
   $scope.isOpenRight = function(){
     return $mdSidenav('right').isOpen();
   };
-  $scope.query = null;
 
-
-  var update_interval_id = 0;
-  $scope.object = {};
-
-  $scope.stop_update = function() {
-    if (angular.isDefined(update_interval_id)) {
-      $interval.cancel(update_interval_id);
-      update_interval_id = undefined;
-    };
-  };
-  $scope.update_object_periodically = function() {
-    $scope.update_object();
-    update_interval_id = $interval($scope.update_object, 15000);
-  };
-  $scope.update_object = function(url=null, f=null) {
-    if (url == null | angular.isNumber(url)) {
-      try {
-        url = document.getElementById("current_object_json").value;
-      }
-      catch(e) {
-        $log.warn("no value 'current_object_json' on page...");
-        return null;
-      }
-    };
-    $http.get(url)
-    .then(function(response) {
-      var data = response.data;
-      if (data.founded) {
-        data.founded = new Date(data.founded);
-      };
-      if (data.start_date) {
-        data.start_date = new Date(data.start_date);
-      };
-      if (data.end_date) {
-        data.end_date = new Date(data.end_date);
-      };
-
-      $scope.object = data;
-
-      if (angular.isFunction(f)) {
-        f();
-      };
-    }, function(response) {
-      $log.warn('Could not fetch tag list. (Wrong URL?)')});
-  };
-
-
+  $scope.search = searchBarService.search;
 
   $scope.goto = function (url) {
     $location.url(url);
@@ -119,62 +69,6 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
         });
     };
 
-  /**
-   * Return the proper object when the append is called.
-   */
-  $scope.transformChip = function (chip) {
-    // If it is an object, it's already a known chip
-    if (angular.isObject(chip)) {
-      return chip;
-    }
-
-    // Otherwise, create a new one
-    return chip;
-  };
-
-
-  $scope.contactSearch = function(query) {
-    /**
-     * Create filter function for a query string
-     */
-    function createContactFilter(query) {
-      var lowercaseQuery = query.toLowerCase();
-
-      return function filterFn(contact) {
-        return (contact.name.toLowerCase().indexOf(lowercaseQuery) === 0) ||
-            (contact.email.toLowerCase().indexOf(lowercaseQuery) === 0);
-      };
-    };
-
-      return query ? $scope.object.requests.filter(createContactFilter(query)) : [];
-  };
-
-  $scope.like = function(url) {
-    $http.get(url)
-    .then(function(response) {
-      $scope.object.liked = response.data;
-    }, function(response) {});
-    $scope.update_object();
-  };
-
-  $scope.like_style = function() {
-    if ($scope.object && $scope.object.liked) {
-      return {'background-color': '#FF7100'};
-    } else {
-      return {'background-color': '#EEE'};
-    }
-  };
-
-  $scope.get_search = function(q=null) {
-    if (q == null & $scope.query) { var q = $scope.query; };
-    var url = "/search/" + q;
-    if (q!=null) {
-      $location.url(url);
-      $scope.close();
-    } else {
-      $scope.close();
-    }
-  };
 
 
   /** Controls the display of new comment forms on the page.

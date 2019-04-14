@@ -1,25 +1,18 @@
-function blankFilterTypes() {
-  return {
-        'ministry': false,
-        'campaign': false,
-        'post': false,
-        'distance': 0,
-  };
-};
-
 // Top-Level View Controllers
 nav_layout.controller('homeController', homeController);
 
-homeController.$inject = ['$scope', '$http', '$location'];
+homeController.$inject = ['$scope', '$http', '$location', 'objectService', 'likeButtonService']
 
-function homeController($scope, $http, $location) {
+function homeController($scope, $http, $location, objectService, likeButtonService) {
   // TODO: change title block
-  $scope.currentNavItem = 'Home';
+  $scope.object = objectService.get;
+  $scope.likeButton = likeButtonService;
 
-  $scope.update_object_periodically();
+  $scope.currentNavItem = 'Home';
+  objectService.periodically_fetch();
   $scope.$on('$destroy', function() {
     // Make sure that the interval is destroyed too
-    $scope.stop_update();
+    objectService.stop();
   });
 
   ga('send', 'pageview', '/home');
@@ -55,17 +48,19 @@ function aboutController($scope, $http, $location) {
 
 nav_layout.controller('campaignCtrl', campaignCtrl);
 
-campaignCtrl.$inject = ['$scope', '$http', '$routeParams', '$location'];
+campaignCtrl.$inject = ['$scope', '$routeParams', 'objectService', 'likeButtonService'];
 
-function campaignCtrl($scope, $http, $routeParams, $location) {
+function campaignCtrl($scope, $routeParams, objectService, likeButtonService) {
   // TODO: change title block
+  $scope.object = objectService.get;
+  $scope.likeButton = likeButtonService;
 
   $scope.currentNavItem = 'Home';
 
-  $scope.update_object_periodically();
+  objectService.periodically_fetch();
   $scope.$on('$destroy', function() {
     // Make sure that the interval is destroyed too
-    $scope.stop_update();
+    objectService.stop();
   });
 
   ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
@@ -74,16 +69,20 @@ function campaignCtrl($scope, $http, $routeParams, $location) {
 
 nav_layout.controller('campaignActionCtrl', campaignActionCtrl);
 
-campaignActionCtrl.$inject = ['$scope', '$http', '$routeParams', '$location'];
+campaignActionCtrl.$inject = ['$scope', '$routeParams', 'tagService', 'objectService'];
 
-function campaignActionCtrl($scope, $http, $routeParams, $location) {
+function campaignActionCtrl($scope, $routeParams, tagService, objectService) {
   // TODO: change title block
 
   $scope.currentNavItem = 'Home';
 
   if ($routeParams.campaign_action == 'edit' || $routeParams.campaign_action == 'create') {
-    $scope.update_object();
-    $scope.get_tags();
+    $scope.object = objectService.get;
+    $scope.filter_tags = tagService.search;
+    $scope.transform_chip = tagService.transform_chip;
+
+    objectService.fetch();
+    tagService.fetch();
   }
 
   ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
@@ -92,9 +91,9 @@ function campaignActionCtrl($scope, $http, $routeParams, $location) {
 
 nav_layout.controller('newsCtrl', newsCtrl);
 
-newsCtrl.$inject = ['$scope', '$http', '$routeParams', '$location'];
+newsCtrl.$inject = ['$scope', '$routeParams'];
 
-function newsCtrl($scope, $http, $routeParams, $location) {
+function newsCtrl($scope, $routeParams) {
   // TODO: change title block
 
   $scope.currentNavItem = 'Home';
@@ -105,9 +104,9 @@ function newsCtrl($scope, $http, $routeParams, $location) {
 
 nav_layout.controller('donationCtrl', donationCtrl);
 
-donationCtrl.$inject = ['$scope', '$http', '$routeParams', '$location'];
+donationCtrl.$inject = ['$scope', '$routeParams'];
 
-function donationCtrl($scope, $http, $routeParams, $location) {
+function donationCtrl($scope, $routeParams) {
   // TODO: change title block
 
   $scope.currentNavItem = null;
@@ -119,17 +118,19 @@ function donationCtrl($scope, $http, $routeParams, $location) {
 
 nav_layout.controller('ministryCtrl', ministryCtrl);
 
-ministryCtrl.$inject = ['$scope', '$http', '$routeParams', '$location']
+ministryCtrl.$inject = ['$scope', '$routeParams', 'objectService', 'likeButtonService']
 
-function ministryCtrl($scope, $http, $routeParams, $location) {
+function ministryCtrl($scope, $routeParams, objectService, likeButtonService) {
   // TODO: change title block
+  $scope.object = objectService.get;
+  $scope.likeButton = likeButtonService;
 
   $scope.currentNavItem = null;
 
-  $scope.update_object_periodically();
+  objectService.periodically_fetch();
   $scope.$on('$destroy', function() {
     // Make sure that the interval is destroyed too
-    $scope.stop_update();
+    objectService.stop();
   });
 
   ga('send', 'pageview', '/ministry/' + $routeParams.ministry_action);
@@ -139,22 +140,21 @@ function ministryCtrl($scope, $http, $routeParams, $location) {
 
 nav_layout.controller('ministryActionCtrl', ministryActionCtrl);
 
-ministryActionCtrl.$inject = ['$scope', '$timeout', '$http', '$routeParams', '$location', 'tagService'];
+ministryActionCtrl.$inject = ['$scope', '$routeParams', 'tagService', 'userFilterService', 'objectService'];
 
-function ministryActionCtrl($scope, $timeout, $http, $routeParams, $location, tagService) {
+function ministryActionCtrl($scope, $routeParams, tagService, userFilterService, objectService) {
   // TODO: change title block
 
   $scope.currentNavItem = null;
 
   if ($routeParams.ministry_action == 'edit' || $routeParams.ministry_action == 'edit') {
-    $scope.filter_tags = filter_tags;
+    $scope.object = objectService.get;
+    $scope.filter_users = userFilterService.search;
+    $scope.filter_tags = tagService.search;
+    $scope.transform_chip = tagService.transform_chip;
 
-    tagService.get();
-    $scope.update_object();
-
-    function filter_tags(q) {
-      return tagService.search(q);
-    }
+    tagService.fetch();
+    objectService.fetch();
   }
   if ($routeParams.ministry_action == 'login') {
     $location.url('/ministry/' + $routeParams.ministry_id);
@@ -168,9 +168,9 @@ function ministryActionCtrl($scope, $timeout, $http, $routeParams, $location, ta
 
 nav_layout.controller('accountCtrl', accountCtrl);
 
-accountCtrl.$inject = ['$scope', '$http', '$routeParams', '$location'];
+accountCtrl.$inject = ['$scope', '$routeParams'];
 
-function accountCtrl($scope, $http, $routeParams, $location) {
+function accountCtrl($scope, $routeParams) {
   // TODO: change title block
 
   $scope.currentNavItem  = null;
@@ -181,9 +181,9 @@ function accountCtrl($scope, $http, $routeParams, $location) {
 
 nav_layout.controller('peopleCtrl', peopleCtrl);
 
-peopleCtrl.$inject = ['$scope', '$http', '$route', '$routeParams', '$location']
+peopleCtrl.$inject = ['$scope', '$route', '$routeParams', '$location']
 
-function peopleCtrl($scope, $http, $route, $routeParams, $location) {
+function peopleCtrl($scope, $route, $routeParams, $location) {
   // TODO: change title block
 
   $scope.currentNavItem  = null;
@@ -201,62 +201,48 @@ function peopleCtrl($scope, $http, $route, $routeParams, $location) {
 
 nav_layout.controller('searchCtrl', searchCtrl);
 
-searchCtrl.$inject = ['$scope', '$http', '$route', '$routeParams', '$location'];
+searchCtrl.$inject = ['$scope', '$timeout', '$routeParams', 'objectService', 'searchFilteringService'];
 
-function searchCtrl($scope, $http, $route, $routeParams, $location) {
+function searchCtrl($scope, $timeout, $routeParams, objectService, searchFilteringService) {
   // TODO: change title block
+
+  $scope.filter_types = searchFilteringService.blank();
+  $scope.object = objectService.get;
+  $scope.distance = 0;
 
   $scope.currentNavItem  = null;
 
-  $scope.filter_types = blankFilterTypes();
-  function populate_filter_selection() {
-    if ($scope.object.ministries.length) {
-      $scope.filter_types['ministry'] = true;
-    };
-    if ($scope.object.campaigns.length) {
-      $scope.filter_types['campaign'] = true;
-    };
-    if ($scope.object.posts.length) {
-      $scope.filter_types['post'] = true;
-    };
-    if ($scope.object.distances.max) {
-      $scope.filter_types['distance'] = $scope.object.distances.max;
-      $scope.distance = $scope.object.distances.max;
-    };
-  };
-
   var url = '/search/' + $routeParams.query + '/json';
-  $scope.update_object(url, populate_filter_selection);
+  objectService.fetch(url);
+  $timeout(
+  (function(){
+    $scope.filter_types = searchFilteringService.populate();
+    $scope.distance = $scope.object().distances ? $scope.object().distances.max : 0;
+  }), 100);
 
   ga('send', 'pageview', '/search/' + $routeParams.query);
 };
 
+
 nav_layout.controller('searchTagCtrl', searchTagCtrl);
-searchTagCtrl.$inject = ['$scope', '$http', '$route', '$routeParams', '$location'];
-function searchTagCtrl($scope, $http, $route, $routeParams, $location) {
+
+searchTagCtrl.$inject = ['$scope', '$timeout', '$routeParams', 'objectService', 'searchFilteringService'];
+
+function searchTagCtrl($scope, $timeout, $routeParams, objectService, searchFilteringService) {
   // TODO: change title block
+  $scope.filter_types = searchFilteringService.blank();
+  $scope.object = objectService.get;
+  $scope.distance = 0;
 
   $scope.currentNavItem  = null;
 
-  $scope.filter_types = blankFilterTypes();
-  function populate_filter_selection() {
-    if ($scope.object.ministries.length) {
-      $scope.filter_types['ministry'] = true;
-    };
-    if ($scope.object.campaigns.length) {
-      $scope.filter_types['campaign'] = true;
-    };
-    if ($scope.object.posts.length) {
-      $scope.filter_types['post'] = true;
-    };
-    if ($scope.object.distances.max) {
-      $scope.filter_types['distance'] = $scope.object.distances.max;
-      $scope.distance = $scope.object.distances.max;
-    };
-  };
-
   var url = '/search/tag/' + $routeParams.query + '/json';
-  $scope.update_object(url, populate_filter_selection);
+  objectService.fetch(url);
+  $timeout(
+  (function(){
+    $scope.filter_types = searchFilteringService.populate();
+    $scope.distance = $scope.object().distances ? $scope.object().distances.max : 0;
+  }), 100);
 
   ga('send', 'pageview', '/search/tag/' + $routeParams.query);
 };

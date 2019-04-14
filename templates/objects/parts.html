@@ -93,19 +93,19 @@
     <div class="like-button" flex
       {# TODO: do better object detection here #}
       {% if hasattr(_obj, 'admin') %}
-        ng-click="like('{{ url_for('ministry:like_ministry', kwargs={"ministry_id": _obj.id}) }}')"
+        ng-click="likeButton.like('{{ url_for('ministry:like_ministry', kwargs={"ministry_id": _obj.id}) }}')"
       {% else %}
-        ng-click="like('{{ url_for('ministry:like_campaign', kwargs={"campaign_id": _obj.id}) }}')"
+        ng-click="likeButton.like('{{ url_for('ministry:like_campaign', kwargs={"campaign_id": _obj.id}) }}')"
       {% endif %}
-      ng-style="like_style()"
+      ng-style="likeButton.style()"
       style="">
         <div style="text-height: 36px !important;">
-          <span ng-if="object.liked"><i class="material-icons" style="font-size: 1.7em;">favorite</i></span>
-          <span ng-if="!object.liked"><i class="material-icons" style="font-size: 1.7em;">favorite_border</i></span>
+          <span ng-if="object().liked"><i class="material-icons" style="font-size: 1.7em;">favorite</i></span>
+          <span ng-if="!object().liked"><i class="material-icons" style="font-size: 1.7em;">favorite_border</i></span>
           <br>
         </div>
         {# TODO: implement a filter to sum up large numbers #}
-        <small>{% raw %}{{ object.likes }}{% endraw %} like this</small>
+        <small>{% raw %}{{ object().likes }}{% endraw %} like this</small>
     </div>
     {% if request and not request.user.is_authenticated %}
     </a>
