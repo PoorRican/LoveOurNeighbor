@@ -41,7 +41,7 @@
                 <img class="profile-img" src="{{ i.user.profile.avatar_url }}">
                 <div layout="column">
                   <bold>By: {{ i.user.name }}</bold>
-                  <small>{{ i.pub_date }}</small>
+                  <small>{{ f_time(i.pub_date) }}</small>
                 </div>
               </div>
             </div>
@@ -59,7 +59,9 @@
         <form enctype="multipart/form-data" method="POST" style="display: none;"
             action="{{ url_for("ministry:create_comment", kwargs={'obj_type': obj_type, 'obj_id': obj.id}) }}">
           <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-          {{ form.as_p() }}
+          <md-input-container>
+            {{ form.as_p() }}
+          </md-input-container>
           <md-button class="md-raised md-primary" type="submit">
             Comment&nbsp;
             <md-icon>

@@ -1,5 +1,4 @@
 {# vim: ft=jinja foldmethod=marker:
-
     templates/objects/content/render_objects.html
 
 #}
@@ -111,10 +110,12 @@
 
           <p class="section-info">
             <span>Began:</span>&nbsp;
-              {{ cam.start_date.strftime("%h %d, %Y") }}
+              {{ cam.start_date.strftime("%h %d, %Y") }}&nbsp;
+              <span>({{ f_time(cam.start_date) }})</span>
             <br>
             <span>Until:</span>&nbsp;
-              {{ cam.end_date.strftime("%h %d, %Y") }}
+              {{ cam.end_date.strftime("%h %d, %Y") }}&nbsp;
+              <span>({{ f_time(cam.end_date) }})</span>
             <br>
             <span>Contributions:</span>&nbsp;
               {% raw %}{{ object().donations }}{% endraw %} have supported so far
