@@ -1,10 +1,14 @@
 // Declare single angular module
 
-var nav_layout = angular.module('oneDollarApp',
+var nav_layout = angular.module('loveOurNeighborApp',
   ['ngMaterial', 'ngRoute', 'ngParallax']);
 
 // Layout controller and config //
-nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http', '$log', '$location', '$mdConstant', 'searchBarService', function($scope, $interval, $mdSidenav, $http, $log, $location, $mdConstant, searchBarService) {
+nav_layout.controller('LayoutCtrl', LayoutCtrl);
+
+LayoutCtrl.$inject = ['$scope', '$interval', '$mdSidenav', '$http', '$log', '$location', '$mdConstant', 'searchBarService'];
+
+function LayoutCtrl($scope, $interval, $mdSidenav, $http, $log, $location, $mdConstant, searchBarService) {
   $scope.separatorKeys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA];
 
   $scope.toggleLeft = buildDelayedToggler('left');
@@ -110,7 +114,7 @@ nav_layout.controller('LayoutCtrl', ['$scope', '$interval', '$mdSidenav', '$http
       $(event.target).parent().parent().css('display', 'none');
     };
   };
-}]);
+};
 
 
 nav_layout.config(function($mdThemingProvider) {

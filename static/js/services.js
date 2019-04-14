@@ -1,51 +1,8 @@
-nav_layout.factory('tagService', ['$http', '$log', function($http, $log) {
-  var available_tags = {};
+nav_layout.factory('objectService', objectService);
 
-  var service = {
-    fetch: fetch,
-    search: search,
-    transform_chip: transform_chip
-  }
-  return service;
+objectService.$inject = ['$http', '$interval', '$log'];
 
-  function fetch() {
-    var url = '/ministry/tags/all';
-    $http.get(url)
-    .then(function(response) {
-      available_tags = response.data;
-    }, function(response) {
-      $log.warn('Could not fetch tag list. (Wrong URL?)')});
-  };
-
-  function search(query) {
-    function createTagFilter(query) {
-      var loweredQuery = query.toLowerCase();
-
-      return function filterFn(tag) {
-        return (tag.indexOf(loweredQuery) === 0);
-      };
-    };
-
-    return query ? available_tags.filter(createTagFilter(query)) : [];
-  };
-
-
-  /**
-   * Return the proper object when the append is called.
-   */
-  function transform_chip(chip) {
-    // If it is an object, it's already a known chip
-    if (angular.isObject(chip)) {
-      return chip;
-    }
-
-    // Otherwise, create a new one
-    return chip;
-  };
-}]);
-
-
-nav_layout.factory('objectService', ['$http', '$interval', '$log', function($http, $interval, $log) {
+function objectService($http, $interval, $log) {
   var interval_id = 0;
   var object = {};
 
@@ -100,10 +57,63 @@ nav_layout.factory('objectService', ['$http', '$interval', '$log', function($htt
      interval_id  = undefined;
     };
   };
-}]);
+};
 
 
-nav_layout.factory('searchFilteringService', ['objectService', function(objectService) {
+nav_layout.factory('likeButtonService', likeButtonService);
+
+likeButtonService.$inject = ['$http', '$log', 'objectService'];
+
+function likeButtonService($http, $log, objectService) {
+  var service = {
+    like: like,
+    style: style
+  };
+  return service
+
+  function like(url) {
+    $http.get(url)
+    .then(function(response) {
+      // don't assume that the object has changed on server side. i think this is proper use of REST
+      objectService.fetch();
+    }, function(response) {
+      $log.error("Unable to like object. Maybe incorrect URL?");
+    });
+  };
+
+  function style() {
+    if (objectService.get().liked) {
+      return {'background-color': '#FF7100'};
+    } else {
+      return {'background-color': '#EEE'};
+    }
+  };
+};
+
+
+nav_layout.factory('searchBarService', searchBarService);
+searchBarService.$inject = ['$location'];
+function searchBarService($location) {
+  var service = {
+    search: search,
+  }
+  return service;
+
+  function search(q=null) {
+    var url = "/search/" + q;
+    if (q != '') {
+      $location.url(url);
+    };
+  };
+
+};
+
+
+nav_layout.factory('searchFilteringService', searchFilteringService);
+
+searchFilteringService.$inject = ['objectService'];
+
+function searchFilteringService(objectService) {
   var filter_types = {};
 
   var service = {
@@ -140,37 +150,66 @@ nav_layout.factory('searchFilteringService', ['objectService', function(objectSe
 
     return filter_types;
   };
-}]);
+};
 
 
-nav_layout.factory('likeButtonService', ['$http', '$log', 'objectService', function($http, $log, objectService) {
+nav_layout.factory('tagService', tagService);
+
+tagService.$inject = ['$http', '$log'];
+
+function tagService($http, $log) {
+  var available_tags = {};
+
   var service = {
-    like: like,
-    style: style
-  };
-  return service
+    fetch: fetch,
+    search: search,
+    transform_chip: transform_chip
+  }
+  return service;
 
-  function like(url) {
+  function fetch() {
+    var url = '/ministry/tags/all';
     $http.get(url)
     .then(function(response) {
-      // don't assume that the object has changed on server side. i think this is proper use of REST
-      objectService.fetch();
+      available_tags = response.data;
     }, function(response) {
-      $log.error("Unable to like object. Maybe incorrect URL?");
-    });
+      $log.warn('Could not fetch tag list. (Wrong URL?)')});
   };
 
-  function style() {
-    if (objectService.get().liked) {
-      return {'background-color': '#FF7100'};
-    } else {
-      return {'background-color': '#EEE'};
+  function search(query) {
+    function createTagFilter(query) {
+      var loweredQuery = query.toLowerCase();
+
+      return function filterFn(tag) {
+        return (tag.indexOf(loweredQuery) === 0);
+      };
+    };
+
+    return query ? available_tags.filter(createTagFilter(query)) : [];
+  };
+
+
+  /**
+   * Return the proper object when the append is called.
+   */
+  function transform_chip(chip) {
+    // If it is an object, it's already a known chip
+    if (angular.isObject(chip)) {
+      return chip;
     }
+
+    // Otherwise, create a new one
+    return chip;
   };
-}]);
+};
 
 
-nav_layout.factory('userFilterService', ['objectService', function(objectService) {
+nav_layout.factory('userFilterService', userFilterService);
+
+
+userFilterService.$inject = ['objectService'];
+
+function userFilterService(objectService) {
 
   var service = {
     search: search
@@ -192,23 +231,7 @@ nav_layout.factory('userFilterService', ['objectService', function(objectService
 
     return query ? objectService.get().requests.filter(createContactFilter(query)) : [];
   };
-}]);
-
-
-nav_layout.factory('searchBarService', ['$location', function($location) {
-  var service = {
-    search: search,
-  }
-  return service;
-
-  function search(q=null) {
-    var url = "/search/" + q;
-    if (q != '') {
-      $location.url(url);
-    };
-  };
-
-}]);
+};
 
 
 // vim:foldmethod=syntax shiftwidth=2 tabstop=2:
