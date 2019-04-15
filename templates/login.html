@@ -5,7 +5,7 @@
   <p>If you have not created an account yet, then please
   <a href="#people/create">sign up</a> first.</p>
 
-  <form class="login" method="POST" action="/people/login">
+  <form name="loginForm" class="login" method="POST" action="/people/login">
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
@@ -13,19 +13,34 @@
       <md-input-container>
         <label>Email</label>
         <input name="email" type="email" required
-               minlength="10" maxlength="100" 
+               minlength="9" maxlength="64" 
                ng-model="email"
                ng-pattern="/^.+@.+\..+$/" />
-        <div ng-messages="email.$error" role="alert">
-          <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
-            Your email must be between 10 and 100 characters long and look like an e-mail address.
+        <div ng-messages="loginForm.email.$error" role="alert">
+          <div ng-message-exp="['required']">
+            This field is required.
+          </div>
+          <div ng-message-exp="['pattern']">
+            Please enter a valid email address.
+          </div>
+          <div ng-message-exp="['minlength', 'maxlength']">
+            Your email must be between 9 and 64 characters long.
           </div>
         </div>
       </md-input-container>
       <md-input-container>
-        {# TODO: render WYSIWYG editor #}
         {{ form.password.label_tag() }}
-        {{ form.password }}
+        <input type="password" name="password" required
+               minlength="9" maxlength="64"
+               ng-model="password"/>
+        <div ng-messages="loginForm.password.$error" role="alert">
+          <div ng-message-exp="['required']">
+            You must enter a password silly.
+          </div>
+          <div ng-message-exp="['minlength', 'maxlength']">
+            Your password must be between 9 and 64 characters long.
+          </div>
+        </div>
       </md-input-container>
     </div>
 

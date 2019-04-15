@@ -111,7 +111,7 @@ def login_user(request):
         password = request.POST['password']
 
         user = authenticate_user(email, password)
-        if user is not None:
+        if user:
             if user.is_active:
                 login(request, user)
                 clear_previous_ministry_login(request, user)
