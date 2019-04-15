@@ -6,9 +6,9 @@ var nav_layout = angular.module('loveOurNeighborApp',
 // Layout controller and config //
 nav_layout.controller('LayoutCtrl', LayoutCtrl);
 
-LayoutCtrl.$inject = ['$scope', 'searchBarService', 'commentService', 'sideNavService'];
+LayoutCtrl.$inject = ['$scope', 'searchBarService', 'commentService', 'sideNavService', 'notificationService'];
 
-function LayoutCtrl($scope, searchBarService, commentService, sideNavService) {
+function LayoutCtrl($scope, searchBarService, commentService, sideNavService, notificationService) {
 
   $scope.sidenav = sideNavService;
 
@@ -18,6 +18,8 @@ function LayoutCtrl($scope, searchBarService, commentService, sideNavService) {
   $scope.goto = function (url) {
     $location.url(url);
   };
+
+  notificationService.update();
 
 
 };

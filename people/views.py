@@ -2,10 +2,13 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password, make_password
-from django.http import HttpResponseRedirect
+from django.contrib.messages import get_messages
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic.edit import UpdateView
+
+import json
 
 from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
@@ -141,3 +144,13 @@ def logout_user(request):
     messages.add_message(request, messages.INFO, _w)
 
     return HttpResponseRedirect('/')
+
+
+def messages_json(request):
+    # TODO: store notification history
+    _json = []
+    _msg = get_messages(request)
+    for msg in _msg:
+        _json.append({'message': str(msg),
+                      'type': msg.tags})
+    return HttpResponse(json.dumps(_json))

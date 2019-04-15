@@ -21,6 +21,7 @@ Urgent TODO:
     - Fix bug on comments showing up as same time
     - Implement User verification with email
     - Re-implement `set_initial_user_names` from people.models
+    - Escape special characters in password regex pattern
 
 Overall TODOs:
     - Automatic Post Creation upon reaching milestones (email notification to admin email & should be a setting and editable)
