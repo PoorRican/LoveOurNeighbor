@@ -57,13 +57,7 @@ nav_layout.config(['$locationProvider', '$routeProvider', function($locationProv
        },
         controller  : 'ministryActionCtrl'
     })
-    .when('/accounts/:account_action*', {
-        templateUrl : function (params) {
-          return '/accounts/' + params.account_action;
-        },
-        controller  : 'accountCtrl'
-    })
-    .when('/people/:people_action*', {
+   .when('/people/:people_action*', {
         templateUrl : function (params) {
           return '/people/' + params.people_action;
         },

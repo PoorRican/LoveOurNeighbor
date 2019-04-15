@@ -10,8 +10,6 @@ from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 
-from allauth.account.signals import user_signed_up
-
 from explore.models import GeoLocation
 
 
@@ -188,7 +186,6 @@ class UserProfile(models.Model):
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 
-@receiver(user_signed_up)
 def set_initial_user_names(request, user, sociallogin=None, **kwargs):
     """
     When a social account is created successfully and this signal is received,

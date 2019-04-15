@@ -3,6 +3,26 @@ from django import forms
 from .models import User
 
 
+class NewUserForm(forms.ModelForm):
+    password2 = forms.PasswordInput()
+
+    def __init__(self, *args, **kwargs):
+        super(NewUserForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = User
+        fields = ('email', 'password', 'first_name', 'last_name')
+
+
+class UserLoginForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(UserLoginForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = User
+        fields = ('email', 'password')
+
+
 class UserEditForm(forms.ModelForm):
     """Form for viewing and editing name fields in a User object.
 

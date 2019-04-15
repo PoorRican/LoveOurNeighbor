@@ -1,0 +1,38 @@
+<section class="wrapper">
+
+  <h1>Sign In</h1>
+
+  <p>If you have not created an account yet, then please
+  <a href="#people/create">sign up</a> first.</p>
+
+  <form class="login" method="POST" action="/people/login">
+
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    <div layout="column" layout-padding class="md-inline-form" flex-gt-sm="50">
+      <md-input-container>
+        <label>Email</label>
+        <input name="email" type="email" required
+               minlength="10" maxlength="100" 
+               ng-model="email"
+               ng-pattern="/^.+@.+\..+$/" />
+        <div ng-messages="email.$error" role="alert">
+          <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
+            Your email must be between 10 and 100 characters long and look like an e-mail address.
+          </div>
+        </div>
+      </md-input-container>
+      <md-input-container>
+        {# TODO: render WYSIWYG editor #}
+        {{ form.password.label_tag() }}
+        {{ form.password }}
+      </md-input-container>
+    </div>
+
+    <md-button class="md-raised md-primary" type="submit">Sign In</md-button>
+
+  </form>
+
+  <a class="button secondaryAction" href="'account_reset_password'">Forgot Password?</a>
+
+</section>

@@ -1,7 +1,7 @@
 // Declare single angular module
 
 var nav_layout = angular.module('loveOurNeighborApp',
-  ['ngMaterial', 'ngRoute', 'ngParallax']);
+  ['ngMaterial', 'ngRoute', 'ngParallax', 'ngMessages']);
 
 // Layout controller and config //
 nav_layout.controller('LayoutCtrl', LayoutCtrl);

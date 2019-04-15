@@ -19,7 +19,6 @@ from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
-from people.views import user_profile
 from . import views
 
 app_name = 'frontend'
@@ -27,12 +26,6 @@ urlpatterns = [
     # Basic URLs
     path('admin/', admin.site.urls),
     path('', views.root),
-
-    # User Profile Functionality
-    path('accounts/', include('allauth.urls')),
-    path('accounts/profile', user_profile, name='user_profile'),
-    path('accounts/profile/',
-         RedirectView.as_view(url='/#/accounts/profile')),
 
     # Main Pages
     path('t/home', views.home),

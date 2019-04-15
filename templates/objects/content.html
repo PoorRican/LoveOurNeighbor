@@ -81,7 +81,7 @@
               {% if request.user.is_authenticated %}
                 ng-href="#{{ url_for('donation:select_payment', kwargs={'campaign_id': cam.id}) }}"
               {% else %}
-                ng-href="#/accounts/login" style="text-decoration: none"
+                ng-href="#/people/login" style="text-decoration: none"
               {% endif %}
               >
                 Donate

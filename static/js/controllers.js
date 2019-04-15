@@ -166,19 +166,6 @@ function ministryActionCtrl($scope, $routeParams, tagService, userFilterService,
 };
 
 
-nav_layout.controller('accountCtrl', accountCtrl);
-
-accountCtrl.$inject = ['$scope', '$routeParams'];
-
-function accountCtrl($scope, $routeParams) {
-  // TODO: change title block
-
-  $scope.currentNavItem  = null;
-
-  ga('send', 'pageview', '/account/' + $routeParams.account_action);
-  console.log('account action: ' + $routeParams.account_action);
-};
-
 nav_layout.controller('peopleCtrl', peopleCtrl);
 
 peopleCtrl.$inject = ['$scope', '$route', '$routeParams', '$location']
@@ -188,10 +175,16 @@ function peopleCtrl($scope, $route, $routeParams, $location) {
 
   $scope.currentNavItem  = null;
 
+  if ($routeParams.people_action == 'signup') {
+  };
+
+  if ($routeParams.people_action == 'login') {
+  };
+
   if ($routeParams.people_action == 'alias/logout') {
     $location.url('/accounts/profile');
     location.reload();
-  }
+  };
 
   ga('send', 'pageview', '/people/' + $routeParams.people_action);
 };

@@ -25,6 +25,7 @@ def home(request):
         AUTH = bool(request.user == _admin or request.user in _reps)
     except IndexError:
         current_campaign, all_news = None, None
+        AUTH = False
 
     context = {'all_news': all_news,
                'current_campaign': current_campaign,

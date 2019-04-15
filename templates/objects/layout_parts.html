@@ -27,7 +27,7 @@
 
           {% else %}
 
-            <a href="#{{ url_for('user_profile') }}"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>
+            <a href="#{{ url_for('people:user_profile') }}"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>
               <md-list-item class="md-1-line">
                 <img class="md-avatar" src="{{ request.user.profile.avatar_url }}">
                 <span>{{- request.user.profile.name -}}</span>
@@ -51,7 +51,7 @@
                     Your Profile
                   </md-button>
                 {% else %}
-                  <md-button ng-href="#{{ url_for('user_profile') }}">
+                  <md-button ng-href="#{{ url_for('people:user_profile') }}">
                     Your Profile
                   </md-button>
                 {% endif %}
@@ -104,7 +104,7 @@
 
               <md-menu-divider></md-menu-divider>
               <md-menu-item>
-                <md-button ng-href="/accounts/logout/">
+                <md-button ng-href="/people/logout/">
                   Logout
                 </md-button>
               </md-menu-item>
@@ -131,7 +131,7 @@
       <div layout="row">
         <md-list>
           <md-list-item class="md-1-line">
-            <md-button ng-href="#/accounts/login/"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>Login</md-button>
+            <md-button ng-href="#/people/login"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>Login</md-button>
           </md-list-item>
         </md-list>
       </div>
@@ -219,7 +219,7 @@
             Your Profile
           </md-button>
         {% else %}
-          <md-button ng-href="#{{ url_for('user_profile') }}">
+          <md-button ng-href="#{{ url_for('people:user_profile') }}">
             Your Profile
           </md-button>
         {% endif %}
@@ -270,7 +270,7 @@
 
       <md-divider></md-divider>
       <md-list-item class="md-line-1">
-        <md-button ng-href="/accounts/logout/">
+        <md-button ng-href="/people/logout/">
           Logout
         </md-button>
       </md-list-item>
