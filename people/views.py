@@ -63,7 +63,8 @@ class UserEditView(UpdateView):
 
     def form_valid(self, form):
         user = form.save(commit=False)
-        user.location = user._location
+        if user._location:
+            user.location = user._location
         user.save()
 
         messages.add_message(self.request, messages.INFO, 'User profile updated')
