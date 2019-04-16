@@ -359,15 +359,26 @@ function notificationService($mdToast, $http, $log, $interval, $timeout) {
   function show() {
     if (messages.length) {
       var notificationArea = 'top right';
+      var msg = messages[0].message;
+      var msg_type = messages[0].type;
+      var msg_style = '';
+      if (msg_type == 'error' || msg_type == 'warning') {
+        msg_style = 'md-warn';
+      } else if (msg_type == 'success') {
+        msg_style = 'GREEN';
+      } else if (msg_type == 'info') {
+        msg_style = 'GREEN';
+      };
 
       $mdToast.show(
         $mdToast.simple()
-        .textContent(messages[0].message)
+        .textContent(msg)
+        .toastClass(msg_style)
         // TODO: iterate over multiple messages
         // TODO: style toast in some way
         .position(notificationArea)
         .hideDelay(10000)
-        .parent('#content'))
+        .parent('#notificationArea'))
       .then(function() {
         $log.log('Message toast dismissed.');
       }).catch(function() {
@@ -383,7 +394,7 @@ function notificationService($mdToast, $http, $log, $interval, $timeout) {
 
     function getAndNotify() {
       get();
-      $timeout(show, 100);
+      $timeout(show, 200);
     };
   };
 }
