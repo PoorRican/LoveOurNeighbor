@@ -1,17 +1,17 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.hashers import make_password
 from django.contrib.messages import get_messages
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.generic.edit import UpdateView
 
 import json
 
 from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
+from .utils import clear_previous_ministry_login
 
 
 def create_user(request):
@@ -28,7 +28,7 @@ def create_user(request):
 
                 print('account created')
                 _w = 'Your account has been created!'
-                messages.add_message(request, messages.INFO, _w)
+                messages.add_message(request, messages.SUCCESS, _w)
 
                 return HttpResponseRedirect('/#people/profile')
             else:
@@ -55,7 +55,8 @@ def user_profile(request):
                 user.location = user._location
             user.save()
 
-            messages.add_message(request, messages.INFO, 'User profile updated')
+            messages.add_message(request, messages.SUCCESS,
+                                 'User profile updated')
 
             return HttpResponseRedirect('/#people/profile')
         else:
@@ -74,15 +75,6 @@ def user_profile(request):
         return render(request, "profile.html", context)
 
 
-def clear_previous_ministry_login(request, user, *args, **kwargs):
-    """ Automatically clears alias of last MinistryProfile alias.
-
-    This performs the same functionality as `be_me_again`
-    """
-    user.logged_in_as = None
-    user.save()
-
-
 @login_required
 def be_me_again(request):
     """ Allows User to interact as themselves.
@@ -96,20 +88,12 @@ def be_me_again(request):
     return HttpResponseRedirect(reverse('people:user_profile'))
 
 
-def authenticate_user(email, password):
-    user = User.objects.get(email=email)
-    if check_password(password, user.password):
-        return user
-    else:
-        return False
-
-
 def login_user(request):
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
 
-        user = authenticate_user(email, password)
+        user = User.authenticate_user(email, password)
         if user:
             if user.is_active:
                 login(request, user)
@@ -124,7 +108,7 @@ def login_user(request):
                 pass
         else:
             _w = 'Incorrect login for %s!' % email
-            messages.add_message(request, messages.INFO, _w)
+            messages.add_message(request, messages.ERROR, _w)
 
             return HttpResponseRedirect('/#people/login')
     elif request.method == 'GET':

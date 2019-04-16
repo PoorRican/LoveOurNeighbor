@@ -1,34 +1,15 @@
 from datetime import date
-from os import path
 
 from django.db import models
 
 from explore.models import GeoLocation
 from people.models import User
 
-
-def ministry_banner_dir(instance, filename):
-    """ Helper function that returns dedicated directory for ministry media.
-    This partitions user uploaded content per ministry.
-    """
-    return path.join('ministries', instance.name,
-                     'banners', filename)
-
-
-def ministry_profile_image_dir(instance, filename):
-    """ Helper function that returns dedicated directory for ministry media.
-    This partitions user uploaded content per ministry.
-    """
-    return path.join('ministries', instance.name,
-                     'images', filename)
-
-
-def campaign_banner_dir(instance, filename):
-    """ Helper function that returns dedicated directory for campaign media.
-    This partitions user uploaded content per ministry, per campaign.
-    """
-    return path.join('ministries', instance.ministry.name,
-                     'campaign_banners', filename)
+from .utils import (
+    ministry_banner_dir,
+    ministry_profile_image_dir,
+    campaign_banner_dir,
+)
 
 
 class Tag(models.Model):
@@ -37,6 +18,23 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def process_tags(cls, obj, tag_str):
+        _tags = tag_str.lower().split(',')
+        if _tags:
+            # TODO: have smart tag selection (tags selected by description)
+            for t in _tags:
+                if not len(t):
+                    continue
+                elif t[0] == ' ':
+                    t = t[1:]
+                elif t[-1] == ' ':
+                    t = t[:-1]
+                if t:
+                    _t, _ = cls.objects.get_or_create(name=t)
+                    obj.tags.add(_t)
+        obj.save()
 
 
 # Backend Functionality

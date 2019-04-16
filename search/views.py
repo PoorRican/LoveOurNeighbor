@@ -1,4 +1,4 @@
-from django.db.models import Q, ProtectedError
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -6,9 +6,14 @@ from django.urls import reverse
 import json
 
 from ministry.models import NewsPost, Campaign, MinistryProfile, Tag
-from ministry.views import serialize_ministry, serialize_campaign, serialize_newspost, F_TIME
+from ministry.utils import (
+    serialize_ministry,
+    serialize_campaign,
+    serialize_newspost,
+    F_TIME,
+    )
 
-from explore.models import calc_distance
+from explore.utils import calc_distance
 
 
 def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):

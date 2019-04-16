@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q, ProtectedError
+from django.db.models import ProtectedError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -10,98 +10,20 @@ from datetime import datetime
 
 from people.models import User
 
-from .forms import MinistryEditForm, CampaignEditForm, NewsEditForm, CommentForm
+from .forms import (
+    MinistryEditForm,
+    CampaignEditForm,
+    NewsEditForm,
+    CommentForm,
+    )
 from .models import NewsPost, Campaign, MinistryProfile, Tag
+from .utils import (
+    serialize_ministry,
+    serialize_campaign,
+    )
 
 
 strptime = datetime.strptime
-
-P_TIME = '%Y-%m-%d'             # when reading/parsing date objects
-F_TIME = '%Y-%m-%dT23:59:59'    # when writing date objects (for JSON)
-
-
-def process_tags(obj, tag_str):
-    _tags = tag_str.lower().split(',')
-    if _tags:
-        # TODO: have smart tag selection (tags selected by description)
-        for t in _tags:
-            if not len(t):
-                continue
-            elif t[0] == ' ':
-                t = t[1:]
-            elif t[-1] == ' ':
-                t = t[:-1]
-            if t:
-                _t, _ = Tag.objects.get_or_create(name=t)
-                obj.tags.add(_t)
-    obj.save()
-
-
-def serialize_ministry(ministry):
-    _founded = ''
-    _requests, _reps = [], []
-    if ministry.founded:
-        _founded = ministry.founded.strftime(F_TIME)
-    if len(ministry.requests.all()):
-        for i in ministry.requests.all():
-            _requests.append({'name': i.name,
-                              'email': i.email,
-                              'img': i.profile.avatar_url,
-                              })
-    if len(ministry.reps.all()):
-        for i in ministry.reps.all():
-            _reps.append({'name': i.name,
-                          'email': i.email,
-                          'img': i.profile.avatar_url,
-                          })
-
-    return {'id': ministry.id,
-            'name': ministry.name,
-            'views': ministry.views,
-            'founded': _founded,
-            'likes': len(ministry.likes.all()),
-            'requests': _requests,
-            'description': ministry.description,
-            'reps': _reps,
-            'tags': [i.name for i in ministry.tags.all()],
-            }
-
-
-def serialize_campaign(cam):
-    _donations = len(cam.donations.all())
-
-    return {'id': cam.id,
-            'title': cam.title,
-            'donated': cam.donated,
-            'start_date': cam.start_date.strftime(F_TIME),
-            'end_date': cam.end_date.strftime(F_TIME),
-            'pub_date': cam.pub_date.strftime(F_TIME),
-            'donations': _donations,
-            'goal': cam.goal,
-            'views': cam.views,
-            'likes': len(cam.likes.all()),
-            'content': cam.content,
-            'tags': [i.name for i in cam.tags.all()]
-            }
-
-
-def serialize_newspost(post):
-    parent = {}
-    if post.ministry:
-        parent['type'] = 'ministry'
-        parent['name'] = post.ministry.name
-        parent['id'] = post.ministry.id
-    if post.campaign:
-        parent['type'] = 'campaign'
-        parent['name'] = post.campaign.title
-        parent['id'] = post.campaign.id
-
-    return {'id': post.id,
-            'title': post.title,
-            'pub_date': post.pub_date.strftime('%Y-%m-%dT%H:%M:%S'),
-            'content': post.content,
-            'parent': parent,
-            }
 
 
 # Ministry Views
@@ -119,7 +41,7 @@ def create_ministry(request):
                 ministry.location = ministry.address
             ministry.save()
 
-            process_tags(ministry, min_form['tags'].value())
+            Tag.process_tags(ministry, min_form['tags'].value())
 
         _url = '/#%s' % reverse('ministry:ministry_profile',
                                 kwargs={'ministry_id': ministry.id})
@@ -136,7 +58,8 @@ def edit_ministry(request, ministry_id):
     try:
         ministry = MinistryProfile.objects.get(id=ministry_id)
         # TODO: set up ministry permissions
-        if request.user == ministry.admin or request.user in ministry.reps.all():
+        if request.user == ministry.admin or \
+           request.user in ministry.reps.all():
             if request.method == 'POST':
                 _form = MinistryEditForm(request.POST, request.FILES,
                                          instance=ministry)
@@ -146,7 +69,7 @@ def edit_ministry(request, ministry_id):
                         _min.location = _min.address
                     _min.save()
 
-                    process_tags(ministry, _form['tags'].value())
+                    Tag.process_tags(ministry, _form['tags'].value())
                     for r in json.loads(_form['reps'].value()):
                         # TODO: notify user
                         u = User.objects.get(email=r['email'])
@@ -154,7 +77,7 @@ def edit_ministry(request, ministry_id):
                         ministry.requests.remove(u)
 
                     _w = 'Edit successful!'
-                    messages.add_message(request, messages.INFO, _w)
+                    messages.add_message(request, messages.SUCCESS, _w)
 
                     _url = reverse('ministry:ministry_profile',
                                    kwargs={'ministry_id': ministry_id})
@@ -194,7 +117,8 @@ def delete_ministry(request, ministry_id):
                 ministry.delete()
             # return HttpResponse(True)
             except ProtectedError:
-                _w = 'There are News Posts or Campaigns that are preventing deletion'
+                _w = 'There are News Posts or Campaigns \
+                      that are preventing deletion'
                 messages.add_message(request, messages.WARNING, _w)
 
                 _url = reverse('ministry_profile',
@@ -203,7 +127,7 @@ def delete_ministry(request, ministry_id):
             # this creates a recursive redirect... i'm not against this being a deterrant
 
             _w = 'You do not have permission to delete this ministry.'
-            messages.add_message(request, messages.WARNING, _w)
+            messages.add_message(request, messages.ERROR, _w)
 
             _url = reverse('ministry_profile',
                            kwargs={'ministry_id': ministry_id})
@@ -326,10 +250,12 @@ def create_news(request, obj_type, obj_id):
         _auth = False
         if obj_type == 'ministry':
             obj = MinistryProfile.objects.get(id=obj_id)
-            _auth = bool(request.user == obj.admin or request.user in obj.reps.all())
+            _auth = bool(request.user == obj.admin or
+                         request.user in obj.reps.all())
         elif obj_type == 'campaign':
             obj = Campaign.objects.get(id=obj_id)
-            _auth = bool(request.user == obj.ministry.admin or request.user in obj.ministry.reps.all())
+            _auth = bool(request.user == obj.ministry.admin or
+                         request.user in obj.ministry.reps.all())
         else:
             raise ValueError("`obj_type` is neither 'ministry' or 'campaign'")
 
@@ -448,8 +374,7 @@ def create_campaign(request, ministry_id):
             cam.ministry = ministry
             cam.save()
 
-            # process tags
-            process_tags(cam, cam_form['tags'].value())
+            Tag.process_tags(cam, cam_form['tags'].value())
 
             _url = '/#%s' % reverse('ministry:campaign_detail',
                                     kwargs={'campaign_id': cam.id})
@@ -467,17 +392,18 @@ def edit_campaign(request, campaign_id):
     try:
         campaign = Campaign.objects.get(id=campaign_id)
         # TODO: set up permissions
-        if request.user == campaign.ministry.admin or request.user in campaign.ministry.reps.all():
+        if request.user == campaign.ministry.admin or \
+           request.user in campaign.ministry.reps.all():
             if request.method == 'POST':
                 _form = CampaignEditForm(request.POST, request.FILES,
                                          instance=campaign)
                 if _form.is_valid():
                     cam = _form.save()
 
-                    process_tags(cam, _form['tags'].value())
+                    Tag.process_tags(cam, _form['tags'].value())
 
                     _w = 'Edit successful!'
-                    messages.add_message(request, messages.INFO, _w)
+                    messages.add_message(request, messages.SUCCESS, _w)
 
                     _url = reverse('ministry:campaign_detail',
                                    kwargs={'campaign_id': campaign_id})
@@ -488,7 +414,8 @@ def edit_campaign(request, campaign_id):
                            "start": False}
                 return render(request, "campaign_content.html", context)
         else:
-            # this creates a recursive redirect... i'm not against this being a deterrant
+            # this creates a recursive redirect...
+            #   i'm not against this being a deterrant
 
             _w = 'You do not have permission to edit this ministry.'
             messages.add_message(request, messages.WARNING, _w)
@@ -522,7 +449,8 @@ def delete_campaign(request, campaign_id):
                 _url = reverse('campaign_detail',
                                kwargs={'campaign_id': campaign_id})
         else:
-            # this creates a recursive redirect... i'm not against this being a deterrant
+            # this creates a recursive redirect...
+            #   i'm not against this being a deterrant
 
             _w = 'You do not have permission to delete this campaign.'
             messages.add_message(request, messages.WARNING, _w)
@@ -566,7 +494,8 @@ def campaign_detail(request, campaign_id):
 
 def campaign_json(request, campaign_id):
     """ Returns json containing dynamic attributes of a specified campaign.
-    These attributes are total amount of donations, number of donations, and number of views.
+    These attributes are total amount of donations,
+        number of donations, and number of views.
     """
 
     cam = Campaign.objects.get(id=campaign_id)
@@ -614,16 +543,19 @@ def create_comment(request, obj_type, obj_id):
             elif obj_type == 'news_post':
                 if obj.campaign:
                     _url = '/#%s' % reverse('ministry:campaign_detail',
-                                            kwargs={'campaign_id': obj.campaign.id})
+                                            kwargs={'campaign_id':
+                                                    obj.campaign.id})
 
                 elif obj.ministry:
                     _url = '/#%s' % reverse('ministry:ministry_detail',
-                                            kwargs={'ministry_id': obj.ministry.id})
+                                            kwargs={'ministry_id':
+                                                    obj.ministry.id})
                 else:
                     e = "Incorrectly formatted NewsPost Object"
                     raise ValueError(e)
             else:
-                e = "Unknown error in determining redirect url in 'create_comment'"
+                e = "Unknown error in determining redirect url \
+                     in 'create_comment'"
                 raise Exception(e)
 
             return HttpResponseRedirect(_url)

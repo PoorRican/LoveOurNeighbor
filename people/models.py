@@ -1,6 +1,7 @@
 from hashlib import md5
-from os import path
 
+
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import UserManager
 from django.core.mail import send_mail
@@ -9,14 +10,10 @@ from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_text
 
 from explore.models import GeoLocation
 
-
-def user_profile_img_dir(instance, filename):
-    return path.join('people', instance.email,
-                     'profile_images', filename)
+from .utils import user_profile_img_dir
 
 
 BLANK_AVATAR = 'https://gravatar.com/avatar/blank'
@@ -167,6 +164,16 @@ class User(AbstractBaseUser, PermissionsMixin):
             return static(self._profile_img.url)
         else:
             return self.profile_img_url
+
+    @classmethod
+    def authenticate_user(cls, email, password):
+        user = cls.objects.get(email=email)
+        if check_password(password, user.password):
+            return user
+        else:
+            return False
+
+
 
 
 def set_initial_user_names(request, user, sociallogin=None, **kwargs):
