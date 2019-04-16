@@ -38,7 +38,7 @@
             <div class="md-list-item-text" layout="column">
               <p>{{ i.content }}</p>
               <div layout="row">
-                <img class="profile-img" src="{{ i.user.profile.avatar_url }}">
+                <img class="profile-img" src="{{ i.user.profile_img }}">
                 <div layout="column">
                   <bold>By: {{ i.user.name }}</bold>
                   <small>{{ f_time(i.pub_date) }}</small>

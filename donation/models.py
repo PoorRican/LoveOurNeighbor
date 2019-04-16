@@ -1,7 +1,7 @@
 from django.db import models
 
 from ministry.models import Campaign
-from people.models import UserProfile
+from people.models import User
 
 
 PAYMENT_TYPES = (('cc', 'Credit Card'),
@@ -91,7 +91,7 @@ class Payment(models.Model):
 
 
 class Donation(models.Model):
-    """ Connects the local `UserProfile` to `Payment`.
+    """ Connects the local `User` to `Payment`.
 
     This is minimal object is for front-end purposes and
         separates the user from the transaction type while
@@ -138,7 +138,7 @@ class Donation(models.Model):
     """
     campaign = models.ForeignKey(Campaign, related_name="donations",
                                  on_delete=models.PROTECT)
-    user = models.ForeignKey(UserProfile, related_name="donations",
+    user = models.ForeignKey(User, related_name="donations",
                              on_delete=models.PROTECT)
     payment = models.OneToOneField(Payment, related_name='donation',
                                    on_delete=models.PROTECT,

@@ -40,6 +40,8 @@ Overall TODOs:
     - Enable multiple admins, and permissions.
     - User alias functionality should not reload page twice (to refresh name in header)
     - Enable "unlike" functionality
+    - Move misc functions into .utils
+    - Enable unified image input of files or urls via dialog (with tabs)
 
 Long-term TODOs:
     - Angular is going to be defunct soon. Convert website to angular.io (there is a Material library for angular.io)

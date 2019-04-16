@@ -9,20 +9,35 @@
 
 <section class="wrapper">
   <h1>Your Details:</h1>
-  <form method="POST" action="{{ url_for('people:user_profile') }}">
+  <form method="POST" enctype="multipart/form-data" action="{{ url_for('people:user_profile') }}">
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    <div layout="row" layout-padding>
+    <div layout="column" layout-padding>
 
       <div layout="column" layout-padding class="md-inline-form">
+        <div layout="row">
+          <img src="{{ request.user.avatar_url }}">
+          <!-- TODO: dynamically get the url from input value via angular -->
+          <md-input-container>
+            {{ form.avatar_url.label_tag() }}
+            {{ form.avatar_url }}
+          </md-input-container>
+        </div>
+        <div>
+          {{ form._profile_img.label_tag() }}
+          {{ form._profile_img }}
+          <!-- TODO: show previous images for selection -->
+          <!-- TODO: unify input via file or url via dialog -->
+        </div>
+        <br>
         <div layout-gt-sm="row">
-          <md-input-container style="margin: 0">
+          <md-input-container flex-gt-sm=50 style="margin: 0">
             {# TODO: render WYSIWYG editor #}
             {{ form.first_name.label_tag() }}
             {{ form.first_name }}
           </md-input-container>
-          <md-input-container style="margin: 0">
+          <md-input-container flex-gt-sm=50 style="margin: 0">
             {# TODO: render WYSIWYG editor #}
             {{ form.last_name.label_tag() }}
             {{ form.last_name }}
@@ -39,7 +54,7 @@
 
         <md-input-container>
           {# TODO: render WYSIWYG editor #}
-          <md-icon><i class="material-icons">face</i></md-icon>
+          <md-icon><i class="material-icons">place</i></md-icon>
           {{ form._location.label_tag() }}
           {{ form._location }}
           <div class="hint">Where are you?</div>
