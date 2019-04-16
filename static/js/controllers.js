@@ -140,9 +140,9 @@ function ministryCtrl($scope, $routeParams, objectService, likeButtonService) {
 
 nav_layout.controller('ministryActionCtrl', ministryActionCtrl);
 
-ministryActionCtrl.$inject = ['$scope', '$routeParams', 'tagService', 'userFilterService', 'objectService'];
+ministryActionCtrl.$inject = ['$scope', '$location', '$routeParams', 'tagService', 'userFilterService', 'objectService'];
 
-function ministryActionCtrl($scope, $routeParams, tagService, userFilterService, objectService) {
+function ministryActionCtrl($scope, $location, $routeParams, tagService, userFilterService, objectService) {
   // TODO: change title block
 
   $scope.currentNavItem = null;
