@@ -17,11 +17,11 @@
 
       <div layout="column" layout-padding class="md-inline-form">
         <div layout="row">
-          <img src="{{ request.user.avatar_url }}">
+          <img src="{{ request.user.profile_img_url }}">
           <!-- TODO: dynamically get the url from input value via angular -->
           <md-input-container>
-            {{ form.avatar_url.label_tag() }}
-            {{ form.avatar_url }}
+            {{ form.profile_img_url.label_tag() }}
+            {{ form.profile_img_url }}
           </md-input-container>
         </div>
         <div>

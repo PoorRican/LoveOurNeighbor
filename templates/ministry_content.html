@@ -40,6 +40,10 @@
         </md-icon>&nbsp;
         Ministry Details:
       </h3>
+      <div>
+        {{ form.profile_img.label_tag() }}
+        {{ form.profile_img }}
+      </div>
       <md-input-container>
         {# TODO: ensure that all ministry titles are unique #}
         {{ form.name.label_tag() }}
