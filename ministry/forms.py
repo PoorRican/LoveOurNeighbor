@@ -17,7 +17,7 @@ class MinistryEditForm(forms.ModelForm):
 
     class Meta:
         model = MinistryProfile
-        fields = ('banner_img',
+        fields = ('profile_img', 'banner_img',
                   'name', 'address', 'phone_number', 'website', 'founded',
                   'admin', 'description',)
         exclude = ('admin',)

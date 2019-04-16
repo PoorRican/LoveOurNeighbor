@@ -35,8 +35,10 @@ class UserEditForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'display_name', '_location')
-        labels = {'_location': 'Location'}
+        fields = ('first_name', 'last_name', 'display_name',
+                  '_location', '_profile_img', 'profile_img_url')
+        labels = {'_location': 'Location',
+                  '_profile_img': 'Profile Image'}
 
 
 class UserAdminForm(forms.ModelForm):

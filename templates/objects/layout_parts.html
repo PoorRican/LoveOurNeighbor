@@ -29,8 +29,8 @@
 
             <a href="#{{ url_for('people:user_profile') }}"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>
               <md-list-item class="md-1-line">
-                <img class="md-avatar" src="{{ request.user.profile.avatar_url }}">
-                <span>{{- request.user.profile.name -}}</span>
+                <img class="md-avatar" src="{{ request.user.profile_img }}">
+                <span>{{- request.user.name -}}</span>
               </md-list-item>
             </a>
 
@@ -69,8 +69,11 @@
                   {% set ALIAS = (request.user.logged_in_as == ministry) %}
                   <md-menu-item>
                     <md-button ng-href="#{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"{% if ALIAS %} class="md-primary"{% endif %}>
-                      {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
+                      <md-icon>
+                      <img class="md-avatar" src="{{ static(ministry.profile_img.url) }}">
+                      </md-icon>
                       {{ ministry }}
+                      {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
                     </md-button>
                     <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}" class="md-icon-button">
                       <md-icon>

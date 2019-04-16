@@ -1,16 +1,22 @@
 from hashlib import md5
+from os import path
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import UserManager
 from django.core.mail import send_mail
 from django.db import models
-from django.dispatch import receiver
+from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 
 from explore.models import GeoLocation
+
+
+def user_profile_img_dir(instance, filename):
+    return path.join('people', instance.email,
+                     'profile_images', filename)
 
 
 BLANK_AVATAR = 'https://gravatar.com/avatar/blank'
@@ -70,6 +76,9 @@ class User(AbstractBaseUser, PermissionsMixin):
                                      on_delete=models.PROTECT,
                                      related_name='+')
     _location = models.CharField(max_length=256, blank=True, null=True)
+    profile_img_url = models.CharField(max_length=256, default=BLANK_AVATAR)
+    _profile_img = models.ImageField('Profile Image', blank=True, null=True,
+                                     upload_to=user_profile_img_dir)
 
     objects = MyUserManager()
 
@@ -145,33 +154,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         gl.location = location
         gl.save()
 
-
-class UserProfile(models.Model):
-    """ Profile data about a user.
-    Certain data makes sense to be in the User model itself, but some
-    is more "profile" data than "user" data. I think this is things like
-    date-of-birth, favourite colour, etc. If you have domain-specific
-    profile information you might create additional profile classes, like
-    say UserGeologistProfile.
-    """
-    user = models.OneToOneField(User, primary_key=True, verbose_name='user',
-                                related_name='profile',
-                                on_delete=models.CASCADE)
-
-    # I oscillate between whether the ``avatar_url`` should be
-    # a) in the User model
-    # b) in this UserProfile model
-    # c) in a table of it's own to track multiple pictures, with the
-    #    "current" avatar as a foreign key in User or UserProfile.
-    avatar_url = models.CharField(max_length=256, default=BLANK_AVATAR)
-
-    def __str__(self):
-        return force_text(self.user.email)
-
-    @property
-    def name(self):
-        return self.user.name
-
     @property
     def donated(self):
         amt = 0
@@ -179,11 +161,12 @@ class UserProfile(models.Model):
             amt += i.amount
         return amt
 
-    class Meta():
-        db_table = 'user_profile'
-
-
-User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
+    @property
+    def profile_img(self):
+        if self._profile_img:
+            return static(self._profile_img.url)
+        else:
+            return self.profile_img_url
 
 
 def set_initial_user_names(request, user, sociallogin=None, **kwargs):

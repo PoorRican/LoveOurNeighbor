@@ -44,38 +44,34 @@ def create_user(request):
         return render(request, 'signup.html', {'form': form})
 
 
-class UserEditView(UpdateView):
-    """Allow view and update of basic user data.
+@login_required
+def user_profile(request):
+    if request.method == 'POST':
+        form = UserEditForm(request.POST, request.FILES,
+                            instance=request.user)
+        if form.is_valid():
+            user = form.save(commit=False)
+            if user._location:
+                user.location = user._location
+            user.save()
 
-    In practice this view edits a model, and that model is
-    the User object itself, specifically the names that
-    a user has.
+            messages.add_message(request, messages.INFO, 'User profile updated')
 
-    The key to updating an existing model, as compared to creating
-    a model (i.e. adding a new row to a database) by using the
-    Django generic view ``UpdateView``, specifically the
-    ``get_object`` method.
-    """
-    form_class = UserEditForm
-    template_name = "profile.html"
-    view_name = 'user_profile'
-    success_url = '/#people/profile'
+            return HttpResponseRedirect('/#people/profile')
+        else:
+            # TODO: show error feedback via messages and reload page
+            err = 'There was an error. Please try again'
+            messages.add_message(request, messages.ERROR, err)
 
-    def get_object(self):
-        return self.request.user
+            return HttpResponseRedirect('/#people/profile')
 
-    def form_valid(self, form):
-        user = form.save(commit=False)
-        if user._location:
-            user.location = user._location
-        user.save()
-
-        messages.add_message(self.request, messages.INFO, 'User profile updated')
-
-        return super(UserEditView, self).form_valid(form)
-
-
-user_profile = login_required(UserEditView.as_view())
+    elif request.method == 'GET':
+        user = request.user
+        form = UserEditForm(instance=user)
+        context = {'form': form,
+                   'request': request
+                   }
+        return render(request, "profile.html", context)
 
 
 def clear_previous_ministry_login(request, user, *args, **kwargs):

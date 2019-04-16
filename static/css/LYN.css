@@ -54,6 +54,16 @@ nav a.md-unselected {
   padding: 0px;
 }
 
+.md-avatar {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  margin-top: -8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  box-sizing: content-box;
+}
+
 #sidenav {
   z-index: 250;
   color: #8B0053;
