@@ -175,7 +175,32 @@ function peopleCtrl($scope, $route, $routeParams, $location) {
 
   $scope.currentNavItem  = null;
 
-  if ($routeParams.people_action == 'signup') {
+  if ($routeParams.people_action == 'create') {
+    $scope.cleanPasswordPattern = cleanPasswordPattern;
+
+    function cleanPasswordPattern() {
+      var cleaned = $scope.password;
+      if (cleaned) {
+        var chars = [
+          [/\\/g, '\\\\'],
+          [/\*/g, '\\*'],
+          [/\^/g, '\\^'],
+          [/\$/g, '\\$'],
+          [/\+/g, '\\+'],
+          [/\?/g, '\\?'],
+          [/\./g, '\\.'],
+          [/\(/g, '\\('],
+          [/\)/g, '\\)'],
+          [/\|/g, '\\|'],
+          [/\{/g, '\\{'],
+          [/\}/g, '\\}'],
+        ];
+        for (var i = 0; i < chars.length; i++) {
+          cleaned = cleaned.replace(chars[i][0], chars[i][1]);
+        };
+        return cleaned;
+      }
+    };
   };
 
   if ($routeParams.people_action == 'login') {
