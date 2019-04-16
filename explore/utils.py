@@ -14,10 +14,9 @@ def calc_distance(request, ministry_location, units='miles'):
         # TODO: calculate location via IP or other API
         pass
 
-    _ml = ministry_location.location
-    if location and _ml:
+    if location and ministry_location:
 
-        dist = distance.distance(location, _ml)
+        dist = distance.distance(location, ministry_location.location)
 
         if units == 'miles':
             return dist.miles

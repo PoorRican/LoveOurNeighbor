@@ -236,7 +236,7 @@ function searchCtrl($scope, $timeout, $routeParams, objectService, searchFilteri
   (function(){
     $scope.filter_types = searchFilteringService.populate();
     $scope.distance = $scope.object().distances ? $scope.object().distances.max : 0;
-  }), 100);
+  }), 200);
 
   ga('send', 'pageview', '/search/' + $routeParams.query);
 };
@@ -260,7 +260,7 @@ function searchTagCtrl($scope, $timeout, $routeParams, objectService, searchFilt
   (function(){
     $scope.filter_types = searchFilteringService.populate();
     $scope.distance = $scope.object().distances ? $scope.object().distances.max : 0;
-  }), 100);
+  }), 200);
 
   ga('send', 'pageview', '/search/tag/' + $routeParams.query);
 };
