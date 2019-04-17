@@ -87,7 +87,11 @@
         {# TODO: render WYSIWYG editor #}
         <md-icon><i class="material-icons">subject</i></md-icon>
         {{ form.content.label_tag() }}
-        {{ parts.wysiwyg_editor(form.content.name, campaign.content) }}
+        {% if start %}
+          {{ parts.wysiwyg_editor(form.content.name) }}
+        {% elif not start %}
+          {{ parts.wysiwyg_editor(form.content.name, campaign.content) }}
+        {% endif %}
         <br>
         <div class="hint">Describe the project!</div>
       </md-input-container>
