@@ -36,8 +36,8 @@ nav_layout.config(['$locationProvider', '$routeProvider', function($locationProv
     .when('/ministry/campaign/:campaign_id/:campaign_action*', {
         templateUrl : function (params) {
           return '/ministry/campaign/' + params.campaign_id + '/' + params.campaign_action;
-       },
-        controller  : 'campaignActionCtrl'
+        },
+        controller  : 'campaignActionCtrl',
     })
     .when('/ministry/campaign/news/:post_id', {
         templateUrl : function (params) {
@@ -54,14 +54,14 @@ nav_layout.config(['$locationProvider', '$routeProvider', function($locationProv
     .when('/ministry/:ministry_id/:ministry_action*', {
         templateUrl : function (params) {
           return '/ministry/' + params.ministry_id + '/' + params.ministry_action;
-       },
-        controller  : 'ministryActionCtrl'
+        },
+        controller  : 'ministryActionCtrl',
     })
    .when('/people/:people_action*', {
         templateUrl : function (params) {
           return '/people/' + params.people_action;
         },
-        controller  : 'peopleCtrl'
+        controller  : 'peopleCtrl',
     })
     .when('/search/:query/', {
         templateUrl : function (params) {

@@ -78,7 +78,7 @@ function objectService($http, $interval, $log) {
         return null;
       }
     };
-    $http.get(url)
+    return $http.get(url)
     .then(function(response) {
       var data = response.data;
       if (data.founded) {
@@ -92,6 +92,7 @@ function objectService($http, $interval, $log) {
       };
 
       object = data;
+      return data;
     }, function(response) {
       $log.warn('Could not fetch object. (Wrong URL?)')});
   };

@@ -42,30 +42,30 @@
       <div layout-gt-sm="row" layout-padding>
         {# TODO: validate that dates have been entered #}
         <div>
-          <input type="hidden" name="{{ form.start_date.name }}" value="{% raw %}{{ object().start_date | date:'yyyy-MM-dd' }}{% endraw %}">
+          <input type="hidden" name="{{ form.start_date.name }}" value="{% raw %}{{ object.start_date | date:'yyyy-MM-dd' }}{% endraw %}">
 
           <div hide-gt-sm>
             <h5 hide-gt-sm>{{ form.start_date.label }}</h5>
-            <input type="date" ng-model="object().start_date">
+            <input type="date" ng-model="object.start_date">
           </div>
 
           <div hide-sm hide-xs>
             <md-subheader>{{ form.start_date.label }}</md-subheader>
-            <md-calendar required id="{{ form.start_date.id_for_label }}" ng-model="object().start_date"></md-datepicker>
+            <md-calendar required id="{{ form.start_date.id_for_label }}" ng-model="object.start_date"></md-datepicker>
           </div>
 
         </div>
         <div>
-          <input type="hidden" name="{{ form.end_date.name }}" value="{% raw %}{{ object().end_date | date:'yyyy-MM-dd' }}{% endraw %}">
+          <input type="hidden" name="{{ form.end_date.name }}" value="{% raw %}{{ object.end_date | date:'yyyy-MM-dd' }}{% endraw %}">
 
           <div hide-gt-sm>
             <h5>{{ form.end_date.label }}</h5>
-            <input type="date" ng-model="object().end_date">
+            <input type="date" ng-model="object.end_date">
           </div>
 
           <div hide-sm hide-xs>
             <md-subheader>{{ form.end_date.label }}</md-subheader>
-            <md-calendar required id="{{ form.end_date.id_for_label }}" ng-model="object().end_date"></md-datepicker>
+            <md-calendar required id="{{ form.end_date.id_for_label }}" ng-model="object.end_date"></md-datepicker>
           </div>
         </div>
       </div>
@@ -98,8 +98,8 @@
       <md-input-contaiter>
         <md-icon><i class="material-icons">class</i></md-icon>
         {{ form.tags.label_tag() }}
-        <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object().tags.join(', ') }}{% endraw %}">
-        <md-chips ng-model="object().tags" md-autocomplete-snap
+        <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
+        <md-chips ng-model="object.tags" md-autocomplete-snap
                   md-transform-chip="tagService.transform_chip($chip)"
                   md-separator-keys="tagService.separatorKeys">
           <md-autocomplete

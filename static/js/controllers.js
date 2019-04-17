@@ -81,8 +81,16 @@ function campaignActionCtrl($scope, $routeParams, tagService, objectService) {
     $scope.filter_tags = tagService.search;
     $scope.tag_service = tagService;
 
-    objectService.fetch();
+    activate();
     tagService.fetch();
+
+    function activate() {
+      return objectService.fetch()
+        .then(function(data) {
+          $scope.object = data;
+        }
+      );
+    };
   }
 
   ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
@@ -148,13 +156,21 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
   $scope.currentNavItem = null;
 
   if ($routeParams.ministry_action == 'edit' || $routeParams.ministry_action == 'edit') {
-    $scope.object = objectService.get;
+    $scope.object = {};
     $scope.filter_users = userFilterService.search;
     $scope.filter_tags = tagService.search;
     $scope.tagService = tagService;
 
+    activate();
     tagService.fetch();
-    objectService.fetch();
+
+    function activate() {
+      return objectService.fetch()
+        .then(function(data) {
+          $scope.object = data;
+        }
+      );
+    };
   }
   if ($routeParams.ministry_action == 'login') {
     $location.url('/ministry/' + $routeParams.ministry_id);
@@ -225,18 +241,23 @@ function searchCtrl($scope, $timeout, $routeParams, objectService, searchFilteri
   // TODO: change title block
 
   $scope.filter_types = searchFilteringService.blank();
-  $scope.object = objectService.get;
+  $scope.object = {};
   $scope.distance = 0;
 
   $scope.currentNavItem  = null;
 
-  var url = '/search/' + $routeParams.query + '/json';
-  objectService.fetch(url);
-  $timeout(
-  (function(){
-    $scope.filter_types = searchFilteringService.populate();
-    $scope.distance = $scope.object().distances ? $scope.object().distances.max : 0;
-  }), 200);
+  activate();
+
+  function activate() {
+    var url = '/search/' + $routeParams.query + '/json';
+    return objectService.fetch(url)
+      .then(function(data) {
+        $scope.distance = data.distances ? data.distances.max : 0;
+        $scope.filter_types = searchFilteringService.populate();
+        $scope.object = data;
+      }
+    );
+  };
 
   ga('send', 'pageview', '/search/' + $routeParams.query);
 };
@@ -249,18 +270,23 @@ searchTagCtrl.$inject = ['$scope', '$timeout', '$routeParams', 'objectService', 
 function searchTagCtrl($scope, $timeout, $routeParams, objectService, searchFilteringService) {
   // TODO: change title block
   $scope.filter_types = searchFilteringService.blank();
-  $scope.object = objectService.get;
+  $scope.object = {};
   $scope.distance = 0;
 
   $scope.currentNavItem  = null;
 
-  var url = '/search/tag/' + $routeParams.query + '/json';
-  objectService.fetch(url);
-  $timeout(
-  (function(){
-    $scope.filter_types = searchFilteringService.populate();
-    $scope.distance = $scope.object().distances ? $scope.object().distances.max : 0;
-  }), 200);
+  activate();
+
+  function activate() {
+    var url = '/search/' + $routeParams.query + '/json';
+    return objectService.fetch(url)
+      .then(function(data) {
+        $scope.distance = data.distances ? data.distances.max : 0;
+        $scope.filter_types = searchFilteringService.populate();
+        $scope.object = data;
+      }
+    );
+  };
 
   ga('send', 'pageview', '/search/tag/' + $routeParams.query);
 };
