@@ -4,25 +4,39 @@
 
 {{ content.show_campaign(cam, detail=False, request=request, AUTH=AUTH, form=form, csrf_token=csrf_token) }}
 
-{% if all_news %}
-  <div class="section wrapper">
-    <h1>
-      News
-      {% if AUTH %}
-        <md-button class="md-raised md-primary" href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': cam.id}) }}">
-          Create News
-        </md-button>
-      {% endif %}
-    </h1>
-  </div>
 
-  {% for i in all_news %}
+{# TODO: move comments section to tabs #}
 
-    {{ content.news_post(i, AUTH=AUTH, request=request, form=form, csrf_token=csrf_token) }}
+<section class="wrapper">
 
-  {% endfor %}
+  <md-tabs md-dynamic-height>
 
-{% endif %}
+
+    {# {{{ News Section #}
+    <md-tab label="News">
+      <md-content>
+        {% if all_news %}
+        {# TODO: generate different card types (both randomly and per parent object type) #}
+        {% for n in all_news %}
+          {{ content.news_card(n) }}
+        {% endfor %}
+        {% endif %}
+      </md-content>
+    </md-tab>
+    {# }}} #}
+
+    {# {{{ Gallery Section #}
+    <md-tab label="Gallery">
+      <md-content>
+        <p>This part of the website is still under construction</p>
+      </md-content>
+    </md-tab>
+    {# }}} #}
+
+
+  </md-tabs>
+
+</section>
 
 
 <!-- Google Analytics Virtual Pageview -->

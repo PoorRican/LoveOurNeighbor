@@ -10,7 +10,7 @@ Urgent TODO:
     - Implement file uploading as 'new upload' and then have `img_path` be an option of selected uploaded files
     - $Social media links for ministries$
     - Map displaying ministry location (via 'explore' tab)
-    - $Fix bug on comments showing up as same time$
+    - $Fix bug in f_time$
     - Re-implement `set_initial_user_names` from people.models
     - MinistryProfile should only have website as required
 
@@ -55,6 +55,11 @@ Overall TODOs:
     - Move campaign / news post to dedicated app:
         - Implement a better primary key
         - Create better routes in angularjs
+    - Move comments section in Campaign and MinistryProfile views to tabs section
+    - Enable tooltips for icon-only buttons
+    - Enable comments via full-screen dialog
+    - Implement authors for NewsPost objects
+    - Implement the sharethis.com button (already have an entry in KeePass for social@loveourneighbor.org)
 
 Long-term TODOs:
     - Angular is going to be defunct soon. Convert website to angular.io (there is a Material library for angular.io)

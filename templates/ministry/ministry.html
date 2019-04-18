@@ -1,31 +1,59 @@
+{# vim: foldmethod=marker tabstop=2 shiftwidth=2:
+    templates/ministry/ministry.html
+#}
 {% import "content.html" as content %}
 
 {% set AUTH = (request.user == ministry.admin or request.user in ministry.reps.all()) %}
 
+
 {{ content.show_ministry(ministry, detail=False, request=request, AUTH=AUTH, form=form, csrf_token=csrf_token) }}
 
-{% if all_news %}
-  <div class="section wrapper">
-    {# TODO: show nav-bar to switch between campaigns and news #}
-    <h1>
-      News
-      {% if AUTH %}
-        <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'ministry', 'obj_id': ministry.id}) }}"
-         style="text-decoration: none;">
-          <md-button class="md-raised md-primary">
-            Create News
-          </md-button>
-        </a>
-      {% endif %}
-    </h1>
-  </div>
 
-    {% for i in all_news %}
+{# TODO: move comments section to tabs #}
 
-        {{ content.news_post(i, AUTH=AUTH, request=request, form=form, csrf_token=csrf_token) }}
+<section class="wrapper">
 
-    {% endfor %}
-{% endif %}
+  <md-tabs md-dynamic-height>
+
+
+    {# {{{ News Section #}
+    <md-tab label="News">
+      <md-content>
+        {% if all_news %}
+        {# TODO: generate different card types (both randomly and per parent object type) #}
+        {% for n in all_news %}
+          {{ content.news_card(n) }}
+        {% endfor %}
+        {% endif %}
+      </md-content>
+    </md-tab>
+    {# }}} #}
+
+    {# {{{ Campaigns Section #}
+    <md-tab label="Campaigns">
+      <md-content>
+        {% if campaigns %}
+        {% for c in campaigns %}
+          {{ content.campaign_card(c) }}
+        {% endfor %}
+        {% endif %}
+      </md-content>
+    </md-tab>
+    {# }}} #}
+
+    {# {{{ Gallery Section #}
+    <md-tab label="Gallery">
+      <md-content>
+        <p>This part of the website is still under construction</p>
+      </md-content>
+    </md-tab>
+    {# }}} #}
+
+
+  </md-tabs>
+
+</section>
+
 
 <!-- Google Analytics Virtual Pageview -->
 <script>ga('send', 'pageview', 'ministry')</script>

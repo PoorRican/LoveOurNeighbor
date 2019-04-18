@@ -166,6 +166,7 @@ def ministry_profile(request, ministry_id):
 
     context = {'ministry': ministry,
                'all_news': all_news,
+               'campaigns': _c,
                'form': comments,
                }
     return render(request, "ministry.html", context)
