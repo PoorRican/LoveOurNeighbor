@@ -39,9 +39,9 @@ nav_layout.config(['$locationProvider', '$routeProvider', function($locationProv
         },
         controller  : 'campaignActionCtrl',
     })
-    .when('/ministry/campaign/news/:post_id', {
+    .when('/ministry/news/:obj_type/:obj_id/:action', {
         templateUrl : function (params) {
-          return '/campaign/news/' + params.post_id;
+          return '/ministry/news/' + params.obj_type + '/' + params.obj_id + '/' + params.action;
         },
         controller  : 'newsCtrl'
     })

@@ -38,7 +38,7 @@
 
     <input type="hidden" enctype="multipart/form-data" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    <div layout="column" layout-padding class="md-inline-form">
+    <div layout="column" class="md-inline-form">
 
       <md-tabs md-dynamic-height md-border-bottom>
 
@@ -51,12 +51,24 @@
           </md-tab-label>
           <md-tab-body>
 
+{#
             {# {{{ INPUT profile_img #}
             <div>
-              {{ form.profile_img.label_tag() }}
-              {{ form.profile_img }}
+              <h5>Profile Image:</h5>
+              {% if not start %}
+              <!-- TODO: dynamically get the updated url from input value via angular -->
+              <img style="height: 120px; width: 120px; margin: auto;" src="{{ static(ministry.profile_img.url) }}"/>
+
+              {% endif %}
+              <div style="">
+                {{ form.profile_img }}
+              </div>
             </div>
+            <br>
             {# }}} #}
+            <md-divider></md-divider>
+
+
             {# {{{ INPUT name #}
             <md-input-container>
               {# TODO: ensure that all ministry titles are unique #}
@@ -65,6 +77,23 @@
               {{ form.name }}
             </md-input-container>
             {# }}} #}
+            <div layout-gt-sm="row" layout-padding>
+            {# {{{ INPUT phone_number #}
+              <md-input-container flex-gt-sm="50">
+                {{ form.phone_number.label_tag() }}
+                {# TODO: render styled phone number input for international phone numbers #}
+                <md-icon><i class="material-icons">phone</i></md-icon>
+                {{ form.phone_number }}
+              </md-input-container>
+            {# }}} #}
+            {# {{{ INPUT phone_number #}
+              <md-input-container flex-gt-sm="50">
+                {{ form.website.label_tag() }}
+                <md-icon><i class="material-icons">explore</i></md-icon>
+                {{ form.website }}
+              </md-input-container>
+            {# }}} #}
+            </div>
             {# {{{ INPUT address #}
             <md-input-container>
               {# TODO: render custom address input #}
@@ -72,21 +101,6 @@
               <md-icon><i class="material-icons">place</i></md-icon>
               {{ form.address }}
             </md-input-container>
-            {# }}} #}
-            {# {{{ INPUT phone_number #}
-            <div layout-gt-sm="row" layout-padding>
-              <md-input-container flex-gt-sm="50">
-                {{ form.phone_number.label_tag() }}
-                {# TODO: render styled phone number input for international phone numbers #}
-                <md-icon><i class="material-icons">phone</i></md-icon>
-                {{ form.phone_number }}
-              </md-input-container>
-              <md-input-container flex-gt-sm="50">
-                {{ form.website.label_tag() }}
-                <md-icon><i class="material-icons">explore</i></md-icon>
-                {{ form.website }}
-              </md-input-container>
-            </div>
             {# }}} #}
             {# {{{ INPUT founded #}
             <div layout="row">

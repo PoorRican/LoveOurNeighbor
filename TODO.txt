@@ -22,6 +22,12 @@ Styling/Javascript Fixes:
     - Implement User verification with email
     - $Fix broken dates on MinistryProfile form (when creating MinistryProfile)$
     - $Fix notification area blocking header drop downs$
+    - Fix input in forms (widths, etc)
+    - Fix labels in forms (alignment, etc)
+    - Fix Google Analytics virtual pageviews
+    - Clear trix content upon navigating views (eg: ministry > news post; ministry > campaign; campaign > news post)
+    - Fix height in Campaign edit view
+    - Make campaign start and end dates required, while still dynamic
 
 Overall TODOs:
     - Automatic Post Creation upon reaching milestones (email notification to admin email & should be a setting and editable)
@@ -45,6 +51,10 @@ Overall TODOs:
     - $Enable unified image input of files or urls via dialog (with tabs)$
     - Enable MinistryProfile broadcasted to all Reps and admins upon profile edits
     - Enable broadcasted notifications for all reps and admins for campaign milestones and edits
+    - Make drop-down menu in MinistryProfile show add news option
+    - Move campaign / news post to dedicated app:
+        - Implement a better primary key
+        - Create better routes in angularjs
 
 Long-term TODOs:
     - Angular is going to be defunct soon. Convert website to angular.io (there is a Material library for angular.io)
