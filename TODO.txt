@@ -51,7 +51,6 @@ Overall TODOs:
     - $Enable unified image input of files or urls via dialog (with tabs)$
     - Enable MinistryProfile broadcasted to all Reps and admins upon profile edits
     - Enable broadcasted notifications for all reps and admins for campaign milestones and edits
-    - Make drop-down menu in MinistryProfile show add news option
     - Move campaign / news post to dedicated app:
         - Implement a better primary key
         - Create better routes in angularjs

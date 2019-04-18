@@ -22,7 +22,7 @@
         {% if all_news %}
         {# TODO: generate different card types (both randomly and per parent object type) #}
         {% for n in all_news %}
-          {{ content.news_card(n) }}
+          {{ content.news_card(n, AUTH) }}
         {% endfor %}
         {% endif %}
       </md-content>
@@ -34,7 +34,7 @@
       <md-content>
         {% if campaigns %}
         {% for c in campaigns %}
-          {{ content.campaign_card(c) }}
+          {{ content.campaign_card(c, AUTH) }}
         {% endfor %}
         {% endif %}
       </md-content>

@@ -29,22 +29,16 @@
                     </md-icon>
                   </md-button>
                   <md-menu-content>
-                    <md-menu-item>
-                      <md-button ng-href="#{{ url_for('ministry:edit_campaign', kwargs={'campaign_id': cam.id}) }}">
-                        <md-icon>
-                          <i class="material-icons">create</i>
-                        </md-icon>&nbsp;
-                        Edit Ministry
-                      </md-button>
-                    </md-menu-item>
-                    <md-menu-item>
-                      <md-button ng-href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': cam.id}) }}">
-                        <md-icon>
-                          <i class="material-icons">note_add</i>
-                        </md-icon>&nbsp;
-                        Write News Post
-                      </md-button>
-                    </md-menu-item>
+                    {% for opt in campaign_admin_urls(cam) %}
+                      <md-menu-item>
+                        <md-button ng-href="#{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                          <md-icon>
+                            <i class="material-icons">{{ opt['icon'] }}</i>
+                          </md-icon>&nbsp;
+                          {{ opt['label'] }}
+                        </md-button>
+                      </md-menu-item>
+                    {% endfor %}
                   </md-menu-content>
                 </md-menu>
               {% endif %}
@@ -169,14 +163,17 @@
                     </md-icon>
                   </md-button>
                   <md-menu-content>
-                    <md-menu-item>
                     {% if AUTH %}
-                      <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
-                        <md-icon>
-                          <i class="material-icons">create</i>
-                        </md-icon>
-                        Edit
-                      </md-button>
+                      {% for opt in ministry_admin_urls(ministry) %}
+                        <md-menu-item>
+                          <md-button ng-href="#{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                            <md-icon>
+                              <i class="material-icons">{{ opt['icon'] }}</i>
+                            </md-icon>&nbsp;
+                          {{ opt['label'] }}
+                          </md-button>
+                        </md-menu-item>
+                      {% endfor %}
                     {% elif not AUTH %}
                       <md-button ng-href="#{{ url_for('ministry:request_to_be_rep', kwargs={'ministry_id': ministry.id}) }}">
                         Request to be a representative
@@ -352,11 +349,11 @@
 {# }}} #}
 
 
-{# ---------------- #
- #  Card Macros     #
- # ---------------- #}
+{# --------------- #
+ #   Card Macros   #
+ # --------------- #}
 {# {{{ NewsPost Card #}
-{% macro news_card(post) %}
+{% macro news_card(post, AUTH=False) %}
   <md-card>
     <md-card-header>
       <md-card-header-text>
@@ -375,10 +372,12 @@
         <i class="material-icons">comment</i>
       </md-button>
       <md-button class="md-icon-button"
-                 ng-href="{{ url_for('ministry:news_detail',
+                 ng-href="#{{ url_for('ministry:news_detail',
                                      kwargs={'post_id': post.id}) }}">
         <i class="material-icons">open_in_new</i>
       </md-button>
+      {% if AUTH %}
+      {% endif %}
     </md-card-actions>
     <md-card-content style="min-height: 50px">
       <md-truncate>
@@ -391,7 +390,7 @@
 
 
 {# {{{ Campaign Card #}
-{% macro campaign_card(campaign) %}
+{% macro campaign_card(campaign, AUTH=False) %}
   <md-card>
     {% if campaign.banner_img %}
     <img src="{{ static(campaign.banner_img.url) }}" class="md-card-image">
@@ -400,13 +399,35 @@
       <md-truncate class="md-headline">
         {{ campaign.title }}
       </md-truncate>
+      {% if AUTH %}
+        <md-menu>
+          <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
+            <md-icon>
+              <i class="material-icons">arrow_drop_down</i>
+            </md-icon>
+          </md-button>
+          <md-menu-content>
+            {% for opt in campaign_admin_urls(campaign) %}
+              <md-menu-item>
+                <md-button ng-href="#{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                  <md-icon>
+                    <i class="material-icons">{{ opt['icon'] }}</i>
+                  </md-icon>&nbsp;
+                  {{ opt['label'] }}
+                </md-button>
+              </md-menu-item>
+            {% endfor %}
+          </md-menu-content>
+        </md-menu>
+      {% endif %}
     </md-card-title>
     <md-card-actions layout="row" layout-align="start center">
+    {# TODO: show tooltips #}
       <md-button class="md-icon-button">
         <i class="material-icons">comment</i>
       </md-button>
       <md-button class="md-icon-button"
-                 ng-href="{{ url_for('ministry:campaign_detail',
+                 ng-href="#{{ url_for('ministry:campaign_detail',
                                      kwargs={'campaign_id': campaign.id}) }}">
         <i class="material-icons">open_in_new</i>
       </md-button>
