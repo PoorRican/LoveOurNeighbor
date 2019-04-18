@@ -1,4 +1,7 @@
-{# TODO: display name and profile pic. Enable editing #}
+{# vim: foldmethod=marker tabstop=2 shiftwidth=2:
+    templates/people/profile.html
+#}
+
 {# TODO: liked ministries/campaigns #}
 {# TODO: total donated amount #}
 {# TODO: campaigns involved in #}
@@ -8,86 +11,166 @@
 {# TODO: messages #}
 
 <section class="wrapper">
-  <h1>Your Details:</h1>
-  <form method="POST" enctype="multipart/form-data" action="{{ url_for('people:user_profile') }}">
 
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <md-tabs md-dynamic-height md-border-bottom>
 
-    <div layout="column" layout-padding>
 
-      <div layout="column" layout-padding class="md-inline-form">
-        <div layout="row">
-          <img src="{{ request.user.profile_img_url }}">
-          <!-- TODO: dynamically get the url from input value via angular -->
-          <md-input-container>
-            {{ form.profile_img_url.label_tag() }}
-            {{ form.profile_img_url }}
-          </md-input-container>
-        </div>
-        <div>
-          {{ form._profile_img.label_tag() }}
-          {{ form._profile_img }}
-          <!-- TODO: show previous images for selection -->
-          <!-- TODO: unify input via file or url via dialog -->
-        </div>
-        <br>
-        <div layout-gt-sm="row">
-          <md-input-container flex-gt-sm=50 style="margin: 0">
-            {# TODO: render WYSIWYG editor #}
-            {{ form.first_name.label_tag() }}
-            {{ form.first_name }}
-          </md-input-container>
-          <md-input-container flex-gt-sm=50 style="margin: 0">
-            {# TODO: render WYSIWYG editor #}
-            {{ form.last_name.label_tag() }}
-            {{ form.last_name }}
-          </md-input-container>
-        </div>
+      {# {{{ User Profile Section #}
+      <md-tab>
+        <md-tab-label>
+          <md-icon><i class="material-icons">account_circle</i></md-icon>&nbsp;
+          My Profile
+        </md-tab-label>
+        <md-tab-body>
+          <form method="POST" enctype="multipart/form-data" action="{{ url_for('people:user_profile') }}">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <div layout="column" layout-padding class="md-inline-form">
 
-        <md-input-container>
-          {# TODO: render WYSIWYG editor #}
-          <md-icon><i class="material-icons">face</i></md-icon>
-          {{ form.display_name.label_tag() }}
-          {{ form.display_name }}
-          <div class="hint">Tell us what we should call you!</div>
-        </md-input-container>
+              {# {{{ INPUT profile_img #}
+              <div layout="row">
+                <img src="{{ request.user.profile_img_url }}">
+                <!-- TODO: dynamically get the updated url from input value via angular -->
+                <md-input-container>
+                  {{ form.profile_img_url.label_tag() }}
+                  {{ form.profile_img_url }}
+                </md-input-container>
+              </div>
 
-        <md-input-container>
-          {# TODO: render WYSIWYG editor #}
-          <md-icon><i class="material-icons">place</i></md-icon>
-          {{ form._location.label_tag() }}
-          {{ form._location }}
-          <div class="hint">Where are you?</div>
-          {# TODO: show hint that this can be country, state, or city #}
-          {# TODO: show dialog on what this is used for #}
-        </md-input-container>
-      </div>
+              <div>
+                {{ form._profile_img.label_tag() }}
+                {{ form._profile_img }}
+                <!-- TODO: show previous images for selection -->
+                <!-- TODO: unify input via file or url via dialog -->
+              </div>
+              <br>
+              {# }}} #}
 
-      <div layout="row" layout-align="end center" layout-padding>
-        <md-button type="submit" class="md-icon-button md-fab md-primary">
-          <i class="material-icons">save</i>
-        </md-button>
-      </div>
+              {# {{{ INPUT name (first, last, display_name) #}
+              <div layout-gt-sm="row">
+                <md-input-container flex-gt-sm=50 style="margin: 0">
+                  {# TODO: render WYSIWYG editor #}
+                  {{ form.first_name.label_tag() }}
+                  {{ form.first_name }}
+                </md-input-container>
+                <md-input-container flex-gt-sm=50 style="margin: 0">
+                  {# TODO: render WYSIWYG editor #}
+                  {{ form.last_name.label_tag() }}
+                  {{ form.last_name }}
+                </md-input-container>
+              </div>
 
-    </div>
-  </form>
+              <md-input-container>
+                <md-icon><i class="material-icons">face</i></md-icon>
+                {{ form.display_name.label_tag() }}
+                {{ form.display_name }}
+                <div class="hint">Tell us what we should call you!</div>
+              </md-input-container>
+              {# }}} #}
 
-  {% if len(request.user.administers.all()) %}
-    <h1>Ministries You Administer:</h1>
+              {# {{{ INPUT location #}
+              <md-input-container>
+                {# TODO: render WYSIWYG editor #}
+                <md-icon><i class="material-icons">place</i></md-icon>
+                {{ form._location.label_tag() }}
+                {{ form._location }}
+                <div class="hint">Where are you?</div>
+                {# TODO: show hint that this can be country, state, or city #}
+                {# TODO: show dialog on what this is used for #}
+              </md-input-container>
+              {# }}} #}
 
-    <ul>
-    {% for ministry in request.user.administers.all() %}
-        <li><a href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">{{ ministry }}</a></li>
-    {% endfor %}
-    </ul>
+            </div>
 
-    <a href="#{{ url_for('ministry:create_ministry') }}"><p>Create a new ministry</p></a>
+            <div layout="row" layout-align="end center" layout-padding>
+              <md-button type="submit" class="md-icon-button md-fab md-primary">
+                <i class="material-icons">save</i>
+              </md-button>
+            </div>
+          </form>
+        </md-tab-body>
+      </md-tab>
+      {# }}} #}
 
-  {% else %}
+      {# {{{ Ministry Section #}
+      <md-tab>
+        <md-tab-label>
+          <md-icon><i class="material-icons">public</i></md-icon>&nbsp;
+          Ministries
+        </md-tab-label>
+        <md-tab-body>
+          {% if len(request.user.administers.all()) %}
+            <h1>Ministries You Administer:</h1>
 
-    <a href="#{{ url_for('ministry:create_ministry') }}"><p>Would you like to create a profile for your Ministry?</p></a>
+            {# TODO: implement md-list #}
+            <ul>
+            {% for ministry in request.user.administers.all() %}
+                <li><a href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">{{ ministry }}</a></li>
+            {% endfor %}
+            </ul>
 
-  {% endif %}
+            <a href="#{{ url_for('ministry:create_ministry') }}"><p>Create a new ministry</p></a>
+
+          {% else %}
+
+            <a href="#{{ url_for('ministry:create_ministry') }}"><p>Would you like to create a profile for your Ministry?</p></a>
+
+          {% endif %}
+        </md-tab-body>
+      </md-tab>
+      {# }}} #}
+
+      {# {{{ Likes Section #}
+      <md-tab label="Likes">
+        <md-tab-label>
+          <md-icon><i class="material-icons">loyalty</i></md-icon>&nbsp;
+          Likes
+        </md-tab-label>
+        <md-tab-body>
+          {# TODO: show liked ministries here #}
+          <p>This part of the website is under construction.</p>
+        </md-tab-body>
+      </md-tab>
+      {# }}} #}
+
+      {# {{{ Receipts Section #}
+      <md-tab>
+        <md-tab-label>
+          <md-icon><i class="material-icons">receipt</i></md-icon>&nbsp;
+          Receipts
+        </md-tab-label>
+        <md-tab-body>
+
+
+          <md-tabs md-dynamic-height>
+
+            {# {{{ Donations Subsection #}
+            <md-tab label="Donations">
+              <md-content>
+                <p>This part of the website is under construction.</p>
+              </md-content>
+            </md-tab>
+            {# }}} #}
+
+            {# {{{ Purchases Subsection #}
+            <md-tab label="Purchases">
+              <md-content>
+                <p>This part of the website is under construction.</p>
+              </md-content>
+            </md-tab>
+            {# }}} #}
+
+          </md-tabs>
+
+
+          {# TODO: show liked ministries here #}
+          <p>This part of the website is under construction.</p>
+        </md-tab-body>
+
+      </md-tab>
+      {# }}} #}
+
+
+    </md-tabs>
 
 </section>
 

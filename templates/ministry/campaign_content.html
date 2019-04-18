@@ -1,124 +1,193 @@
+{# vim: foldmethod=marker tabstop=2 shiftwidth=2:
+    templates/ministry/campaign_content.html
+#}
 {% import "parts.html" as parts %}
 
 <section class="wrapper">
-  {% if start %}
-    <h1>New Campaign:</h1>
 
-    <form enctype="multipart/form-data" method="POST" action="{{ url_for('ministry:create_campaign', kwargs={"ministry_id": ministry.id}) }}">
+  {# {{{ Form Header #}
+  {% if start %}
+  <h1>New Campaign:</h1>
+
+  <form enctype="multipart/form-data" method="POST" action="{{ url_for('ministry:create_campaign', kwargs={"ministry_id": ministry.id}) }}">
 
   {% else %}
 
-    <h1>Edit Campaign:</h1>
+  {#
+  <h1>Edit Campaign:</h1>
+  #}
 
-    <form method="POST" enctype="multipart/form-data" action="{{ url_for('ministry:edit_campaign', kwargs={'campaign_id': campaign.id}) }}">
-      <input type="hidden" id="current_object_json" value="{{ url_for("ministry:campaign_json", kwargs={'campaign_id': campaign.id}) }}">
+  <form method="POST" enctype="multipart/form-data" action="{{ url_for('ministry:edit_campaign', kwargs={'campaign_id': campaign.id}) }}">
+    <input type="hidden" id="current_object_json" value="{{ url_for("ministry:campaign_json", kwargs={'campaign_id': campaign.id}) }}">
 
   {% endif %}
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
+  {# }}} #}
+
     <div layout="column" layout-padding class="md-inline-form">
-      <h3>
-        <md-icon>
-          <i class="material-icons">info</i>
-        </md-icon>&nbsp;
-        Details:
-      </h3>
-      <div layout-gt-sm="row" padding-layout>
-        <md-input-container flex-gt-sm="50">
-          {# TODO: ensure that all ministry titles are unique #}
-          {{ form.title.label_tag() }}
-          {{ form.title }}
-        </md-input-container>
-        <md-input-container flex-gt-sm="50">
-          {{ form.goal.label_tag() }}
-          <md-icon><i class="material-icons">trending_up</i></md-icon>
-          {{ form.goal }}
-          <md-icon><i class="material-icons">attach_money</i></md-icon>
-        </md-input-container>
-      </div>
 
-      <br>
-      <div layout-gt-sm="row" layout-padding>
-        {# TODO: validate that dates have been entered #}
-        <div>
-          <input type="hidden" name="{{ form.start_date.name }}" value="{% raw %}{{ object.start_date | date:'yyyy-MM-dd' }}{% endraw %}">
+      <md-tabs>
 
-          <div hide-gt-sm>
-            <h5 hide-gt-sm>{{ form.start_date.label }}</h5>
-            <input type="date" ng-model="object.start_date">
-          </div>
 
-          <div hide-sm hide-xs>
-            <md-subheader>{{ form.start_date.label }}</md-subheader>
-            <md-calendar required id="{{ form.start_date.id_for_label }}" ng-model="object.start_date"></md-datepicker>
-          </div>
+        {# {{{ Details Section #}
+        <md-tab>
+          <md-tab-label>
+            <md-icon>
+              <i class="material-icons">info</i>
+            </md-icon>&nbsp;
+            Details
+          </md-tab-label>
+          <md-tab-body>
 
-        </div>
-        <div>
-          <input type="hidden" name="{{ form.end_date.name }}" value="{% raw %}{{ object.end_date | date:'yyyy-MM-dd' }}{% endraw %}">
+            <div layout-gt-sm="row" padding-layout>
+              {# {{{ INPUT title #}
+              <md-input-container flex-gt-sm="50">
+                {# TODO: ensure that all ministry titles are unique #}
+                {{ form.title.label_tag() }}
+                {{ form.title }}
+              </md-input-container>
+              {# }}} #}
+              {# {{{ INPUT goal #}
+              <md-input-container flex-gt-sm="50">
+                {{ form.goal.label_tag() }}
+                <md-icon><i class="material-icons">trending_up</i></md-icon>
+                {{ form.goal }}
+                <md-icon><i class="material-icons">attach_money</i></md-icon>
+              </md-input-container>
+              {# }}} #}
+            </div>
 
-          <div hide-gt-sm>
-            <h5>{{ form.end_date.label }}</h5>
-            <input type="date" ng-model="object.end_date">
-          </div>
+            <br>
 
-          <div hide-sm hide-xs>
-            <md-subheader>{{ form.end_date.label }}</md-subheader>
-            <md-calendar required id="{{ form.end_date.id_for_label }}" ng-model="object.end_date"></md-datepicker>
-          </div>
-        </div>
-      </div>
-      <br><br>
+            {# {{{ INPUT start_date/end_date #}
+            <div layout-gt-sm="row" layout-padding>
+              {# TODO: validate that dates have been entered #}
+              {# {{{ INPUT start_date #}
+              <div>
+                <input type="hidden" name="{{ form.start_date.name }}" value="{% raw %}{{ object.start_date | date:'yyyy-MM-dd' }}{% endraw %}">
 
-      <md-divider></md-divider>
+                <div hide-gt-sm>
+                  <h5>{{ form.start_date.label }}</h5>
+                  <input type="date" ng-model="object.start_date">
+                </div>
 
-      <h3>
-        <md-icon><i class="material-icons">description</i></md-icon>&nbsp;
-        Content:
-      </h3>
-      {# TODO: show custom file selector displaying previous images #}
-      <div layout="row" layout-padding>
-        <md-icon style="margin: 0"><i class="material-icons">image</i></md-icon>
-        {{ form.banner_img.label_tag() }}
-        {{ form.banner_img }}
-      </div>
-      <md-input-container>
-        {# TODO: render WYSIWYG editor #}
-        <md-icon><i class="material-icons">subject</i></md-icon>
-        {{ form.content.label_tag() }}
-        {% if start %}
-          {{ parts.wysiwyg_editor(form.content.name) }}
-        {% elif not start %}
-          {{ parts.wysiwyg_editor(form.content.name, campaign.content) }}
-        {% endif %}
-        <br>
-        <div class="hint">Describe the project!</div>
-      </md-input-container>
-      <md-input-contaiter>
-        <md-icon><i class="material-icons">class</i></md-icon>
-        {{ form.tags.label_tag() }}
-        <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
-        <md-chips ng-model="object.tags" md-autocomplete-snap
-                  md-transform-chip="tagService.transform_chip($chip)"
-                  md-separator-keys="tagService.separatorKeys">
-          <md-autocomplete
-              md-search-text="tagText"
-              md-items="tag in filter_tags(tagText)"
-              md-item-text="tag"
-              md-min-length="1">
-            <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
-          </md-autocomplete>
-          <md-chip-template>
-            <span>
-              <span>{% raw %}{{ $chip }}{% endraw %}</span>
-            </span>
-          </md-chip-template>
-        </md-chips>
-        <small class="hint">Select from existing tags, or create new ones by entering a comma.</small>
-      </md-input-container>
-      <br><br>
+                <div hide-sm hide-xs>
+                  <md-subheader>{{ form.start_date.label }}</md-subheader>
+                  <md-calendar required id="{{ form.start_date.id_for_label }}" ng-model="object.start_date"></md-datepicker>
+                </div>
 
+              </div>
+              {# }}} #}
+              {# {{{ INPUT end_date #}
+              <div>
+                <input type="hidden" name="{{ form.end_date.name }}" value="{% raw %}{{ object.end_date | date:'yyyy-MM-dd' }}{% endraw %}">
+
+                <div hide-gt-sm>
+                  <h5>{{ form.end_date.label }}</h5>
+                  <input type="date" ng-model="object.end_date">
+                </div>
+
+                <div hide-sm hide-xs>
+                  <md-subheader>{{ form.end_date.label }}</md-subheader>
+                  <md-calendar required id="{{ form.end_date.id_for_label }}" ng-model="object.end_date"></md-datepicker>
+                </div>
+              </div>
+              {# }}} #}
+            </div>
+            {# }}} #}
+
+          </md-tab-body>
+        </md-tab>
+        {# }}} #}
+
+        {# {{{ Content Section #}
+        <md-tab>
+          <md-tab-label>
+            <md-icon><i class="material-icons">description</i></md-icon>&nbsp;
+            Content
+          </md-tab-label>
+          <md-tab-body>
+
+            {# {{{ INPUT banner_img #}
+            {# TODO: show custom file selector displaying previous images #}
+            <div layout="row" layout-padding>
+              <md-icon style="margin: 0"><i class="material-icons">image</i></md-icon>
+              {{ form.banner_img.label_tag() }}
+              {{ form.banner_img }}
+            </div>
+            {# }}} #}
+            {# {{{ INPUT content (WYSIWYG editor) #}
+            <md-input-container>
+              {# TODO: render WYSIWYG editor #}
+              <md-icon><i class="material-icons">subject</i></md-icon>
+              {{ form.content.label_tag() }}
+              {% if start %}
+                {{ parts.wysiwyg_editor(form.content.name) }}
+              {% elif not start %}
+                {{ parts.wysiwyg_editor(form.content.name, campaign.content) }}
+              {% endif %}
+              <br>
+              <div class="hint">Describe the project!</div>
+            </md-input-container>
+            {# }}} #}
+            {# {{{ INPUT tag editor #}
+            <md-input-contaiter>
+              <md-icon><i class="material-icons">class</i></md-icon>
+              {{ form.tags.label_tag() }}
+              <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
+              <md-chips ng-model="object.tags" md-autocomplete-snap
+                        md-transform-chip="tagService.transform_chip($chip)"
+                        md-separator-keys="tagService.separatorKeys">
+                <md-autocomplete
+                    md-search-text="tagText"
+                    md-items="tag in filter_tags(tagText)"
+                    md-item-text="tag"
+                    md-min-length="1">
+                  <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
+                </md-autocomplete>
+                <md-chip-template>
+                  <span>
+                    <span>{% raw %}{{ $chip }}{% endraw %}</span>
+                  </span>
+                </md-chip-template>
+              </md-chips>
+              <small class="hint">Select from existing tags, or create new ones by entering a comma.</small>
+            </md-input-container>
+            {# }}} #}
+
+          </md-tab-body>
+        </md-tab>
+        {# }}} #}
+
+        {# {{{ News Section #}
+        <md-tab>
+          <md-tab-label>
+            <md-icon><i class="material-icons">trending_up</i></md-icon>
+            News
+          </md-tab-label>
+          <md-tab-body>
+            {% if start %}
+              <p>Finish your campaign to start posting what God has done already<p>
+            {% elif not start %}
+              {# TODO: list NewsPost objects as cards or md-list #}
+              <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}"
+               style="text-decoration: none;">
+                <md-button class="md-raised md-accent">
+                  Create News
+                </md-button>
+              </a>
+            {% endif %}
+          </md-tab-body>
+        </md-tab>
+        {# }}} #}
+
+
+      </md-tabs>
+
+      {# {{{ Form Buttons #}
+      {# TODO: choose better place for buttons #}
       <div id="form_buttons" layout="row">
         <md-button style="position: fixed; bottom: 75; right: 10%;" class="md-fab md-primary" type="submit">
           <md-icon>
@@ -127,32 +196,24 @@
         </md-button>
 
         {% if not start and campaign %}
-          <br><br>
-          <md-button class="md-icon-button md-raised md-warn">
-            <a style="color: #FFF; text-decoration: none;" href="{{ url_for('ministry:delete_campaign', kwargs={'campaign_id': campaign.id}) }}">
-              <md-icon>
-                <i class="material-icons">delete</i>
-              </md-icon>
-            </a>
-            {# TODO: implement DOUBLE dialog confirmation #}
-          </md-button>
+        <br><br>
+        <md-button class="md-icon-button md-raised md-warn">
+          <a style="color: #FFF; text-decoration: none;" href="{{ url_for('ministry:delete_campaign', kwargs={'campaign_id': campaign.id}) }}">
+            <md-icon>
+              <i class="material-icons">delete</i>
+            </md-icon>
+          </a>
+          {# TODO: implement DOUBLE dialog confirmation #}
+        </md-button>
         {% endif %}
+
       </div><!-- /#form_buttons -->
+      {# }}} #}
 
     </div><!-- /.md-inline-form -->
+
   </form>
 
-
-  {% if not start %}
-
-    <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}"
-     style="text-decoration: none;">
-      <md-button class="md-raised md-accent">
-        Create News
-      </md-button>
-    </a>
-
-  {% endif %}
 </section>
 
 
