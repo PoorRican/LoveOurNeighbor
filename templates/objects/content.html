@@ -350,3 +350,72 @@
 
 {% endmacro %}
 {# }}} #}
+
+
+{# ---------------- #
+ #  Card Macros     #
+ # ---------------- #}
+{# {{{ NewsPost Card #}
+{% macro news_card(post) %}
+  <md-card>
+    <md-card-header>
+      <md-card-header-text>
+        <span class="md-subhead">
+          Posted: {{ f_time(post.pub_date) }}
+        </span>
+      </md-card-header-text>
+    </md-card-header>
+    <md-card-title>
+      <md-truncate class="md-title">
+        {{ post.title }}
+      </md-truncate>
+    </md-card-title>
+    <md-card-actions layout="row" layout-align="start center">
+      <md-button class="md-icon-button">
+        <i class="material-icons">comment</i>
+      </md-button>
+      <md-button class="md-icon-button"
+                 ng-href="{{ url_for('ministry:news_detail',
+                                     kwargs={'post_id': post.id}) }}">
+        <i class="material-icons">open_in_new</i>
+      </md-button>
+    </md-card-actions>
+    <md-card-content style="min-height: 50px">
+      <md-truncate>
+        {{ post.content | safe }}
+      </md-truncate>
+    </md-card-content>
+  </md-card>
+{% endmacro %}
+{# }}} #}
+
+
+{# {{{ Campaign Card #}
+{% macro campaign_card(campaign) %}
+  <md-card>
+    {% if campaign.banner_img %}
+    <img src="{{ static(campaign.banner_img.url) }}" class="md-card-image">
+    {% endif %}
+    <md-card-title>
+      <md-truncate class="md-headline">
+        {{ campaign.title }}
+      </md-truncate>
+    </md-card-title>
+    <md-card-actions layout="row" layout-align="start center">
+      <md-button class="md-icon-button">
+        <i class="material-icons">comment</i>
+      </md-button>
+      <md-button class="md-icon-button"
+                 ng-href="{{ url_for('ministry:campaign_detail',
+                                     kwargs={'campaign_id': campaign.id}) }}">
+        <i class="material-icons">open_in_new</i>
+      </md-button>
+    </md-card-actions>
+    <md-card-content style="min-height: 50px">
+      <md-truncate>
+        {{ campaign.content | safe }}
+      </md-truncate>
+    </md-card-content>
+  </md-card>
+{% endmacro %}
+{# }}} #}
