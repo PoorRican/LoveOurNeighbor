@@ -110,5 +110,17 @@ nav a.md-unselected {
 }
 
 
+#notificationArea {
+  width: 100%;
+  position: fixed;
+  z-index: 500;
+}
+@media screen and (max-width: 959px) {
+  #notificationArea {
+    bottom: 0;
+  }
+}
+
+
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */

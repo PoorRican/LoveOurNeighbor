@@ -20,8 +20,6 @@ Styling/Javascript Fixes:
         - $banner uploads$
         - WYSIWYG Editor
     - Implement User verification with email
-    - $Fix broken dates on MinistryProfile form (when creating MinistryProfile)$
-    - $Fix notification area blocking header drop downs$
     - Fix input in forms (widths, etc)
     - Fix labels in forms (alignment, etc)
     - Fix Google Analytics virtual pageviews

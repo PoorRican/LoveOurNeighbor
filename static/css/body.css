@@ -39,16 +39,6 @@ a:not(section a) {
   text-decoration: underline;
 }
 
-#notificationArea {
-  position: fixed;
-  z-index: 500;
-}
-@media screen and (max-width: 959px) {
-  #notificationArea {
-    bottom: 0;
-  }
-}
-
     /** Section **/
 .section, section {
   padding-top: 20px;
