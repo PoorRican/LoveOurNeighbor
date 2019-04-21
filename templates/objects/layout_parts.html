@@ -109,7 +109,7 @@
 
               <md-menu-divider></md-menu-divider>
               <md-menu-item>
-                <md-button ng-href="/people/logout/">
+                <md-button ng-href="{{ url_for('people:logout') }}">
                   Logout
                 </md-button>
               </md-menu-item>
@@ -275,7 +275,7 @@
 
       <md-divider></md-divider>
       <md-list-item class="md-line-1">
-        <md-button ng-href="/people/logout/">
+        <md-button ng-href="{{ url_for('people:logout') }}">
           Logout
         </md-button>
       </md-list-item>

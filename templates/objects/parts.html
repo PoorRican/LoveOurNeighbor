@@ -77,7 +77,7 @@
           <i class="material-icons">add_comment</i>
         </md-button>
       {% else %}
-        <a href="#accounts/login" style="text-decoration: none;">
+        <a href="#{{ url_for('people:login') }}" style="text-decoration: none;">
           <span>Login to Comment</span>
           <md-button class="md-raised md-accent">Login</md-button>
         </a>

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from django.urls import reverse_lazy
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -139,6 +140,8 @@ AUTH_USER_MODEL = 'people.User'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+LOGIN_URL = reverse_lazy('people:login')
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
