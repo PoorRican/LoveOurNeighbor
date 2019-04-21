@@ -29,7 +29,20 @@ strptime = datetime.strptime
 # Ministry Views
 @login_required
 def create_ministry(request):
-    """ Renders form for editing or creating `Ministry` object.
+    """ Renders form for creating `MinistryProfile` object.
+
+    Template
+    --------
+    "ministry/ministry_content.html"
+
+    See Also
+    --------
+    `ministry:edit_ministry`
+
+    Note
+    ----
+    The template differentiates from editing existing and creating
+        new objects by being passed a boolean variable `start`
     """
     if request.method == 'POST':
         min_form = MinistryEditForm(request.POST, request.FILES,)
@@ -55,8 +68,28 @@ def create_ministry(request):
 
 @login_required
 def edit_ministry(request, ministry_id):
+    """ Renders form for editing `MinistryProfile object.
+
+    Redirects To
+    ------------
+    'ministry:ministry_profile'
+        Upon success, or if the user does not have sufficient priveleges.
+
+    Template
+    --------
+    "ministry/ministry_content.html"
+
+    See Also
+    --------
+    `ministry:edit_ministry`
+
+    Note
+    ----
+    The template differentiates from editing existing and creating
+        new objects by being passed a boolean variable `start`
+    """
     try:
-        ministry = MinistryProfile.objects.get(id=ministry_id)
+        ministry = MinistryProfile.objects.get(pk=ministry_id)
         # TODO: set up ministry permissions
         if request.user == ministry.admin or \
            request.user in ministry.reps.all():
@@ -108,9 +141,40 @@ def edit_ministry(request, ministry_id):
 
 @login_required
 def delete_ministry(request, ministry_id):
-    _url = reverse('user_profile')      # url if operation successful
+    """ Deletes `MinsitryProfile` if `request.user` has sufficient priveleges.
+
+    At the moment, the only privilege checking is if the user is the admin
+        (eg: they originally created the object).
+
+    The user is notified of success or any errors via django-messages.
+
+    Arguments
+    ---------
+    ministry_id: int
+        This is the primary key that the object is looked up by.
+
+    Redirects To
+    ------------
+    'people:user_profile'
+        If successful, or if there was a `ProtectedError` (see Note)
+
+    'ministry:ministry_profile'
+        if the user does not have sufficient permissions.
+        This attempts to create a redirect loop on the client.
+        I don't think that it causes much strain on the server,
+            aside from the `MinsitryProfile` lookup (which should be cached)
+            and the permissions checking.
+        The user is made aware upon returning via django-messages.
+
+    Note
+    ----
+    The action may be restricted by any existing `Campaign` or `NewsPost`
+        objects that are associated, and the user is notified if this occurs.
+        The `MinistryProfile` can be edited after permissions have been set up.
+    """
+    _url = reverse('people:user_profile')      # url if operation successful
     try:
-        ministry = MinistryProfile.objects.get(id=ministry_id)
+        ministry = MinistryProfile.objects.get(pk=ministry_id)
         # TODO: set up ministry permissions
         if request.user == ministry.admin:
             try:
@@ -124,12 +188,10 @@ def delete_ministry(request, ministry_id):
                 _url = reverse('ministry_profile',
                                kwargs={'ministry_id': ministry_id})
         else:
-            # this creates a recursive redirect... i'm not against this being a deterrant
-
             _w = 'You do not have permission to delete this ministry.'
             messages.add_message(request, messages.ERROR, _w)
 
-            _url = reverse('ministry_profile',
+            _url = reverse('delete_ministry',
                            kwargs={'ministry_id': ministry_id})
 
     except MinistryProfile.DoesNotExist:
@@ -144,9 +206,27 @@ def delete_ministry(request, ministry_id):
 
 
 def ministry_profile(request, ministry_id):
-    """ Renders profile for `Ministry` object.
+    """ Primary rendering view for displaying `MinistryProfile` objects.
+
+    News is aggregated to be displayed, and the view counter is incremented.
+
+    Arguments
+    ---------
+    ministry_id: int
+        This is the primary key that the object is looked up by.
+        This will soon no longer be an int
+
+    Template
+    --------
+    "ministry/ministry.html"
+
+    Note
+    ----
+    (from Swe) I would imagine that after a while iterating over the `NewsPost`
+        will be task intensive, therefore, it should be dynamically rendered
+        on the client so that the page has the appearance of loading quicker.
     """
-    ministry = MinistryProfile.objects.get(id=ministry_id)
+    ministry = MinistryProfile.objects.get(pk=ministry_id)
     ministry.views += 1
     ministry.save()
     # TODO: combine QuerySet of campaign and ministry news
@@ -174,14 +254,34 @@ def ministry_profile(request, ministry_id):
 
 @login_required
 def login_as_ministry(request, ministry_id):
-    ministry = MinistryProfile.objects.get(id=ministry_id)
+    """ This allows an authorized user to interact with other users
+        under the alias of the `MinistryProfile` identified by `ministry_id`.
+
+    Feedback is given via django-messages.
+
+    Arguments
+    ---------
+    ministry_id: int
+        This is the primary key that the object is looked up by.
+
+    Redirects To
+    ------------
+    'ministry:ministry_profile'
+        if successful
+
+    'ministry:login_as_ministry'
+        if the user does not have sufficient permissions.
+        This attempts to create a redirect loop on the client.
+        I don't think that it causes much strain on the server,
+            aside from the `MinsitryProfile` lookup (which should be cached)
+            and the permissions checking.
+        The user is made aware upon returning via django-messages.
+    """
+    ministry = MinistryProfile.objects.get(pk=ministry_id)
     if request.user == ministry.admin or request.user in ministry.reps.all():
         print(ministry)
         request.user.logged_in_as = ministry
         request.user.save()
-
-        #print('User: %s logged in as %s' % (request.user.name, request.user.profile.logged_in_as.name))
-        print(request.user.logged_in_as)
 
         _w = 'Logged in as %s!' % ministry.name
         messages.add_message(request, messages.INFO, _w)
@@ -225,6 +325,14 @@ def request_to_be_rep(request, ministry_id):
 
 
 def ministry_json(request, ministry_id):
+    """ Returns serialized `MinistryProfile` object as json.
+
+    This function relies on ministry.utils.serialize_ministry
+
+    Returns
+    -------
+    JSON formatted dict
+    """
     ministry = MinistryProfile.objects.get(id=ministry_id)
 
     _liked = False
