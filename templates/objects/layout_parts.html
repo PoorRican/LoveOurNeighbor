@@ -21,7 +21,9 @@
             <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': request.user.logged_in_as.id}) }}"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>
               <md-list-item class="md-1-line">
                 <img class="md-avatar" src="{{ static(request.user.logged_in_as.profile_img.url) }}">
-                <span class="uname">{{- request.user.logged_in_as.name -}}</span>
+                <span class="uname" md-truncate>
+                  {{- request.user.logged_in_as.name -}}
+                </span>
               </md-list-item>
             </a>
 
@@ -30,7 +32,7 @@
             <a href="#{{ url_for('people:user_profile') }}"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>
               <md-list-item class="md-1-line">
                 <img class="md-avatar" src="{{ request.user.profile_img }}">
-                <span>{{- request.user.name -}}</span>
+                <span md-truncate>{{- request.user.name -}}</span>
               </md-list-item>
             </a>
 
@@ -340,11 +342,11 @@
   <div layout="row" class="search-bar" {% if not sidenav %}hide-xs hide-sm{% endif %}>
     <form method="GET" ng-submit="search(query)">
       {% if not sidenav %}
-      <md-icon>
+      <md-icon flex="10">
         <i class="material-icons" style="color: white">search</i>
       </md-icon>
       {% endif %}
-      <input ng-model="query" placeholder="Search">
+      <input ng-model="query" placeholder="Search"{% if not sidenav %} flex="80"{% endif %}>
     </form>
   </div>
 {% endmacro %}
