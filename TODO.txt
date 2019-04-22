@@ -13,6 +13,7 @@ Urgent TODO:
     - $Fix bug in f_time$
     - Re-implement `set_initial_user_names` from people.models
     - MinistryProfile should only have website as required
+    - $Implement "next page" in login functionality$
 
 Styling/Javascript Fixes:
     - Truncate long ministry/profile names in nav bar header and 'h' elements/content

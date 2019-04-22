@@ -1,7 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import ProtectedError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import (
+    HttpResponse, HttpResponseRedirect, JsonResponse
+    )
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -126,7 +128,7 @@ def edit_ministry(request, ministry_id):
             _w = 'You do not have permission to edit this ministry.'
             messages.add_message(request, messages.WARNING, _w)
 
-            _url = reverse('ministry_profile',
+            _url = reverse('ministry:edit_ministry',
                            kwargs={'ministry_id': ministry_id})
 
     except MinistryProfile.DoesNotExist:
@@ -179,19 +181,18 @@ def delete_ministry(request, ministry_id):
         if request.user == ministry.admin:
             try:
                 ministry.delete()
-            # return HttpResponse(True)
             except ProtectedError:
                 _w = 'There are News Posts or Campaigns \
                       that are preventing deletion'
                 messages.add_message(request, messages.WARNING, _w)
 
-                _url = reverse('ministry_profile',
+                _url = reverse('ministry:ministry_profile',
                                kwargs={'ministry_id': ministry_id})
         else:
             _w = 'You do not have permission to delete this ministry.'
             messages.add_message(request, messages.ERROR, _w)
 
-            _url = reverse('delete_ministry',
+            _url = reverse('ministry:delete_ministry',
                            kwargs={'ministry_id': ministry_id})
 
     except MinistryProfile.DoesNotExist:
@@ -279,7 +280,6 @@ def login_as_ministry(request, ministry_id):
     """
     ministry = MinistryProfile.objects.get(pk=ministry_id)
     if request.user == ministry.admin or request.user in ministry.reps.all():
-        print(ministry)
         request.user.logged_in_as = ministry
         request.user.save()
 
@@ -343,7 +343,7 @@ def ministry_json(request, ministry_id):
     _json['liked'] = _liked
     del _json['description']        # remove to tx less data
 
-    return HttpResponse(json.dumps(_json))
+    return JsonResponse(_json)
 
 
 # News Views
@@ -369,7 +369,6 @@ def create_news(request, obj_type, obj_id):
             raise ValueError("`obj_type` is neither 'ministry' or 'campaign'")
 
         if not _auth:
-            print("unauthorized")
             # TODO: have more meaningful error
             return HttpResponseRedirect("/")
 
@@ -421,7 +420,6 @@ def edit_news(request, post_id):
                        "start": False}
             return render(request, "news_content.html", context)
     else:
-        print("unauthorized")
         # TODO: have more meaningful error
         return HttpResponseRedirect("/")
 
