@@ -117,7 +117,9 @@ class TestMinistryProfileViews(BaseMinistryViewTestCase):
         self.obj_name = "Test Ministry"
         self.obj = MinistryProfile.objects.create(name=self.obj_name,
                                                   admin=self.user,
-                                                  website="test.com")
+                                                  website="justawebsite.com",
+                                                  phone_number="(753)753-7777",
+                                                  address="777 validate me ct")
 
     def testCreate_ministry(self):
         # assert that User must be logged
@@ -182,9 +184,11 @@ class TestMinistryProfileViews(BaseMinistryViewTestCase):
         # TODO: test that feedback on success
 
     def testDelete_ministry(self):
-        obj = MinistryProfile.objects.create(name=self.obj_name,
+        obj = MinistryProfile.objects.create(name="another one",
                                              admin=self.user,
-                                             website="test.com")
+                                             website="unique.com",
+                                             phone_number="(753)753-2468",
+                                             address="753 Validated Ave")
         self.volatile.append(obj)
 
         _id = obj.id
@@ -340,7 +344,9 @@ class TestCampaignViews(BaseMinistryViewTestCase):
         self.min_name = "Test Ministry"
         self.min = MinistryProfile.objects.create(name=self.min_name,
                                                   admin=self.user,
-                                                  website="test.com")
+                                                  website="justawebsite.com",
+                                                  phone_number="(753)753-7777",
+                                                  address="777 validate me ct")
         self.obj_name = "Test Campaign"
         self.obj = Campaign.objects.create(title=self.obj_name,
                                            ministry=self.min,
@@ -480,7 +486,9 @@ class TestNewsPostViews(BaseMinistryViewTestCase):
         self.min_name = "Test Ministry"
         self.min = MinistryProfile.objects.create(name=self.min_name,
                                                   admin=self.user,
-                                                  website="test.com")
+                                                  website="justawebsite.com",
+                                                  phone_number="(753)753-7777",
+                                                  address="777 validate me ct")
         self.cam_name = "Test Campaign"
         self.cam = Campaign.objects.create(title=self.cam_name,
                                            ministry=self.min,
