@@ -39,7 +39,7 @@ class Tag(models.Model):
 
 # Backend Functionality
 class MinistryProfile(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     verified = models.BooleanField(default=False)
 
     # Administration
@@ -59,10 +59,10 @@ class MinistryProfile(models.Model):
     views = models.PositiveIntegerField('views', default=0, editable=False)
 
     # Ministry Details
-    address = models.CharField(max_length=256, blank=True, null=True)
+    address = models.CharField(max_length=256, unique=True)
     # TODO: enable multiple addresses
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
-    website = models.URLField()
+    phone_number = models.CharField(max_length=20, unique=True)
+    website = models.URLField(unique=True)
     founded = models.DateField(blank=True, null=True)
     created = models.DateField(auto_now_add=True)
 
@@ -105,7 +105,7 @@ class MinistryProfile(models.Model):
 
 # Website Content
 class Campaign(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, unique=True)
 
     pub_date = models.DateTimeField('date created', auto_now_add=True)
     start_date = models.DateField('start date', default=date.today)
