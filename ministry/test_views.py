@@ -2,9 +2,13 @@ from django.test import TestCase, Client
 from django.test.client import RedirectCycleError
 from django.contrib.auth.hashers import make_password
 
+from datetime import date
+
 from people.models import User
 
-from .models import MinistryProfile
+from .models import (
+    MinistryProfile, Campaign
+    )
 
 
 class BaseMinistryViewTestCase(TestCase):
@@ -325,3 +329,75 @@ class TestMinistryProfileViews(BaseMinistryViewTestCase):
         for a in _attrs:
             self.assertTrue(a in data)
         # TODO: test data content
+
+
+class TestCampaignViews(BaseMinistryViewTestCase):
+    def setUp(self):
+        BaseMinistryViewTestCase.setUp(self)
+
+        self.min_name = "Test Ministry"
+        self.min = MinistryProfile.objects.create(name=self.obj_name,
+                                                  admin=self.user,
+                                                  website="test.com")
+        self.obj_name = "Test Campaign"
+        self.obj = Campaign.objects.create(title=self.obj_name,
+                                           ministry=self.min,
+                                           start_date=date(2019, 1, 1),
+                                           end_date=date(2019, 1, 1),
+                                           goal=7531)
+
+    def tearDown(self):
+        BaseMinistryViewTestCase.tearDown(self)
+
+        del self.min
+
+    def testCreateCampaign(self):
+        return NotImplemented
+
+    def testEditCampaign(self):
+        return NotImplemented
+
+    def testDeletecampaign(self):
+        return NotImplemented
+
+    def testCampaignDetail(self):
+        return NotImplemented
+
+    def testCampaignJson(self):
+        return NotImplemented
+
+
+class TestNewsPostViews(BaseMinistryViewTestCase):
+    def setUp(self):
+        BaseMinistryViewTestCase.setUp(self)
+
+        self.obj_name = "Test Ministry"
+        self.obj = MinistryProfile.objects.create(name=self.obj_name,
+                                                  admin=self.user,
+                                                  website="test.com")
+
+    def testCreateNews(self):
+        return NotImplemented
+
+    def testEditNews(self):
+        return NotImplemented
+
+    def testDeleteNews(self):
+        return NotImplemented
+
+    def testNewsDetail(self):
+        return NotImplemented
+
+
+class OtherMinistryViews(BaseMinistryViewTestCase):
+    def testCreateComment(self):
+        return NotImplemented
+
+    def testLikeMinistry(self):
+        return NotImplemented
+
+    def testLikeCampaign(self):
+        return NotImplemented
+
+    def testTagsJson(self):
+        return NotImplemented
