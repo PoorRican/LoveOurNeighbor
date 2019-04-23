@@ -7,7 +7,7 @@ from datetime import date
 from people.models import User
 
 from .models import (
-    MinistryProfile, Campaign
+    MinistryProfile, Campaign, NewsPost
     )
 
 
@@ -103,8 +103,10 @@ class BaseMinistryViewTestCase(TestCase):
         for i in self.volatile:
             i.delete()
 
-        self.obj.delete()
-        self.user.delete()
+        if hasattr(self, 'obj'):
+            self.obj.delete()
+        if hasattr(self, 'user'):
+            self.user.delete()
 
 
 class TestMinistryProfileViews(BaseMinistryViewTestCase):
@@ -336,7 +338,7 @@ class TestCampaignViews(BaseMinistryViewTestCase):
         BaseMinistryViewTestCase.setUp(self)
 
         self.min_name = "Test Ministry"
-        self.min = MinistryProfile.objects.create(name=self.obj_name,
+        self.min = MinistryProfile.objects.create(name=self.min_name,
                                                   admin=self.user,
                                                   website="test.com")
         self.obj_name = "Test Campaign"
@@ -347,46 +349,300 @@ class TestCampaignViews(BaseMinistryViewTestCase):
                                            goal=7531)
 
     def tearDown(self):
+        del self.obj
+        del self.min
+        del self.user
+
         BaseMinistryViewTestCase.tearDown(self)
 
-        del self.min
-
     def testCreateCampaign(self):
-        return NotImplemented
+        _url = "/ministry/%s/campaign/create" % self.min.id
+
+        # assert that User must be logged
+        response = self.client.get(_url)
+        self.assertRedirects(response,
+                             "/people/login?next=%2Fministry%2F"
+                             + "%s" % self.min.id + "%2Fcampaign%2Fcreate")
+
+        # assert correct template after login
+        self.login()
+        response = self.client.get(_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response,       # assert correct template
+                            "ministry/campaign_content")
+
+        # TODO: test POST data and redirect on success
+        # TODO: test malformed POST and redirect on error
+        # TODO: test MinistryProfile.banner_img
+        # TODO: test MinistryProfile.profile_img
+        # TODO: test that feedback on success
+        # TODO: test that feedback on success
 
     def testEditCampaign(self):
-        return NotImplemented
+        _id = self.obj.id
+        _url = "/ministry/campaign/%s/edit" % _id
+
+        # assert that User must be logged in
+        response = self.client.get(_url)
+        self.assertRedirects(response,
+                             "/people/login?next=%2Fministry%2Fcampaign%2F"
+                             + "%s/edit" % _id)
+
+        # assert correct template after login
+        self.login()
+        response = self.client.get(_url)
+        self.assertContains(response,
+                            "ministry/campaign_content")
+
+        # assert redirect when incorrect permissions
+        email, password = "new@test-users.com", "randombasicpassword1234"
+        new_user = self.create_user(email, password)
+        self.volatile.append(new_user)
+        self.login(email, password)
+
+        response = self.client.get(_url)
+        self.assertEqual(response.status_code, 302)
+        # TODO: test messages
+
+        # assert rep permissions
+        self.min.reps.add(new_user)
+        self.min.save()
+
+        response = self.client.get(_url)
+        # TODO: assert messages
+        self.assertContains(response,
+                            "ministry/campaign_content")
 
     def testDeletecampaign(self):
-        return NotImplemented
+        obj = Campaign.objects.create(title="test",
+                                      ministry=self.min,
+                                      start_date=date(2019, 1, 1),
+                                      end_date=date(2019, 12, 31),
+                                      goal=7531)
+        self.volatile.append(obj)
+
+        _id = obj.id
+        _url = "/ministry/campaign/%s/delete" % _id
+
+        # assert that User must be logged in
+        response = self.client.get(_url)
+        self.assertRedirects(response,
+                             "/people/login?next=%2Fministry%2Fcampaign%2F"
+                             + "%s/delete" % _id)
+
+        # assert denial for reps
+        email, password = "new@test-users.com", "randombasicpassword1234"
+        new_user = self.create_user(email, password)
+        self.volatile.append(new_user)
+        self.login(email, password)
+
+        self.min.reps.add(new_user)
+        self.min.save()
+
+        response = self.client.get(_url)
+        self.assertEqual(response.status_code, 302)
+        # TODO: test messages
+
+        # assert admin permissions
+        self.login()
+        response = self.client.get(_url)
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(_url, follow=True)
+        # TODO: test messages
+        self.assertContains(response,   # test redirect and template
+                            "people/profile")
 
     def testCampaignDetail(self):
-        return NotImplemented
+        _id = self.obj.id
+        _url = "/ministry/campaign/%s" % _id
+
+        response = self.client.get(_url)
+        self.assertContains(response,
+                            "ministry/campaign_details")
 
     def testCampaignJson(self):
-        return NotImplemented
+        _url = "/ministry/campaign/%s/json" % self.obj.id
+        _attrs = (
+            'title', 'id', 'start_date', 'end_date', 'pub_date',
+            'views', 'likes', 'liked', 'donated', 'goal', 'tags'
+            )
+        response = self.client.get(_url)
+        data = response.json().keys()
+        for a in _attrs:
+            self.assertTrue(a in data)
+        # TODO: test data content
 
 
 class TestNewsPostViews(BaseMinistryViewTestCase):
     def setUp(self):
         BaseMinistryViewTestCase.setUp(self)
 
-        self.obj_name = "Test Ministry"
-        self.obj = MinistryProfile.objects.create(name=self.obj_name,
+        self.min_name = "Test Ministry"
+        self.min = MinistryProfile.objects.create(name=self.min_name,
                                                   admin=self.user,
                                                   website="test.com")
+        self.cam_name = "Test Campaign"
+        self.cam = Campaign.objects.create(title=self.cam_name,
+                                           ministry=self.min,
+                                           start_date=date(2019, 1, 1),
+                                           end_date=date(2019, 1, 1),
+                                           goal=7531)
 
-    def testCreateNews(self):
+    def tearDown(self):
+        del self.cam
+        del self.min
+        del self.user
+
+        BaseMinistryViewTestCase.tearDown(self)
+
+    def testCreateNews_ministry(self):
+        _url_base = "/ministry/news/%s/%s/create"
+
+        # test NewsPost for MinistryProfile
+        _url = _url_base % ("ministry", self.min.id)
+
+        # assert User must be logged in
+        response = self.client.get(_url)
+        self.assertRedirects(response,
+                             "/people/login?next=%2Fministry%2Fnews"
+                             + "%2Fministry%2F"
+                             + "%s" % self.min.id + "%2Fcreate")
+
+        # assert when not authorized
+        email, password = "new@test-users.com", "randombasicpassword1234"
+        new_user = self.create_user(email, password)
+        self.volatile.append(new_user)
+        self.login(email, password)
+
+        response = self.client.get(_url)
+        self.assertEqual(response.status_code, 302)
+        # TODO: test messages
+
+        # assert rep permissions
+        self.min.reps.add(new_user)
+        self.min.save()
+
+        response = self.client.get(_url)
+        self.assertContains(response,
+                            "ministry/news_content")
+
+        self.min.reps.remove(new_user)
+        self.min.save()
+
+        # test admin permissions
+        self.login()
+        response = self.client.get(_url)
+        self.assertContains(response,
+                            "ministry/news_content")
+
+        # TODO: test correct POST
+        # TODO: test incorrect POST
+
+    def testCreateNews_campaign(self):
+        _url_base = "/ministry/news/%s/%s/create"
+
+        # test NewsPost for Campaign
+        _url = _url_base % ("campaign", self.cam.id)
+
+        # assert User must be logged in
+        response = self.client.get(_url)
+        self.assertRedirects(response,
+                             "/people/login?next=%2Fministry%2Fnews"
+                             + "%2Fcampaign%2F"
+                             + "%s" % self.cam.id + "%2Fcreate")
+
+        # assert when not authorized
+        email, password = "new@test-users.com", "randombasicpassword1234"
+        new_user = self.create_user(email, password)
+        self.volatile.append(new_user)
+        self.login(email, password)
+
+        response = self.client.get(_url)
+        self.assertEqual(response.status_code, 302)
+        # TODO: test messages
+
+        # assert rep permissions
+        self.cam.ministry.reps.add(new_user)
+        self.cam.ministry.save()
+
+        response = self.client.get(_url)
+        self.assertContains(response,
+                            "ministry/news_content")
+
+        self.cam.ministry.reps.remove(new_user)
+        self.cam.ministry.save()
+
+        # test admin permissions
+        self.login()
+        response = self.client.get(_url)
+        self.assertContains(response,
+                            "ministry/news_content")
+        # TODO: test correct POST
+        # TODO: test incorrect POST
+
+    def testCreateNews_invalid(self):
+        # TODO: test invalid url (`obj_type`)
         return NotImplemented
 
     def testEditNews(self):
         return NotImplemented
 
     def testDeleteNews(self):
-        return NotImplemented
+        obj = NewsPost.objects.create(title="test news post",
+                                      ministry=self.min,
+                                      content="super interesting content")
+        self.volatile.append(obj)
+
+        _id = obj.id
+        _url = "/ministry/news/%s/delete" % _id
+
+        # assert that User must be logged in
+        response = self.client.get(_url)
+        self.assertRedirects(response,
+                             "/people/login?next=%2Fministry%2Fnews%2F"
+                             + "%s/delete" % _id)
+
+        # assert reps permissions
+        email, password = "new@test-users.com", "randombasicpassword1234"
+        new_user = self.create_user(email, password)
+        self.volatile.append(new_user)
+        self.login(email, password)
+
+        self.min.reps.add(new_user)
+        self.min.save()
+
+        response = self.client.get(_url, follow=True)
+        self.assertContains(response,   # test redirect and template
+                            "people/profile",)
+        # TODO: test messages
+
+        # assert admin permissions
+        obj = NewsPost.objects.create(title="test news post",
+                                      ministry=self.min,
+                                      content="super interesting content")
+        self.volatile.append(obj)
+
+        _id = obj.id
+        _url = "/ministry/news/%s/delete" % _id
+
+        self.login()
+        response = self.client.get(_url, follow=True)
+        # TODO: test messages
+        self.assertContains(response,   # test redirect and template
+                            "people/profile",)
 
     def testNewsDetail(self):
-        return NotImplemented
+        obj = NewsPost.objects.create(title="test news post",
+                                      ministry=self.min,
+                                      content="super interesting content")
+        self.volatile.append(obj)
+
+        _id = obj.id
+        _url = "/ministry/news/%s" % _id
+
+        response = self.client.get(_url)
+        self.assertContains(response,
+                            "ministry/news_post")
 
 
 class OtherMinistryViews(BaseMinistryViewTestCase):

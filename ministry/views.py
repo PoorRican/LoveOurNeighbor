@@ -123,7 +123,7 @@ def edit_ministry(request, ministry_id):
                            "start": False}
                 return render(request, "ministry_content.html", context)
         else:
-            # this creates a recursive redirect... i'm not against this being a deterrant
+            # this creates a recursive redirect as a deterrant
 
             _w = 'You do not have permission to edit this ministry.'
             messages.add_message(request, messages.WARNING, _w)
@@ -308,7 +308,8 @@ def request_to_be_rep(request, ministry_id):
         is approved by the ministry admin.
     """
     ministry = MinistryProfile.objects.get(id=ministry_id)
-    if not(request.user == ministry.admin or request.user in ministry.reps.all()):
+    if not(request.user == ministry.admin or
+           request.user in ministry.reps.all()):
         # TODO: create notification to `ministry.admin`
         ministry.requests.add(request.user)
         ministry.save()
@@ -355,23 +356,23 @@ def news_index(request):
 
 @login_required
 def create_news(request, obj_type, obj_id):
-    if request.method == 'POST':
-        _auth = False
-        if obj_type == 'ministry':
-            obj = MinistryProfile.objects.get(id=obj_id)
-            _auth = bool(request.user == obj.admin or
-                         request.user in obj.reps.all())
-        elif obj_type == 'campaign':
-            obj = Campaign.objects.get(id=obj_id)
-            _auth = bool(request.user == obj.ministry.admin or
-                         request.user in obj.ministry.reps.all())
-        else:
-            raise ValueError("`obj_type` is neither 'ministry' or 'campaign'")
+    _auth = False
+    if obj_type == 'ministry':
+        obj = MinistryProfile.objects.get(id=obj_id)
+        _auth = bool(request.user == obj.admin or
+                     request.user in obj.reps.all())
+    elif obj_type == 'campaign':
+        obj = Campaign.objects.get(id=obj_id)
+        _auth = bool(request.user == obj.ministry.admin or
+                     request.user in obj.ministry.reps.all())
+    else:
+        raise ValueError("`obj_type` is neither 'ministry' or 'campaign'")
 
-        if not _auth:
-            # TODO: have more meaningful error
-            return HttpResponseRedirect("/")
+    if not _auth:
+        # TODO: have more meaningful error
+        return HttpResponseRedirect("/")
 
+    elif request.method == 'POST':
         news_form = NewsEditForm(request.POST)
         if news_form.is_valid():
             news = news_form.save(commit=False)
@@ -433,18 +434,18 @@ def delete_news(request, post_id):
     elif post.campaign:
         ministry = post.campaign.ministry
 
-    if request.user == ministry.admin or request in ministry.reps.all():
+    if request.user == ministry.admin or request.user in ministry.reps.all():
         try:
             post.delete()
         except ProtectedError:
             # TODO: show error
+            # this might be raised when NewsPost media is implemented
             pass
-        # return HttpResponse(True)
     else:
         # TODO: show error
         pass
 
-    _url = '/#%s' % reverse('user_profile')
+    _url = '/#%s' % reverse('people:user_profile')
     return HttpResponseRedirect(_url)
 
 
@@ -542,7 +543,7 @@ def edit_campaign(request, campaign_id):
 
 @login_required
 def delete_campaign(request, campaign_id):
-    _url = reverse('user_profile')      # url if operation successful
+    _url = reverse('people:user_profile')      # url if operation successful
     try:
         campaign = Campaign.objects.get(id=campaign_id)
         # TODO: set up permissions
@@ -553,7 +554,7 @@ def delete_campaign(request, campaign_id):
                 _w = 'There are News Posts that are preventing deletion'
                 messages.add_message(request, messages.WARNING, _w)
 
-                _url = reverse('campaign_detail',
+                _url = reverse('ministry:campaign_detail',
                                kwargs={'campaign_id': campaign_id})
         else:
             # this creates a recursive redirect...
@@ -562,7 +563,7 @@ def delete_campaign(request, campaign_id):
             _w = 'You do not have permission to delete this campaign.'
             messages.add_message(request, messages.WARNING, _w)
 
-            _url = reverse('campaign_detail',
+            _url = reverse('ministry:campaign_detail',
                            kwargs={'campaign_id': campaign_id})
 
     except Campaign.DoesNotExist:
@@ -615,7 +616,7 @@ def campaign_json(request, campaign_id):
     _json['liked'] = _liked
     del _json['content']        # remove to tx less data
 
-    return HttpResponse(json.dumps(_json))
+    return JsonResponse(_json)
 
 
 # User Interaction
