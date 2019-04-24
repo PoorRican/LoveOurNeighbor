@@ -52,15 +52,20 @@ def create_ministry(request):
         if min_form.is_valid():        # implement a custom `TagField`
             ministry = min_form.save(commit=False)
             ministry.admin = request.user
+            ministry.save()
             if ministry.address:
                 ministry.location = ministry.address
             ministry.save()
 
             Tag.process_tags(ministry, min_form['tags'].value())
 
-        _url = '/#%s' % reverse('ministry:ministry_profile',
-                                kwargs={'ministry_id': ministry.id})
-        return HttpResponseRedirect(_url)
+            _url = '/#%s' % reverse('ministry:ministry_profile',
+                                    kwargs={'ministry_id': ministry.id})
+            return HttpResponseRedirect(_url)
+
+        else:
+            # TODO: properly return form errors
+            print(min_form.errors)
     else:
         _form = MinistryEditForm(initial={'website': 'https://'})
         context = {"form": _form,
@@ -105,11 +110,12 @@ def edit_ministry(request, ministry_id):
                     _min.save()
 
                     Tag.process_tags(ministry, _form['tags'].value())
-                    for r in json.loads(_form['reps'].value()):
-                        # TODO: notify user
-                        u = User.objects.get(email=r['email'])
-                        ministry.reps.add(u)
-                        ministry.requests.remove(u)
+                    if _form['reps'].value():
+                        for r in json.loads(_form['reps'].value()):
+                            # TODO: notify user
+                            u = User.objects.get(email=r['email'])
+                            ministry.reps.add(u)
+                            ministry.requests.remove(u)
 
                     _w = 'Edit successful!'
                     messages.add_message(request, messages.SUCCESS, _w)
@@ -411,8 +417,14 @@ def edit_news(request, post_id):
             _form = NewsEditForm(request.POST, instance=post)
             _form.save()
             # TODO: redirect to referrer or something
-            _url = '/#%s' % reverse('ministry:news_detail',
-                                    kwargs={'post_id': post.id})
+            if post.campaign:
+                _url = '/#%s' % reverse('ministry:campaign_detail',
+                                        kwargs={'campaign_id':
+                                                post.campaign.id})
+            elif post.ministry:
+                _url = '/#%s' % reverse('ministry:ministry_profile',
+                                        kwargs={'ministry_id':
+                                                post.ministry.id})
             return HttpResponseRedirect(_url)
         else:
             _form = NewsEditForm(instance=post)
@@ -487,6 +499,9 @@ def create_campaign(request, ministry_id):
             _url = '/#%s' % reverse('ministry:campaign_detail',
                                     kwargs={'campaign_id': cam.id})
             return HttpResponseRedirect(_url)
+        else:
+            # TODO: properly return form errors
+            print(cam_form.errors)
     else:
         _form = CampaignEditForm()
         context = {"form": _form,

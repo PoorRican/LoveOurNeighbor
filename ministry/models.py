@@ -21,7 +21,7 @@ class Tag(models.Model):
 
     @classmethod
     def process_tags(cls, obj, tag_str):
-        _tags = tag_str.lower().split(',')
+        _tags = str(tag_str).lower().split(',')
         if _tags:
             # TODO: have smart tag selection (tags selected by description)
             for t in _tags:

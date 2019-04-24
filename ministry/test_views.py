@@ -119,22 +119,33 @@ class TestMinistryProfileViews(BaseMinistryViewTestCase):
                                                   admin=self.user,
                                                   website="justawebsite.com",
                                                   phone_number="(753)753-7777",
-                                                  address="777 validate me ct")
+                                                  address="Sao Paolo")
 
     def testCreate_ministry(self):
+        _url = "/ministry/create"
         # assert that User must be logged
-        response = self.client.get("/ministry/create")
+        response = self.client.get(_url)
         self.assertRedirects(response,
                              "/people/login?next=%2Fministry%2Fcreate")
 
         # assert correct template after login
         self.login()
-        response = self.client.get('/ministry/create')
+        response = self.client.get(_url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,       # assert correct template
                             "ministry/ministry_content")
 
-        # TODO: test POST data and redirect on success
+        # assert proper POST data
+        _new = {'name': 'a new ministry',
+                'website': "https://ministrywebsite.com",
+                'address': 'Philadelphia, PA',
+                'phone_number': '(753)123-7770'}
+        response = self.client.post(_url, data=_new)
+        _min = MinistryProfile.objects.get(name=_new['name'])
+        self.volatile.append(_min)
+        self.assertTrue(bool(_min))
+        self.assertRedirects(response, "/#/ministry/%s" % _min.id)
+
         # TODO: test malformed POST and redirect on error
         # TODO: test MinistryProfile.banner_img
         # TODO: test MinistryProfile.profile_img
@@ -176,7 +187,21 @@ class TestMinistryProfileViews(BaseMinistryViewTestCase):
         self.assertContains(response,
                             "ministry/ministry_content")
 
-        # TODO: test POST data and redirect on success
+        # assert proper POST data
+        _edit = {'name': "a new name",
+                 'website': "https://ministrywebsite.com",
+                 'address': "USA",
+                 'phone_number': "(123)753-2468"}
+        for key, val in _edit.items():
+            data = {attr: getattr(self.obj, attr) for attr in _edit.keys()}
+            data[key] = val
+            response = self.client.post(_url, data=data)
+
+            # for some reason, self.obj does not reflect changes
+            _min = MinistryProfile.objects.get(pk=self.obj.id)
+            self.assertEqual(getattr(_min, key), val)
+            self.assertRedirects(response, "/#/ministry/%s" % self.obj.id)
+
         # TODO: test malformed POST and redirect on error
         # TODO: test MinistryProfile.banner_img
         # TODO: test MinistryProfile.profile_img
@@ -352,6 +377,7 @@ class TestCampaignViews(BaseMinistryViewTestCase):
                                            ministry=self.min,
                                            start_date=date(2019, 1, 1),
                                            end_date=date(2019, 1, 1),
+                                           content="this is some content",
                                            goal=7531)
 
     def tearDown(self):
@@ -377,12 +403,23 @@ class TestCampaignViews(BaseMinistryViewTestCase):
         self.assertContains(response,       # assert correct template
                             "ministry/campaign_content")
 
-        # TODO: test POST data and redirect on success
+        # assert proper POST data
+        _new = {'title': 'a new campaign',
+                'start_date': date(2020, 1, 1),
+                'end_date': date(2020, 12, 31),
+                'content': "this is some content",
+                'goal': 5319}
+        response = self.client.post(_url, data=_new)
+        _cam = Campaign.objects.get(title=_new['title'])
+        self.volatile.append(_cam)
+        self.assertTrue(bool(_cam))
+        self.assertRedirects(response, "/#/ministry/campaign/%s" % _cam.id)
+
         # TODO: test malformed POST and redirect on error
         # TODO: test MinistryProfile.banner_img
         # TODO: test MinistryProfile.profile_img
-        # TODO: test that feedback on success
-        # TODO: test that feedback on success
+        # TODO: test feedback on success
+        # TODO: test feedback on error
 
     def testEditCampaign(self):
         _id = self.obj.id
@@ -419,11 +456,28 @@ class TestCampaignViews(BaseMinistryViewTestCase):
         self.assertContains(response,
                             "ministry/campaign_content")
 
+        # assert proper POST data
+        _edit = {'title': 'a new campaign',
+                 'start_date': date(2020, 1, 1),
+                 'end_date': date(2020, 12, 31),
+                 'content': "this is some content",
+                 'goal': 5319}
+        for key, val in _edit.items():
+            data = {attr: getattr(self.obj, attr) for attr in _edit.keys()}
+            data[key] = val
+            response = self.client.post(_url, data=_edit)
+
+            # for some reason, self.obj does not reflect changes
+            _cam = Campaign.objects.get(title=_edit['title'])
+            self.assertEqual(getattr(_cam, key), val)
+            self.assertRedirects(response, "/#/ministry/campaign/%s" % _cam.id)
+
     def testDeletecampaign(self):
         obj = Campaign.objects.create(title="test",
                                       ministry=self.min,
                                       start_date=date(2019, 1, 1),
                                       end_date=date(2019, 12, 31),
+                                      content="this is some content",
                                       goal=7531)
         self.volatile.append(obj)
 
@@ -543,7 +597,15 @@ class TestNewsPostViews(BaseMinistryViewTestCase):
         self.assertContains(response,
                             "ministry/news_content")
 
-        # TODO: test correct POST
+        # assert proper POST data
+        _new = {'title': "news post object",
+                'content': "this is the content for the news post"}
+        response = self.client.post(_url, data=_new)
+        _np = NewsPost.objects.get(title=_new['title'])
+        self.volatile.append(_np)
+        self.assertTrue(bool(_np))
+        self.assertRedirects(response, "/#/ministry/%s" % self.min.id)
+
         # TODO: test incorrect POST
 
     def testCreateNews_campaign(self):
@@ -585,15 +647,131 @@ class TestNewsPostViews(BaseMinistryViewTestCase):
         response = self.client.get(_url)
         self.assertContains(response,
                             "ministry/news_content")
-        # TODO: test correct POST
+
+        # assert proper POST data
+        _new = {'title': "news post object",
+                'content': "this is the content for the news post"}
+        response = self.client.post(_url, data=_new)
+        _np = NewsPost.objects.get(title=_new['title'])
+        self.volatile.append(_np)
+        self.assertTrue(bool(_np))
+        self.assertRedirects(response, "/#/ministry/campaign/%s" % self.cam.id)
+
         # TODO: test incorrect POST
 
     def testCreateNews_invalid(self):
         # TODO: test invalid url (`obj_type`)
         return NotImplemented
 
-    def testEditNews(self):
-        return NotImplemented
+    def testEditNews_ministry(self):
+        post = NewsPost.objects.create(title="news title",
+                                       content="post content",
+                                       ministry=self.min)
+        self.volatile.append(post)
+        _url = "/ministry/news/%s/edit" % post.id
+
+        # assert User must be logged in
+        response = self.client.get(_url)
+        self.assertRedirects(response,
+                             "/people/login?next=%2Fministry%2Fnews%2F"
+                             + "%s" % post.id + "%2Fedit")
+
+        # assert when not authorized
+        email, password = "new@test-users.com", "randombasicpassword1234"
+        new_user = self.create_user(email, password)
+        self.volatile.append(new_user)
+        self.login(email, password)
+
+        response = self.client.get(_url)
+        self.assertEqual(response.status_code, 302)
+        # TODO: test messages
+
+        # assert rep permissions
+        self.cam.ministry.reps.add(new_user)
+        self.cam.ministry.save()
+
+        response = self.client.get(_url)
+        self.assertContains(response,
+                            "ministry/news_content")
+
+        self.cam.ministry.reps.remove(new_user)
+        self.cam.ministry.save()
+
+        # test admin permissions
+        self.login()
+        response = self.client.get(_url)
+        self.assertContains(response,
+                            "ministry/news_content")
+
+        # assert proper POST data
+        _edit = {'title': "news post object",
+                 'content': "this is the content for the news post"}
+        for key, val in _edit.items():
+            data = {attr: getattr(post, attr) for attr in _edit.keys()}
+            data[key] = val
+            response = self.client.post(_url, data=data)
+
+            _np = NewsPost.objects.get(pk=post.id)
+            self.assertEqual(getattr(_np, key), val)
+            self.assertRedirects(response,
+                                 "/#/ministry/%s" % self.min.id)
+
+        # TODO: test incorrect POST
+
+    def testEditNews_campaign(self):
+        post = NewsPost.objects.create(title="news title",
+                                       content="post content",
+                                       campaign=self.cam)
+        self.volatile.append(post)
+        _url = "/ministry/news/%s/edit" % post.id
+
+        # assert User must be logged in
+        response = self.client.get(_url)
+        self.assertRedirects(response,
+                             "/people/login?next=%2Fministry%2Fnews%2F"
+                             + "%s" % post.id + "%2Fedit")
+
+        # assert when not authorized
+        email, password = "new@test-users.com", "randombasicpassword1234"
+        new_user = self.create_user(email, password)
+        self.volatile.append(new_user)
+        self.login(email, password)
+
+        response = self.client.get(_url)
+        self.assertEqual(response.status_code, 302)
+        # TODO: test messages
+
+        # assert rep permissions
+        self.cam.ministry.reps.add(new_user)
+        self.cam.ministry.save()
+
+        response = self.client.get(_url)
+        self.assertContains(response,
+                            "ministry/news_content")
+
+        self.cam.ministry.reps.remove(new_user)
+        self.cam.ministry.save()
+
+        # test admin permissions
+        self.login()
+        response = self.client.get(_url)
+        self.assertContains(response,
+                            "ministry/news_content")
+
+        # assert proper POST data
+        _edit = {'title': "news post object",
+                 'content': "this is the content for the news post"}
+        for key, val in _edit.items():
+            data = {attr: getattr(post, attr) for attr in _edit.keys()}
+            data[key] = val
+            response = self.client.post(_url, data=data)
+
+            _np = NewsPost.objects.get(pk=post.id)
+            self.assertEqual(getattr(_np, key), val)
+            self.assertRedirects(response,
+                                 "/#/ministry/campaign/%s" % self.cam.id)
+
+        # TODO: test incorrect POST
 
     def testDeleteNews(self):
         obj = NewsPost.objects.create(title="test news post",
