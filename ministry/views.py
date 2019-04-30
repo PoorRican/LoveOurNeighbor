@@ -7,9 +7,11 @@ from django.http import (
 from django.shortcuts import render
 from django.urls import reverse
 
+import os
 import json
 from datetime import datetime
 
+from frontend.settings import MEDIA_ROOT
 from people.models import User
 
 from .forms import (
@@ -18,10 +20,16 @@ from .forms import (
     NewsEditForm,
     CommentForm,
     )
-from .models import NewsPost, Campaign, MinistryProfile, Tag
+from .models import (
+    NewsPost, Campaign, MinistryProfile, Tag,
+    DEFAULT_MP_PROFILE_IMG
+    )
 from .utils import (
     serialize_ministry,
     serialize_campaign,
+    dedicated_ministry_dir,
+    ministry_banner_dir,
+    ministry_profile_image_dir
     )
 
 
@@ -101,9 +109,27 @@ def edit_ministry(request, ministry_id):
         if request.user == ministry.admin or \
            request.user in ministry.reps.all():
             if request.method == 'POST':
+                _old_dir = dedicated_ministry_dir(ministry)
                 _form = MinistryEditForm(request.POST, request.FILES,
                                          instance=ministry)
                 if _form.is_valid():
+                    # move to new directory if name change
+                    _new_dir = dedicated_ministry_dir(ministry)
+                    if _old_dir is not _new_dir:
+                        _old_dir = os.path.join(MEDIA_ROOT, _old_dir)
+                        _new_dir = os.path.join(MEDIA_ROOT, _new_dir)
+
+                        os.rename(_old_dir, _new_dir)
+                        if ministry.banner_img:
+                            _img = os.path.basename(ministry.banner_img.path)
+                            ministry.banner_img = ministry_banner_dir(ministry,
+                                                                      _img)
+                        if ministry.profile_img and \
+                           ministry.profile_img.path != DEFAULT_MP_PROFILE_IMG:
+                            _img = os.path.basename(ministry.profile_img.path)
+                            _img = ministry_profile_image_dir(ministry, _img)
+                            ministry.profile_img = _img
+
                     _min = _form.save(commit=False)
                     if _min.address:
                         _min.location = _min.address

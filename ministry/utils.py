@@ -75,12 +75,16 @@ def serialize_newspost(post):
 
 
 # Model Utility Functions
+def dedicated_ministry_dir(instance):
+    return path.join('ministries', instance.name)
+
+
 
 def ministry_banner_dir(instance, filename):
     """ Helper function that returns dedicated directory for ministry media.
     This partitions user uploaded content per ministry.
     """
-    return path.join('ministries', instance.name,
+    return path.join(dedicated_ministry_dir(instance),
                      'banners', filename)
 
 
@@ -88,7 +92,7 @@ def ministry_profile_image_dir(instance, filename):
     """ Helper function that returns dedicated directory for ministry media.
     This partitions user uploaded content per ministry.
     """
-    return path.join('ministries', instance.name,
+    return path.join(dedicated_ministry_dir(instance),
                      'images', filename)
 
 

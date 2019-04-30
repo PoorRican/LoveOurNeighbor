@@ -12,6 +12,9 @@ from .utils import (
 )
 
 
+DEFAULT_MP_PROFILE_IMG = 'ministries/blank_profile.jpg'
+
+
 class Tag(models.Model):
     name = models.CharField(max_length=20)
     description = models.TextField(blank=True, null=True)
@@ -71,7 +74,7 @@ class MinistryProfile(models.Model):
     tags = models.ManyToManyField(Tag, related_name='ministries',
                                   blank=True,)
     profile_img = models.ImageField('Profile Image',
-                                    default='ministries/blank_profile.jpg',
+                                    default=DEFAULT_MP_PROFILE_IMG,
                                     upload_to=ministry_profile_image_dir)
     banner_img = models.ImageField('Banner Image', blank=True, null=True,
                                    upload_to=ministry_banner_dir)
