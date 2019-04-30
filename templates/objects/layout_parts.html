@@ -4,9 +4,9 @@
 
 {% set links =
   [
-    ('home', 'Home'),
-    ('faq', 'FAQ'),
-    ('about', 'About Us')
+    ('/#/home', 'Home'),
+    ('/#/faq', 'FAQ'),
+    ('/#/about', 'About Us')
   ]
 %}
 
@@ -155,10 +155,10 @@
 
         <a class="title-shadow-orange brand-logo center md-accent md-hue-2" href="#home" layout-padding>Love Our Neighbor</a>
 
-        <md-nav-bar ng-model="currentNavItem" class="" md-selected-nav-item="currentNavItem" hide-xs hide-sm>
+        <md-nav-bar md-selected-nav-item="currentNavItem" hide-xs hide-sm>
         {%- for _link in links -%}
           <md-nav-item md-nav-href="{{ _link[0] }}" name="{{ _link[1] }}">
-              {{ _link[1] }}
+            {{ _link[1] }}
           </md-nav-item>
         {%- endfor -%}
         </md-nav-bar>
