@@ -148,23 +148,34 @@ function ministryCtrl($scope, $routeParams, objectService, likeButtonService) {
 
 nav_layout.controller('ministryActionCtrl', ministryActionCtrl);
 
-ministryActionCtrl.$inject = ['$scope', '$location', '$routeParams', 'tagService', 'userFilterService', 'objectService'];
+ministryActionCtrl.$inject = ['$scope', '$location', '$routeParams', 'tagService', 'userFilterService', 'objectService', 'bannerImageService'];
 
-function ministryActionCtrl($scope, $location, $routeParams, tagService, userFilterService, objectService) {
+function ministryActionCtrl($scope, $location, $routeParams, tagService, userFilterService, objectService, bannerImageService) {
   // TODO: change title block
 
   $scope.currentNavItem = null;
 
-  if ($routeParams.ministry_action == 'edit' || $routeParams.ministry_action == 'edit') {
+  if ($routeParams.ministry_action == 'edit' || $routeParams.ministry_action == 'create') {
     $scope.object = {};
+    $scope.banner_urls = {};
+
     $scope.filter_users = userFilterService.search;
     $scope.filter_tags = tagService.search;
+
     $scope.tagService = tagService;
+
+    $scope.banner_img_dialog = bannerImageService;
 
     activate();
     tagService.fetch();
 
     function activate() {
+      var banners_url = "/ministry/" + $routeParams.ministry_id + "/banners/json";
+      bannerImageService.get(banners_url)
+        .then(function(data) {
+          $scope.banner_urls = data;
+        })
+
       return objectService.fetch()
         .then(function(data) {
           $scope.object = data;

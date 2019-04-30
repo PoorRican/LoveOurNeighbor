@@ -19,6 +19,8 @@ urlpatterns = [
          name='edit_ministry'),
     path('<int:ministry_id>/delete', views.delete_ministry,
          name='delete_ministry'),
+    path('<int:ministry_id>/banners/json', views.ministry_banners_json,
+         name='ministry_banners_json'),
 
     path('news', views.news_index,
          name='news_index'),

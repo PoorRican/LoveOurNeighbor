@@ -400,4 +400,51 @@ function notificationService($mdToast, $http, $log, $interval, $timeout) {
   };
 }
 
+
+nav_layout.factory('bannerImageService', bannerImageService);
+
+bannerImageService.$inject = ['$mdDialog', '$http', '$log'];
+
+function bannerImageService($mdDialog, $http, $log) {
+  // a custom controller might need to be implemented inside of `show`
+  selected = '';
+  images = {};
+
+  var bd = this;
+
+  var service = {
+    'close': close,
+    'get': get,
+    'show': show,
+    'selected': selected,
+    'images': images,
+  };
+  return service;
+
+  function close() {
+    $mdDialog.hide();
+  };
+
+  function get(url) {
+    return $http.get(url).then(success, failure);
+
+    function success(response) {
+      images = response.data;
+      return response.data;
+    };
+    function failure(response) {
+      $log.error('Could not fetch images. (Wrong URL?)');
+    };
+  };
+
+  function show(ev) {
+    $mdDialog.show({
+     contentElement: '#bannerDialog',
+     targetEvent: ev,
+     clickOutsideToClose: false,
+     fullscreen: true,
+    })
+  };
+};
+
 // vim:foldmethod=syntax shiftwidth=2 tabstop=2:

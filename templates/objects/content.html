@@ -15,7 +15,7 @@
 
       {# {{{ Top Section Overlay #}
       <div class="parallax-container" style='height: {{ height }};'>
-        <div ng-parallax class="parallax-img" pattern="'.{% if cam.banner_img %}{{ static(cam.banner_img.url) }}{% endif %}'" speed="1">
+        <div ng-parallax class="parallax-img" pattern="'{% if cam.banner_img %}{{ cam.banner_img.url }}{% endif %}'" speed="1">
           <div class="overlay wrapper">
             {# TODO: put some content in here #}
             <h1>
@@ -149,7 +149,7 @@
 
       {# {{{ Top Section Overlay #}
       <div class="parallax-container" style='height: {{ height }};'>
-        <div ng-parallax class="parallax-img" pattern="'.{% if ministry.banner_img %}{{ static(ministry.banner_img.url) }}{% endif %}'" speed="3">
+        <div ng-parallax class="parallax-img" pattern="'{% if ministry.banner_img %}{{ ministry.banner_img.url }}{% endif %}'" speed="3">
           <div class="overlay wrapper">
             {# TODO: put some content in here #}
             <h1>
@@ -393,7 +393,7 @@
 {% macro campaign_card(campaign, AUTH=False) %}
   <md-card>
     {% if campaign.banner_img %}
-    <img src="{{ static(campaign.banner_img.url) }}" class="md-card-image">
+    <img src="{{ campaign.banner_img.url }}" class="md-card-image">
     {% endif %}
     <md-card-title>
       <md-truncate class="md-headline">

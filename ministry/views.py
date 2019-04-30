@@ -7,8 +7,8 @@ from django.http import (
 from django.shortcuts import render
 from django.urls import reverse
 
-import os
 import json
+import os
 from datetime import datetime
 
 from frontend.settings import MEDIA_ROOT
@@ -27,9 +27,11 @@ from .models import (
 from .utils import (
     serialize_ministry,
     serialize_campaign,
+
     dedicated_ministry_dir,
+
     ministry_banner_dir,
-    ministry_profile_image_dir
+    ministry_profile_image_dir,
     )
 
 
@@ -175,7 +177,7 @@ def edit_ministry(request, ministry_id):
 
 @login_required
 def delete_ministry(request, ministry_id):
-    """ Deletes `MinsitryProfile` if `request.user` has sufficient priveleges.
+    """ Deletes `MinistryProfile` if `request.user` has sufficient priveleges.
 
     At the moment, the only privilege checking is if the user is the admin
         (eg: they originally created the object).
@@ -196,7 +198,7 @@ def delete_ministry(request, ministry_id):
         if the user does not have sufficient permissions.
         This attempts to create a redirect loop on the client.
         I don't think that it causes much strain on the server,
-            aside from the `MinsitryProfile` lookup (which should be cached)
+            aside from the `MinistryProfile` lookup (which should be cached)
             and the permissions checking.
         The user is made aware upon returning via django-messages.
 
@@ -306,7 +308,7 @@ def login_as_ministry(request, ministry_id):
         if the user does not have sufficient permissions.
         This attempts to create a redirect loop on the client.
         I don't think that it causes much strain on the server,
-            aside from the `MinsitryProfile` lookup (which should be cached)
+            aside from the `MinistryProfile` lookup (which should be cached)
             and the permissions checking.
         The user is made aware upon returning via django-messages.
     """
@@ -376,6 +378,21 @@ def ministry_json(request, ministry_id):
     _json['liked'] = _liked
     del _json['description']        # remove to tx less data
 
+    return JsonResponse(_json)
+
+
+def ministry_banners_json(request, ministry_id):
+    """ View that returns all images located in dedicated
+    banner directory for MinistryProfile
+    """
+    ministry = MinistryProfile.objects.get(pk=ministry_id)
+    _dir = ministry_banner_dir(ministry, '')
+    _dir = os.path.join(MEDIA_ROOT, _dir)
+
+    _json = {}
+    imgs = os.listdir(_dir)
+    for i in imgs:
+        _json[i] = os.path.join('/', _dir, i)
     return JsonResponse(_json)
 
 

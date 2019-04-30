@@ -58,7 +58,7 @@
               <h5>Profile Image:</h5>
               {% if not start %}
               <!-- TODO: dynamically get the updated url from input value via angular -->
-              <img style="height: 120px; width: 120px; margin: auto;" src="{{ static(ministry.profile_img.url) }}"/>
+              <img style="height: 120px; width: 120px; margin: auto;" src="{{ ministry.profile_img.url }}"/>
 
               {% endif %}
               <div style="">
@@ -132,13 +132,68 @@
           </md-tab-label>
           <md-tab-body>
 
-            {# TODO: show custom file selector displaying previous images #}
             {# {{{ INPUT banner_image #}
-            <div layout-gt-sm="column" layout-padding>
-              <md-icon style="margin: 0"><i class="material-icons">image</i></md-icon>
-              {{ form.banner_img.label_tag() }}
-              {{ form.banner_img }}
+            <md-button ng-click="banner_img_dialog.show($event)">
+              <md-icon><i class="material-icons">image</i></md-icon>
+              Banner Img
+            </md-button>
+
+            {# {{{ Banner Selection Dialog #}
+            <div style="visibility: hidden">
+              <div class="md-dialog-container" id="bannerDialog">
+                <md-dialog>
+
+                  <md-toolbar>
+                    <div class="md-toolbar-tools">
+                      <h2>Banner Selection</h2>
+                      <span flex></span>
+                      <md-button class="md-icon-button" ng-click="banner_img_dialog.close()">
+                        <i class="material-icons">close</i>
+                      </md-button>
+                    </div><!-- /.md-toolbar-tools -->
+                  </md-toolbar>
+
+                  <md-dialog-content>
+                    <div class="md-dialog-content">
+                      <div class="previous-images">
+                          <md-grid-list
+                                md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6"
+                                md-row-height-gt-md="1:1" md-row-height="4:3"
+                                md-gutter="8px" md-gutter-gt-sm="4px" >
+
+                            <md-grid-tile ng-repeat="(name, src) in banner_urls"
+                                          {# TODO: dynamically allocate this #}
+                                          md-rowspan="1"
+                                          md-colspan="1"
+                                          md-colspan-sm="1"
+                                          md-colspan-xs="1">
+                              <img ng-src="{% raw %}{{ src }}{% endraw %}" style="width: 100%; bottom: 0; position: absolute;">
+                              <md-grid-tile-footer><h3>{% raw %}{{ name }}{% endraw %}</h3></md-grid-tile-footer>
+                            </md-grid-tile>
+                          </md-grid-list>
+                      </div><!-- /.previous-images -->
+
+                      {{ form.banner_img.label_tag() }}
+                      {{ form.banner_img }}
+
+                    </div><!-- /.md-dialog-content -->
+                  </md-dialog-content>
+
+                  <md-dialog-actions layout="row">
+                    <md-button ng-click="banner_img_dialog.close()">
+                      Cancel
+                    </md-button>
+                    <md-button class="md-raised md-primary" ng-click="banner_img_dialog.close()">
+                      Done
+                    </md-button>
+                  </md-dialog-actions>
+
+                </md-dialog>
+              </div>
             </div>
+            {# }}} #}
+            {# }}} #}
+            {# {{{ INPUT description (WYSIWYG) #}
             <md-input-container>
               <md-icon><i class="material-icons">subject</i></md-icon>
               {{ form.description.label_tag() }}
