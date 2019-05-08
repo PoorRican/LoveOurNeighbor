@@ -67,7 +67,8 @@ class User(AbstractBaseUser, PermissionsMixin):
                                     help_text=_('Designates whether this user should be treated as '
                                                 'active. Unselect this instead of deleting accounts.'))
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
-    first_login = models.BooleanField(_('first login'), default=True)
+    # TODO: implement last login
+    # TODO: implement login history TextField
     logged_in_as = models.ForeignKey('ministry.MinistryProfile',
                                      blank=True, null=True,
                                      on_delete=models.PROTECT,
@@ -137,6 +138,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def location(self):
+        # lazy relationship
         if self._location:
             gl, _ = GeoLocation.objects.get_or_create(user=self)
             if _:
@@ -150,6 +152,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         gl, _ = GeoLocation.objects.get_or_create(user=self)
         gl.location = location
         gl.save()
+
+        # lazy relationship
+        self._location = location
+        self.save()
 
     @property
     def donated(self):
@@ -172,8 +178,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             return user
         else:
             return False
-
-
 
 
 def set_initial_user_names(request, user, sociallogin=None, **kwargs):
