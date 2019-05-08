@@ -4,7 +4,6 @@ Urgent TODO:
     - Enable anonymous donations (must capture email). Enable user creation via donate page. Enable user creation via email link. Enable cookie persistence for returning users.
     - Dynamically create comment forms to enable parent/child commenting
     - $Enable commenting 'as ministry' editable from comment form.$
-    - $Convert News post to Card (from Angular Material)$
     - Gallery for ministries/campaigns of aggregated media
     - Ability to add multiple media items to NewsPost
     - Implement file uploading as 'new upload' and then have `img_path` be an option of selected uploaded files
@@ -15,13 +14,14 @@ Urgent TODO:
     - MinistryProfile should only have website as required
     - $Implement "next page" in login functionality$
     - Implement unique error feedback for title and name attributes in Campaign and MinsitryProfile objects
+    - Check `is_active` before logging in User
+    - Implement User verification with email
 
 Styling/Javascript Fixes:
     - Truncate long ministry/profile names in nav bar header and 'h' elements/content
     - Fix on Mobile:
         - $banner uploads$
         - WYSIWYG Editor
-    - Implement User verification with email
     - Fix input in forms (widths, etc)
     - Fix labels in forms (alignment, etc)
     - Fix Google Analytics virtual pageviews
@@ -30,6 +30,7 @@ Styling/Javascript Fixes:
     - Make campaign start and end dates required, while still dynamic
 
 Overall TODOs:
+    - User should be able to remove GeoLocation
     - Automatic Post Creation upon reaching milestones (email notification to admin email & should be a setting and editable)
     - Create dynamic background or something for progress-bar. Dynamic update of progress-bar
     - Dynamic Countdown

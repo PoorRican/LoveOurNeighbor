@@ -66,6 +66,7 @@ class MinistryTestCase(BaseMinistryModelTestCase):
                     MinistryProfile.objects.create(**kwargs)
 
             self.assertIn(reason, str(e.exception))
+            self.assertIn('UNIQUE', str(e.exception))
 
     #######################
     # Functionality Tests #
