@@ -1,6 +1,8 @@
 from django.db import IntegrityError, transaction
 from django.test import TestCase
 
+from os import path
+import tempfile
 from datetime import datetime
 
 from .models import User, BLANK_AVATAR
@@ -20,6 +22,8 @@ class UserTestCase(TestCase):
     ###################
 
     def testAtttributeDefaults(self):
+        """ Test default values of `User` model.
+        """
         self.assertEqual(self.user.email, self.email)
 
         # TODO: `is_active` this should be False
@@ -35,6 +39,10 @@ class UserTestCase(TestCase):
             self.assertFalse(getattr(self.user, attr))      # passes if None
 
     def testUniqueEmail(self):
+        """ Asserts that two users are unable to share the same email.
+
+        NOTE: this does not test UI feedback.
+        """
         with self.assertRaises(IntegrityError) as e:
             with transaction.atomic():
                 User.objects.create(email=self.email)
@@ -47,6 +55,10 @@ class UserTestCase(TestCase):
     ##################
 
     def testNameProperty(self):
+        """ Tests `name` property for `User`.
+
+        This should test that `User.display_name` is dynamically generated.
+        """
         # test defaults when User has no name
         for attr in ('first_name', 'last_name', 'display_name'):
             self.assertEqual(getattr(self.user, attr), None)
@@ -65,17 +77,30 @@ class UserTestCase(TestCase):
         self.assertTrue(self.user.display_name)     # passes if not None
 
     def testProfileImgFunctionality(self):
+        """ Test that a user is able to use a url or a file.
+
+        This does not test storage location or UI.
+        """
         # the assumption is that an avatar url is provided by default
         self.assertEqual(self.user.profile_img, BLANK_AVATAR)
+        self.assertEqual(self.user.profile_img_url, BLANK_AVATAR)
 
-        # TODO: create temp file
-        # TODO: set `self.user._profile_img` to file
-        # TODO: assert that property returns file uri
-        # TODO: assert that `profile_img_url` still exists
+        with tempfile.TemporaryDirectory(dir="./static/media") as d:
+            with tempfile.NamedTemporaryFile(dir=d) as f:
+                t_fp = f.name[f.name.index(path.split(d)[1]):]
+            self.user._profile_img = t_fp
+            self.user.save()
+            self.assertEqual(self.user.profile_img,
+                             '/static/media/%s' % t_fp)
 
-        return NotImplemented
+        self.assertEqual(self.user.profile_img_url, BLANK_AVATAR)
 
     def testLocationFunctionality(self):
+        """ Test lazy relationship methods of `User` and `GeoLocation`.
+
+        This does not check UI feedback.
+        Nor does this exhaustively check `GeoLocation` methods.
+        """
         # test real location
         self.user.location = "New Jersey"
         self.assertEqual(type(self.user.location.location),
