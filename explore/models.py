@@ -8,7 +8,7 @@ gc = Nominatim(user_agent="LoveOurNeighbor")
 
 
 class GeoLocation(models.Model):
-    _location = models.BinaryField(max_length=1024)
+    _location = models.BinaryField(max_length=256)
     user = models.OneToOneField('people.User',
                                 null=True, blank=True,
                                 on_delete=models.CASCADE)
@@ -27,7 +27,10 @@ class GeoLocation(models.Model):
     @location.setter
     def location(self, location):
         if type(location) is str:
-            _, L = gc.geocode(location)
-            self._location = dumps(L)
+            try:
+                _, L = gc.geocode(location)
+                self._location = dumps(L)
+            except TypeError:
+                raise ValueError("%s is not a valid location" % location)
         else:
             raise TypeError("location argument is not of type str")
