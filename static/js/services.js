@@ -401,26 +401,43 @@ function notificationService($mdToast, $http, $log, $interval, $timeout) {
 }
 
 
-nav_layout.factory('bannerImageService', bannerImageService);
+nav_layout.service('bannerImageService', bannerImageService);
 
 bannerImageService.$inject = ['$mdDialog', '$http', '$log'];
 
 function bannerImageService($mdDialog, $http, $log) {
   // a custom controller might need to be implemented inside of `show`
-  selected = '';
+  selected = '';    // for some reason, this property is never mutable from $scope
   images = {};
+  current = '';
 
   var bd = this;
 
   var service = {
+    'banner_current': banner_current,
+    'banner_selected': banner_selected,
     'close': close,
+    'clear': clear,
+    'current': current,
     'get': get,
     'show': show,
+    'select': select,
     'selected': selected,
     'images': images,
   };
   return service;
 
+  function banner_current(name) {
+    // applies styles for current banner image
+    return name === bd.current;
+  }
+  function banner_selected(name) {
+    // applies styles for selected banner image
+    return name === bd.selected;
+  }
+  function clear() {
+    bd.selected = '';
+  };
   function close() {
     $mdDialog.hide();
   };
@@ -429,17 +446,21 @@ function bannerImageService($mdDialog, $http, $log) {
     return $http.get(url).then(success, failure);
 
     function success(response) {
-      images = response.data;
-      return response.data;
+      bd.images = response.data.available;
+      bd.current = response.data.current;
+      return bd.images;
     };
     function failure(response) {
       $log.error('Could not fetch images. (Wrong URL?)');
     };
   };
 
-  function show(ev) {
+  function select(name) {
+    bd.selected = name;
+  }
+  function show(ev, name) {
     $mdDialog.show({
-     contentElement: '#bannerDialog',
+     contentElement: '#'+name,
      targetEvent: ev,
      clickOutsideToClose: false,
      fullscreen: true,

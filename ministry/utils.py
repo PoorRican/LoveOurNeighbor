@@ -79,7 +79,6 @@ def dedicated_ministry_dir(instance):
     return path.join('ministries', instance.name)
 
 
-
 def ministry_banner_dir(instance, filename):
     """ Helper function that returns dedicated directory for ministry media.
     This partitions user uploaded content per ministry.

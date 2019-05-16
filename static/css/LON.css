@@ -26,5 +26,33 @@
 }
 
 
+/* Ministry Profile Content */
+.banner_current {
+  outline: 2px solid red !important;
+}
+.banner_selected {
+  outline: 4px solid orange !important;
+}
+
+.banner_current_label {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: red;
+  padding: 3px 6px;
+  border-top-left-radius: 5px
+}
+
+.banner_selected_label {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: orange;
+  padding-left: 3px;
+  padding-top: 3px;
+  border-top-left-radius: 10px
+}
+
+
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */

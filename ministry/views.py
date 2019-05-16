@@ -28,6 +28,8 @@ from .utils import (
     serialize_ministry,
     serialize_campaign,
 
+    campaign_banner_dir,
+
     dedicated_ministry_dir,
 
     ministry_banner_dir,
@@ -117,7 +119,7 @@ def edit_ministry(request, ministry_id):
                 if _form.is_valid():
                     # move to new directory if name change
                     _new_dir = dedicated_ministry_dir(ministry)
-                    if _old_dir is not _new_dir:
+                    if _old_dir != _new_dir:
                         _old_dir = os.path.join(MEDIA_ROOT, _old_dir)
                         _new_dir = os.path.join(MEDIA_ROOT, _new_dir)
 
@@ -131,6 +133,16 @@ def edit_ministry(request, ministry_id):
                             _img = os.path.basename(ministry.profile_img.path)
                             _img = ministry_profile_image_dir(ministry, _img)
                             ministry.profile_img = _img
+
+                    if request.POST['selected_banner_img']:
+                        prev_banner = request.POST['selected_banner_img']
+                        ministry.banner_img = ministry_banner_dir(ministry,
+                                                                  prev_banner)
+                    if request.POST['selected_profile_img']:
+                        prev_banner = request.POST['selected_profile_img']
+                        ministry.profile_img = ministry_profile_image_dir(ministry,
+                                                                          prev_banner)
+                    ministry.save()
 
                     _min = _form.save(commit=False)
                     if _min.address:
@@ -390,9 +402,34 @@ def ministry_banners_json(request, ministry_id):
     _dir = os.path.join(MEDIA_ROOT, _dir)
 
     _json = {}
+    _json['available'] = {}
+
     imgs = os.listdir(_dir)
     for i in imgs:
-        _json[i] = os.path.join('/', _dir, i)
+        _json['available'][i] = os.path.join('/', _dir, i)
+
+    _current = ministry.banner_img.path
+    _json['current'] = os.path.basename(_current)
+    return JsonResponse(_json)
+
+
+def ministry_profile_img_json(request, ministry_id):
+    """ View that returns all images located in dedicated
+    banner directory for MinistryProfile
+    """
+    ministry = MinistryProfile.objects.get(pk=ministry_id)
+    _dir = ministry_profile_image_dir(ministry, '')
+    _dir = os.path.join(MEDIA_ROOT, _dir)
+
+    _json = {}
+    _json['available'] = {}
+
+    imgs = os.listdir(_dir)
+    for i in imgs:
+        _json['available'][i] = os.path.join('/', _dir, i)
+
+    _current = ministry.banner_img.path
+    _json['current'] = os.path.basename(_current)
     return JsonResponse(_json)
 
 
@@ -568,6 +605,12 @@ def edit_campaign(request, campaign_id):
 
                     Tag.process_tags(cam, _form['tags'].value())
 
+                    if request.POST['selected_banner_img']:
+                        prev_banner = request.POST['selected_banner_img']
+                        campaign.banner_img = campaign_banner_dir(campaign,
+                                                                  prev_banner)
+                    campaign.save()
+
                     _w = 'Edit successful!'
                     messages.add_message(request, messages.SUCCESS, _w)
 
@@ -674,6 +717,26 @@ def campaign_json(request, campaign_id):
     _json['liked'] = _liked
     del _json['content']        # remove to tx less data
 
+    return JsonResponse(_json)
+
+
+def campaign_banners_json(request, campaign_id):
+    """ View that returns all images located in dedicated
+    banner directory for Campaign
+    """
+    campaign = Campaign.objects.get(pk=campaign_id)
+    _dir = campaign_banner_dir(campaign, '')
+    _dir = os.path.join(MEDIA_ROOT, _dir)
+
+    _json = {}
+    _json['available'] = {}
+
+    imgs = os.listdir(_dir)
+    for i in imgs:
+        _json['available'][i] = os.path.join('/', _dir, i)
+
+    _current = campaign.banner_img.path
+    _json['current'] = os.path.basename(_current)
     return JsonResponse(_json)
 
 

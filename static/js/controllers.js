@@ -69,9 +69,9 @@ function campaignCtrl($scope, $routeParams, objectService, likeButtonService) {
 
 nav_layout.controller('campaignActionCtrl', campaignActionCtrl);
 
-campaignActionCtrl.$inject = ['$scope', '$routeParams', 'tagService', 'objectService'];
+campaignActionCtrl.$inject = ['$scope', '$routeParams', 'tagService', 'objectService', 'bannerImageService'];
 
-function campaignActionCtrl($scope, $routeParams, tagService, objectService) {
+function campaignActionCtrl($scope, $routeParams, tagService, objectService, bannerImageService) {
   // TODO: change title block
 
   $scope.currentNavItem = 'Home';
@@ -81,10 +81,48 @@ function campaignActionCtrl($scope, $routeParams, tagService, objectService) {
     $scope.filter_tags = tagService.search;
     $scope.tag_service = tagService;
 
+    $scope.banner_urls = {};
+    $scope.select_banner = select_banner;
+    $scope.banner_img_dialog = bannerImageService;
+    $scope.selected_banner = $scope.banner_img_dialog.selected;
+
+    $scope.profile_img_urls = {};
+    $scope.select_profile_img = select_profile_img;
+    $scope.profile_img_dialog = bannerImageService;
+    $scope.selected_profile_img = $scope.profile_img_dialog.selected;
+
     activate();
     tagService.fetch();
 
+    function select_banner(name) {
+      // this is a dirty hack, but it works.....
+      // for some reason, the selected attribute is never updated via $watch/$digest
+      $scope.banner_img_dialog.select(name);
+      $scope.selected_banner = name;
+    }
+
+    function select_profile_img(name) {
+      // this is a dirty hack, but it works.....
+      // for some reason, the selected attribute is never updated via $watch/$digest
+      $scope.profile_img_dialog.select(name);
+      $scope.selected_profile_img = name;
+    }
+
     function activate() {
+      var banners_url = "/ministry/campaign/" + $routeParams.campaign_id + "/banners/json";
+      bannerImageService.get(banners_url)
+        .then(function(data) {
+          $scope.banner_urls = data;
+
+        })
+
+      var profile_img_url = "/ministry/campaign/" + $routeParams.campaign_id + "/profile_img/json";
+      bannerImageService.get(profile_img_url)
+        .then(function(data) {
+          $scope.profile_img_urls = data;
+
+        })
+
       return objectService.fetch()
         .then(function(data) {
           $scope.object = data;
@@ -157,23 +195,52 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
 
   if ($routeParams.ministry_action == 'edit' || $routeParams.ministry_action == 'create') {
     $scope.object = {};
-    $scope.banner_urls = {};
 
     $scope.filter_users = userFilterService.search;
     $scope.filter_tags = tagService.search;
 
     $scope.tagService = tagService;
 
+    $scope.banner_urls = {};
+    $scope.select_banner = select_banner;
     $scope.banner_img_dialog = bannerImageService;
+    $scope.selected_banner = $scope.banner_img_dialog.selected;
+
+    $scope.profile_img_urls = {};
+    $scope.select_profile_img = select_profile_img;
+    $scope.profile_img_dialog = bannerImageService;
+    $scope.selected_profile_img = $scope.profile_img_dialog.selected;
 
     activate();
     tagService.fetch();
+
+    function select_banner(name) {
+      // this is a dirty hack, but it works..... 
+      // for some reason, the selected attribute is never updated via $watch/$digest
+      $scope.banner_img_dialog.select(name);
+      $scope.selected_banner = name;
+    }
+
+    function select_profile_img(name) {
+      // this is a dirty hack, but it works.....
+      // for some reason, the selected attribute is never updated via $watch/$digest
+      $scope.profile_img_dialog.select(name);
+      $scope.selected_profile_img = name;
+    }
 
     function activate() {
       var banners_url = "/ministry/" + $routeParams.ministry_id + "/banners/json";
       bannerImageService.get(banners_url)
         .then(function(data) {
           $scope.banner_urls = data;
+
+        })
+
+      var profile_img_url = "/ministry/" + $routeParams.ministry_id + "/profile_img/json";
+      bannerImageService.get(profile_img_url)
+        .then(function(data) {
+          $scope.profile_img_urls = data;
+
         })
 
       return objectService.fetch()
@@ -182,6 +249,7 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
         }
       );
     };
+
   }
   if ($routeParams.ministry_action == 'login') {
     $location.url('/ministry/' + $routeParams.ministry_id);
