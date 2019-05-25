@@ -9,6 +9,7 @@ from .utils import (
     ministry_banner_dir,
     ministry_profile_image_dir,
     campaign_banner_dir,
+    news_post_media_dir,
 )
 
 
@@ -150,6 +151,8 @@ class NewsPost(models.Model):
     title = models.CharField(max_length=100)
     pub_date = models.DateTimeField('date published', auto_now_add=True)
     content = models.TextField()
+    attachment = models.ImageField('Media Image', blank=True, null=True,
+                                   upload_to=news_post_media_dir)
 
     def __str__(self):
         return self.title

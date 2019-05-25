@@ -15,13 +15,16 @@
   {% else %}
     <h1>Edit Ministry Profile:</h1>
 
-    <form method="POST" action="{{ url_for('ministry:edit_news', kwargs={'post_id': post.id}) }}">
+    <form enctype="multipart/form-data" method="POST" action="{{ url_for('ministry:edit_news', kwargs={'post_id': post.id}) }}">
 
   {% endif %}
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
     <div layout="column" layout-padding class="md-inline-form">
+      {{ form.attachment.label_tag() }}
+      {{ form.attachment }}
+
       <md-input-container>
         {# TODO: ensure that all ministry titles are unique #}
         {{ form.title.label_tag() }}

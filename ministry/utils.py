@@ -101,3 +101,15 @@ def campaign_banner_dir(instance, filename):
     """
     return path.join('ministries', instance.ministry.name,
                      'campaign_banners', filename)
+
+
+def news_post_media_dir(instance, filename):
+    if instance.campaign:
+        return path.join('ministries', instance.campaign.ministry.name,
+                         'post_media', filename)
+    elif instance.ministry:
+        return path.join('ministries', instance.ministry.name,
+                         'post_media', filename)
+    else:
+        e = 'There was an unknown error finding a dir for %s' % instance.name
+        raise AttributeError(e)

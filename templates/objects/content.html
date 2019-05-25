@@ -338,6 +338,10 @@
           </h6>
         {% endif %}
 
+        {% if post.attachment != None %}
+        <img src="{{ post.attachment.url }}" class="news_post_media">
+        {% endif %}
+
         <p class="">{{ post.content|safe }}</p>
 
         {{ parts.comments_section(post, 'news_post', request, form=form, csrf_token=csrf_token) }}
@@ -362,6 +366,11 @@
         </span>
       </md-card-header-text>
     </md-card-header>
+
+    {% if post.attachment %}
+    <img src="{{ post.attachment.url }}" class="md-card-image">
+    {% endif %}
+
     <md-card-title>
       <md-truncate class="md-title">
         {{ post.title }}

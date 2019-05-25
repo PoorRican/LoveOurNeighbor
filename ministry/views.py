@@ -459,7 +459,7 @@ def create_news(request, obj_type, obj_id):
         return HttpResponseRedirect("/")
 
     elif request.method == 'POST':
-        news_form = NewsEditForm(request.POST)
+        news_form = NewsEditForm(request.POST, request.FILES)
         if news_form.is_valid():
             news = news_form.save(commit=False)
             setattr(news, obj_type, obj)
@@ -494,7 +494,8 @@ def edit_news(request, post_id):
 
     if request.user == _admin or request.user in _reps:
         if request.method == 'POST':
-            _form = NewsEditForm(request.POST, instance=post)
+            _form = NewsEditForm(request.POST, request.FILES,
+                                 instance=post)
             _form.save()
             # TODO: redirect to referrer or something
             if post.campaign:
