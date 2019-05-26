@@ -18,8 +18,8 @@
   <h1>Edit Campaign:</h1>
   #}
 
-  <form method="POST" enctype="multipart/form-data" action="{{ url_for('ministry:edit_campaign', kwargs={'campaign_id': campaign.id}) }}">
-    <input type="hidden" id="current_object_json" value="{{ url_for("ministry:campaign_json", kwargs={'campaign_id': campaign.id}) }}">
+  <form method="POST" enctype="multipart/form-data" action="{{ campaign.edit }}">
+    <input type="hidden" id="current_object_json" value="{{ campaign.json }}">
 
   {% endif %}
 

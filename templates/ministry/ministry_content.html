@@ -31,13 +31,13 @@
     </h1>
     #}
 
-    <form method="POST" enctype="multipart/form-data" action="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
-      <input type="hidden" id="current_object_json" value="{{ url_for("ministry:ministry_json", kwargs={'ministry_id': ministry.id}) }}">
+    <form method="POST" enctype="multipart/form-data" action="{{ ministry.edit }}">
+      <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
 
   {% endif %}
   {# }}} #}
 
-    <input type="hidden" enctype="multipart/form-data" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
     <div layout="column" class="md-inline-form">
 
@@ -429,7 +429,7 @@
             <ul>
               {% for i in ministry.campaigns.all() %}
                 <li>
-                  <a href="#{{ url_for('ministry:campaign_detail', kwargs={'campaign_id': i.id}) }}">
+                  <a href="#{{ campaign.url }}">
                     {{ i }}
                   </a>
                 </li>

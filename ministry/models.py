@@ -112,6 +112,16 @@ class MinistryProfile(models.Model):
         return reverse('ministry:ministry_profile',
                        kwargs={'ministry_id': self.id})
 
+    @property
+    def edit(self):
+        return reverse('ministry:edit_ministry',
+                       kwargs={'ministry_id': self.id})
+
+    @property
+    def json(self):
+        return reverse('ministry:ministry_json',
+                       kwargs={'ministry_id': self.id})
+
 
 # Website Content
 class Campaign(models.Model):
@@ -153,6 +163,16 @@ class Campaign(models.Model):
         return reverse('ministry:campaign_detail',
                        kwargs={'campaign_id': self.id})
 
+    @property
+    def edit(self):
+        return reverse('ministry:edit_campaign',
+                       kwargs={'campaign_id': self.id})
+
+    @property
+    def json(self):
+        return reverse('ministry:campaign_json',
+                       kwargs={'campaign_id': self.id})
+
 
 class NewsPost(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.PROTECT,
@@ -171,6 +191,11 @@ class NewsPost(models.Model):
     @property
     def url(self):
         return reverse('ministry:news_detail',
+                       kwargs={'post_id': self.id})
+
+    @property
+    def edit(self):
+        return reverse('ministry:edit_news',
                        kwargs={'post_id': self.id})
 
 
