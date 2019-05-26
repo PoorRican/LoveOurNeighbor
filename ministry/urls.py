@@ -23,6 +23,8 @@ urlpatterns = [
          name='ministry_banners_json'),
     path('<int:ministry_id>/profile_img/json', views.ministry_profile_img_json,
          name='ministry_profile_img_json'),
+    path('<int:ministry_id>/gallery/json', views.ministry_gallery_json,
+         name='ministry_gallery_json'),
 
     path('news', views.news_index,
          name='news_index'),
@@ -51,6 +53,8 @@ urlpatterns = [
          name='campaign_json'),
     path('campaign/<int:campaign_id>/banners/json',
          views.campaign_banners_json, name='campaign_banners_json'),
+    path('campaign/<int:campaign_id>/gallery/json',
+         views.campaign_gallery_json, name='campaign_gallery_json'),
 
     path('comment/<str:obj_type>/<int:obj_id>/create', views.create_comment,
          name='create_comment'),

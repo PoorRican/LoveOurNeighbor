@@ -1,7 +1,9 @@
 {# vim: foldmethod=marker tabstop=2 shiftwidth=2:
     templates/ministry/ministry.html
 #}
+
 {% import "content.html" as content %}
+{% import "parts.html" as parts %}
 
 {% set AUTH = (request.user == ministry.admin or request.user in ministry.reps.all()) %}
 
@@ -25,6 +27,8 @@
         {% for n in all_news %}
           {{ content.news_card(n, AUTH) }}
         {% endfor %}
+        {% else %}
+          <p>There is no news to show at this time.</p>
         {% endif %}
       </md-content>
     </md-tab>
@@ -45,7 +49,7 @@
     {# {{{ Gallery Section #}
     <md-tab label="Gallery">
       <md-content>
-        <p>This part of the website is still under construction</p>
+        {{ parts.gallery() }}
       </md-content>
     </md-tab>
     {# }}} #}

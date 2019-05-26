@@ -433,6 +433,40 @@ def ministry_profile_img_json(request, ministry_id):
     return JsonResponse(_json)
 
 
+def ministry_gallery_json(request, ministry_id):
+    """ Return a JSON dict of all used images associated
+    to the MinistryProfile selected by `ministry_id`.
+
+    The list that is returned is not exhaustive and
+        uses images from all NewsPosts with an `attachment` image
+        from both `MinistryProfile.news` and `Campaign.news`,
+        and `Campaign.banner_imgs`
+    """
+    ministry = MinistryProfile.objects.get(pk=ministry_id)
+
+    gallery = []
+    for i in ministry.news.all():
+        if i.attachment is not None:
+            gallery.append(i)
+    for i in ministry.campaigns.all():
+        if i.banner_img is not None:
+            gallery.append(i)
+        for n in i.news.all():
+            if n.attachment is not None:
+                gallery.append(n)
+    gallery.sort(key=lambda np: np.pub_date, reverse=True)
+
+    _gallery = []
+    _gallery.append({'src': ministry.banner_img.url, 'obj': ministry.url})
+    for i in gallery:
+        if hasattr(i, 'attachment'):
+            _gallery.append({'src': i.attachment.url, 'obj': i.url})
+        elif hasattr(i, 'banner_img'):
+            _gallery.append({'src': i.banner_img.url, 'obj': i.url})
+
+    return JsonResponse({'gallery': _gallery})
+
+
 # News Views
 def news_index(request):
     # TODO: paginate and render
@@ -739,6 +773,34 @@ def campaign_banners_json(request, campaign_id):
     _current = campaign.banner_img.path
     _json['current'] = os.path.basename(_current)
     return JsonResponse(_json)
+
+
+def campaign_gallery_json(request, campaign_id):
+    """ Return a JSON dict of all used images associated
+    to the MinistryProfile selected by `ministry_id`.
+
+    The list that is returned is not exhaustive and
+        uses images from all NewsPosts with an `attachment` image
+        from both `MinistryProfile.news` and `Campaign.news`,
+        and `Campaign.banner_imgs`
+    """
+    campaign = Campaign.objects.get(pk=campaign_id)
+
+    gallery = []
+    for i in campaign.news.all():
+        if i.attachment is not None:
+            gallery.append(i)
+    gallery.sort(key=lambda np: np.pub_date, reverse=True)
+
+    print(gallery)
+
+    _gallery = []
+    _gallery.append({'src': campaign.banner_img.url, 'obj': campaign.url})
+    for i in gallery:
+        if hasattr(i, 'attachment'):
+            _gallery.append({'src': i.attachment.url, 'obj': i.url})
+
+    return JsonResponse({'gallery': _gallery})
 
 
 # User Interaction

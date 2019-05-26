@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.db import models
+from django.urls import reverse
 
 from explore.models import GeoLocation
 from people.models import User
@@ -68,7 +69,7 @@ class MinistryProfile(models.Model):
     phone_number = models.CharField(max_length=20, unique=True)
     website = models.URLField(unique=True)
     founded = models.DateField(blank=True, null=True)
-    created = models.DateField(auto_now_add=True)
+    pub_date = models.DateField(auto_now_add=True)
 
     # Ministry Content
     description = models.TextField(blank=True, null=True)
@@ -106,6 +107,11 @@ class MinistryProfile(models.Model):
         gl.location = location
         gl.save()
 
+    @property
+    def url(self):
+        return reverse('ministry:ministry_profile',
+                       kwargs={'ministry_id': self.id})
+
 
 # Website Content
 class Campaign(models.Model):
@@ -142,6 +148,11 @@ class Campaign(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def url(self):
+        return reverse('ministry:campaign_detail',
+                       kwargs={'campaign_id': self.id})
+
 
 class NewsPost(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.PROTECT,
@@ -156,6 +167,11 @@ class NewsPost(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def url(self):
+        return reverse('ministry:news_detail',
+                       kwargs={'post_id': self.id})
 
 
 class Comment(models.Model):

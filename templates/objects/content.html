@@ -235,9 +235,9 @@
                   'phone_number': 'Phone',
                   'address': 'Address',
                   'founded': 'Date Founded',
-                  'created': 'Profile Created'
+                  'pub_date': 'Profile Created'
               } %}
-              {# TODO: make intuitive date for `created`. eg: "1 year ago" #}
+              {# TODO: make intuitive date for `pub_date`. eg: "1 year ago" #}
               {% for attr, str in info.items() %}
                 {% if ministry.__dict__[attr] %}
                   <span>{{ str }}:</span>&nbsp;

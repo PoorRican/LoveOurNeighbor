@@ -48,20 +48,32 @@ function aboutController($scope, $http, $location) {
 
 nav_layout.controller('campaignCtrl', campaignCtrl);
 
-campaignCtrl.$inject = ['$scope', '$routeParams', 'objectService', 'likeButtonService'];
+campaignCtrl.$inject = ['$scope', '$routeParams', 'objectService', 'likeButtonService', 'galleryService'];
 
-function campaignCtrl($scope, $routeParams, objectService, likeButtonService) {
+function campaignCtrl($scope, $routeParams, objectService, likeButtonService, galleryService) {
   // TODO: change title block
   $scope.object = objectService.get;
   $scope.likeButton = likeButtonService;
 
   $scope.currentNavItem = 'Home';
 
+  $scope.gallery = [];
+
+  activate();
+
   objectService.periodically_fetch();
   $scope.$on('$destroy', function() {
     // Make sure that the interval is destroyed too
     objectService.stop();
   });
+
+  function activate() {
+    var gallery_url = "/ministry/campaign/" + $routeParams.campaign_id + "/gallery/json";
+    return galleryService.get(gallery_url)
+      .then(function(data) {
+        $scope.gallery = data;
+      })
+  };
 
   ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
 }
@@ -164,14 +176,17 @@ function donationCtrl($scope, $routeParams) {
 
 nav_layout.controller('ministryCtrl', ministryCtrl);
 
-ministryCtrl.$inject = ['$scope', '$routeParams', 'objectService', 'likeButtonService']
+ministryCtrl.$inject = ['$scope', '$routeParams', 'objectService', 'likeButtonService', 'galleryService']
 
-function ministryCtrl($scope, $routeParams, objectService, likeButtonService) {
+function ministryCtrl($scope, $routeParams, objectService, likeButtonService, galleryService) {
   // TODO: change title block
   $scope.object = objectService.get;
   $scope.likeButton = likeButtonService;
 
-  $scope.currentNavItem = null;
+  $scopecurrentNavItem = null;
+  $scope.gallery = [];
+
+  activate();
 
   objectService.periodically_fetch();
   $scope.$on('$destroy', function() {
@@ -179,8 +194,16 @@ function ministryCtrl($scope, $routeParams, objectService, likeButtonService) {
     objectService.stop();
   });
 
-  ga('send', 'pageview', '/ministry/' + $routeParams.ministry_action);
-  console.log('ministry action: ' + $routeParams.ministry_action);
+  function activate() {
+    var gallery_url = "/ministry/" + $routeParams.ministry_id + "/gallery/json";
+    return galleryService.get(gallery_url)
+      .then(function(data) {
+        $scope.gallery = data;
+      })
+  };
+
+  ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id);
+  console.log('ministry action: ' + $routeParams.ministry_id);
 };
 
 

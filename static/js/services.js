@@ -468,4 +468,34 @@ function bannerImageService($mdDialog, $http, $log) {
   };
 };
 
+
+nav_layout.factory('galleryService', galleryService);
+
+galleryService.$inject = ['$http', '$log'];
+
+function galleryService($http, $log) {
+  gallery = [];
+
+  var G = this;
+
+  var service = {
+    'gallery': gallery,
+    'get': get,
+  };
+  return service;
+
+
+  function get(url) {
+    return $http.get(url).then(success, failure);
+
+    function success(response) {
+      G.gallery = response.data.gallery;
+      return response.data.gallery;
+    };
+    function failure(response) {
+      $log.error('Could not fetch images. (Wrong URL?)');
+    };
+  };
+}
+
 // vim:foldmethod=syntax shiftwidth=2 tabstop=2:

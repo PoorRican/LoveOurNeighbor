@@ -4,7 +4,6 @@
 
 #}
 
-
 {% macro section_start(id) -%}
 
     {# TODO: experiment w/ z-depth #}
@@ -135,4 +134,26 @@
   {# SECURITY NOTE: it seems to be that it is possible to bypass sanitation. However AngularJS seems to inhibit the browser from loading embedded content. #}
   <input name="{{ name }}" id="styledContent" type="hidden" value="{{ content }}">
   <trix-editor style="min-height: 20em"input="styledContent"></trix-editor>
+{% endmacro %}
+
+
+{% macro gallery() %}
+  <br>
+  <md-grid-list
+        md-cols="1" md-cols-sm="4" md-cols-md="6" md-cols-gt-md="8"
+        md-row-height="1:1"
+        md-gutter="16px">
+
+    <md-grid-tile ng-repeat="img in gallery"
+                  {# TODO: dynamically allocate this #}
+                  md-rowspan="1"
+                  md-colspan="1"
+                  md-rowspan-gt-xs="2"
+                  md-colspan-gt-xs="2">
+      <img style="width: 100%; bottom: 0; position: absolute;"
+           ng-src="{% raw %}{{ img.src }}{% endraw %}">
+    </md-grid-tile>
+  </md-grid-list>
+
+  <p ng-hide="gallery">There are no gallery images at this time</p>
 {% endmacro %}

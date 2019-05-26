@@ -45,9 +45,9 @@ nav_layout.config(['$locationProvider', '$routeProvider', function($locationProv
         },
         controller  : 'newsCtrl'
     })
-    .when('/ministry/:ministry_action', {
+    .when('/ministry/:ministry_id', {
         templateUrl : function (params) {
-          return '/ministry/' + params.ministry_action;
+          return '/ministry/' + params.ministry_id;
        },
         controller  : 'ministryCtrl'
     })

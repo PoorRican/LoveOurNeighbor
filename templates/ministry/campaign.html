@@ -1,7 +1,9 @@
 {# vim: foldmethod=marker tabstop=2 shiftwidth=2:
     templates/ministry/campaign.html
 #}
+
 {% import "content.html" as content %}
+{% import "parts.html" as parts %}
 
 {% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
 
@@ -32,7 +34,7 @@
     {# {{{ Gallery Section #}
     <md-tab label="Gallery">
       <md-content>
-        <p>This part of the website is still under construction</p>
+        {{ parts.gallery() }}
       </md-content>
     </md-tab>
     {# }}} #}
