@@ -75,12 +75,15 @@ def serialize_newspost(post):
 
 
 # Model Utility Functions
+def dedicated_ministry_dir(instance):
+    return path.join('ministries', instance.name)
+
 
 def ministry_banner_dir(instance, filename):
     """ Helper function that returns dedicated directory for ministry media.
     This partitions user uploaded content per ministry.
     """
-    return path.join('ministries', instance.name,
+    return path.join(dedicated_ministry_dir(instance),
                      'banners', filename)
 
 
@@ -88,8 +91,8 @@ def ministry_profile_image_dir(instance, filename):
     """ Helper function that returns dedicated directory for ministry media.
     This partitions user uploaded content per ministry.
     """
-    return path.join('ministries', instance.name,
-                     'images', filename)
+    return path.join(dedicated_ministry_dir(instance),
+                     'profile_images', filename)
 
 
 def campaign_banner_dir(instance, filename):
@@ -98,3 +101,15 @@ def campaign_banner_dir(instance, filename):
     """
     return path.join('ministries', instance.ministry.name,
                      'campaign_banners', filename)
+
+
+def news_post_media_dir(instance, filename):
+    if instance.campaign:
+        return path.join('ministries', instance.campaign.ministry.name,
+                         'post_media', filename)
+    elif instance.ministry:
+        return path.join('ministries', instance.ministry.name,
+                         'post_media', filename)
+    else:
+        e = 'There was an unknown error finding a dir for %s' % instance.name
+        raise AttributeError(e)

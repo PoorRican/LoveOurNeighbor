@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.db import models
+from django.urls import reverse
 
 from explore.models import GeoLocation
 from people.models import User
@@ -9,7 +10,11 @@ from .utils import (
     ministry_banner_dir,
     ministry_profile_image_dir,
     campaign_banner_dir,
+    news_post_media_dir,
 )
+
+
+DEFAULT_MP_PROFILE_IMG = 'ministries/blank_profile.jpg'
 
 
 class Tag(models.Model):
@@ -64,14 +69,14 @@ class MinistryProfile(models.Model):
     phone_number = models.CharField(max_length=20, unique=True)
     website = models.URLField(unique=True)
     founded = models.DateField(blank=True, null=True)
-    created = models.DateField(auto_now_add=True)
+    pub_date = models.DateField(auto_now_add=True)
 
     # Ministry Content
     description = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, related_name='ministries',
                                   blank=True,)
     profile_img = models.ImageField('Profile Image',
-                                    default='ministries/blank_profile.jpg',
+                                    default=DEFAULT_MP_PROFILE_IMG,
                                     upload_to=ministry_profile_image_dir)
     banner_img = models.ImageField('Banner Image', blank=True, null=True,
                                    upload_to=ministry_banner_dir)
@@ -101,6 +106,21 @@ class MinistryProfile(models.Model):
         gl, _ = GeoLocation.objects.get_or_create(ministry=self)
         gl.location = location
         gl.save()
+
+    @property
+    def url(self):
+        return reverse('ministry:ministry_profile',
+                       kwargs={'ministry_id': self.id})
+
+    @property
+    def edit(self):
+        return reverse('ministry:edit_ministry',
+                       kwargs={'ministry_id': self.id})
+
+    @property
+    def json(self):
+        return reverse('ministry:ministry_json',
+                       kwargs={'ministry_id': self.id})
 
 
 # Website Content
@@ -138,6 +158,21 @@ class Campaign(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def url(self):
+        return reverse('ministry:campaign_detail',
+                       kwargs={'campaign_id': self.id})
+
+    @property
+    def edit(self):
+        return reverse('ministry:edit_campaign',
+                       kwargs={'campaign_id': self.id})
+
+    @property
+    def json(self):
+        return reverse('ministry:campaign_json',
+                       kwargs={'campaign_id': self.id})
+
 
 class NewsPost(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.PROTECT,
@@ -147,9 +182,21 @@ class NewsPost(models.Model):
     title = models.CharField(max_length=100)
     pub_date = models.DateTimeField('date published', auto_now_add=True)
     content = models.TextField()
+    attachment = models.ImageField('Media Image', blank=True, null=True,
+                                   upload_to=news_post_media_dir)
 
     def __str__(self):
         return self.title
+
+    @property
+    def url(self):
+        return reverse('ministry:news_detail',
+                       kwargs={'post_id': self.id})
+
+    @property
+    def edit(self):
+        return reverse('ministry:edit_news',
+                       kwargs={'post_id': self.id})
 
 
 class Comment(models.Model):

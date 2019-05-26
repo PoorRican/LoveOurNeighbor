@@ -105,7 +105,7 @@
             {# TODO: implement md-list #}
             <ul>
             {% for ministry in request.user.administers.all() %}
-                <li><a href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">{{ ministry }}</a></li>
+                <li><a href="#{{ ministry.url }}">{{ ministry }}</a></li>
             {% endfor %}
             </ul>
 

@@ -8,8 +8,10 @@ from django.shortcuts import render
 from django.urls import reverse
 
 import json
+import os
 from datetime import datetime
 
+from frontend.settings import MEDIA_ROOT
 from people.models import User
 
 from .forms import (
@@ -18,10 +20,20 @@ from .forms import (
     NewsEditForm,
     CommentForm,
     )
-from .models import NewsPost, Campaign, MinistryProfile, Tag
+from .models import (
+    NewsPost, Campaign, MinistryProfile, Tag,
+    DEFAULT_MP_PROFILE_IMG
+    )
 from .utils import (
     serialize_ministry,
     serialize_campaign,
+
+    campaign_banner_dir,
+
+    dedicated_ministry_dir,
+
+    ministry_banner_dir,
+    ministry_profile_image_dir,
     )
 
 
@@ -101,9 +113,37 @@ def edit_ministry(request, ministry_id):
         if request.user == ministry.admin or \
            request.user in ministry.reps.all():
             if request.method == 'POST':
+                _old_dir = dedicated_ministry_dir(ministry)
                 _form = MinistryEditForm(request.POST, request.FILES,
                                          instance=ministry)
                 if _form.is_valid():
+                    # move to new directory if name change
+                    _new_dir = dedicated_ministry_dir(ministry)
+                    if _old_dir != _new_dir:
+                        _old_dir = os.path.join(MEDIA_ROOT, _old_dir)
+                        _new_dir = os.path.join(MEDIA_ROOT, _new_dir)
+
+                        os.rename(_old_dir, _new_dir)
+                        if ministry.banner_img:
+                            _img = os.path.basename(ministry.banner_img.path)
+                            ministry.banner_img = ministry_banner_dir(ministry,
+                                                                      _img)
+                        if ministry.profile_img and \
+                           ministry.profile_img.path != DEFAULT_MP_PROFILE_IMG:
+                            _img = os.path.basename(ministry.profile_img.path)
+                            _img = ministry_profile_image_dir(ministry, _img)
+                            ministry.profile_img = _img
+
+                    if request.POST['selected_banner_img']:
+                        prev_banner = request.POST['selected_banner_img']
+                        ministry.banner_img = ministry_banner_dir(ministry,
+                                                                  prev_banner)
+                    if request.POST['selected_profile_img']:
+                        prev_banner = request.POST['selected_profile_img']
+                        ministry.profile_img = ministry_profile_image_dir(ministry,
+                                                                          prev_banner)
+                    ministry.save()
+
                     _min = _form.save(commit=False)
                     if _min.address:
                         _min.location = _min.address
@@ -149,7 +189,7 @@ def edit_ministry(request, ministry_id):
 
 @login_required
 def delete_ministry(request, ministry_id):
-    """ Deletes `MinsitryProfile` if `request.user` has sufficient priveleges.
+    """ Deletes `MinistryProfile` if `request.user` has sufficient priveleges.
 
     At the moment, the only privilege checking is if the user is the admin
         (eg: they originally created the object).
@@ -170,7 +210,7 @@ def delete_ministry(request, ministry_id):
         if the user does not have sufficient permissions.
         This attempts to create a redirect loop on the client.
         I don't think that it causes much strain on the server,
-            aside from the `MinsitryProfile` lookup (which should be cached)
+            aside from the `MinistryProfile` lookup (which should be cached)
             and the permissions checking.
         The user is made aware upon returning via django-messages.
 
@@ -280,7 +320,7 @@ def login_as_ministry(request, ministry_id):
         if the user does not have sufficient permissions.
         This attempts to create a redirect loop on the client.
         I don't think that it causes much strain on the server,
-            aside from the `MinsitryProfile` lookup (which should be cached)
+            aside from the `MinistryProfile` lookup (which should be cached)
             and the permissions checking.
         The user is made aware upon returning via django-messages.
     """
@@ -353,6 +393,80 @@ def ministry_json(request, ministry_id):
     return JsonResponse(_json)
 
 
+def ministry_banners_json(request, ministry_id):
+    """ View that returns all images located in dedicated
+    banner directory for MinistryProfile
+    """
+    ministry = MinistryProfile.objects.get(pk=ministry_id)
+    _dir = ministry_banner_dir(ministry, '')
+    _dir = os.path.join(MEDIA_ROOT, _dir)
+
+    _json = {}
+    _json['available'] = {}
+
+    imgs = os.listdir(_dir)
+    for i in imgs:
+        _json['available'][i] = os.path.join('/', _dir, i)
+
+    _current = ministry.banner_img.path
+    _json['current'] = os.path.basename(_current)
+    return JsonResponse(_json)
+
+
+def ministry_profile_img_json(request, ministry_id):
+    """ View that returns all images located in dedicated
+    banner directory for MinistryProfile
+    """
+    ministry = MinistryProfile.objects.get(pk=ministry_id)
+    _dir = ministry_profile_image_dir(ministry, '')
+    _dir = os.path.join(MEDIA_ROOT, _dir)
+
+    _json = {}
+    _json['available'] = {}
+
+    imgs = os.listdir(_dir)
+    for i in imgs:
+        _json['available'][i] = os.path.join('/', _dir, i)
+
+    _current = ministry.banner_img.path
+    _json['current'] = os.path.basename(_current)
+    return JsonResponse(_json)
+
+
+def ministry_gallery_json(request, ministry_id):
+    """ Return a JSON dict of all used images associated
+    to the MinistryProfile selected by `ministry_id`.
+
+    The list that is returned is not exhaustive and
+        uses images from all NewsPosts with an `attachment` image
+        from both `MinistryProfile.news` and `Campaign.news`,
+        and `Campaign.banner_imgs`
+    """
+    ministry = MinistryProfile.objects.get(pk=ministry_id)
+
+    gallery = []
+    for i in ministry.news.all():
+        if i.attachment is not None:
+            gallery.append(i)
+    for i in ministry.campaigns.all():
+        if i.banner_img is not None:
+            gallery.append(i)
+        for n in i.news.all():
+            if n.attachment is not None:
+                gallery.append(n)
+    gallery.sort(key=lambda np: np.pub_date, reverse=True)
+
+    _gallery = []
+    _gallery.append({'src': ministry.banner_img.url, 'obj': ministry.url})
+    for i in gallery:
+        if hasattr(i, 'attachment'):
+            _gallery.append({'src': i.attachment.url, 'obj': i.url})
+        elif hasattr(i, 'banner_img'):
+            _gallery.append({'src': i.banner_img.url, 'obj': i.url})
+
+    return JsonResponse({'gallery': _gallery})
+
+
 # News Views
 def news_index(request):
     # TODO: paginate and render
@@ -379,7 +493,7 @@ def create_news(request, obj_type, obj_id):
         return HttpResponseRedirect("/")
 
     elif request.method == 'POST':
-        news_form = NewsEditForm(request.POST)
+        news_form = NewsEditForm(request.POST, request.FILES)
         if news_form.is_valid():
             news = news_form.save(commit=False)
             setattr(news, obj_type, obj)
@@ -414,7 +528,8 @@ def edit_news(request, post_id):
 
     if request.user == _admin or request.user in _reps:
         if request.method == 'POST':
-            _form = NewsEditForm(request.POST, instance=post)
+            _form = NewsEditForm(request.POST, request.FILES,
+                                 instance=post)
             _form.save()
             # TODO: redirect to referrer or something
             if post.campaign:
@@ -525,6 +640,12 @@ def edit_campaign(request, campaign_id):
 
                     Tag.process_tags(cam, _form['tags'].value())
 
+                    if request.POST['selected_banner_img']:
+                        prev_banner = request.POST['selected_banner_img']
+                        campaign.banner_img = campaign_banner_dir(campaign,
+                                                                  prev_banner)
+                    campaign.save()
+
                     _w = 'Edit successful!'
                     messages.add_message(request, messages.SUCCESS, _w)
 
@@ -632,6 +753,54 @@ def campaign_json(request, campaign_id):
     del _json['content']        # remove to tx less data
 
     return JsonResponse(_json)
+
+
+def campaign_banners_json(request, campaign_id):
+    """ View that returns all images located in dedicated
+    banner directory for Campaign
+    """
+    campaign = Campaign.objects.get(pk=campaign_id)
+    _dir = campaign_banner_dir(campaign, '')
+    _dir = os.path.join(MEDIA_ROOT, _dir)
+
+    _json = {}
+    _json['available'] = {}
+
+    imgs = os.listdir(_dir)
+    for i in imgs:
+        _json['available'][i] = os.path.join('/', _dir, i)
+
+    _current = campaign.banner_img.path
+    _json['current'] = os.path.basename(_current)
+    return JsonResponse(_json)
+
+
+def campaign_gallery_json(request, campaign_id):
+    """ Return a JSON dict of all used images associated
+    to the MinistryProfile selected by `ministry_id`.
+
+    The list that is returned is not exhaustive and
+        uses images from all NewsPosts with an `attachment` image
+        from both `MinistryProfile.news` and `Campaign.news`,
+        and `Campaign.banner_imgs`
+    """
+    campaign = Campaign.objects.get(pk=campaign_id)
+
+    gallery = []
+    for i in campaign.news.all():
+        if i.attachment is not None:
+            gallery.append(i)
+    gallery.sort(key=lambda np: np.pub_date, reverse=True)
+
+    print(gallery)
+
+    _gallery = []
+    _gallery.append({'src': campaign.banner_img.url, 'obj': campaign.url})
+    for i in gallery:
+        if hasattr(i, 'attachment'):
+            _gallery.append({'src': i.attachment.url, 'obj': i.url})
+
+    return JsonResponse({'gallery': _gallery})
 
 
 # User Interaction

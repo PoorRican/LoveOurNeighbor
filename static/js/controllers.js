@@ -48,14 +48,18 @@ function aboutController($scope, $http, $location) {
 
 nav_layout.controller('campaignCtrl', campaignCtrl);
 
-campaignCtrl.$inject = ['$scope', '$routeParams', 'objectService', 'likeButtonService'];
+campaignCtrl.$inject = ['$scope', '$routeParams', 'objectService', 'likeButtonService', 'galleryService'];
 
-function campaignCtrl($scope, $routeParams, objectService, likeButtonService) {
+function campaignCtrl($scope, $routeParams, objectService, likeButtonService, galleryService) {
   // TODO: change title block
   $scope.object = objectService.get;
   $scope.likeButton = likeButtonService;
 
   $scope.currentNavItem = 'Home';
+
+  $scope.gallery = [];
+
+  activate();
 
   objectService.periodically_fetch();
   $scope.$on('$destroy', function() {
@@ -63,15 +67,23 @@ function campaignCtrl($scope, $routeParams, objectService, likeButtonService) {
     objectService.stop();
   });
 
+  function activate() {
+    var gallery_url = "/ministry/campaign/" + $routeParams.campaign_id + "/gallery/json";
+    return galleryService.get(gallery_url)
+      .then(function(data) {
+        $scope.gallery = data;
+      })
+  };
+
   ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
 }
 
 
 nav_layout.controller('campaignActionCtrl', campaignActionCtrl);
 
-campaignActionCtrl.$inject = ['$scope', '$routeParams', 'tagService', 'objectService'];
+campaignActionCtrl.$inject = ['$scope', '$routeParams', 'tagService', 'objectService', 'bannerImageService'];
 
-function campaignActionCtrl($scope, $routeParams, tagService, objectService) {
+function campaignActionCtrl($scope, $routeParams, tagService, objectService, bannerImageService) {
   // TODO: change title block
 
   $scope.currentNavItem = 'Home';
@@ -81,10 +93,48 @@ function campaignActionCtrl($scope, $routeParams, tagService, objectService) {
     $scope.filter_tags = tagService.search;
     $scope.tag_service = tagService;
 
+    $scope.banner_urls = {};
+    $scope.select_banner = select_banner;
+    $scope.banner_img_dialog = bannerImageService;
+    $scope.selected_banner = $scope.banner_img_dialog.selected;
+
+    $scope.profile_img_urls = {};
+    $scope.select_profile_img = select_profile_img;
+    $scope.profile_img_dialog = bannerImageService;
+    $scope.selected_profile_img = $scope.profile_img_dialog.selected;
+
     activate();
     tagService.fetch();
 
+    function select_banner(name) {
+      // this is a dirty hack, but it works.....
+      // for some reason, the selected attribute is never updated via $watch/$digest
+      $scope.banner_img_dialog.select(name);
+      $scope.selected_banner = name;
+    }
+
+    function select_profile_img(name) {
+      // this is a dirty hack, but it works.....
+      // for some reason, the selected attribute is never updated via $watch/$digest
+      $scope.profile_img_dialog.select(name);
+      $scope.selected_profile_img = name;
+    }
+
     function activate() {
+      var banners_url = "/ministry/campaign/" + $routeParams.campaign_id + "/banners/json";
+      bannerImageService.get(banners_url)
+        .then(function(data) {
+          $scope.banner_urls = data;
+
+        })
+
+      var profile_img_url = "/ministry/campaign/" + $routeParams.campaign_id + "/profile_img/json";
+      bannerImageService.get(profile_img_url)
+        .then(function(data) {
+          $scope.profile_img_urls = data;
+
+        })
+
       return objectService.fetch()
         .then(function(data) {
           $scope.object = data;
@@ -126,14 +176,17 @@ function donationCtrl($scope, $routeParams) {
 
 nav_layout.controller('ministryCtrl', ministryCtrl);
 
-ministryCtrl.$inject = ['$scope', '$routeParams', 'objectService', 'likeButtonService']
+ministryCtrl.$inject = ['$scope', '$routeParams', 'objectService', 'likeButtonService', 'galleryService']
 
-function ministryCtrl($scope, $routeParams, objectService, likeButtonService) {
+function ministryCtrl($scope, $routeParams, objectService, likeButtonService, galleryService) {
   // TODO: change title block
   $scope.object = objectService.get;
   $scope.likeButton = likeButtonService;
 
-  $scope.currentNavItem = null;
+  $scopecurrentNavItem = null;
+  $scope.gallery = [];
+
+  activate();
 
   objectService.periodically_fetch();
   $scope.$on('$destroy', function() {
@@ -141,36 +194,85 @@ function ministryCtrl($scope, $routeParams, objectService, likeButtonService) {
     objectService.stop();
   });
 
-  ga('send', 'pageview', '/ministry/' + $routeParams.ministry_action);
-  console.log('ministry action: ' + $routeParams.ministry_action);
+  function activate() {
+    var gallery_url = "/ministry/" + $routeParams.ministry_id + "/gallery/json";
+    return galleryService.get(gallery_url)
+      .then(function(data) {
+        $scope.gallery = data;
+      })
+  };
+
+  ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id);
+  console.log('ministry action: ' + $routeParams.ministry_id);
 };
 
 
 nav_layout.controller('ministryActionCtrl', ministryActionCtrl);
 
-ministryActionCtrl.$inject = ['$scope', '$location', '$routeParams', 'tagService', 'userFilterService', 'objectService'];
+ministryActionCtrl.$inject = ['$scope', '$location', '$routeParams', 'tagService', 'userFilterService', 'objectService', 'bannerImageService'];
 
-function ministryActionCtrl($scope, $location, $routeParams, tagService, userFilterService, objectService) {
+function ministryActionCtrl($scope, $location, $routeParams, tagService, userFilterService, objectService, bannerImageService) {
   // TODO: change title block
 
   $scope.currentNavItem = null;
 
-  if ($routeParams.ministry_action == 'edit' || $routeParams.ministry_action == 'edit') {
+  if ($routeParams.ministry_action == 'edit' || $routeParams.ministry_action == 'create') {
     $scope.object = {};
+
     $scope.filter_users = userFilterService.search;
     $scope.filter_tags = tagService.search;
+
     $scope.tagService = tagService;
+
+    $scope.banner_urls = {};
+    $scope.select_banner = select_banner;
+    $scope.banner_img_dialog = bannerImageService;
+    $scope.selected_banner = $scope.banner_img_dialog.selected;
+
+    $scope.profile_img_urls = {};
+    $scope.select_profile_img = select_profile_img;
+    $scope.profile_img_dialog = bannerImageService;
+    $scope.selected_profile_img = $scope.profile_img_dialog.selected;
 
     activate();
     tagService.fetch();
 
+    function select_banner(name) {
+      // this is a dirty hack, but it works..... 
+      // for some reason, the selected attribute is never updated via $watch/$digest
+      $scope.banner_img_dialog.select(name);
+      $scope.selected_banner = name;
+    }
+
+    function select_profile_img(name) {
+      // this is a dirty hack, but it works.....
+      // for some reason, the selected attribute is never updated via $watch/$digest
+      $scope.profile_img_dialog.select(name);
+      $scope.selected_profile_img = name;
+    }
+
     function activate() {
+      var banners_url = "/ministry/" + $routeParams.ministry_id + "/banners/json";
+      bannerImageService.get(banners_url)
+        .then(function(data) {
+          $scope.banner_urls = data;
+
+        })
+
+      var profile_img_url = "/ministry/" + $routeParams.ministry_id + "/profile_img/json";
+      bannerImageService.get(profile_img_url)
+        .then(function(data) {
+          $scope.profile_img_urls = data;
+
+        })
+
       return objectService.fetch()
         .then(function(data) {
           $scope.object = data;
         }
       );
     };
+
   }
   if ($routeParams.ministry_action == 'login') {
     $location.url('/ministry/' + $routeParams.ministry_id);

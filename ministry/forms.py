@@ -75,7 +75,7 @@ class NewsEditForm(forms.ModelForm):
     class Meta:
         model = NewsPost
         fields = ('title', 'content',
-                  # TODO: create ui for editing `img_path`
+                  'attachment',
                   )
         widgets = {'content': forms.Textarea(attrs={'rows': 20,
                                                     'cols': 80})}

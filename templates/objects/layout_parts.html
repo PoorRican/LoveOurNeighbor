@@ -4,9 +4,9 @@
 
 {% set links =
   [
-    ('home', 'Home'),
-    ('faq', 'FAQ'),
-    ('about', 'About Us')
+    ('/#/home', 'Home'),
+    ('/#/faq', 'FAQ'),
+    ('/#/about', 'About Us')
   ]
 %}
 
@@ -20,7 +20,7 @@
 
             <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': request.user.logged_in_as.id}) }}"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>
               <md-list-item class="md-1-line">
-                <img class="md-avatar" src="{{ static(request.user.logged_in_as.profile_img.url) }}">
+                <img class="md-avatar" src="{{ request.user.logged_in_as.profile_img.url }}">
                 <span class="uname" md-truncate>
                   {{- request.user.logged_in_as.name -}}
                 </span>
@@ -72,7 +72,7 @@
                   <md-menu-item>
                     <md-button ng-href="#{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"{% if ALIAS %} class="md-primary"{% endif %}>
                       <md-icon>
-                      <img class="md-avatar" src="{{ static(ministry.profile_img.url) }}">
+                      <img class="md-avatar" src="{{ ministry.profile_img.url }}">
                       </md-icon>
                       {{ ministry }}
                       {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
@@ -155,10 +155,10 @@
 
         <a class="title-shadow-orange brand-logo center md-accent md-hue-2" href="#home" layout-padding>Love Our Neighbor</a>
 
-        <md-nav-bar ng-model="currentNavItem" class="" md-selected-nav-item="currentNavItem" hide-xs hide-sm>
+        <md-nav-bar md-selected-nav-item="currentNavItem" hide-xs hide-sm>
         {%- for _link in links -%}
           <md-nav-item md-nav-href="{{ _link[0] }}" name="{{ _link[1] }}">
-              {{ _link[1] }}
+            {{ _link[1] }}
           </md-nav-item>
         {%- endfor -%}
         </md-nav-bar>
