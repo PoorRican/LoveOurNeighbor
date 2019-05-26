@@ -4,6 +4,8 @@
 
 #}
 
+
+{# {{{ Section start/stop #}
 {% macro section_start(id) -%}
 
     {# TODO: experiment w/ z-depth #}
@@ -19,23 +21,35 @@
     </div>
 
 {%- endmacro %}
+{# }}} #}
 
 
+{# {{{ Contact Us #}
 {% macro contact_us(txt = "Contact Us") %}
+
     <a href="#/about#contact_us">{{ txt }}</a>
+
 {% endmacro %}
+{# }}} #}
 
 
+{# {{{ Comments Section #}
 {% macro comments_section(obj, obj_type, request=None, form=None, csrf_token=None) %}
+
   <div class="comments_section wrapper">
     <h3>Comments:</h3>
+
+    {# {{{ Comment List #}
     {% if len(obj.comments.all()) %}
       <md-list flex>
+
         {% for i in obj.comments.all() %}
           {# TODO: implement this in angular to reduce server overhead #}
           <md-list-item class="md-2-line comment">
             <div class="md-list-item-text" layout="column">
+
               <p>{{ i.content }}</p>
+
               <div layout="row">
                 <img class="profile-img" src="{{ i.user.profile_img }}">
                 <div layout="column">
@@ -43,25 +57,35 @@
                   <small>{{ f_time(i.pub_date) }}</small>
                 </div>
               </div>
-            </div>
+
+            </div><!-- ./md-list-item-text -->
           </md-list-item>
         {% endfor %}
+
       </md-list>
     {% else %}
       <p class="md-caption">Be the first to comment</p>
     {% endif %}
+    {# }}} #}
+
     <md-divider></md-divider>
     <br>
+
+    {# {{{ New Comment #}
     <div class="new_comment">
       {# TODO: use js to dynamically hide this #}
+
       {% if request and request.user.is_authenticated %}
         <form enctype="multipart/form-data" method="POST" style="display: none;"
             action="{{ url_for("ministry:create_comment", kwargs={'obj_type': obj_type, 'obj_id': obj.id}) }}">
           <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
           <md-input-container>
+
             {# TODO: add `md-no-asterisk` to get rid of asterisk in label #}
             {{ form.as_p() }}
+
           </md-input-container>
+
           <md-button class="md-raised md-primary" type="submit">
             Comment&nbsp;
             <md-icon>
@@ -71,22 +95,30 @@
           <md-button class="md-icon-button md-warn" ng-click="comment.hide($event)">
             <i class="material-icons">cancel</i>
           </md-button>
+
         </form>
+
         <md-button class="md-icon-button md-raised md-primary" ng-click="comment.show($event)">
           <i class="material-icons">add_comment</i>
         </md-button>
+
       {% else %}
         <a href="#{{ url_for('people:login') }}" style="text-decoration: none;">
           <span>Login to Comment</span>
           <md-button class="md-raised md-accent">Login</md-button>
         </a>
       {% endif %}
+      {# }}} #}
+
     </div><!-- /.new_comment -->
   </div><!-- /.comment_form -->
-{% endmacro %}
 
+{% endmacro %}
+{# }}} #}
+
+
+{# {{{ Like Button #}
 {% macro like_button(_obj, request=None) %}
-{# {{{ #}
 
     {# TODO: implement "unlike" in django view #}
     {% if request and not request.user.is_authenticated %}
@@ -113,31 +145,48 @@
     </a>
     {% endif %}
 
-{# }}} #}
 {% endmacro %}
+{# }}} #}
 
 
+{# {{{ Tag Chips #}
 {% macro tag_chips(obj) %}
+
   {% if len(obj.tags.all()) %}
     <h3 style="margin: 5px 0;">Tags:</h3>
+
     <md-chips>
       {% for i in obj.tags.all() %}
+
         {# TODO: link to search query showing related objects #}
+
         <md-chip ng-click="goto('{{ url_for('search:search_tag', kwargs={'tag_name': i.name}) }}')">{{ i.name }}</md-chip>
+
       {% endfor %}
     </md-chips>
+
   {% endif %}
+
 {% endmacro %}
+{# }}} #}
 
 
+{# {{{ WYSIWYG Editor #}
 {% macro wysiwyg_editor(name, content='') %}
+
   {# SECURITY NOTE: it seems to be that it is possible to bypass sanitation. However AngularJS seems to inhibit the browser from loading embedded content. #}
+
   <input name="{{ name }}" id="styledContent" type="hidden" value="{{ content }}">
-  <trix-editor style="min-height: 20em"input="styledContent"></trix-editor>
+
+  <trix-editor style="min-height: 20em" input="styledContent"></trix-editor>
+
 {% endmacro %}
+{# }}} #}
 
 
+{# {{{ Gallery #}
 {% macro gallery() %}
+
   <br>
   <md-grid-list
         md-cols="1" md-cols-sm="4" md-cols-md="6" md-cols-gt-md="8"
@@ -150,10 +199,14 @@
                   md-colspan="1"
                   md-rowspan-gt-xs="2"
                   md-colspan-gt-xs="2">
+
       <img style="width: 100%; bottom: 0; position: absolute;"
            ng-src="{% raw %}{{ img.src }}{% endraw %}">
+
     </md-grid-tile>
   </md-grid-list>
 
   <p ng-hide="gallery">There are no gallery images at this time</p>
+
 {% endmacro %}
+{# }}} #}
