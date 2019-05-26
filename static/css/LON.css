@@ -53,6 +53,11 @@
   border-top-left-radius: 10px
 }
 
+.news_post_media {
+  width: 80%;
+  margin: 0 10% 25px 10%;
+}
+
 
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */

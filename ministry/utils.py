@@ -92,7 +92,7 @@ def ministry_profile_image_dir(instance, filename):
     This partitions user uploaded content per ministry.
     """
     return path.join(dedicated_ministry_dir(instance),
-                     'images', filename)
+                     'profile_images', filename)
 
 
 def campaign_banner_dir(instance, filename):
