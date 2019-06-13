@@ -5,7 +5,6 @@ Urgent TODO:
     - Dynamically create comment forms to enable parent/child commenting
     - $Enable commenting 'as ministry' editable from comment form.$
     - Gallery for ministries/campaigns of aggregated media
-    - Ability to add multiple media items to NewsPost
     - Implement file uploading as 'new upload' and then have `img_path` be an option of selected uploaded files
     - $Social media links for ministries$
     - Map displaying ministry location (via 'explore' tab)
