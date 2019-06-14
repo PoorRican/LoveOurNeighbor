@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -6,9 +5,9 @@ from django.urls import reverse
 from .models import Donation
 from .forms import SelectPaymentForm
 from ministry.models import Campaign
+from people.models import User
 
 
-@login_required
 def select_payment(request, campaign_id):
     """ Presents user with a the option to select payment type.
     django-payments might not support multiple payment variants,
@@ -17,10 +16,14 @@ def select_payment(request, campaign_id):
     The user is presented to pay via CoinBase or Braintree.
     """
     if request.method == "POST":
-        # TODO: Donation object should be created here
-        user = request.user.profile
-        campaign = Campaign.objects.get(id=campaign_id)
         _data = request.POST
+        if request.user.is_authenticated:
+            user = request.user
+        elif _data['email']:
+            user = User.objects.create(email=_data['email'],
+                                       password="", is_active=False)
+
+        campaign = Campaign.objects.get(id=campaign_id)
         donation = Donation.objects.create(campaign=campaign,
                                            user=user,)
         if _data['payment_type'] == 'cc':
@@ -43,11 +46,11 @@ def select_payment(request, campaign_id):
         form = SelectPaymentForm()
         context = {'campaign_id': campaign_id,
                    'form': form,
+                   'request': request,
                    }
         return render(request, 'select_payment.html', context)
 
 
-@login_required
 def cc_payment(request, donation_id):
     """ This utilizes whatever credit card processing widget provided by the bank.
     Accepts POST data to populate form.
@@ -56,7 +59,6 @@ def cc_payment(request, donation_id):
     return NotImplemented
 
 
-@login_required
 def braintree_payment(request, donation_id):
     """ This uses the braintree Drop-in UI to continue a payment.
     Accepts POST data to populate form.
@@ -65,7 +67,6 @@ def braintree_payment(request, donation_id):
     return NotImplemented
 
 
-@login_required
 def coinbase_payment(request, donation_id):
     """ This uses whatever CoinBase offers as a widget to continue a payment.
     Accepts POST data to populate form.
