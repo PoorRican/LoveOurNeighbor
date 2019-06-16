@@ -1,0 +1,16 @@
+<section class="wrapper">
+  <!-- donation/payment_complete -->
+
+  <h1>Your Receipt</h1>
+
+  <h3>Thank you for donating to <a href="#{{ campaign.url }}">{{ campaign }}</a></h3>
+  <p>Your confirmation number is {{ payment.confirmation }}.
+     You can access this through the <code>Receipts</code> panel in your
+     <a href="#{{ url_for('people:user_profile') }}">User Profile</a>
+  </p>
+
+</section>
+
+
+<!-- Google Analytics Virtual Pageview -->
+<script>ga('send', 'pageview', 'select payment')</script>

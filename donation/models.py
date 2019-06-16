@@ -2,15 +2,17 @@ from django.db import models
 
 from yaml import load
 from datetime import datetime
+from uuid import uuid4
+from base64 import b64encode
 
 from ministry.models import Campaign
 from people.models import User
 
 
 PAYMENT_TYPES = (('cc', 'Credit Card'),
-                 ('bt', 'Venmo, Apple Pay, \
+                 ('other', 'Venmo, Apple Pay, \
                          Samsung Pay, Google Pay'),     # braintree
-                 ('cb', 'Bitcoin'))     # alt currencies?
+                 ('btc', 'Bitcoin'))     # alt currencies?
 
 
 # This is a massive list of most countries
@@ -176,6 +178,12 @@ class Payment(models.Model):
     #       therefore, for UI, `Donation.amount` should always be used
     # stores btc transaction amount
     amount = models.DecimalField(max_digits=7, decimal_places=2)
+
+    def confirm(self):
+        """ Used to generate a 'receipt' confirmation number.
+        """
+        self.confirmation = str(b64encode(uuid4().bytes))[2:-1]
+        self.save()
 
     class Meta:
         abstract = True
