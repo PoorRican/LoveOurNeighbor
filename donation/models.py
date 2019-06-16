@@ -1,5 +1,8 @@
 from django.db import models
 
+from yaml import load
+from datetime import datetime
+
 from ministry.models import Campaign
 from people.models import User
 
@@ -10,84 +13,10 @@ PAYMENT_TYPES = (('cc', 'Credit Card'),
                  ('cb', 'Bitcoin'))     # alt currencies?
 
 
-class Payment(models.Model):
-    """ Encapsulates the 3 payment methods that will be available for donation.
-
-    This object is meant for storage and not lookup speed.
-
-    However, this model enables transparent usage of bitcoin payments alongside
-        normal credit card amounts. More importantly, this enables unified
-        tracking for credit card payments across both Braintree and
-        bank provided credit card processing.
-
-    Braintree, Coinbase and bank provided cc processing will be available.
-        (bank provided credit card processing offers low fees.)
-
-    This model is intended for backend use. Hooks may or not be implemented
-        to add transactions to ledger and/or to verify against bank statements.
-
-    Attributes
-    ==========
-    payment_type: 'cc', 'bt', or 'cb'
-        This attribute indicates type of payment contained in `PAYMENT_TYPES`
-    payment_date: datetime
-        Transaction time and date are stored here. This field is non-editable,
-            and is handled automatically by `auto_now_add`.
-    confirm_date: datetime
-        To be used for bitcoin transactions, storing when
-            the transaction has been confirmed.
-        This is a non-essential field and intended as statistical
-            or investigative metadata.
-    _amount: int (positive)
-        For bitcoin transactions, the satoshi donated in the transaction are
-            stored in this field. It is then accessed when determing
-            the dollar amount involved in the transaction.
-    confirmation: str
-        Any confirmation code returned by either the bank, braintree,
-            or whatever bitcoin portal is used.
-    tx_id: str
-        Initial transanction identifying information is stored here.
-
-    Methods
-    =======
-    amount
-        This method provides the seemless functionality in returning dollar
-            amounts for bitcoin payments.
-    """
-    payment_type = models.CharField(max_length=9, choices=PAYMENT_TYPES)
-    payment_date = models.DateTimeField(auto_now_add=True)
-    confirm_date = models.DateTimeField(blank=True, null=True)
-
-    # Transaction Details
-    # TODO: figure out what details braintree gives
-    # TODO: store current btc/usd rate. however if btc, USD amount is stored via `self.donation.amount`
-    #       therefore, for UI, `Donation.amount` should always be used
-    # stores btc transaction amount
-    _amount = models.PositiveIntegerField(null=True, blank=True)
-    # this stores any confirmation data
-    confirmation = models.CharField(max_length=256,
-                                    null=True, blank=True)
-    # stores identifying transaction data
-    tx_id = models.CharField(max_length=256,
-                             null=True, blank=True)
-
-    @property
-    def amount(self):
-        """ This method enables bitcoin donations to be summed alongside
-        dollar transactions by converting transaction amount using the
-        current exchange rate.
-
-        This function is meant to be used for in the UI, NOT backend!
-
-        Obviously, this will cause fluctuating dollar amounts over time,
-        but such is the caveat with bitcoin transactions.
-        """
-        # TODO: this has to be tested
-        if self.payment_type == 'cb':
-            # TODO: calculate usd amount based CURRENT on exchange rate
-            return self._amount
-        else:
-            return self._amount
+# This is a massive list of most countries
+with open("countries.yaml", 'r') as f:
+    COUNTRIES = sorted(load(f)['COUNTRIES'])
+    COUNTRIES = tuple(i for i in zip(COUNTRIES, COUNTRIES))
 
 
 class Donation(models.Model):
@@ -140,12 +69,33 @@ class Donation(models.Model):
                                  on_delete=models.PROTECT)
     user = models.ForeignKey(User, related_name="donations",
                              on_delete=models.PROTECT)
-    payment = models.OneToOneField(Payment, related_name='donation',
-                                   on_delete=models.PROTECT,
-                                   null=True, blank=True)
 
     def __str__(self):
         return "$%d for %s" % (self.amount, self.campaign)
+
+    @property
+    def payment(self):
+        """ This allows for blind-binding of Donation to payment objects.
+
+        This is the preferred way of accessing payment info since
+            any return type will have the essential attributes defined
+            in `Payment` (eg: amount, payment_date).
+
+        Returns
+        =======
+        inherited child of `Payment`:
+            ccPayment, btcPayment, braintreePayment
+
+        Raises
+        ======
+        ValueError:
+            if there is no associated payment attribute
+        """
+        _ = ("cc_payment", "btc_payment", "braintree_payment")
+        for p in _:
+            if hasattr(self, p):
+                return getattr(self, p)
+        raise ValueError("Donation object does not have a payment")
 
     @property
     def date(self):
@@ -154,8 +104,141 @@ class Donation(models.Model):
     @property
     def amount(self):
         """ If there is no payment, do not include amount.
+        Since, this value is more important, calculations should still be
+            performed despite any malformed `Donation` objects.
         """
-        if self.payment:
+        try:
             return self.payment.amount
-        else:
-            return 0
+        except ValueError:
+            return 0.0
+
+    @classmethod
+    def cleanup(cls):
+        """ This maintanence method deletes any malformed `Donation` objects
+        and is meant to be called on a regular interval as a clean-up task.
+
+        It is meant to clean-up any "unpaid" Donations (eg: Donation objects
+            that raise `ValueError` via the `Donation.payment` attribute.
+
+        NOTE
+        ====
+        Because the `Donation` model only has two columns, this should not be
+            a tasking method to call. HOWEVER, the method of iteration is
+            not optimized for django.db nor is it very thought out.
+
+        TODO
+        ====
+        Implement better iteration
+        """
+        for i in cls.objects.all():
+            try:
+                i.payment
+            except ValueError:
+                i.delete()
+
+
+class Payment(models.Model):
+    """ Base class for the 3 payment methods that will be available for donation.
+
+    This object is meant for storage and not lookup speed.
+
+    However, this model enables transparent usage of bitcoin payments alongside
+        normal credit card amounts. More importantly, this enables unified
+        tracking for credit card payments across both Braintree and
+        bank provided credit card processing.
+
+    Braintree, Coinbase and bank provided cc processing will be available.
+        (bank provided credit card processing offers low fees.)
+
+    This model is intended for backend use. Hooks may or not be implemented
+        to add transactions to ledger and/or to verify against bank statements.
+
+    Attributes
+    ==========
+    payment_date: datetime
+        Transaction time and date are stored here. This field is non-editable.
+    amount: int (positive)
+        For bitcoin transactions, the satoshi donated in the transaction are
+            stored in this field. It is then accessed when determing
+            the dollar amount involved in the transaction.
+    confirmation: str
+        Any confirmation code returned by either the bank, braintree,
+            or whatever bitcoin portal is used.
+    """
+    payment_date = models.DateTimeField(default=datetime.now, editable=False)
+    # this stores any confirmation data
+    confirmation = models.CharField(max_length=256, blank=True, default='')
+
+    # Transaction Details
+    # TODO: figure out what details braintree gives
+    # TODO: store current btc/usd rate. however if btc,
+    #       USD amount is stored via `self.donation.amount`
+    #       therefore, for UI, `Donation.amount` should always be used
+    # stores btc transaction amount
+    amount = models.DecimalField(max_digits=7, decimal_places=2)
+
+    class Meta:
+        abstract = True
+
+
+class ccPayment(Payment):
+    """ Stores data for a credit-card transaction.
+
+    TODO: this is not ready to go live
+    TODO: there must be a method that deletes ALL old cc numbers.
+    TODO: there should be some level of encryption on sensitive attributes.
+
+    Attributes
+    ==========
+    donation: `Donation`
+        This is the donation that the payment is meant for.
+        The relationship traverses via `Donation.cc_payment`,
+            but should be accessed by the `Donation.payment` property.
+    """
+    donation = models.OneToOneField(Donation, related_name="cc_payment",
+                                    null=True, blank=True,
+                                    on_delete=models.CASCADE)
+
+    first_name = models.CharField("First Name", max_length=32, default=None)
+    last_name = models.CharField("Last Name", max_length=32, default=None)
+
+    address = models.CharField(max_length=64, default=None)
+    state = models.CharField(max_length=32, default=None)
+    city = models.CharField(max_length=32, default=None)
+    zipcode = models.PositiveIntegerField()
+    country = models.CharField(max_length=32, choices=COUNTRIES, default=None)
+
+    card_number = models.PositiveIntegerField()
+    ccv2 = models.PositiveIntegerField()
+
+
+class btcPayment(Payment):
+    """ Skeleton for Bitcoin payment options.
+    Transaction detail attributes have yet to be implemented.
+
+    Attributes
+    ==========
+    donation: `Donation`
+        This is the donation that the payment is meant for.
+        The relationship traverses via `Donation.btc_payment`,
+            but should be accessed by the `Donation.payment` property.
+    """
+    donation = models.OneToOneField(Donation, related_name="btc_payment",
+                                    null=True, blank=True,
+                                    on_delete=models.CASCADE)
+
+
+class braintreePayment(Payment):
+    """ Skeleton for Braintree payment options.
+    Transaction detail attributes have yet to be implemented.
+
+    Attributes
+    ==========
+    donation: `Donation`
+        This is the donation that the payment is meant for.
+        The relationship traverses via `Donation.braintree_payment`,
+            but should be accessed by the `Donation.payment` property.
+    """
+    donation = models.OneToOneField(Donation, related_name="braintree_payment",
+                                    null=True, blank=True,
+                                    on_delete=models.CASCADE)
