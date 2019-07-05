@@ -17,4 +17,4 @@ class ccPaymentForm(forms.ModelForm):
         model = ccPayment
         fields = ('first_name', 'last_name',
                   'address', 'state', 'city', 'zipcode', 'country',
-                  'amount', 'card_number', 'ccv2')
+                  'amount', 'card_number', 'ccv2', 'expiration_date')

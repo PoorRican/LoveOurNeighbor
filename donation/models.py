@@ -207,6 +207,11 @@ class ccPayment(Payment):
                                     null=True, blank=True,
                                     on_delete=models.CASCADE)
 
+    card_number = models.PositiveIntegerField()
+    ccv2 = models.PositiveIntegerField()
+    expiration_date = models.CharField("Expiration Date",
+                                       maxlength=5, minlength=5)
+
     first_name = models.CharField("First Name", max_length=32, default=None)
     last_name = models.CharField("Last Name", max_length=32, default=None)
 
@@ -215,9 +220,6 @@ class ccPayment(Payment):
     city = models.CharField(max_length=32, default=None)
     zipcode = models.PositiveIntegerField()
     country = models.CharField(max_length=32, choices=COUNTRIES, default=None)
-
-    card_number = models.PositiveIntegerField()
-    ccv2 = models.PositiveIntegerField()
 
 
 class btcPayment(Payment):

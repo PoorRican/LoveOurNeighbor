@@ -11,6 +11,72 @@
         action="{{ url_for('donation:cc_payment', kwargs={'donation_id': donation.id}) }}">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
+    <input type="hidden" name="cover_fees" value="{% raw %}{{ cover_fees }}{% endraw %}">
+    <md-checkbox ng-model="cover_fees">
+      Increase my donation amount to help cover credit card processing fees.
+    </md-checkbox>
+
+    <input type="hidden" name="recurring" value="{% raw %}{{ recurring }}{% endraw %}">
+    <md-checkbox ng-model="recurring">
+      Make this donation recurring (monthly).
+    </md-checkbox>
+
+    <h3>Payment Details:</h3>
+
+    <md-input-container>
+      {{ form.amount.label_tag() }}
+      <input name="amount" type="number"
+             ng-model="amount"
+             min="1">
+      <div ng-messages="ccPaymentForm.amount.$error" role="alert">
+        <div ng-message-exp="['required']">
+          This field is required.
+        </div>
+      </div>
+    </md-input-container>
+    <md-input-container>
+      {{ form.card_number.label_tag() }}
+      <!-- TODO: add ng-pattern -->
+      <input name="card_number" type="text"
+             ng-model="card_number"
+             maxlength="64">
+      <div ng-messages="ccPaymentForm.card_number.$error" role="alert">
+        <div ng-message-exp="['required']">
+          This field is required.
+        </div>
+      </div>
+    </md-input-container>
+    <md-input-container>
+      {{ form.ccv2.label_tag() }}
+      <!-- TODO: add ng-pattern -->
+      <input name="ccv2" type="text"
+             ng-model="ccv2"
+             maxlength="3">
+      <div ng-messages="ccPaymentForm.ccv2.$error" role="alert">
+        <div ng-message-exp="['required']">
+          This field is required.
+        </div>
+      </div>
+    </md-input-container>
+    <md-input-container>
+      <label>Expiration Date: (MM-YY)</label>
+      <input name="expiration_date" type="text"
+             ng-model="expiration_date"
+             minlength="5" maxlength="5"
+             ng-pattern="/([0-9])([0-9])-([0-9])([0-9])$/">
+             {# TODO: turn pattern into a function that returns a regex of valid date #}
+      <div ng-messages="ccPaymentForm.expiration_date.$error" role="alert">
+        <div ng-message-exp="['required']">
+          This field is required.
+        </div>
+        <div ng-message-exp="['pattern', 'minlength', 'maxlength']">
+          Please enter in the format MM-YY.
+        </div>
+      </div>
+    </md-input-container>
+
+    <h3>Your Information</h3>
+
     <md-input-container>
       {{ form.first_name.label_tag() }}
       <input name="first_name" type="text"
@@ -33,8 +99,6 @@
         </div>
       </div>
     </md-input-container>
-
-    <md-divider></md-divider>
 
     <div layout="row">
       <md-input-container>
@@ -89,45 +153,6 @@
         {{ form.country }}
       </md-input-container>
     </div>
-
-    <md-divider></md-divider>
-
-    <md-input-container>
-      {{ form.amount.label_tag() }}
-      <input name="amount" type="number"
-             ng-model="amount"
-             min="1">
-      <div ng-messages="ccPaymentForm.amount.$error" role="alert">
-        <div ng-message-exp="['required']">
-          This field is required.
-        </div>
-      </div>
-    </md-input-container>
-    <md-input-container>
-      {{ form.card_number.label_tag() }}
-      <!-- TODO: add ng-pattern -->
-      <input name="card_number" type="text"
-             ng-model="card_number"
-             maxlength="64">
-      <div ng-messages="ccPaymentForm.card_number.$error" role="alert">
-        <div ng-message-exp="['required']">
-          This field is required.
-        </div>
-      </div>
-    </md-input-container>
-    <md-input-container>
-      {{ form.ccv2.label_tag() }}
-      <!-- TODO: add ng-pattern -->
-      <input name="ccv2" type="text"
-             ng-model="ccv2"
-             maxlength="3">
-      <div ng-messages="ccPaymentForm.ccv2.$error" role="alert">
-        <div ng-message-exp="['required']">
-          This field is required.
-        </div>
-      </div>
-    </md-input-container>
-
 
     <md-button class="md-raised md-accent" type="submit">Done</md-button>
 
