@@ -209,8 +209,7 @@ class ccPayment(Payment):
 
     card_number = models.PositiveIntegerField()
     ccv2 = models.PositiveIntegerField()
-    expiration_date = models.CharField("Expiration Date",
-                                       maxlength=5, minlength=5)
+    expiration_date = models.CharField(max_length=5)
 
     first_name = models.CharField("First Name", max_length=32, default=None)
     last_name = models.CharField("Last Name", max_length=32, default=None)

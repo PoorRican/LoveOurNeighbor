@@ -18,7 +18,8 @@ from ministry.models import (
 
 
 CC_DEFAULT = {"amount": 7531.00,
-              "card_number": 7531753175317531, "ccv2": 753,
+              "card_number": 7531753175317531,
+              "ccv2": 753, "expiration_date": "01/20",
               "first_name": "John", "last_name": "Doe",
               "address": "123 Fake Street", "city": "Peopletown",
               "state": "State", "zipcode": 7531, "country": COUNTRIES[-1]}

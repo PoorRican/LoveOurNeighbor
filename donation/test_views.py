@@ -121,6 +121,88 @@ class BaseDonationViewTestCase(TestCase):
         del self.user
 
 
+class adminDonationViewTestCase(BaseDonationViewTestCase):
+    def testAdminDonation_get(self):
+        _url = '/donation/admin'
+
+        # assert proper response
+        response = self.client.get(_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "donation/admin_donation")
+
+    def testAdminDonation_post(self):
+        _url = '/donation/admin'
+
+        # donate while logged out, w/ existing user
+        Donation.cleanup()
+        payment_info = {"amount": 7531.00,
+                        "card_number": 7531753175317531,
+                        "ccv2": 753, "expiration_date": "03/20",
+                        "first_name": "John", "last_name": "Doe",
+                        "address": "123 Fake Street", "city": "Peopletown",
+                        "state": "State", "zipcode": 7531,
+                        "country": COUNTRIES[-1],
+                        "email": self.user_email}
+
+        response = self.client.post(_url, payment_info)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "donation/payment_complete")
+
+        # donate while logged out, w/o existing user
+        Donation.cleanup()
+        email = "test@email.com"
+
+        payment_info = {"amount": 7531.00,
+                        "card_number": 7531753175317531,
+                        "ccv2": 753, "expiration_date": "03/20",
+                        "first_name": "John", "last_name": "Doe",
+                        "address": "123 Fake Street", "city": "Peopletown",
+                        "state": "State", "zipcode": 7531,
+                        "country": COUNTRIES[-1],
+                        "email": email}
+
+        response = self.client.post(_url, payment_info)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "donation/payment_complete")
+
+        # check for new user
+        self.assertTrue(User.objects.get(email=email))
+
+        # donate while logged out and no email
+        # ensuring that email is required
+        Donation.cleanup()
+
+        payment_info = {"amount": 7531.00,
+                        "card_number": 7531753175317531,
+                        "ccv2": 753, "expiration_date": "03/20",
+                        "first_name": "John", "last_name": "Doe",
+                        "address": "123 Fake Street", "city": "Peopletown",
+                        "state": "State", "zipcode": 7531,
+                        "country": COUNTRIES[-1],}
+
+        response = self.client.post(_url, payment_info)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "donation/payment_complete")
+        # TODO: look for an error
+
+        # donate while logged in
+        # ensuring that email is not required
+        Donation.cleanup()
+
+        self.login()
+        payment_info = {"amount": 7531.00,
+                        "card_number": 7531753175317531,
+                        "ccv2": 753, "expiration_date": "03/20",
+                        "first_name": "John", "last_name": "Doe",
+                        "address": "123 Fake Street", "city": "Peopletown",
+                        "state": "State", "zipcode": 7531,
+                        "country": COUNTRIES[-1],}
+
+        response = self.client.post(_url, payment_info)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "donation/payment_complete")
+
+
 class selectPaymentViewTestCase(BaseDonationViewTestCase):
     def testSelectPayment_get(self):
         _url_base = "/donation/campaign/%s/select"
@@ -194,7 +276,8 @@ class ccPaymentViewTestCase(BaseDonationViewTestCase):
         _url = _url_base % d.id
 
         payment_info = {"amount": 7531.00,
-                        "card_number": 7531753175317531, "ccv2": 753,
+                        "card_number": 7531753175317531,
+                        "ccv2": 753, "expiration_date": "03/20",
                         "first_name": "John", "last_name": "Doe",
                         "address": "123 Fake Street", "city": "Peopletown",
                         "state": "State", "zipcode": 7531,
