@@ -14,10 +14,18 @@
 
   <!-- Facebook OpenGraph meta properties -->
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="{{ static('img/favicon.png') }}">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="51">
+  <meta property="og:image:height" content="59">
 
 
   <head>
-    <title>Love Our Neighbors</title>
+    <title>Love Our Neighbor</title>
+
+    {#  favicon #}
+
+    <link rel="icon" href="{{ static('img/favicon.svg') }}" type="image/svg">
 
     {# {{{ CSS Imports #}
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">

@@ -21,11 +21,14 @@ from django.conf.urls.static import static
 
 from . import views
 
+favicon_view = RedirectView.as_view(url='/static/img/favicon.svg', permanent=True)
+
 app_name = 'frontend'
 urlpatterns = [
     # Basic URLs
     path('admin/', admin.site.urls),
     path('', views.root),
+    path('favicon.ico', favicon_view),
 
     # Main Pages
     path('t/home', views.home),
