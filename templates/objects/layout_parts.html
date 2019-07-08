@@ -153,8 +153,11 @@
     <md-toolbar class="md-primary" ng-cloak>
       <div class="md-toolbar-tools" layout="row" layout-align="left end">
 
-        <a class="title-shadow-orange brand-logo center md-accent md-hue-2" href="#home" layout-padding>Love Our Neighbor</a>
-
+        <a class="brand-logo center" href="#home" layout="row">
+          <img id="logo" src="{{ static('img/brand/LON_logo.svg') }}">
+          <img id="brand-text" src="{{ static('img/brand/LON_straight.png') }}">
+          {# TODO: Hide logo text when searchbar is clicked #}
+        </a>
         <md-nav-bar md-selected-nav-item="currentNavItem" hide-xs hide-sm>
         {%- for _link in links -%}
           <md-nav-item md-nav-href="{{ _link[0] }}" name="{{ _link[1] }}">
@@ -170,7 +173,7 @@
         </div>
 
         {# Hidden Side Nav Button #}
-        <md-button class="md-icon-button" style="font-size: 1em; margin: auto 15px auto auto;" ng-click="sidenav.toggleRight()" hide-gt-sm>
+        <md-button class="md-icon-button" style="font-size: 1em; margin: auto 0 auto auto;" ng-click="sidenav.toggleRight()" hide-gt-sm>
           <md-icon>
             <i class="material-icons" aria-hidden="true">menu</i>
           </md-icon>

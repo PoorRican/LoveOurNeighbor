@@ -15,12 +15,23 @@ nav a.md-unselected {
   left: auto !important;
   margin-top: auto;
   margin-bottom: auto;
-  padding-left: 35px;
+  padding: 2px;
 
   font-weight: 400;
   font-size: 20px;
   text-decoration: none;
   color: #eee;
+  height: 100%;
+
+}
+
+.brand-logo #logo {
+  height: 100%;
+}
+.brand-logo #brand-text {
+  height: 1em;
+  margin-top: auto;
+  margin-bottom: .7em;
 }
 
 .title-shadow-orange {
