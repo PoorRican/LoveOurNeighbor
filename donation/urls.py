@@ -4,6 +4,9 @@ from . import views
 
 app_name = 'donation'
 urlpatterns = (
+    path('admin', views.admin_donation,
+         name='admin_donation'),
+
     path('campaign/<int:campaign_id>/select', views.select_payment,
          name='select_payment'),
 

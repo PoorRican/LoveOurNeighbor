@@ -9,6 +9,43 @@ from ministry.models import Campaign
 from people.models import User
 
 
+def admin_donation(request):
+    if request.method == "GET":
+        form = ccPaymentForm()
+        context = {'form': form,
+                   'requst': request}
+
+        return render(request, "admin_donation.html", context)
+
+    elif request.mehtod == "POST":
+        _data = request.POST
+        if request.user.is_authenticated:
+            user = request.user
+        # inactive User is created, allowing for semi-anonymous donations
+        elif _data['email']:
+            # create user if does not exist already
+            # this allows users to donate using their account w/o signing in
+            try:
+                user = User.objects.get(email=_data['email'])
+            except User.DoesNotExist:
+                user = User.objects.create(email=_data['email'],
+                                           password="", is_active=False)
+
+        # `Donation` objects w/o `campaign` is assumed to be admin donation
+        donation = Donation.objects.create(user=user,)
+
+        payment = ccPaymentForm(request.POST, commit=False)
+        payment.donation = donation
+        payment.confirm()
+        payment.save()
+        context = {'payment': payment,
+                   'request': request}
+
+        return render(request, "payment_complete.html", context)
+
+
+# Intermediate Pages
+
 def select_payment(request, campaign_id):
     """ Presents user with a the option to select payment type.
     django-payments might not support multiple payment variants,
@@ -27,8 +64,13 @@ def select_payment(request, campaign_id):
             user = request.user
         # inactive User is created, allowing for semi-anonymous donations
         elif _data['email']:
-            user = User.objects.create(email=_data['email'],
-                                       password="", is_active=False)
+            # create user if does not exist already
+            # this allows users to donate using their account w/o signing in
+            try:
+                user = User.objects.get(email=_data['email'])
+            except User.DoesNotExist:
+                user = User.objects.create(email=_data['email'],
+                                           password="", is_active=False)
 
         donation = Donation.objects.create(campaign=campaign,
                                            user=user,)
@@ -64,9 +106,12 @@ def payment_complete(request, donation_id):
         return HttpResponseRedirect('/')
 
     context = {'payment': donation.payment,
-               'campaign': donation.campaign}
+               'campaign': donation.campaign,
+               'request': request}
     return render(request, "payment_complete.html", context)
 
+
+# Payment-specific pages
 
 def cc_payment(request, donation_id):
     """ This utilizes whatever credit card processing widget provided by the bank.

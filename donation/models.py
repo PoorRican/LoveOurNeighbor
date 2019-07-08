@@ -208,7 +208,7 @@ class ccPayment(Payment):
                                     on_delete=models.CASCADE)
 
     card_number = models.PositiveIntegerField()
-    ccv2 = models.PositiveIntegerField()
+    ccv2 = models.PositiveIntegerField("3-digit Code")
     expiration_date = models.CharField(max_length=5)
 
     first_name = models.CharField("First Name", max_length=32, default=None)
