@@ -72,12 +72,7 @@
             <div class="donate" flex>
               {# TODO: create anonymous donations #}
               <md-button class="md-raised md-accent"
-              {% if request.user.is_authenticated %}
-                ng-href="#{{ url_for('donation:select_payment', kwargs={'campaign_id': cam.id}) }}"
-              {% else %}
-                ng-href="#/people/login" style="text-decoration: none"
-              {% endif %}
-              >
+                         ng-href="#{{ url_for('donation:select_payment', kwargs={'campaign_id': cam.id}) }}">
                 Donate
                 <md-icon>
                   <i class="material-icons">redeem</i>

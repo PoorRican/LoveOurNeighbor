@@ -1,16 +1,16 @@
 /** Footer Styling **/
 footer {
   background-color: #8B0053 !important;
-}
-
-.page-footer {
-  padding: 20px;
-  position: relative;
-  bottom: 0;
 
   font-size: 12px;
-  text-align: right;
   color: #EEE;
+  position: relative;
+  bottom: 0;
+}
+
+-footer {
+  padding: 20px;
+
 }
 @media screen and (min-width: 850px) {
   .page-footer {
@@ -19,7 +19,7 @@ footer {
   }
 }
 
-footer.page-footer .footer-top:first-child {
+footer.page-footer {
   margin-left: 10%;
   margin-right: 10%;
   margin-bottom: 10px;
@@ -35,17 +35,13 @@ footer #sitemap ul li {
   margin-bottom: 5px;
 }
 
-.social-media-links {
-  position: absolute;
-  right: 0;
-}
-.social-media-links a {
+#social-media-links a {
   height: 50px;
   width: 50px;
   padding: 5px 5px;
   margin-bottom: 15px;
 }
-.social-media-links a img {
+#social-media-links a img {
   height: 40px;
   width: 40px;
 }

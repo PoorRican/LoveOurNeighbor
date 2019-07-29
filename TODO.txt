@@ -1,4 +1,5 @@
 Urgent TODO:
+    - $Campaign bar breaks when donated amount is larger than goal$
     - Implement Braintree for payment
     - Enable user to user messages
     - Enable anonymous donations (must capture email). Enable user creation via donate page. Enable user creation via email link. Enable cookie persistence for returning users.
@@ -29,6 +30,7 @@ Styling/Javascript Fixes:
     - Make campaign start and end dates required, while still dynamic
 
 Overall TODOs:
+    - Static Link to Receipts and other tabs
     - User should be able to remove GeoLocation
     - Automatic Post Creation upon reaching milestones (email notification to admin email & should be a setting and editable)
     - Create dynamic background or something for progress-bar. Dynamic update of progress-bar
@@ -37,7 +39,7 @@ Overall TODOs:
     - Mailing list functionality
     - Add detailed logging (individual log files: requests, user creation, donation, etc)
     - Secure logout function (logout on POST, not GET)
-    - enable dynamic width for progress bar
+    - $enable dynamic width for progress bar$
     - Create more admin like page for Profile management
     - Implement page history via js
     - Implement donation guestbook-like functionality. "people who have donated have said:"

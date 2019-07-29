@@ -1,0 +1,26 @@
+<section class="wrapper">
+  <!-- donation/payment_complete -->
+
+  <h1>Your Receipt</h1>
+
+  {% if campaign %}
+    <h3>Thank you for donating to <a href="#{{ campaign.url }}">{{ campaign }}</a></h3>
+  {% else %}
+    <h3>Thank you for donating to Love Our Neighbor.<h3>
+  {% endif %}
+
+  <p>Your confirmation number is {{ payment.confirmation }}.
+    {% if request and request.is_authenticated %}
+      You can access this through the <code>Receipts</code> panel in your
+      <a href="#{{ url_for('people:user_profile') }}">User Profile</a>
+    {% else %}
+      A receipt has been emailed to you.
+      When you create an account and login, you will be able to view this receipt.
+    {% endif %}
+  </p>
+
+</section>
+
+
+<!-- Google Analytics Virtual Pageview -->
+<script>ga('send', 'pageview', 'select payment')</script>

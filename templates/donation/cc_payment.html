@@ -1,0 +1,17 @@
+{# vim: ft=jinja foldmethod=marker tabstop=2 shiftwidth=2:
+    templates/ministry/ministry_content.html
+#}
+{% import "parts.html" as parts %}
+
+<section class="wrapper">
+  <!-- donation/cc_payment -->
+
+  <h1>Payment Details</h1>
+
+  {{ parts.cc_payment(url_for('donation:cc_payment', kwargs={'donation_id': donation.id})) }}
+
+</section>
+
+
+<!-- Google Analytics Virtual Pageview -->
+<script>ga('send', 'pageview', 'cc payment')</script>

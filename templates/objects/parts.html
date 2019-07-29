@@ -210,3 +210,213 @@
 
 {% endmacro %}
 {# }}} #}
+
+
+{# {{{ CC Payment #}
+
+{% macro cc_payment(url, form, request=None) %}
+
+  <form name="ccPaymentForm" method="POST"
+        action="{{ url }}"
+        id="ccPaymentForm"
+        layout="column">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    {# {{{ Payment Details #}
+    <h3>Payment Details:</h3>
+
+    {# {{{ Email Input #}
+    {% if request and not request.is_authenticated %}
+      <md-input-container>
+        <label>Email</label>
+        <input name="email" type="email" required
+               minlength="9" maxlength="64" 
+               ng-model="email"
+               ng-pattern="/^.+@.+\..+$/" />
+        <div ng-messages="ccPaymentForm.email.$error" role="alert">
+          <div ng-message-exp="['required']">
+            This field is required.
+          </div>
+          <div ng-message-exp="['pattern']">
+            Please enter a valid email address.
+          </div>
+          <div ng-message-exp="['minlength', 'maxlength']">
+            Your email must be between 9 and 64 characters long.
+          </div>
+        </div>
+      </md-input-container>
+    {% endif %}
+    {# }}} #}
+
+    {# {{{ Amount Input #}
+    <md-input-container>
+      {{ form.amount.label_tag() }}
+      <input name="amount" type="number"
+             ng-model="amount"
+             min="1" required>
+      <div ng-messages="ccPaymentForm.amount.$error" role="alert">
+        <div ng-message-exp="['required']">
+          This field is required.
+        </div>
+      </div>
+    </md-input-container>
+    {# }}} #}
+
+    {# {{{ Card Number #}
+    <md-input-container class="md-block">
+      {{ form.card_number.label_tag() }}
+      <!-- TODO: add ng-pattern -->
+      <input name="card_number" type="number"
+             ng-model="card_number"
+             maxlength="64" required>
+      <div ng-messages="ccPaymentForm.card_number.$error" role="alert" multiple md-auto-hide="true">
+        <div ng-message-exp="['required']">
+          This field is required.
+        </div>
+      </div>
+    </md-input-container>
+    {# }}} #}
+
+    {# {{{ Card Expiration/CCV2 #}
+    <div layout="row" class="md-block">
+      <md-input-container flex="50" class="md-block">
+        {{ form.ccv2.label_tag() }}
+        <!-- TODO: add ng-pattern -->
+        <input name="ccv2" type="number"
+               ng-model="ccv2"
+               maxlength="3" required>
+        <div ng-messages="ccPaymentForm.ccv2.$error" role="alert">
+          <div ng-message-exp="['required']">
+            This field is required.
+          </div>
+        </div>
+      </md-input-container>
+
+      <md-input-container flex="50" class="md-block">
+        <label>Exp. Date: (MM-YY)</label>
+        <input name="expiration_date" type="text"
+               ng-model="expiration_date"
+               minlength="5" maxlength="5"
+               ng-pattern="/([0-9])([0-9])-([0-9])([0-9])$/" required>
+               {# TODO: turn pattern into a function that returns a regex of valid date #}
+        <div ng-messages="ccPaymentForm.expiration_date.$error" role="alert">
+          <div ng-message-exp="['required']">
+            This field is required.
+          </div>
+          <div ng-message-exp="['pattern', 'minlength', 'maxlength']">
+            Please enter in the format MM-YY.
+          </div>
+        </div>
+      </md-input-container>
+    </div>
+    {# }}} #}
+
+    {# {{{ Donation Options #}
+    <input type="hidden" name="cover_fees" value="{% raw %}{{ cover_fees }}{% endraw %}">
+    <md-checkbox ng-model="cover_fees">
+      Increase my donation amount to help cover credit card processing fees. (3% increase)
+    </md-checkbox>
+
+    <input type="hidden" name="recurring" value="{% raw %}{{ recurring }}{% endraw %}">
+    <md-checkbox ng-model="recurring">
+      Make this donation recurring (monthly).
+    </md-checkbox>
+    {# }}} #}
+
+    {# }}} #}
+
+    {# {{{ Billing Info #}
+    <h3>Your Information</h3>
+
+    {# {{{ Name #}
+    <md-input-container class="md-block">
+      {{ form.first_name.label_tag() }}
+      <input name="first_name" type="text"
+             ng-model="first_name"
+             maxlength="32" required>
+      <div ng-messages="ccPaymentForm.first_name.$error" role="alert">
+        <div ng-message-exp="['required']">
+          This field is required.
+        </div>
+      </div>
+    </md-input-container>
+    <md-input-container class="md-block">
+      {{ form.last_name.label_tag() }}
+      <input name="last_name" type="text"
+             ng-model="last_name"
+             maxlength="32" required>
+      <div ng-messages="ccPaymentForm.last_name.$error" role="alert">
+        <div ng-message-exp="['required']">
+          This field is required.
+        </div>
+      </div>
+    </md-input-container>
+    {# }}} #}
+
+    {# {{{ Address #}
+    <div layout="row">
+      <md-input-container flex="100">
+        {{ form.address.label_tag() }}
+        <input name="address" type="text"
+               ng-model="address"
+               maxlength="64" required>
+        <div ng-messages="ccPaymentForm.address.$error" role="alert">
+          <div ng-message-exp="['required']">
+            This field is required.
+          </div>
+        </div>
+      </md-input-container>
+    </div>
+    <div layout="column" layout-gt-sm="row">
+      <md-input-container flex-gt-sm="33">
+        {{ form.city.label_tag() }}
+        <input name="city" type="text"
+               ng-model="city"
+               maxlength="32" required>
+        <div ng-messages="ccPaymentForm.city.$error" role="alert">
+          <div ng-message-exp="['required']">
+            This field is required.
+          </div>
+        </div>
+      </md-input-container>
+      <md-input-container flex-gt-sm="33">
+        {{ form.state.label_tag() }}
+        <input name="state" type="text"
+               ng-model="state"
+               maxlength="32" required>
+        <div ng-messages="ccPaymentForm.state.$error" role="alert">
+          <div ng-message-exp="['required']">
+            This field is required.
+          </div>
+        </div>
+      </md-input-container>
+      <md-input-container flex-gt-sm="33">
+        {{ form.zipcode.label_tag() }}
+        <!-- TODO: add ng-pattern -->
+        <input name="zipcode" type="number"
+               ng-model="zipcode"
+               min="0" required>
+        <div ng-messages="ccPaymentForm.zipcode.$error" role="alert">
+          <div ng-message-exp="['required']">
+            This field is required.
+          </div>
+        </div>
+      </md-input-container>
+    </div>
+    {# }}} #}
+
+    {# {{{ Country #}
+    <md-input-container>
+      {{ form.country.label_tag() }}
+      {{ form.country }}
+    </md-input-container>
+    {# }}} #}
+    {# }}} #}
+
+    <md-button class="md-raised md-accent" type="submit">Donate Now</md-button>
+
+  </form>
+
+{% endmacro %}
+
+{# }}} #}

@@ -2,14 +2,57 @@
 {# TODO: use POST data to go to either braintree_payment or coinbase_payment #}
 
 <section class="wrapper">
+  <!-- donation/select_payment -->
 
   <h1>Enter Donation Details</h1>
 
-  <form method="POST" action="{{ url_for('donation:select_payment', kwargs={'campaign_id': campaign_id}) }}" class="payment_select">
+  <form name="beginDonationForm" method="POST" action="{{ url_for('donation:select_payment', kwargs={'campaign_id': campaign.id}) }}" class="payment_select">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    {{ form.as_p() }}
-    {# TODO: somehow style the select elements #}
+    {% if not request.user.is_authenticated %}
+      <div layout="row" layout-align="left center">
+
+        <md-input-container>
+          <label>Email</label>
+          <input name="email" type="hidden" value="{% raw %}{{ email }}{% endraw %}">
+          <input type="email" required
+                 minlength="9" maxlength="64" 
+                 ng-model="email"
+                 ng-pattern="/^.+@.+\..+$/" />
+          <div ng-messages="beginDonationForm.email.$error" role="alert">
+            <div ng-message-exp="['required']">
+              This field is required.
+            </div>
+            <div ng-message-exp="['pattern']">
+              Please enter a valid email address.
+            </div>
+            <div ng-message-exp="['minlength', 'maxlength']">
+              Your email must be between 9 and 64 characters long.
+            </div>
+          </div>
+        </md-input-container>
+
+        <span>&nbsp;&nbsp;or</span>
+        <md-button class="md-raised md-primary">Login</md-button>
+
+      </div>
+    {% endif %}
+
+    <input name="payment_type" type="hidden" value="{% raw %}{{ payment_type }}{% endraw %}">
+
+    <md-radio-group ng-model="payment_type">
+
+      {% set payment_types = (('cc', 'Credit Card'),
+                              ('btc', 'Bitcoin'),
+                              ('other', 'Venmo, Apple Pay, Samsung Pay, Google Pay')
+                              ) %}
+
+      {% for pt in payment_types %}
+        <md-radio-button value="{{ pt[0] }}" class="md-primary">{{ pt[1] }}</md-radio-button>
+      {% endfor %}
+
+    </md-radio-group>
+    {# TODO: style the select elements #}
 
     <md-button class="md-raised md-accent" type="submit">Continue</md-button>
 
