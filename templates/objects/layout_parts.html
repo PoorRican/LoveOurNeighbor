@@ -164,13 +164,11 @@
             {{ _link[1] }}
           </md-nav-item>
         {%- endfor -%}
+          <md-nav-item md-nav-href="/#{{ url_for('donation:admin_donation') }}">
+            <span style="color: rgb(213,0,249) !important;">Donate Now</span>
+          </md-nav-item>
         </md-nav-bar>
 
-        <md-button class="md-primary md-raised"
-                   ng-href="/#/{{ url_for('donation:admin_donation') }}"
-                   hide-xs hide-sm>
-          Donate Now
-        </md-button>
 
         {{ searchbar() }}
 
