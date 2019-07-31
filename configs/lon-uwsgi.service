@@ -1,0 +1,9 @@
+[Unit]
+Description=Start uWSGI socket for LON django app
+
+[Service]
+Type=oneshot
+ExecStart=uwsgi --ini /srv/LON/configs/lon_uwsgi.ini
+
+[Install]
+WantedBy=multi-user.target
