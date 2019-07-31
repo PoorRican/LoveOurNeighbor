@@ -3,7 +3,7 @@ Description=Start uWSGI socket for LON django app
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/uwsgi --ini /srv/LON/configs/lon_uwsgi.ini
+ExecStart=/usr/local/bin/uwsgi --ini /srv/LON/configs/lon_uwsgi.ini &
 ExecStop=/usr/bin/killall uwsgi
 
 [Install]
