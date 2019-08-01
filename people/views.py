@@ -93,7 +93,13 @@ def login_user(request):
         email = request.POST['email']
         password = request.POST['password']
 
-        user = User.authenticate_user(email, password)
+        try:
+            user = User.authenticate_user(email, password)
+        except User.DoesNotExist:
+            # send back to login if email not found
+            _e = "%s was not found!" % email
+            messages.add_message(request, messages.ERROR, _e)
+            return HttpResponseRedirect('/#people/login')
         if user:
             if user.is_active:
                 login(request, user)
