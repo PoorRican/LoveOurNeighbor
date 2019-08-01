@@ -27,7 +27,7 @@ SECRET_KEY = 'qh*ctnmwh9xbzjtndzgaqm3x)3zmkxzlpa!411xvm0xdl99d+g'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "dev.loveourneigbor.org", "loveourneighbor.org"]
+ALLOWED_HOSTS = ["localhost", "dev.loveourneighbor.org", "loveourneighbor.org"]
 
 
 # Application definition
