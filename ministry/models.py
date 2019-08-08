@@ -70,6 +70,7 @@ class MinistryProfile(models.Model):
     website = models.URLField(unique=True)
     founded = models.DateField(blank=True, null=True)
     pub_date = models.DateField(auto_now_add=True)
+    staff = models.SmallIntegerField(default=1)
 
     # Ministry Content
     description = models.TextField(blank=True, null=True)
