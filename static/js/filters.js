@@ -12,10 +12,10 @@ nav_layout.filter('withinDistance', function() {
       for (var i = 0; i < items.length; i++) {
         if (items[i].distance < distance) {
           results[r++] = items[i];
-        };
-      };
+        }
+      }
       return results;
-    };
+    }
   };
 });
 

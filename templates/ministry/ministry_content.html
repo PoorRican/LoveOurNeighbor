@@ -6,6 +6,7 @@
 
 <section class="wrapper">
   <!-- ministry/ministry_content -->
+
   {# {{{ Form Header #}
   {% if start %}
     <h1>New Ministry Profile:</h1>
@@ -44,7 +45,7 @@
 
 
         {# {{{ Detail Section #}
-        <md-tab>
+        <md-tab label="Minsitry">
           <md-tab-label>
             <md-icon><i class="material-icons">info</i></md-icon>&nbsp;
             Ministry
@@ -206,7 +207,7 @@
         {# }}} #}
 
         {# {{{ Content Section #}
-        <md-tab>
+        <md-tab label="Content">
           <md-tab-label>
             <md-icon><i class="material-icons">description</i></md-icon>&nbsp;
             Content
@@ -252,7 +253,7 @@
                                    ng-click="select_banner(name)"
                                    ng-src="{% raw %}{{ src }}{% endraw %}"
                                    ng-class="[{banner_current:  banner_img_dialog.banner_current(name),
-                                               banner_selected: banner_img_dialog.banner_selected(name)}]">
+                                               banner_selected: banner_img_dialog.banner_selected(name)}]" alt="Profile Image">
                               <md-grid-tile-footer>
                                 <h3>
                                   <span ng-if="banner_img_dialog.banner_selected(name)"
@@ -306,16 +307,17 @@
               <md-icon><i class="material-icons">subject</i></md-icon>
               {{ form.description.label_tag() }}
               {% if start %}
-              {{ parts.wysiwyg_editor(form.description.name, '') }}
+              {{ parts.wysiwyg_editor(form.description.name, '', unique='ministry') }}
               {% else%}
-              {{ parts.wysiwyg_editor(form.description.name, ministry.description) }}
+              {{ parts.wysiwyg_editor(form.description.name, ministry.description, unique='ministry') }}
               {% endif %}
-              <br>
+              <br><br>
               <div class="hint">Describe yourself</div>
             </md-input-container>
             {# }}} #}
             {# {{{ INPUT tags #}
-            <md-input-container>
+            <br>
+            <md-input-container layout="column">
               <md-icon><i class="material-icons">class</i></md-icon>
               {{ form.tags.label_tag() }}
               <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
@@ -335,6 +337,7 @@
                   </span>
                 </md-chip-template>
               </md-chips>
+              <br><br>
               <div class="hint">Select from existing tags, or create new ones by entering a comma.</div>
             </md-input-container>
             {# }}} #}
@@ -345,7 +348,7 @@
 
       {# {{{ Administration Section #}
         {# uncreated MinistryProfile objects should have no rep functionality yet #}
-        <md-tab>
+        <md-tab label="Admininistration">
           <md-tab-label>
             <md-icon><i class="material-icons">lock</i></md-icon>&nbsp;
             Administration
@@ -401,7 +404,7 @@
       {# }}} #}
 
         {# {{{ Campaign Section #}
-        <md-tab>
+        <md-tab label="Campaigns">
           <md-tab-label>
             <md-icon><i class="material-icons">public</i></md-icon>
             Campaigns
@@ -410,15 +413,6 @@
           {% if start %}
             <p>Finish creating your ministry before starting a campaign.</p>
           {% elif not start %}
-            <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'ministry', 'obj_id': ministry.id}) }}"
-             style="text-decoration: none;">
-              <md-button class="md-raised md-accent">
-                Create News&nbsp;
-                <md-icon>
-                  <i class="material-icons">note_add</i>
-                </md-icon>
-              </md-button>
-            </a>
 
             {# TODO: differentiate between current and previous fundraisers #}
             <a href="#{{ url_for('ministry:create_campaign', kwargs={'ministry_id': ministry.id}) }}">
@@ -426,21 +420,22 @@
             </a>
 
             <ul>
-              {% for i in ministry.campaigns.all() %}
+              {% for campaign in ministry.campaigns.all() %}
                 <li>
                   <a href="#{{ campaign.url }}">
-                    {{ i }}
+                    {{ campaign }}
                   </a>
                 </li>
               {% endfor %}
             </ul>
+
           {% endif %}
           </md-tab-body>
         </md-tab>
         {# }}} #}
 
         {# {{{ Statistics Section #}
-        <md-tab>
+        <md-tab label="Statistics">
           <md-tab-label>
             <md-icon><i class="material-icons">poll</i></md-icon>&nbsp;
             Statistics
@@ -458,7 +453,7 @@
       <div id="form_buttons" layout="row">
         {# TODO: implement DOUBLE dialog confirmation upon deletion #}
         {# TODO: implement FAB toolbar #}
-        <md-button style="position: fixed; bottom: 75; right: 10%; z-index: 500" class="md-fab md-primary" type="submit">
+        <md-button style="position: fixed; bottom: 75px; right: 10%; z-index: 500" class="md-fab md-primary" type="submit">
           <md-icon>
             <i class="material-icons">save</i>
           </md-icon>

@@ -30,14 +30,16 @@ def create_user(request):
                 _w = 'Your account has been created!'
                 messages.add_message(request, messages.SUCCESS, _w)
 
-                return HttpResponseRedirect('/#people/profile')
+                _url = "/#%s" % reverse('people:user_profile')
+                return HttpResponseRedirect(_url)
             else:
                 for _, error in form.errors.items():
                     for msg in error:
                         print(msg)
                         messages.add_message(request, messages.ERROR, msg)
 
-                return HttpResponseRedirect('/#/people/create')
+                _url = "/#%s" % reverse('people:create_user')
+                return HttpResponseRedirect(_url)
 
     elif request.method == 'GET':
         form = NewUserForm()
@@ -58,13 +60,15 @@ def user_profile(request):
             messages.add_message(request, messages.SUCCESS,
                                  'User profile updated')
 
-            return HttpResponseRedirect('/#people/profile')
+            _url = "/#%s" % reverse('people:user_profile')
+            return HttpResponseRedirect(_url)
         else:
             # TODO: show error feedback via messages and reload page
             err = 'There was an error. Please try again'
             messages.add_message(request, messages.ERROR, err)
 
-            return HttpResponseRedirect('/#people/profile')
+            _url = "/#%s" % reverse('people:user_profile')
+            return HttpResponseRedirect(_url)
 
     elif request.method == 'GET':
         user = request.user
@@ -85,7 +89,8 @@ def be_me_again(request):
     This is initiated after deliberate user action
     """
     clear_previous_ministry_login(request, request.user)
-    return HttpResponseRedirect(reverse('people:user_profile'))
+    _url = "/#%s" % reverse('people:user_profile')
+    return HttpResponseRedirect(_url)
 
 
 def login_user(request):
@@ -99,7 +104,9 @@ def login_user(request):
             # send back to login if email not found
             _e = "%s was not found!" % email
             messages.add_message(request, messages.ERROR, _e)
-            return HttpResponseRedirect('/#people/login')
+
+            _url = "/#%s" % reverse('people:login')
+            return HttpResponseRedirect(_url)
         if user:
             if user.is_active:
                 login(request, user)
@@ -108,7 +115,8 @@ def login_user(request):
                 _w = 'You have logged in as %s!' % email
                 messages.add_message(request, messages.INFO, _w)
 
-                return HttpResponseRedirect('/#people/profile')
+                _url = "/#%s" % reverse('people:user_profile')
+                return HttpResponseRedirect(_url)
             else:
                 # TODO: show error for inactive user
                 pass
@@ -116,7 +124,8 @@ def login_user(request):
             _w = 'Incorrect login for %s!' % email
             messages.add_message(request, messages.ERROR, _w)
 
-            return HttpResponseRedirect('/#people/login')
+            _url = "/#%s" % reverse('people:user_profile')
+            return HttpResponseRedirect(_url)
     elif request.method == 'GET':
         form = UserLoginForm()
         context = {'form': form}

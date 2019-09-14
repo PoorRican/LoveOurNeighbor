@@ -174,8 +174,7 @@
                         Request to be a representative
                       </md-button>
                     {% endif %}
-                    </md-menu-item>
-                  </md-menu-centent>
+                  </md-menu-content>
                 </md-menu>
               {% endif %}
               {# }}} #}
@@ -286,7 +285,7 @@
           <md-menu>
             <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
               <md-icon>
-                <i class="material-icons" style="color: white">arrow_drop_down</i>
+                <i class="material-icons">arrow_drop_down</i>
               </md-icon>
             </md-button>
             <md-menu-content>
@@ -300,7 +299,7 @@
                   </md-button>
                 </md-menu-item>
                 <md-menu-item>
-                  <md-button ng-href="#{{url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
+                  <md-button ng-href="{{url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
                     <md-icon>
                       <i class="material-icons">delete</i>
                     </md-icon>&nbsp;
@@ -380,6 +379,45 @@
         <i class="material-icons">open_in_new</i>
       </md-button>
       {% if AUTH %}
+        {# {{{ Action Menu #}
+        <md-menu>
+          <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
+            <md-icon>
+              <i class="material-icons">arrow_drop_down</i>
+            </md-icon>
+          </md-button>
+          <md-menu-content>
+            {% if AUTH %}
+              <md-menu-item>
+                <md-button ng-href="#{{ post.edit }}">
+                  <md-icon>
+                    <i class="material-icons">create</i>
+                  </md-icon>&nbsp;
+                  Edit News Post
+                </md-button>
+              </md-menu-item>
+              <md-menu-item>
+                <md-button ng-href="{{url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
+                  <md-icon>
+                    <i class="material-icons">delete</i>
+                  </md-icon>&nbsp;
+                  Delete News Post
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+            {% endif %}
+
+            <md-menu-item>
+              <md-button ng-href="#{{ post.url }}">
+                <md-icon>
+                  <i class="material-icons">link</i>
+                </md-icon>&nbsp;
+                Link to news
+              </md-button>
+            </md-menu-item>
+          </md-menu-content>
+        </md-menu>
+        {# }}} #}
       {% endif %}
     </md-card-actions>
     <md-card-content style="min-height: 50px">
@@ -440,5 +478,56 @@
       </md-truncate>
     </md-card-content>
   </md-card>
+{% endmacro %}
+{# }}} #}
+
+
+{# {{{ Card Area #}
+{% macro card_area(news, campaigns=(False, []), AUTH=None) %}
+  <md-tabs md-dynamic-height>
+
+    {# {{{ News Section #}
+    <md-tab label="News">
+      <md-content>
+        {% if news %}
+          {# TODO: generate different card types (both randomly and per parent object type) #}
+          {% for n in news %}
+            {{ news_card(n, AUTH) }}
+          {% endfor %}
+        {% else %}
+          <br>
+          <p>There is no news to show at this time.</p>
+        {% endif %}
+      </md-content>
+    </md-tab>
+    {# }}} #}
+
+    {# {{{ Campaigns Section #}
+    {% if campaigns[0] %}
+    <md-tab label="Campaigns">
+      <md-content>
+        {% if campaigns[1] %}
+          {% for c in campaigns[1] %}
+            {{ campaign_card(c, AUTH) }}
+          {% endfor %}
+        {% else %}
+          <br>
+          <p>There are no campaigns to show at this time.</p>
+        {% endif %}
+      </md-content>
+    </md-tab>
+    {% endif %}
+    {# }}} #}
+
+    {# {{{ Gallery Section #}
+    <md-tab label="Gallery">
+      <md-content>
+        {{ parts.gallery() }}
+      </md-content>
+    </md-tab>
+    {# }}} #}
+
+
+  </md-tabs>
 {% endmacro %}
 {# }}} #}

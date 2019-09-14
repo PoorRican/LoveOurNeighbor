@@ -3,14 +3,16 @@
 #}
 {% import "parts.html" as parts %}
 
-<section class="wrapper">
+<section class="wrapper" xmlns="">
   <!-- ministry/campaign_content -->
 
   {# {{{ Form Header #}
+  <form
   {% if start %}
+  enctype="multipart/form-data" method="POST" action="{{ url_for('ministry:create_campaign', kwargs={"ministry_id": ministry.id}) }}">
+
   <h1>New Campaign:</h1>
 
-  <form enctype="multipart/form-data" method="POST" action="{{ url_for('ministry:create_campaign', kwargs={"ministry_id": ministry.id}) }}">
 
   {% else %}
 
@@ -18,7 +20,7 @@
   <h1>Edit Campaign:</h1>
   #}
 
-  <form method="POST" enctype="multipart/form-data" action="{{ campaign.edit }}">
+  method="POST" enctype="multipart/form-data" action="{{ campaign.edit }}">
     <input type="hidden" id="current_object_json" value="{{ campaign.json }}">
 
   {% endif %}
@@ -29,7 +31,7 @@
 
     <div layout="column" layout-padding class="md-inline-form">
 
-      <md-tabs>
+      <md-tabs md-dynamic-height>
 
 
         {# {{{ Details Section #}
@@ -42,7 +44,7 @@
           </md-tab-label>
           <md-tab-body>
 
-            <div layout-gt-sm="row" padding-layout>
+            <div layout-gt-sm="row" layout="column" padding-layout>
               {# {{{ INPUT title #}
               <md-input-container flex-gt-sm="50">
                 {# TODO: ensure that all ministry titles are unique #}
@@ -53,9 +55,9 @@
               {# {{{ INPUT goal #}
               <md-input-container flex-gt-sm="50">
                 {{ form.goal.label_tag() }}
-                <md-icon><i class="material-icons">trending_up</i></md-icon>
-                {{ form.goal }}
                 <md-icon><i class="material-icons">attach_money</i></md-icon>
+                {{ form.goal }}
+                <md-icon><i class="material-icons">trending_up</i></md-icon>
               </md-input-container>
               {# }}} #}
             </div>
@@ -70,13 +72,13 @@
                 <input type="hidden" name="{{ form.start_date.name }}" value="{% raw %}{{ object.start_date | date:'yyyy-MM-dd' }}{% endraw %}">
 
                 <div hide-gt-sm>
-                  <h5>{{ form.start_date.label }}</h5>
-                  <input type="date" ng-model="object.start_date">
+                  <label for="start_date">{{ form.start_date.label }}</label>
+                  <input id="start_date" type="date" ng-model="object.start_date">
                 </div>
 
                 <div hide-sm hide-xs>
                   <md-subheader>{{ form.start_date.label }}</md-subheader>
-                  <md-calendar required id="{{ form.start_date.id_for_label }}" ng-model="object.start_date"></md-datepicker>
+                  <md-calendar required id="{{ form.start_date.id_for_label }}" ng-model="object.start_date"></md-calendar>
                 </div>
 
               </div>
@@ -86,13 +88,13 @@
                 <input type="hidden" name="{{ form.end_date.name }}" value="{% raw %}{{ object.end_date | date:'yyyy-MM-dd' }}{% endraw %}">
 
                 <div hide-gt-sm>
-                  <h5>{{ form.end_date.label }}</h5>
-                  <input type="date" ng-model="object.end_date">
+                  <label for="end_date">{{ form.end_date.label }}</label>
+                  <input id="end_date" type="date" ng-model="object.end_date">
                 </div>
 
                 <div hide-sm hide-xs>
                   <md-subheader>{{ form.end_date.label }}</md-subheader>
-                  <md-calendar required id="{{ form.end_date.id_for_label }}" ng-model="object.end_date"></md-datepicker>
+                  <md-calendar required id="{{ form.end_date.id_for_label }}" ng-model="object.end_date"></md-calendar>
                 </div>
               </div>
               {# }}} #}
@@ -203,27 +205,28 @@
               <md-icon><i class="material-icons">subject</i></md-icon>
               {{ form.content.label_tag() }}
               {% if start %}
-                {{ parts.wysiwyg_editor(form.content.name) }}
+                {{ parts.wysiwyg_editor(form.content.name, unique='campaign') }}
               {% elif not start %}
-                {{ parts.wysiwyg_editor(form.content.name, campaign.content) }}
+                {{ parts.wysiwyg_editor(form.content.name, campaign.content, unique='campaign') }}
               {% endif %}
-              <br>
+              <br><br>
               <div class="hint">Describe the project!</div>
             </md-input-container>
             {# }}} #}
             {# {{{ INPUT tag editor #}
-            <md-input-contaiter>
+            <br>
+            <md-input-container layout="column">
               <md-icon><i class="material-icons">class</i></md-icon>
               {{ form.tags.label_tag() }}
               <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
               <md-chips ng-model="object.tags" md-autocomplete-snap
-                        md-transform-chip="tagService.transform_chip($chip)"
-                        md-separator-keys="tagService.separatorKeys">
+                        md-transform-chip="tag_service.transform_chip($chip)"
+                        md-separator-keys="tag_service.separatorKeys">
                 <md-autocomplete
                     md-search-text="tagText"
                     md-items="tag in filter_tags(tagText)"
                     md-item-text="tag"
-                    md-min-length="1">
+                    md-min-length="1" flex="100">
                   <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
                 </md-autocomplete>
                 <md-chip-template>
@@ -232,6 +235,7 @@
                   </span>
                 </md-chip-template>
               </md-chips>
+              <br><br>
               <small class="hint">Select from existing tags, or create new ones by entering a comma.</small>
             </md-input-container>
             {# }}} #}
@@ -248,7 +252,7 @@
           </md-tab-label>
           <md-tab-body>
             {% if start %}
-              <p>Finish your campaign to start posting what God has done already<p>
+              <p>Finish your campaign to start posting what God has done already</p>
             {% elif not start %}
               {# TODO: list NewsPost objects as cards or md-list #}
               <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}"
@@ -268,7 +272,7 @@
       {# {{{ Form Buttons #}
       {# TODO: choose better place for buttons #}
       <div id="form_buttons" layout="row">
-        <md-button style="position: fixed; bottom: 75; right: 10%;" class="md-fab md-primary" type="submit">
+        <md-button style="position: fixed; bottom: 75px; right: 10%;" class="md-fab md-primary" type="submit">
           <md-icon>
             <i class="material-icons">save</i>
           </md-icon>

@@ -5,8 +5,6 @@ Urgent TODO:
     - Enable anonymous donations (must capture email). Enable user creation via donate page. Enable user creation via email link. Enable cookie persistence for returning users.
     - Dynamically create comment forms to enable parent/child commenting
     - $Enable commenting 'as ministry' editable from comment form.$
-    - Gallery for ministries/campaigns of aggregated media
-    - Implement file uploading as 'new upload' and then have `img_path` be an option of selected uploaded files
     - $Social media links for ministries$
     - Map displaying ministry location (via 'explore' tab)
     - $Fix bug in f_time$
@@ -18,15 +16,11 @@ Urgent TODO:
     - Implement User verification with email
 
 Styling/Javascript Fixes:
-    - Truncate long ministry/profile names in nav bar header and 'h' elements/content
     - Fix on Mobile:
         - $banner uploads$
         - WYSIWYG Editor
-    - Fix input in forms (widths, etc)
-    - Fix labels in forms (alignment, etc)
     - Fix Google Analytics virtual pageviews
     - Clear trix content upon navigating views (eg: ministry > news post; ministry > campaign; campaign > news post)
-    - Fix height in Campaign edit view
     - Make campaign start and end dates required, while still dynamic
 
 Overall TODOs:

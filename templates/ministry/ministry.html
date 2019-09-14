@@ -3,7 +3,6 @@
 #}
 
 {% import "content.html" as content %}
-{% import "parts.html" as parts %}
 
 {% set AUTH = (request.user == ministry.admin or request.user in ministry.reps.all()) %}
 
@@ -16,46 +15,7 @@
 <section class="wrapper">
   <!-- ministry/ministry_details -->
 
-  <md-tabs md-dynamic-height>
-
-
-    {# {{{ News Section #}
-    <md-tab label="News">
-      <md-content>
-        {% if all_news %}
-        {# TODO: generate different card types (both randomly and per parent object type) #}
-        {% for n in all_news %}
-          {{ content.news_card(n, AUTH) }}
-        {% endfor %}
-        {% else %}
-          <p>There is no news to show at this time.</p>
-        {% endif %}
-      </md-content>
-    </md-tab>
-    {# }}} #}
-
-    {# {{{ Campaigns Section #}
-    <md-tab label="Campaigns">
-      <md-content>
-        {% if campaigns %}
-        {% for c in campaigns %}
-          {{ content.campaign_card(c, AUTH) }}
-        {% endfor %}
-        {% endif %}
-      </md-content>
-    </md-tab>
-    {# }}} #}
-
-    {# {{{ Gallery Section #}
-    <md-tab label="Gallery">
-      <md-content>
-        {{ parts.gallery() }}
-      </md-content>
-    </md-tab>
-    {# }}} #}
-
-
-  </md-tabs>
+  {{ content.card_area(all_news, campaigns=(True, campaigns), AUTH=AUTH) }}
 
 </section>
 

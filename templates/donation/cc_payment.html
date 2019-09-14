@@ -6,9 +6,11 @@
 <section class="wrapper">
   <!-- donation/cc_payment -->
 
+  {# TODO: give more descriptive details regarding transaction #}
   <h1>Payment Details</h1>
 
-  {{ parts.cc_payment(url_for('donation:cc_payment', kwargs={'donation_id': donation.id})) }}
+  {{ parts.cc_payment(url_for('donation:cc_payment', kwargs={'donation_id': donation.id}),
+                      form=form, request=request) }}
 
 </section>
 

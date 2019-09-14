@@ -18,22 +18,22 @@
       <div layout="row">
           {% if request.user.logged_in_as %}
 
-            <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': request.user.logged_in_as.id}) }}"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>
-              <md-list-item class="md-1-line">
-                <img class="md-avatar" src="{{ request.user.logged_in_as.profile_img.url }}">
-                <span class="uname" md-truncate>
+            <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': request.user.logged_in_as.id}) }}"
+               {% if sidenav %} ng-click="sidenav.close()"{% endif %}
+               class="profile-link">
+                <img class="profile-img" src="{{ request.user.logged_in_as.profile_img.url }}" alt="Ministry Profile Img">
+                <md-truncate class="uname">
                   {{- request.user.logged_in_as.name -}}
-                </span>
-              </md-list-item>
+                </md-truncate>
             </a>
 
           {% else %}
 
-            <a href="#{{ url_for('people:user_profile') }}"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>
-              <md-list-item class="md-1-line">
-                <img class="md-avatar" src="{{ request.user.profile_img }}">
-                <span md-truncate>{{- request.user.name -}}</span>
-              </md-list-item>
+            <a href="#{{ url_for('people:user_profile') }}"
+               {% if sidenav %} ng-click="sidenav.close()"{% endif %}
+               class="profile-link">
+                <img class="profile-img" src="{{ request.user.profile_img }}" alt="Profile Img">
+                <md-truncate class="uname">{{- request.user.name -}}</md-truncate>
             </a>
 
           {% endif %}
@@ -49,7 +49,7 @@
             <md-menu-content width="4" style="overflow-y: hidden; z-index: 300;">
               <md-menu-item>
                 {% if request.user.logged_in_as %}
-                  <md-button ng-href="#{{ url_for('people:be_me_again') }}">
+                  <md-button ng-href="{{ url_for('people:be_me_again') }}">
                     Your Profile
                   </md-button>
                 {% else %}
@@ -198,7 +198,7 @@
     <md-toolbar layout="row">
       <div class="md-toolbar-tools">
 
-      <div class="profile-area" ng-hide="searching" flex=70>
+      <div class="profile-area" ng-hide="searching" flex="70">
         {{ user_widget(request, sidenav=True) }}
       </div>
 
@@ -227,7 +227,7 @@
     <md-list ng-if="switching" layout="column" ng-click="sidenav.close()">
       <md-list-item class="md-line-1">
         {% if request.user.logged_in_as %}
-          <md-button ng-href="#{{ url_for('people:be_me_again') }}">
+          <md-button ng-href="{{ url_for('people:be_me_again') }}">
             Your Profile
           </md-button>
         {% else %}

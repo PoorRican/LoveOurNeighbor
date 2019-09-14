@@ -151,8 +151,12 @@ class Campaign(models.Model):
         amt = 0
         for i in self.donations.all():
             # don't count unpayed donations
-            if i.payment:
-                amt += i.amount
+            try:
+                if i.payment:
+                    amt += i.amount
+            except ValueError:
+                # unpayed donation
+                pass
         return amt
 
     def __str__(self):

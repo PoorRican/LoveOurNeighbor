@@ -172,13 +172,13 @@
 
 
 {# {{{ WYSIWYG Editor #}
-{% macro wysiwyg_editor(name, content='') %}
+{% macro wysiwyg_editor(name, content='', unique='') %}
 
   {# SECURITY NOTE: it seems to be that it is possible to bypass sanitation. However AngularJS seems to inhibit the browser from loading embedded content. #}
 
-  <input name="{{ name }}" id="styledContent" type="hidden" value="{{ content }}">
+  <input name="{{ name }}" id="styledContent_{{ name }}_{{ unique }}" type="hidden" value="{{ content }}">
 
-  <trix-editor style="min-height: 20em" input="styledContent"></trix-editor>
+  <trix-editor style="min-height: 20em" input="styledContent_{{ name }}_{{ unique }}"></trix-editor>
 
 {% endmacro %}
 {# }}} #}

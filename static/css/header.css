@@ -44,10 +44,9 @@ nav a.md-unselected {
   margin: auto 15px auto 0;
   border: solid 1px #FF7100;
   padding: 2px 16px;
-  border-radius: 30px;
   background-color: rgba(255,255,255,0.2);
 }
-.profile-area .uname {
+.uname {
   font-size: 22px;
   margin: auto 10px auto auto;
   text-decoration: none;
@@ -60,9 +59,20 @@ nav a.md-unselected {
   margin: auto;
 }
 .profile-img {
-  border-radius: 20px;
-  height: 1.5em;
-  padding: 0px;
+  margin: 8px 16px 8px -4px;
+  border-radius: 50%;
+  box-sizing: content-box;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 0;
+}
+.profile-link {
+  padding: 0 16px;
+  display: flex;
+  overflow: hidden;
 }
 
 

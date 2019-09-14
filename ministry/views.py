@@ -25,15 +25,21 @@ from .models import (
     DEFAULT_MP_PROFILE_IMG
     )
 from .utils import (
+    # serialization functions
     serialize_ministry,
     serialize_campaign,
 
+    create_news_post_dir,
+
+    # Campaign utility functions
     campaign_banner_dir,
+    create_campaign_dir,
 
+    # MinistryProfile utility functions
     dedicated_ministry_dir,
-
     ministry_banner_dir,
     ministry_profile_image_dir,
+    create_ministry_dir,
     )
 
 
@@ -61,15 +67,25 @@ def create_ministry(request):
     if request.method == 'POST':
         min_form = MinistryEditForm(request.POST, request.FILES,)
 
-        if min_form.is_valid():        # implement a custom `TagField`
-            ministry = min_form.save(commit=False)
+        if min_form.is_valid():        # TODO: implement a custom `TagField`
+            # handle custom form attributes
+            ministry = min_form.save(commit=False)      # `ministry` is type MinistryProfile
             ministry.admin = request.user
-            ministry.save()
+            ministry.save()                             # object must exist before relationships with other objects
+
+            # handle relationships with other objects
             if ministry.address:
                 ministry.location = ministry.address
-            ministry.save()
+            ministry.save()                             # this might be a redundant call to `save`
 
             Tag.process_tags(ministry, min_form['tags'].value())
+
+            # create dedicated media folder
+            create_ministry_dir(ministry)
+
+            # handle response and generate UI feedback
+            _w = 'Ministry Profile Created!'
+            messages.add_message(request, messages.SUCCESS, _w)
 
             _url = '/#%s' % reverse('ministry:ministry_profile',
                                     kwargs={'ministry_id': ministry.id})
@@ -117,23 +133,31 @@ def edit_ministry(request, ministry_id):
                 _form = MinistryEditForm(request.POST, request.FILES,
                                          instance=ministry)
                 if _form.is_valid():
+                    ministry.save()
+
                     # move to new directory if name change
                     _new_dir = dedicated_ministry_dir(ministry)
                     if _old_dir != _new_dir:
                         _old_dir = os.path.join(MEDIA_ROOT, _old_dir)
                         _new_dir = os.path.join(MEDIA_ROOT, _new_dir)
 
-                        os.rename(_old_dir, _new_dir)
-                        if ministry.banner_img:
-                            _img = os.path.basename(ministry.banner_img.path)
-                            ministry.banner_img = ministry_banner_dir(ministry,
-                                                                      _img)
-                        if ministry.profile_img and \
-                           ministry.profile_img.path != DEFAULT_MP_PROFILE_IMG:
-                            _img = os.path.basename(ministry.profile_img.path)
-                            _img = ministry_profile_image_dir(ministry, _img)
-                            ministry.profile_img = _img
+                        try:
+                            os.rename(_old_dir, _new_dir)
+                            # update paths in object memory
+                            if ministry.banner_img:
+                                _img = os.path.basename(ministry.banner_img.path)
+                                ministry.banner_img = ministry_banner_dir(ministry,
+                                                                          _img)
+                            if ministry.profile_img and \
+                               ministry.profile_img.path != DEFAULT_MP_PROFILE_IMG:
+                                _img = os.path.basename(ministry.profile_img.path)
+                                _img = ministry_profile_image_dir(ministry, _img)
+                                ministry.profile_img = _img
+                        except FileNotFoundError:
+                            # assume there is no dedicated content
+                            create_ministry_dir(ministry)
 
+                    # handle selection of previously uploaded media
                     if request.POST['selected_banner_img']:
                         prev_banner = request.POST['selected_banner_img']
                         ministry.banner_img = ministry_banner_dir(ministry,
@@ -144,6 +168,7 @@ def edit_ministry(request, ministry_id):
                                                                           prev_banner)
                     ministry.save()
 
+                    # handle relationships with other objects
                     _min = _form.save(commit=False)
                     if _min.address:
                         _min.location = _min.address
@@ -157,7 +182,8 @@ def edit_ministry(request, ministry_id):
                             ministry.reps.add(u)
                             ministry.requests.remove(u)
 
-                    _w = 'Edit successful!'
+                    # handle response and generate UI feedback
+                    _w = 'Changes saved to %s!' % ministry.name
                     messages.add_message(request, messages.SUCCESS, _w)
 
                     _url = reverse('ministry:ministry_profile',
@@ -476,6 +502,7 @@ def news_index(request):
 
 @login_required
 def create_news(request, obj_type, obj_id):
+    # manage authenticated users
     _auth = False
     if obj_type == 'ministry':
         obj = MinistryProfile.objects.get(id=obj_id)
@@ -495,9 +522,17 @@ def create_news(request, obj_type, obj_id):
     elif request.method == 'POST':
         news_form = NewsEditForm(request.POST, request.FILES)
         if news_form.is_valid():
+            # create NewsPost object and dedicated directory
             news = news_form.save(commit=False)
             setattr(news, obj_type, obj)
             news.save()
+
+            create_news_post_dir(news)
+
+            # handle redirect and UI feedback
+            _w = "News Post Created!"
+            messages.add_message(request, messages.SUCCESS, _w)
+
             if obj_type == 'ministry':
                 _url = '/#%s' % reverse('ministry:ministry_profile',
                                         kwargs={'ministry_id': obj.id})
@@ -556,23 +591,35 @@ def edit_news(request, post_id):
 def delete_news(request, post_id):
     post = NewsPost.objects.get(id=post_id)
 
+    # Setup redirect url
     if post.ministry:
-        ministry = post.ministry
+        ministry = post.ministry            # for checking auth
+        _url = reverse('ministry:ministry_profile', kwargs={'ministry_id': post.ministry.id})
     elif post.campaign:
-        ministry = post.campaign.ministry
+        ministry = post.campaign.ministry   # for checking auth
+        _url = reverse('ministry:campaign_detail', kwargs={'campaign_id': post.campaign.id})
+    else:
+        _url = ''
+        ministry = None
 
-    if request.user == ministry.admin or request.user in ministry.reps.all():
+    # check user permissions and generate feedback
+    if ministry and request.user == ministry.admin or request.user in ministry.reps.all():
         try:
+            _feedback = "NewsPost '%s' was successfully deleted!" % post.title
+            messages.add_message(request, messages.SUCCESS, _feedback)
             post.delete()
         except ProtectedError:
-            # TODO: show error
-            # this might be raised when NewsPost media is implemented
-            pass
+            _feedback = "There was an error deleting '%s'" % post.title
+            messages.add_message(request, messages.ERROR, _feedback)
+    elif not ministry:
+        _feedback = "UNKOWN ERROR: NewsPost '%s' was malformatted!" % post.id
+        print("NewsPost '%s' was malformatted!" % post.id)
+        messages.add_message(request, messages.ERROR, _feedback)
     else:
-        # TODO: show error
-        pass
+        _feedback = "You don't have permissions to be deleting this NewsPost object!"
+        messages.add_message(request, messages.ERROR, _feedback)
 
-    _url = '/#%s' % reverse('people:user_profile')
+    _url = '/#%s' % _url
     return HttpResponseRedirect(_url)
 
 
@@ -605,11 +652,19 @@ def create_campaign(request, ministry_id):
     if request.method == 'POST':
         cam_form = CampaignEditForm(request.POST, request.FILES)
         if cam_form.is_valid():
+            # create object and directory
             cam = cam_form.save(commit=False)
             cam.ministry = ministry
             cam.save()
 
+            create_campaign_dir(cam)
+
+            # handle relationships with other objects
             Tag.process_tags(cam, cam_form['tags'].value())
+
+            # handle response and generate UI feedback
+            _w = 'Ministry Profile Created!'
+            messages.add_message(request, messages.SUCCESS, _w)
 
             _url = '/#%s' % reverse('ministry:campaign_detail',
                                     kwargs={'campaign_id': cam.id})

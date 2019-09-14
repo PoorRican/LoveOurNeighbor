@@ -3,7 +3,6 @@
 #}
 
 {% import "content.html" as content %}
-{% import "parts.html" as parts %}
 
 {% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
 
@@ -15,32 +14,7 @@
 <section class="wrapper">
   <!-- ministry/campaign_details -->
 
-  <md-tabs md-dynamic-height>
-
-
-    {# {{{ News Section #}
-    <md-tab label="News">
-      <md-content>
-        {% if all_news %}
-        {# TODO: generate different card types (both randomly and per parent object type) #}
-        {% for n in all_news %}
-          {{ content.news_card(n, AUTH) }}
-        {% endfor %}
-        {% endif %}
-      </md-content>
-    </md-tab>
-    {# }}} #}
-
-    {# {{{ Gallery Section #}
-    <md-tab label="Gallery">
-      <md-content>
-        {{ parts.gallery() }}
-      </md-content>
-    </md-tab>
-    {# }}} #}
-
-
-  </md-tabs>
+  {{ content.card_area(all_news, AUTH=AUTH) }}
 
 </section>
 

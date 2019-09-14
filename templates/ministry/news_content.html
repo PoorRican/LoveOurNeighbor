@@ -36,9 +36,9 @@
         {{ form.content.label_tag() }}
 
         {% if start %}
-          {{ parts.wysiwyg_editor(form.content.name) }}
+          {{ parts.wysiwyg_editor(form.content.name, unique='news') }}
         {% else %}
-          {{ parts.wysiwyg_editor(form.content.name, post.content) }}
+          {{ parts.wysiwyg_editor(form.content.name, post.content, unique='news') }}
         {% endif %}
 
       </md-input-container>
