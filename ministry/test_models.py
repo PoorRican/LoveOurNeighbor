@@ -35,6 +35,7 @@ class MinistryTestCase(BaseMinistryModelTestCase):
 
     def testAttributeDefaults(self):
         self.assertEqual(0, self.min.views)
+        self.assertEqual(1, self.min.staff)
 
     def testUniqueAttributes(self):
         _attrs = [
