@@ -33,6 +33,7 @@ def serialize_ministry(ministry):
             'requests': _requests,
             'description': ministry.description,
             'reps': _reps,
+            'url': ministry.url,
             'tags': [i.name for i in ministry.tags.all()],
             }
 
@@ -51,7 +52,9 @@ def serialize_campaign(cam):
             'views': cam.views,
             'likes': len(cam.likes.all()),
             'content': cam.content,
-            'tags': [i.name for i in cam.tags.all()]
+            'url': cam.url,
+            'tags': [i.name for i in cam.tags.all()],
+            'ministry': serialize_ministry(cam.ministry)
             }
 
 
@@ -71,6 +74,7 @@ def serialize_newspost(post):
             'pub_date': post.pub_date.strftime('%Y-%m-%dT%H:%M:%S'),
             'content': post.content,
             'parent': parent,
+            'url': post.url
             }
 
 

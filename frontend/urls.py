@@ -23,6 +23,12 @@ from . import views
 
 favicon_view = RedirectView.as_view(url='/static/img/favicon.svg', permanent=True)
 
+
+class PrettyRedirect(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        return '/#/t%s' % self.request.path
+
+
 app_name = 'frontend'
 urlpatterns = [
     # Basic URLs
@@ -35,15 +41,18 @@ urlpatterns = [
     path('t/about', views.about),
     path('t/faq', views.faq),
 
-    # Redirects for user-friendly URLs
+    # Redirects for user-friendly URLs by redirecting to angular first
     path('home', RedirectView.as_view(url='/#/home'), name='home'),
     path('archives', RedirectView.as_view(url='/#/archives'), name='archives'),
     path('about', RedirectView.as_view(url='/#/about'), name='about'),
     path('faq', RedirectView.as_view(url='/#/faq'), name='faq'),
+    path('ministry/<str:orig>', PrettyRedirect.as_view()),
+    path('donation/<str:orig>', PrettyRedirect.as_view()),
+    path('search/<str:orig>', PrettyRedirect.as_view()),
 
     # Main functionality
-    path('ministry/', include('ministry.urls')),
-    path('donation/', include('donation.urls')),
+    path('t/ministry/', include('ministry.urls')),
+    path('t/donation/', include('donation.urls')),
+    path('t/search/', include('search.urls')),
     path('people/', include('people.urls')),
-    path('search/', include('search.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

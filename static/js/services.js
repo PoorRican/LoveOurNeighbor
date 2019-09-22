@@ -396,9 +396,9 @@ bannerImageService.$inject = ['$mdDialog', '$http', '$log'];
 
 function bannerImageService($mdDialog, $http, $log) {
   // a custom controller might need to be implemented inside of `show`
-  selected = '';    // for some reason, this property is never mutable from $scope
-  images = {};
-  current = '';
+  var selected = '';    // for some reason, this property is never mutable from $scope
+  var images = {};
+  var current = '';
 
   var bd = this;
 
@@ -467,7 +467,7 @@ nav_layout.factory('galleryService', galleryService);
 galleryService.$inject = ['$http', '$log'];
 
 function galleryService($http, $log) {
-  gallery = [];
+  var gallery = [];
 
   var G = this;
 
@@ -487,6 +487,66 @@ function galleryService($http, $log) {
 
     function failure(response) {
       $log.error('Could not fetch images. (Wrong URL?)');
+    }
+  }
+}
+
+
+// sharethis.js Wrapper Service
+/* Wrapper to set HTML DOM property attributes for the sharethis.js service */
+nav_layout.factory('shareThisWrapper', shareThisWrapper);
+shareThisWrapper.$inject = ['$timeout'];
+
+
+function shareThisWrapper($timeout) {
+  var disabled = false;
+  var properties = {
+    'title': 'Upload your non-profit ministry onto Love Our Neighbor!',
+    'url': 'https://loveourneighbor.org',
+    'image': '',
+    'description': 'Check out this awesome ministry!'
+  };
+
+  return {
+    disabled: disabled,
+    properties: properties,
+    reset: reset,
+    set: set,
+    update_dom: update_dom
+  };
+
+  function reset() {
+    disabled = false;
+    properties = {
+      'title': 'Upload your non-profit ministry onto Love Our Neighbor!',
+      'url': 'https://loveourneighbor.org',
+      'image': '',
+      'description': 'Check out this awesome ministry!'
+    };
+    update_dom();
+  }
+
+  function set(key, value) {
+    // check validate passed arguments
+    if (['title', 'url', 'image', 'description'].includes(key) && value.substring) {
+      properties[key] = value;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function update_dom() {
+
+    $timeout(manipulate_dom, 250);
+
+    function manipulate_dom() {
+      var element = document.getElementsByClassName('share-button')[0];
+
+      element.setAttribute('data-title', properties.title);
+      element.setAttribute('data-url', properties.url);
+      element.setAttribute('data-image', properties.image);
+      element.setAttribute('data-description', properties.description);
     }
   }
 }

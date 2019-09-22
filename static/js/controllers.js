@@ -8,7 +8,10 @@ function homeController($scope, $http, $location, objectService, likeButtonServi
   $scope.likeButton = likeButtonService;
 
   $scope.currentNavItem = 'Home';
+
+  $scope.share.reset();               // share button
   objectService.periodically_fetch();
+
   $scope.$on('$destroy', function() {
     // Make sure the interval is no longer running
     objectService.stop();
@@ -26,6 +29,12 @@ function faqController($scope, $http, $location) {
 
   $scope.currentNavItem = 'FAQ';
 
+  // share button
+  $scope.share.reset();
+  $scope.share.set('title', 'Frequently Asked Questions - Love Our Neighbor');
+  $scope.share.set('url', 'https://loveourneighbor.org/FAQ');
+  $scope.share.update_dom();
+
   ga('send', 'pageview', '/faq');
 }
 
@@ -37,6 +46,12 @@ function aboutController($scope, $http, $location) {
   // TODO: change title block
 
   $scope.currentNavItem = 'About';
+
+  // share button
+  $scope.share.reset();
+  $scope.share.set('title', 'About Love Our Neighbor');
+  $scope.share.set('url', 'https://loveourneighbor.org/about');
+  $scope.share.update_dom();
 
   ga('send', 'pageview', '/about');
 }
@@ -55,20 +70,39 @@ function campaignCtrl($scope, $routeParams, objectService, likeButtonService, ga
 
   $scope.gallery = [];
 
+  // activate dynamic content
   activate();
+  share_button();
 
-  objectService.periodically_fetch();
+  // activate dynamic content
   $scope.$on('$destroy', function() {
     // Make sure the interval is no longer running
     objectService.stop();
   });
 
   function activate() {
-    var gallery_url = "/ministry/campaign/" + $routeParams.campaign_id + "/gallery/json";
+    // get campaign content
+    objectService.periodically_fetch();
+
+    // get gallery content
+    var gallery_url = "/t/ministry/campaign/" + $routeParams.campaign_id + "/gallery/json";
     return galleryService.get(gallery_url)
       .then(function(data) {
         $scope.gallery = data;
       })
+  }
+
+  function share_button() {
+    // hack to update share button with attributes from objectService because promises don't seem to be working
+    $scope.share.reset();
+
+    $timeout(update_dom, 250);
+
+    function update_dom() {
+      $scope.share.set('title', 'Check out this fundraiser for ' + $scope.object().name + ' on Love Our Neighbor!');
+      $scope.share.set('url', 'https://loveourneighbor.org' + $scope.object().url.substr(2));
+      $scope.share.update_dom();
+    }
   }
   ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
 }
@@ -80,6 +114,7 @@ function campaignActionCtrl($scope, $routeParams, tagService, objectService, ban
   // TODO: change title block
 
   $scope.currentNavItem = 'Home';
+  $scope.share.disabled = true;
 
   if ($routeParams.campaign_action === 'create') {
     $scope.object = {'tags': []};     // work around
@@ -120,14 +155,14 @@ function campaignActionCtrl($scope, $routeParams, tagService, objectService, ban
 
     function activate() {
       if ($routeParams.campaign_id) {
-        var banners_url = "/ministry/campaign/" + $routeParams.campaign_id + "/banners/json";
+        var banners_url = "/t/ministry/campaign/" + $routeParams.campaign_id + "/banners/json";
         bannerImageService.get(banners_url)
         .then(function (data) {
           $scope.banner_urls = data;
 
         });
 
-        var profile_img_url = "/ministry/campaign/" + $routeParams.campaign_id + "/profile_img/json";
+        var profile_img_url = "/t/ministry/campaign/" + $routeParams.campaign_id + "/profile_img/json";
         bannerImageService.get(profile_img_url)
         .then(function (data) {
           $scope.profile_img_urls = data;
@@ -158,6 +193,12 @@ function newsCtrl($scope, $routeParams) {
 
   $scope.currentNavItem = 'Home';
 
+  // share button
+  $scope.share.reset();
+  $scope.share.set('title', 'Check out what God has done through this ministry!');
+  $scope.share.set('url', 'https://loveourneighbor.org/ministry/' + $routeParams.post_id);
+  $scope.share.update_dom();
+
   ga('send', 'pageview', '/campaigns/news/' + $routeParams.post_id);
 }
 
@@ -170,6 +211,17 @@ function donationCtrl($scope, $routeParams) {
   // TODO: change title block
 
   $scope.currentNavItem = null;
+  console.log($routeParams.donation_action);
+
+  // share button
+  if ($routeParams.donation_action === 'admin') {   // sharing of administrative page
+    $scope.share.reset();
+    $scope.share.set('title', 'Help support Love Our Neighbor');
+    $scope.share.set('url', 'https://loveourneighbor.org/donation/admin');
+    $scope.share.update_dom();
+  } else {
+    $scope.share.disabled = true;
+  }
 
   ga('send', 'pageview', '/donation/' + $routeParams.donation_action);
   console.log('donation action: ' + $routeParams.donation_action);
@@ -178,33 +230,51 @@ function donationCtrl($scope, $routeParams) {
 
 // Ministry Controllers
 nav_layout.controller('ministryCtrl', ministryCtrl);
-ministryCtrl.$inject = ['$scope', '$routeParams', 'objectService', 'likeButtonService', 'galleryService'];
+ministryCtrl.$inject = ['$scope', '$routeParams', '$timeout', 'objectService', 'likeButtonService', 'galleryService'];
 
-function ministryCtrl($scope, $routeParams, objectService, likeButtonService, galleryService) {
+function ministryCtrl($scope, $routeParams, $timeout, objectService, likeButtonService, galleryService) {
   // TODO: change title block
   $scope.object = objectService.get;
   $scope.likeButton = likeButtonService;
 
-  $scopecurrentNavItem = null;
+  $scope.currentNavItem = null;
   $scope.gallery = [];
 
+  // activate dynamic content
   activate();
+  share_button();
 
-  objectService.periodically_fetch();
   $scope.$on('$destroy', function() {
-    // Make sure that the interval is destroyed too
+    // stop periodic updating
     objectService.stop();
   });
 
   function activate() {
-    var gallery_url = "/ministry/" + $routeParams.ministry_id + "/gallery/json";
+    // get ministry content
+    objectService.periodically_fetch();
+
+    // get gallery content
+    var gallery_url = "/t/ministry/" + $routeParams.ministry_id + "/gallery/json";
     return galleryService.get(gallery_url)
       .then(function(data) {
         $scope.gallery = data;
       })
   }
+
+  function share_button() {
+    // hack to update share button with attributes from objectService because promises don't seem to be working
+    $scope.share.reset();
+
+    $timeout(update_dom, 250);
+
+    function update_dom() {
+      $scope.share.set('title', 'Check out the ministry profile for "' + $scope.object().name + '" on Love Our Neighbor!');
+      $scope.share.set('url', 'https://loveourneighbor.org' + $scope.object().url.substr(2));
+      $scope.share.update_dom();
+    }
+  }
+
   ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id);
-  console.log('ministry action: ' + $routeParams.ministry_id);
 }
 
 nav_layout.controller('ministryActionCtrl', ministryActionCtrl);
@@ -214,6 +284,7 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
   // TODO: change title block
 
   $scope.currentNavItem = null;
+  $scope.share.disabled = true;
 
   if ($routeParams.ministry_action === 'edit' || $routeParams.ministry_action === 'create') {
     $scope.object = {};
@@ -251,14 +322,14 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
     }
 
     function activate() {
-      var banners_url = "/ministry/" + $routeParams.ministry_id + "/banners/json";
+      var banners_url = "/t/ministry/" + $routeParams.ministry_id + "/banners/json";
       bannerImageService.get(banners_url)
       .then(function(data) {
         $scope.banner_urls = data;
 
       });
 
-      var profile_img_url = "/ministry/" + $routeParams.ministry_id + "/profile_img/json";
+      var profile_img_url = "/t/ministry/" + $routeParams.ministry_id + "/profile_img/json";
       bannerImageService.get(profile_img_url)
       .then(function(data) {
         $scope.profile_img_urls = data;
@@ -290,6 +361,7 @@ function peopleCtrl($scope, $route, $routeParams, $location) {
   // TODO: change title block
 
   $scope.currentNavItem  = null;
+  $scope.share.disabled = true;
 
   if ($routeParams.people_action === 'create') {
     $scope.cleanPasswordPattern = cleanPasswordPattern;
@@ -341,10 +413,16 @@ function searchCtrl($scope, $timeout, $routeParams, objectService, searchFilteri
 
   $scope.currentNavItem  = null;
 
+  // share button
+  $scope.share.reset();
+  $scope.share.set('title', 'Check out all of these ministries on Love Our Neighbor');
+  $scope.share.set('url', 'https://loveourneighbor.org/search/' + $routeParams.query);
+  $scope.share.update_dom();
+
   activate();
 
   function activate() {
-    var url = '/search/' + $routeParams.query + '/json';
+    var url = '/t/search/' + $routeParams.query + '/json';
     return objectService.fetch(url)
       .then(function(data) {
         $scope.distance = data.distances ? data.distances.max : 0;
@@ -367,10 +445,16 @@ function searchTagCtrl($scope, $timeout, $routeParams, objectService, searchFilt
 
   $scope.currentNavItem  = null;
 
+  // share button
+  $scope.share.reset();
+  $scope.share.set('title', 'Check out all of these ministries regarding ' + $routeParams.query + ' on Love Our Neighbor');
+  $scope.share.set('url', 'https://loveourneighbor.org/search/tag/' + $routeParams.query);
+  $scope.share.update_dom();
+
   activate();
 
   function activate() {
-    var url = '/search/' + $routeParams.query + '/json';
+    var url = '/t/search/' + $routeParams.query + '/json';
     return objectService.fetch(url)
       .then(function(data) {
         $scope.distance = data.distances ? data.distances.max : 0;

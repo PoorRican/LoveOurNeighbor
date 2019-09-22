@@ -483,12 +483,19 @@ def ministry_gallery_json(request, ministry_id):
     gallery.sort(key=lambda np: np.pub_date, reverse=True)
 
     _gallery = []
-    _gallery.append({'src': ministry.banner_img.url, 'obj': ministry.url})
+    try:
+        _gallery.append({'src': ministry.banner_img.url, 'obj': ministry.url})
+    except ValueError:
+        pass
+
     for i in gallery:
-        if hasattr(i, 'attachment'):
-            _gallery.append({'src': i.attachment.url, 'obj': i.url})
-        elif hasattr(i, 'banner_img'):
-            _gallery.append({'src': i.banner_img.url, 'obj': i.url})
+        try:
+            if hasattr(i, 'attachment'):
+                _gallery.append({'src': i.attachment.url, 'obj': i.url})
+            elif hasattr(i, 'banner_img'):
+                _gallery.append({'src': i.banner_img.url, 'obj': i.url})
+        except ValueError:
+            pass
 
     return JsonResponse({'gallery': _gallery})
 
@@ -850,10 +857,17 @@ def campaign_gallery_json(request, campaign_id):
     print(gallery)
 
     _gallery = []
-    _gallery.append({'src': campaign.banner_img.url, 'obj': campaign.url})
+    try:
+        _gallery.append({'src': campaign.banner_img.url, 'obj': campaign.url})
+    except ValueError:
+        pass
+
     for i in gallery:
-        if hasattr(i, 'attachment'):
-            _gallery.append({'src': i.attachment.url, 'obj': i.url})
+        try:
+            if hasattr(i, 'attachment'):
+                _gallery.append({'src': i.attachment.url, 'obj': i.url})
+        except ValueError:
+            pass
 
     return JsonResponse({'gallery': _gallery})
 
