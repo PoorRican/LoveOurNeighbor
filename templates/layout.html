@@ -12,6 +12,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="keywords" content="{{ ', '.join(keywords) }}">
 
+  <!-- sharethis.js -->
+  <script type='text/javascript'
+          src='https://platform-api.sharethis.com/js/sharethis.js#property=5d86a3a539dead0012285037&product=inline-share-buttons'
+          async='async'></script>
+
+
   <!-- Facebook OpenGraph meta properties -->
   <meta property="og:type" content="website" />
   <meta property="og:image" content="{{ static('img/favicon.png') }}">
@@ -58,6 +64,8 @@
     {{ layout.navbar_links(request) }}
 
     <div id="notificationArea"></div>
+
+    <div ng-hide="share.disabled" class="sharethis-sticky-share-buttons share-button"></div>
 
     <md-content id="content" layout-align="center top" flex>
 
@@ -106,14 +114,15 @@
     // Layout controller and config //
     nav_layout.controller('LayoutCtrl', LayoutCtrl);
 
-    LayoutCtrl.$inject = ['$scope', '$location', 'searchBarService', 'commentService', 'sideNavService', 'notificationService'];
+    LayoutCtrl.$inject = ['$scope', '$location', 'searchBarService', 'commentService', 'sideNavService', 'notificationService', 'shareThisWrapper'];
 
-    function LayoutCtrl($scope, $location, searchBarService, commentService, sideNavService, notificationService) {
+    function LayoutCtrl($scope, $location, searchBarService, commentService, sideNavService, notificationService, shareThisWrapper) {
 
       $scope.sidenav = sideNavService;
 
       $scope.search = searchBarService.search;
       $scope.comment = commentService;
+      $scope.share = shareThisWrapper;
 
       $scope.goto = function (url) {
         $location.url(url);

@@ -69,5 +69,11 @@
   font-size: 14px;
 }
 
+
+/* sharethis.js override */
+.st-total {
+  background-color: transparent !important;
+}
+
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */
