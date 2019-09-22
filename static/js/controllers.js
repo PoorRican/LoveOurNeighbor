@@ -120,14 +120,14 @@ function campaignActionCtrl($scope, $routeParams, tagService, objectService, ban
 
     function activate() {
       if ($routeParams.campaign_id) {
-        var banners_url = "/ministry/campaign/" + $routeParams.campaign_id + "/banners/json";
+        var banners_url = "/t/ministry/campaign/" + $routeParams.campaign_id + "/banners/json";
         bannerImageService.get(banners_url)
         .then(function (data) {
           $scope.banner_urls = data;
 
         });
 
-        var profile_img_url = "/ministry/campaign/" + $routeParams.campaign_id + "/profile_img/json";
+        var profile_img_url = "/t/ministry/campaign/" + $routeParams.campaign_id + "/profile_img/json";
         bannerImageService.get(profile_img_url)
         .then(function (data) {
           $scope.profile_img_urls = data;
@@ -251,14 +251,14 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
     }
 
     function activate() {
-      var banners_url = "/ministry/" + $routeParams.ministry_id + "/banners/json";
+      var banners_url = "/t/ministry/" + $routeParams.ministry_id + "/banners/json";
       bannerImageService.get(banners_url)
       .then(function(data) {
         $scope.banner_urls = data;
 
       });
 
-      var profile_img_url = "/ministry/" + $routeParams.ministry_id + "/profile_img/json";
+      var profile_img_url = "/t/ministry/" + $routeParams.ministry_id + "/profile_img/json";
       bannerImageService.get(profile_img_url)
       .then(function(data) {
         $scope.profile_img_urls = data;
@@ -344,7 +344,7 @@ function searchCtrl($scope, $timeout, $routeParams, objectService, searchFilteri
   activate();
 
   function activate() {
-    var url = '/search/' + $routeParams.query + '/json';
+    var url = '/t/search/' + $routeParams.query + '/json';
     return objectService.fetch(url)
       .then(function(data) {
         $scope.distance = data.distances ? data.distances.max : 0;
@@ -370,7 +370,7 @@ function searchTagCtrl($scope, $timeout, $routeParams, objectService, searchFilt
   activate();
 
   function activate() {
-    var url = '/search/' + $routeParams.query + '/json';
+    var url = '/t/search/' + $routeParams.query + '/json';
     return objectService.fetch(url)
       .then(function(data) {
         $scope.distance = data.distances ? data.distances.max : 0;

@@ -21,52 +21,52 @@ nav_layout.config(['$locationProvider', '$routeProvider', function($locationProv
     })
 
     // Main Functionality
-    .when('/donation/:donation_action*', {
+  .when('/t/donation/:donation_action*', {
         templateUrl : function (params) {
-          return '/donation/' + params.donation_action;
+          return '/t/donation/' + params.donation_action;
        },
         controller  : 'donationCtrl'
     })
-    .when('/ministry/campaign/:campaign_id', {
+  .when('/t/ministry/campaign/:campaign_id', {
         templateUrl : function (params) {
-          return '/ministry/campaign/' + params.campaign_id;
+          return '/t/ministry/campaign/' + params.campaign_id;
        },
         controller  : 'campaignCtrl'
     })
-    .when('/ministry/campaign/:campaign_id/:campaign_action*', {
+  .when('/t/ministry/campaign/:campaign_id/:campaign_action*', {
         templateUrl : function (params) {
-          return '/ministry/campaign/' + params.campaign_id + '/' + params.campaign_action;
+          return '/t/ministry/campaign/' + params.campaign_id + '/' + params.campaign_action;
         },
         controller  : 'campaignActionCtrl'
     })
-    .when('/ministry/:ministry_id/campaign/:campaign_action', {
+  .when('/t/ministry/:ministry_id/campaign/:campaign_action', {
         templateUrl : function (params) {
-          return '/ministry/' + params.ministry_id + '/campaign/' + params.campaign_action;
+          return '/t/ministry/' + params.ministry_id + '/campaign/' + params.campaign_action;
         },
         controller  : 'campaignActionCtrl'
     })
-    .when('/ministry/news/:obj_type/:obj_id/:action', {
+  .when('/t/ministry/news/:obj_type/:obj_id/:action', {
         templateUrl : function (params) {
-          return '/ministry/news/' + params.obj_type + '/' + params.obj_id + '/' + params.action;
+          return '/t/ministry/news/' + params.obj_type + '/' + params.obj_id + '/' + params.action;
         },
         controller  : 'newsCtrl'
     })
-    .when('/ministry/news/:obj_id/:action', {
+  .when('/t/ministry/news/:obj_id/:action', {
       templateUrl : function (params) {
         console.log("here");
-        return '/ministry/news/' + params.obj_id + '/' + params.action;
+        return '/t/ministry/news/' + params.obj_id + '/' + params.action;
       },
       controller  : 'newsCtrl'
     })
-    .when('/ministry/:ministry_id', {
+  .when('/t/ministry/:ministry_id', {
         templateUrl : function (params) {
-          return '/ministry/' + params.ministry_id;
+          return '/t/ministry/' + params.ministry_id;
        },
         controller  : 'ministryCtrl'
     })
-    .when('/ministry/:ministry_id/:ministry_action*', {
+  .when('/t/ministry/:ministry_id/:ministry_action*', {
         templateUrl : function (params) {
-          return '/ministry/' + params.ministry_id + '/' + params.ministry_action;
+          return '/t/ministry/' + params.ministry_id + '/' + params.ministry_action;
         },
         controller  : 'ministryActionCtrl'
     })
@@ -78,13 +78,13 @@ nav_layout.config(['$locationProvider', '$routeProvider', function($locationProv
     })
     .when('/search/:query/', {
         templateUrl : function (params) {
-          return '/search/' + params.query;
+          return '/t/search/' + params.query;
        },
         controller  : 'searchCtrl'
     })
     .when('/search/tag/:query/', {
         templateUrl : function (params) {
-          return '/search/tag/' + params.query;
+          return '/t/search/tag/' + params.query;
        },
         controller  : 'searchTagCtrl'
     });
