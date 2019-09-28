@@ -304,8 +304,10 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
     $scope.profile_img_dialog = bannerImageService;
     $scope.selected_profile_img = $scope.profile_img_dialog.selected;
 
-    activate();
-    tagService.fetch();
+    if ($routeParams.ministry_action === 'edit') {
+      activate();
+      tagService.fetch();
+    }
 
     function select_banner(name) {
       // this is a dirty hack, but it works.....
@@ -349,7 +351,6 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
   }
 
   ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);
-  console.log('ministry action: ' + $routeParams.ministry_action + ' of ' + $routeParams.ministry_id);
 }
 
 

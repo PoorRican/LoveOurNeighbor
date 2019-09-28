@@ -11,6 +11,7 @@ class MinistryEditForm(forms.ModelForm):
     """
     tags = forms.CharField(max_length=256, required=False)
     reps = forms.CharField(max_length=1024, required=False)
+    social_media = forms.CharField(max_length=1024, required=False)
 
     def __init__(self, *args, **kwargs):
         super(MinistryEditForm, self).__init__(*args, **kwargs)

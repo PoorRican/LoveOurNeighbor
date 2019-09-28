@@ -223,8 +223,14 @@
             <h3>Ministry Information:</h3>
             <p class="section-info">
               <span>Website:</span>&nbsp;
-                <a href="{{ ministry.website }}">{{ ministry.website.split("://")[1] }}</a>
-              <br>
+              <a href="{{ ministry.website }}">{{ ministry.website.split("://")[1] }}</a><br>
+              {% if ministry.social_media %}
+                <span>Social Media:&nbsp;</span>
+                {% for site, url in ministry.social_media.items() %}
+                  <a href="{{ url }}">{{ site }}</a>&nbsp;
+                {% endfor %}
+                <br>
+              {% endif %}
               {% set info = {
                   'phone_number': 'Phone',
                   'address': 'Address',

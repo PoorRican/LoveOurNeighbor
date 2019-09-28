@@ -67,10 +67,12 @@ def create_ministry(request):
     if request.method == 'POST':
         min_form = MinistryEditForm(request.POST, request.FILES,)
 
-        if min_form.is_valid():        # TODO: implement a custom `TagField`
+        if min_form.is_valid():
             # handle custom form attributes
             ministry = min_form.save(commit=False)      # `ministry` is type MinistryProfile
-            ministry.admin = request.user
+            ministry.admin = request.user  # set the admin as the user responsible for creating the page
+            if min_form['social_media']:
+                ministry.social_media = json.loads(min_form['social_media'].value())
             ministry.save()                             # object must exist before relationships with other objects
 
             # handle relationships with other objects
@@ -92,8 +94,10 @@ def create_ministry(request):
             return HttpResponseRedirect(_url)
 
         else:
-            # TODO: properly return form errors
-            print(min_form.errors)
+            for _, message in min_form.errors.items():
+                messages.add_message(request, messages.ERROR, message[0])
+            _url = '/#%s' % reverse('ministry:create_ministry')
+            return HttpResponseRedirect(_url)
     else:
         _form = MinistryEditForm(initial={'website': 'https://'})
         context = {"form": _form,
@@ -167,6 +171,10 @@ def edit_ministry(request, ministry_id):
                         ministry.profile_img = ministry_profile_image_dir(ministry,
                                                                           prev_banner)
                     ministry.save()
+
+                    # handle custom form attributes
+                    if _form['social_media'].value():
+                        ministry.social_media = json.loads(_form['social_media'].value())
 
                     # handle relationships with other objects
                     _min = _form.save(commit=False)

@@ -3,6 +3,8 @@ from datetime import date
 from django.db import models
 from django.urls import reverse
 
+from pickle import loads, dumps
+
 from explore.models import GeoLocation
 from people.models import User
 
@@ -71,6 +73,7 @@ class MinistryProfile(models.Model):
     founded = models.DateField(blank=True, null=True)
     pub_date = models.DateField(auto_now_add=True)
     staff = models.SmallIntegerField(default=1)
+    _social_media = models.BinaryField(max_length=1024, default="")
 
     # Ministry Content
     description = models.TextField(blank=True, null=True)
@@ -107,6 +110,15 @@ class MinistryProfile(models.Model):
         gl, _ = GeoLocation.objects.get_or_create(ministry=self)
         gl.location = location
         gl.save()
+
+    @property
+    def social_media(self):
+        return loads(self._social_media)
+
+    @social_media.setter
+    def social_media(self, links):
+        self._social_media = dumps(links)
+        self.save()
 
     @property
     def url(self):

@@ -4,7 +4,7 @@ from . import views
 
 app_name = 'ministry'
 urlpatterns = [
-    path('create', views.create_ministry, name='create_ministry'),
+    path('action/create', views.create_ministry, name='create_ministry'),
     path('<int:ministry_id>', views.ministry_profile,
          name='ministry_profile'),
     path('<int:ministry_id>/login', views.login_as_ministry,

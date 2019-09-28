@@ -13,7 +13,8 @@
     <!-- TODO: make link for more information -->
     <h3>Please note that all ministry profiles are must be approved before they are made public</h3>
 
-    <form method="POST" enctype="multipart/form-data" action="{{ url_for('ministry:create_ministry') }}">
+    <form method="POST" name="ministryForm" enctype="multipart/form-data"
+          action="{{ url_for('ministry:create_ministry') }}">
 
   {% else %}
     {#
@@ -31,7 +32,7 @@
     </h1>
     #}
 
-    <form method="POST" enctype="multipart/form-data" action="{{ ministry.edit }}">
+    <form method="POST" name="ministryForm" enctype="multipart/form-data" action="{{ ministry.edit }}">
       <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
 
   {% endif %}
@@ -45,7 +46,7 @@
 
 
         {# {{{ Detail Section #}
-        <md-tab label="Minsitry">
+        <md-tab label="Ministry">
           <md-tab-label>
             <md-icon><i class="material-icons">info</i></md-icon>&nbsp;
             Ministry
@@ -209,6 +210,29 @@
             </md-input-container>
             {# }}} #}
 
+            {# {{{ INPUT social media links }} #}
+            <h5>Social Media Links:</h5>
+            <div>
+              {# TODO: Add social media Icons #}
+              <input type="hidden" name="social_media" value="{% raw %}{{ object.social_media }}{% endraw %}">
+              {% set sm_links = [['sm_fb', 'facebook', 'Facebook'],
+                                 ['sm_ig', 'instagram', 'Instagram'],
+                                 ['sm_yt', 'youtube', 'YouTube'],
+                                 ['sm_t', 'twitter', 'Twitter']] %}
+              {% for form_name, attr_name, ui_name in sm_links %}
+                <md-input-container>
+                  <label for="{{ form_name }}">{{ ui_name }}</label>
+                  <input id="{{ form_name }}" name="{{ form_name }}" type="url"
+                         ng-model="object.social_media.{{ attr_name }}">
+                  <div ng-messages="ministryForm.{{ form_name }}.$error" role="alert">
+                    <div ng-message="url">
+                      Link should start with http:// or https://
+                    </div>
+                  </div>
+                </md-input-container>
+              {% endfor %}
+            </div>
+
           </md-tab-body>
         </md-tab>
         {# }}} #}
@@ -355,7 +379,7 @@
 
       {# {{{ Administration Section #}
         {# uncreated MinistryProfile objects should have no rep functionality yet #}
-        <md-tab label="Admininistration">
+        <md-tab label="Administration">
           <md-tab-label>
             <md-icon><i class="material-icons">lock</i></md-icon>&nbsp;
             Administration
