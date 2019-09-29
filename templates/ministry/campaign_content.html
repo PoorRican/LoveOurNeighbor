@@ -205,9 +205,9 @@
               <md-icon><i class="material-icons">subject</i></md-icon>
               {{ form.content.label_tag() }}
               {% if start %}
-                {{ parts.wysiwyg_editor(form.content.name, unique='campaign') }}
+                {{ parts.wysiwyg_editor(form.content.name) }}
               {% elif not start %}
-                {{ parts.wysiwyg_editor(form.content.name, campaign.content, unique='campaign') }}
+                {{ parts.wysiwyg_editor(form.content.name, 'object.content') }}
               {% endif %}
               <br><br>
               <div class="hint">Describe the project!</div>

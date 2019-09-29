@@ -37,7 +37,6 @@
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.1.0/trix.css">
 
     {# Local Scripts #}
     {# TODO: minify and fetch these from CDN while on production #}
@@ -109,7 +108,7 @@
   <script>
 
     var nav_layout = angular.module('loveOurNeighborApp',
-      ['ngMaterial', 'ngRoute', 'ngParallax', 'ngMessages']);
+      ['ngMaterial', 'ngRoute', 'ngParallax', 'ngMessages', 'ui.tinymce']);
 
     // Layout controller and config //
     nav_layout.controller('LayoutCtrl', LayoutCtrl);
@@ -130,6 +129,17 @@
 
       notificationService.update();
 
+      $scope.tinymceOptions = {
+        height: 500,
+        max_height: 750,
+        min_width: 300,
+        width: 650,
+        resize: true,
+        mobile: {
+          theme: 'mobile',
+//          toolbar: [ 'undo', 'bold', 'italic', 'styleselect' ]
+        }
+      }
 
     }
     nav_layout.config(function($mdThemingProvider) {
@@ -155,6 +165,7 @@
       'services.js',
       'routes.js',
       'controllers.js',
+      'angularjs_tinymce.min.js',
     ]
   -%}
 
@@ -163,7 +174,8 @@
   {% endfor -%}
 
   <!-- WYSIWYG Editor -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.1.0/trix.js"></script>
+  {% set TINY_API_KEY = 'ropl0dvkzt3bbjqb9e8dk06ff578n2fkfvgun5yxa1zgb234' %}
+  <script src="https://cdn.tiny.cloud/1/{{ TINY_API_KEY }}/tinymce/4/tinymce.min.js" referrerpolicy="origin"></script>
   {# }}} #}
 
 

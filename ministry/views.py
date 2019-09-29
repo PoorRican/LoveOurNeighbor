@@ -419,7 +419,8 @@ def ministry_json(request, ministry_id):
 
     _json = serialize_ministry(ministry)
     _json['liked'] = _liked
-    del _json['description']        # remove to tx less data
+    # TODO: do not always transmit `description` to save on server side processing power
+    # del _json['description']        # remove to tx less data
 
     return JsonResponse(_json)
 
@@ -817,7 +818,8 @@ def campaign_json(request, campaign_id):
 
     _json = serialize_campaign(cam)
     _json['liked'] = _liked
-    del _json['content']        # remove to tx less data
+    # TODO: do not always transmit `content` to save on server side processing power
+    # del _json['content']        # remove to tx less data
 
     return JsonResponse(_json)
 
