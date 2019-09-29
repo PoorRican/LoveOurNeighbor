@@ -59,9 +59,9 @@ function aboutController($scope, $http, $location) {
 
 // Campaign Controllers
 nav_layout.controller('campaignCtrl', campaignCtrl);
-campaignCtrl.$inject = ['$scope', '$routeParams', 'objectService', 'likeButtonService', 'galleryService'];
+campaignCtrl.$inject = ['$scope', '$routeParams', '$timeout', 'objectService', 'likeButtonService', 'galleryService'];
 
-function campaignCtrl($scope, $routeParams, objectService, likeButtonService, galleryService) {
+function campaignCtrl($scope, $routeParams, $timeout, objectService, likeButtonService, galleryService) {
   // TODO: change title block
   $scope.object = objectService.get;
   $scope.likeButton = likeButtonService;
@@ -193,6 +193,8 @@ function newsCtrl($scope, $routeParams) {
 
   $scope.currentNavItem = 'Home';
 
+  $scope.news_editor = document.getElementById('initial_tinymce_value').value;
+
   // share button
   $scope.share.reset();
   $scope.share.set('title', 'Check out what God has done through this ministry!');
@@ -303,6 +305,7 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
     $scope.select_profile_img = select_profile_img;
     $scope.profile_img_dialog = bannerImageService;
     $scope.selected_profile_img = $scope.profile_img_dialog.selected;
+
 
     if ($routeParams.ministry_action === 'edit') {
       activate();

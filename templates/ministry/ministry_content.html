@@ -352,9 +352,9 @@
               <md-icon><i class="material-icons">subject</i></md-icon>
               {{ form.description.label_tag() }}
               {% if start %}
-              {{ parts.wysiwyg_editor(form.description.name, '', unique='ministry') }}
+                {{ parts.wysiwyg_editor(form.description.name) }}
               {% else%}
-              {{ parts.wysiwyg_editor(form.description.name, ministry.description, unique='ministry') }}
+                {{ parts.wysiwyg_editor(form.description.name, 'object.description') }}
               {% endif %}
               <br><br>
               <div class="hint">Describe yourself</div>
