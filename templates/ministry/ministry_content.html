@@ -42,8 +42,7 @@
 
     <div layout="column" class="md-inline-form">
 
-      <md-tabs md-dynamic-height md-border-bottom>
-
+      <md-tabs id="form_inputs" md-dynamic-height md-border-bottom>
 
         {# {{{ Detail Section #}
         <md-tab label="Ministry">
@@ -54,17 +53,13 @@
           <md-tab-body>
 
             {# {{{ INPUT profile_img #}
-            <div>
+            <div id="image_input">
               <h5>Profile Image:</h5>
               {% if not start %}
               <!-- TODO: dynamically get the updated url from input value via angular -->
-              <img style="height: 120px; width: 120px; margin: auto;" src="{{ ministry.profile_img.url }}"/>
+                <img style="height: 120px; width: 120px; margin: auto;" src="{{ ministry.profile_img.url }}"
+                     ng-click="profile_img_dialog.show($event, 'profileImgDialog')"/>
               {% endif %}
-              {# {{{ INPUT profile_image #}
-              <md-button ng-click="profile_img_dialog.show($event, 'profileImgDialog')">
-                <md-icon><i class="material-icons">image</i></md-icon>
-                Profile Img
-              </md-button>
 
               {# {{{ Banner Selection Dialog #}
               <div style="visibility: hidden">
@@ -152,86 +147,105 @@
             {# }}} #}
 
             <md-divider></md-divider>
+            <br>
 
-            {# {{{ INPUT name #}
-            <md-input-container>
-              {# TODO: ensure that all ministry titles are unique #}
-              {{ form.name.label_tag() }}
-              <md-icon><i class="material-icons">group</i></md-icon>
-              {{ form.name }}
-            </md-input-container>
-            {# }}} #}
-            <div layout-gt-sm="row" layout-padding>
-            {# {{{ INPUT phone_number #}
-              <md-input-container flex-gt-sm="50">
-                {{ form.phone_number.label_tag() }}
-                {# TODO: render styled phone number input for international phone numbers #}
-                <md-icon><i class="material-icons">phone</i></md-icon>
-                {{ form.phone_number }}
+            <div layout="column">
+              {# {{{ INPUT name #}
+              <md-input-container>
+                {# TODO: ensure that all ministry titles are unique #}
+                {{ form.name.label_tag() }}
+                <md-icon><i class="material-icons">group</i></md-icon>
+                {{ form.name }}
               </md-input-container>
-            {# }}} #}
-            {# {{{ INPUT website #}
-              <md-input-container flex-gt-sm="50">
-                {{ form.website.label_tag() }}
-                <md-icon><i class="material-icons">explore</i></md-icon>
-                {{ form.website }}
+              {# }}} #}
+              <div layout-gt-sm="row" layout="column">
+                {# {{{ INPUT phone_number #}
+                <md-input-container flex-gt-sm="50">
+                  {{ form.phone_number.label_tag() }}
+                  {# TODO: render styled phone number input for international phone numbers #}
+                  <md-icon><i class="material-icons">phone</i></md-icon>
+                  {{ form.phone_number }}
+                </md-input-container>
+                {# }}} #}
+                <div hide-sm hide-xs>&nbsp;&nbsp;</div>
+                {# {{{ INPUT website #}
+                <md-input-container flex-gt-sm="50">
+                  {{ form.website.label_tag() }}
+                  <md-icon><i class="material-icons">explore</i></md-icon>
+                  {{ form.website }}
+                </md-input-container>
+                {# }}} #}
+              </div>
+              {# {{{ INPUT address #}
+              <md-input-container>
+                {# TODO: render custom address input #}
+                {{ form.address.label_tag() }}
+                <md-icon><i class="material-icons">place</i></md-icon>
+                {{ form.address }}
               </md-input-container>
-            {# }}} #}
-            </div>
-            {# {{{ INPUT address #}
-            <md-input-container>
-              {# TODO: render custom address input #}
-              {{ form.address.label_tag() }}
-              <md-icon><i class="material-icons">place</i></md-icon>
-              {{ form.address }}
-            </md-input-container>
-            {# }}} #}
-            {# {{{ INPUT founded #}
-            <div layout="row">
-              <h5 style="font-weight: 400">
-                {{ form.founded.label }}:
-              </h5>
-              <md-icon><i class="material-icons">cake</i></md-icon>
-              <input type="hidden" name="{{ form.founded.name }}" value="{% raw %}{{ object.founded | date:'yyyy-MM-dd' }}{% endraw %}">
-              <md-input-container hide-sm hide-xs>
-                <md-datepicker id="{{ form.founded.id_for_label }}" ng-model="object.founded" md-placeholder="Enter date founded" md-open-on-focus hide-sm hide-xs></md-datepicker>
-                <div class="hint">When did this ministry start?</div>
-              </md-input-container>
-              <md-input-container hide-gt-sm>
-                <input type="date" ng-model="object.founded">
-              </md-input-container>
-            </div>
-            {# }}} #}
-            {# {{{ INPUT employee count #}
-            <md-input-container>
-              {{ form.staff.label_tag() }}
-              <md-icon><i class="material-icons">people</i></md-icon>
-              {{ form.staff }}
-            </md-input-container>
-            {# }}} #}
+              {# }}} #}
+              <div layout-gt-sm="row" layout="column">
+                {# {{{ INPUT employee count #}
+                <md-input-container flex-gt-sm="50">
+                  {{ form.staff.label_tag() }}
+                  <md-icon><i class="material-icons">people</i></md-icon>
+                  {{ form.staff }}
+                </md-input-container>
 
-            {# {{{ INPUT social media links }} #}
-            <h5>Social Media Links:</h5>
-            <div>
-              {# TODO: Add social media Icons #}
-              <input type="hidden" name="social_media" value="{% raw %}{{ object.social_media }}{% endraw %}">
-              {% set sm_links = [['sm_fb', 'facebook', 'Facebook'],
+                <div hide-sm hide-xs>&nbsp;&nbsp;</div>
+                {# }}} #}
+
+                {# {{{ INPUT date founded #}
+                <div flex-gt-sm="50">
+                  <input type="hidden" name="{{ form.founded.name }}"
+                         value="{% raw %}{{ object.founded | date:'yyyy-MM-dd' }}{% endraw %}">
+                  <md-input-container flex-gt-sm="50" hide-sm hide-xs>
+                    <md-datepicker name="founded_ui" id="{{ form.founded.id_for_label }}"
+                                   ng-model="object.founded"
+                                   md-placeholder="Date Founded"
+                                   md-open-on-focus
+                                   hide-sm hide-xs
+                                   required></md-datepicker>
+                    <div ng-hide="ministryForm.founded_ui.$touched" class="hint">When did this ministry start?</div>
+                    <div ng-messages="ministryForm.founded_ui.$error" role="alert">
+                      <div ng-message="required">
+                        A date is required
+                      </div>
+                    </div>
+                  </md-input-container>
+                  <md-input-container flex-gt-sm="50" hide-gt-sm>
+                    <span>Date Founded:</span>
+                    <md-icon><i class="material-icons">cake</i></md-icon>
+                    <input type="date" ng-model="object.founded">
+                  </md-input-container>
+                </div>
+                {# }}} #}
+
+              </div>
+
+              {# {{{ INPUT social media links }} #}
+              <h5>Social Media Links:</h5>
+              <div layout="column" layout-gt-sm="row">
+                {# TODO: Add social media Icons #}
+                <input type="hidden" name="social_media" value="{% raw %}{{ object.social_media }}{% endraw %}">
+                {% set sm_links = [['sm_fb', 'facebook', 'Facebook'],
                                  ['sm_ig', 'instagram', 'Instagram'],
                                  ['sm_yt', 'youtube', 'YouTube'],
                                  ['sm_t', 'twitter', 'Twitter']] %}
-              {% for form_name, attr_name, ui_name in sm_links %}
-                <md-input-container>
-                  <label for="{{ form_name }}">{{ ui_name }}</label>
-                  <input id="{{ form_name }}" name="{{ form_name }}" type="url"
-                         ng-model="object.social_media.{{ attr_name }}">
-                  <div ng-messages="ministryForm.{{ form_name }}.$error" role="alert">
-                    <div ng-message="url">
-                      Link should start with http:// or https://
+                {% for form_name, attr_name, ui_name in sm_links %}
+                  <md-input-container flex-gt-sm="25">
+                    <label for="{{ form_name }}">{{ ui_name }}</label>
+                    <input id="{{ form_name }}" name="{{ form_name }}" type="url"
+                           ng-model="object.social_media.{{ attr_name }}">
+                    <div ng-messages="ministryForm.{{ form_name }}.$error" role="alert">
+                      <div ng-message="url">
+                        Link should start with http:// or https://
+                      </div>
                     </div>
-                  </div>
-                </md-input-container>
-              {% endfor %}
-            </div>
+                  </md-input-container>
+                {% endfor %}
+              </div>
+            </div><!-- Ministry Detail Inputs -->
 
           </md-tab-body>
         </md-tab>
@@ -491,13 +505,6 @@
         </md-button>
 
         {% if not start and ministry %}
-          <md-button class="md-raised md-accent"
-                     ng-href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'ministry', 'obj_id': ministry.id}) }}">
-            Create News&nbsp;
-            <md-icon>
-              <i class="material-icons">note_add</i>
-            </md-icon>
-          </md-button>
           <md-button class="md-icon-button md-raised md-warn"
                      ng-href="{{ url_for('ministry:delete_ministry', kwargs={'ministry_id': ministry.id}) }}">
             <md-icon>
