@@ -366,18 +366,15 @@ def login_as_ministry(request, ministry_id):
         _w = 'Logged in as %s!' % ministry.name
         messages.add_message(request, messages.INFO, _w)
 
-        return HttpResponseRedirect(reverse('ministry:ministry_profile',
-                                            kwargs={'ministry_id': ministry_id}
-                                            ))
+        _url = "/#%s" % reverse('ministry:ministry_profile', kwargs={'ministry_id': ministry_id})
+        return HttpResponseRedirect(_url)
     else:
         # we shouldn't really get here, but redirect to originating page
         _w = 'You do not have permission to do this.'
         messages.add_message(request, messages.WARNING, _w)
 
         # cause a redirect loop as deterrant
-        return HttpResponseRedirect(reverse('ministry:login_as_ministry',
-                                            kwargs={'ministry_id': ministry_id}
-                                            ))
+        return HttpResponseRedirect(reverse('ministry:login_as_ministry', kwargs={'ministry_id': ministry_id}))
 
 
 @login_required
