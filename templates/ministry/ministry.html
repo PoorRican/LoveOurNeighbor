@@ -3,6 +3,7 @@
 #}
 
 {% import "content.html" as content %}
+{% import "cards.html" as card %}
 
 {% set AUTH = (request.user == ministry.admin or request.user in ministry.reps.all()) %}
 
@@ -15,7 +16,7 @@
 <section class="wrapper">
   <!-- ministry/ministry_details -->
 
-  {{ content.card_area(all_news, campaigns=(True, campaigns), AUTH=AUTH) }}
+  {{ card.card_area(all_news, campaigns=(True, campaigns), AUTH=AUTH) }}
 
 </section>
 

@@ -1,0 +1,241 @@
+{% import "parts.html" as parts %}
+{# {{{ NewsPost Card #}
+{% macro news_card(post, AUTH=False) %}
+  <md-card>
+    <md-card-header>
+      <md-card-header-text>
+        <span class="md-subhead">
+          Posted: {{ f_time(post.pub_date) }}
+        </span>
+      </md-card-header-text>
+    </md-card-header>
+
+    {% if post.attachment %}
+      <img src="{{ post.attachment.url }}" class="md-card-image">
+    {% endif %}
+
+    <md-card-title>
+      <md-truncate class="md-title">
+        <a href="#{{ post.url }}" style="color: black; text-decoration: none;">
+          {{ post.title }}
+        </a>
+      </md-truncate>
+    </md-card-title>
+    <md-card-actions layout="row" layout-align="end center" layout-align-gt-sm="start center">
+      <md-button class="md-icon-button">
+        <i class="material-icons">comment</i>
+      </md-button>
+      <md-button class="md-icon-button"
+                 ng-href="#{{ post.url }}">
+        <i class="material-icons">open_in_new</i>
+      </md-button>
+      {% if AUTH %}
+        {# {{{ Action Menu #}
+        <md-menu>
+          <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
+            <md-icon>
+              <i class="material-icons">arrow_drop_down</i>
+            </md-icon>
+          </md-button>
+          <md-menu-content>
+            {% if AUTH %}
+              <md-menu-item>
+                <md-button ng-href="#{{ post.edit }}">
+                  <md-icon>
+                    <i class="material-icons">create</i>
+                  </md-icon>&nbsp;
+                  Edit News Post
+                </md-button>
+              </md-menu-item>
+              <md-menu-item>
+                <md-button ng-href="{{ url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
+                  <md-icon>
+                    <i class="material-icons">delete</i>
+                  </md-icon>&nbsp;
+                  Delete News Post
+                </md-button>
+              </md-menu-item>
+              <md-menu-divider></md-menu-divider>
+            {% endif %}
+
+            <md-menu-item>
+              <md-button ng-href="#{{ post.url }}">
+                <md-icon>
+                  <i class="material-icons">link</i>
+                </md-icon>&nbsp;
+                Link to news
+              </md-button>
+            </md-menu-item>
+          </md-menu-content>
+        </md-menu>
+        {# }}} #}
+      {% endif %}
+    </md-card-actions>
+    <md-card-content style="min-height: 50px">
+      <md-truncate>
+        {{ post.content | safe }}
+      </md-truncate>
+    </md-card-content>
+  </md-card>
+{% endmacro %}
+{# }}} #}
+
+
+{# {{{ Campaign Card #}
+{% macro campaign_card(campaign, AUTH=False) %}
+  <md-card>
+    {% if campaign.banner_img %}
+      <img src="{{ campaign.banner_img.url }}" class="md-card-image">
+    {% endif %}
+    <md-card-title>
+      <md-truncate class="md-headline">
+        <a href="#{{ campaign.url }}" style="color: black; text-decoration: none;">
+          {{ campaign.title }}
+        </a>
+      </md-truncate>
+      {% if AUTH %}
+        <md-menu>
+          <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
+            <md-icon class="color: black">
+              <i class="material-icons">arrow_drop_down</i>
+            </md-icon>
+          </md-button>
+          <md-menu-content>
+            {% for opt in campaign_admin_urls(campaign) %}
+              <md-menu-item>
+                <md-button ng-href="#{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                  <md-icon>
+                    <i class="material-icons">{{ opt['icon'] }}</i>
+                  </md-icon>&nbsp;
+                  {{ opt['label'] }}
+                </md-button>
+              </md-menu-item>
+            {% endfor %}
+          </md-menu-content>
+        </md-menu>
+      {% endif %}
+    </md-card-title>
+    <md-card-actions layout="row" layout-align="end center" layout-align-gt-sm="start center">
+      {# TODO: show tooltips #}
+      <md-button class="md-icon-button">
+        <i class="material-icons">comment</i>
+      </md-button>
+      <md-button class="md-icon-button"
+                 ng-href="#{{ campaign.url }}">
+        <i class="material-icons">open_in_new</i>
+      </md-button>
+    </md-card-actions>
+    <md-card-content style="min-height: 50px">
+      <md-truncate>
+        {{ campaign.content | safe }}
+      </md-truncate>
+    </md-card-content>
+  </md-card>
+{% endmacro %}
+{# }}} #}
+
+
+{% macro ministry_card(ministry, AUTH=False) %}
+
+  <md-card>
+    {% if ministry.banner_img %}
+      <img src="{{ campaign.banner_img.url }}" class="md-card-image">
+    {% endif %}
+
+    <md-card-title>
+      <md-truncate class="md-headline">
+        <a href="#{{ ministry.url }}" style="color: black; text-decoration: none;">
+          {{ ministry.name }}
+        </a>
+      </md-truncate>
+      {% if AUTH %}
+        <md-menu>
+          <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
+            <md-icon class="color: black">
+              <i class="material-icons">arrow_drop_down</i>
+            </md-icon>
+          </md-button>
+          <md-menu-content>
+            {% for opt in ministry_admin_urls(campaign) %}
+              <md-menu-item>
+                <md-button ng-href="#{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                  <md-icon>
+                    <i class="material-icons">{{ opt['icon'] }}</i>
+                  </md-icon>&nbsp;
+                  {{ opt['label'] }}
+                </md-button>
+              </md-menu-item>
+            {% endfor %}
+          </md-menu-content>
+        </md-menu>
+      {% endif %}
+    </md-card-title>
+
+    <md-card-actions layout="row" layout-align="end center" layout-align-gt-sm="start center">
+      {# TODO: show tooltips #}
+      <md-button class="md-icon-button"
+                 ng-href="#{{ campaign.url }}">
+        <i class="material-icons">open_in_new</i>
+      </md-button>
+    </md-card-actions>
+
+    <md-card-content style="min-height: 50px">
+      <md-truncate>
+        {{ ministry.description | safe }}
+      </md-truncate>
+    </md-card-content>
+
+  </md-card>
+
+{% endmacro %}
+
+
+{# {{{ Card Area #}
+{% macro card_area(news, campaigns=(False, []), AUTH=None) %}
+  <md-tabs md-dynamic-height>
+
+    {# {{{ News Section #}
+    <md-tab label="News">
+      <md-content>
+        {% if news %}
+          {# TODO: generate different card types (both randomly and per parent object type) #}
+          {% for n in news %}
+            {{ news_card(n, AUTH) }}
+          {% endfor %}
+        {% else %}
+          <br>
+          <p>There is no news to show at this time.</p>
+        {% endif %}
+      </md-content>
+    </md-tab>
+    {# }}} #}
+
+    {# {{{ Campaigns Section #}
+    {% if campaigns[0] %}
+      <md-tab label="Campaigns">
+        <md-content>
+          {% if campaigns[1] %}
+            {% for c in campaigns[1] %}
+              {{ campaign_card(c, AUTH) }}
+            {% endfor %}
+          {% else %}
+            <br>
+            <p>There are no campaigns to show at this time.</p>
+          {% endif %}
+        </md-content>
+      </md-tab>
+    {% endif %}
+    {# }}} #}
+
+    {# {{{ Gallery Section #}
+    <md-tab label="Gallery">
+      <md-content>
+        {{ parts.gallery() }}
+      </md-content>
+    </md-tab>
+    {# }}} #}
+
+
+  </md-tabs>
+{% endmacro %}
+{# }}} #}
