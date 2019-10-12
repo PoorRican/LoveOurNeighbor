@@ -493,6 +493,61 @@
 {# }}} #}
 
 
+{% macro ministry_card(ministry, AUTH=False) %}
+
+  <md-card>
+    {% if ministry.banner_img %}
+      <img src="{{ campaign.banner_img.url }}" class="md-card-image">
+    {% endif %}
+
+    <md-card-title>
+      <md-truncate class="md-headline">
+        <a href="#{{ ministry.url }}" style="color: black; text-decoration: none;">
+          {{ ministry.name }}
+        </a>
+      </md-truncate>
+      {% if AUTH %}
+        <md-menu>
+          <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
+            <md-icon class="color: black">
+              <i class="material-icons">arrow_drop_down</i>
+            </md-icon>
+          </md-button>
+          <md-menu-content>
+            {% for opt in ministry_admin_urls(campaign) %}
+              <md-menu-item>
+                <md-button ng-href="#{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                  <md-icon>
+                    <i class="material-icons">{{ opt['icon'] }}</i>
+                  </md-icon>&nbsp;
+                  {{ opt['label'] }}
+                </md-button>
+              </md-menu-item>
+            {% endfor %}
+          </md-menu-content>
+        </md-menu>
+      {% endif %}
+    </md-card-title>
+
+    <md-card-actions layout="row" layout-align="end center" layout-align-gt-sm="start center">
+      {# TODO: show tooltips #}
+      <md-button class="md-icon-button"
+                 ng-href="#{{ campaign.url }}">
+        <i class="material-icons">open_in_new</i>
+      </md-button>
+    </md-card-actions>
+
+    <md-card-content style="min-height: 50px">
+      <md-truncate>
+        {{ ministry.description | safe }}
+      </md-truncate>
+    </md-card-content>
+
+  </md-card>
+
+{% endmacro %}
+
+
 {# {{{ Card Area #}
 {% macro card_area(news, campaigns=(False, []), AUTH=None) %}
   <md-tabs md-dynamic-height>
