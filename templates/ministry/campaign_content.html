@@ -2,6 +2,7 @@
     templates/ministry/campaign_content.html
 #}
 {% import "parts.html" as parts %}
+{% import "cards.html" as card %}
 
 <section class="wrapper" xmlns="">
   <!-- ministry/campaign_content -->
@@ -254,13 +255,17 @@
             {% if start %}
               <p>Finish your campaign to start posting what God has done already</p>
             {% elif not start %}
-              {# TODO: list NewsPost objects as cards or md-list #}
-              <a href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}"
-               style="text-decoration: none;">
-                <md-button class="md-raised md-accent">
-                  Create News
-                </md-button>
-              </a>
+              <br>
+              <md-button class="md-accent" style="text-decoration: none;"
+                         href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}">
+                <md-icon>
+                  <i class="material-icons">add</i>
+                </md-icon>
+                Create News Post
+              </md-button>
+              {% for news in campaign.news.all() %}
+                {{ card.news_card(news, AUTH=True) }}
+              {% endfor %}
             {% endif %}
           </md-tab-body>
         </md-tab>

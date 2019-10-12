@@ -2,6 +2,7 @@
     templates/ministry/ministry_content.html
 #}
 {% import "parts.html" as parts %}
+{% import "cards.html" as card %}
 {# TODO: total donated amount #}
 
 <section class="wrapper">
@@ -458,21 +459,19 @@
           {% if start %}
             <p>Finish creating your ministry before starting a campaign.</p>
           {% elif not start %}
-
+            <br>
             {# TODO: differentiate between current and previous fundraisers #}
-            <a href="#{{ url_for('ministry:create_campaign', kwargs={'ministry_id': ministry.id}) }}">
-              Create a new fundraiser
-            </a>
+            <md-button class="md-accent" style="color: white; text-decoration: none;"
+                       ng-href="#{{ url_for('ministry:create_campaign', kwargs={'ministry_id': ministry.id}) }}">
+              <md-icon>
+                <i class="material-icons">add</i>
+              </md-icon>
+              New Campaign
+            </md-button>
 
-            <ul>
-              {% for campaign in ministry.campaigns.all() %}
-                <li>
-                  <a href="#{{ campaign.url }}">
-                    {{ campaign }}
-                  </a>
-                </li>
-              {% endfor %}
-            </ul>
+            {% for campaign in ministry.campaigns.all() %}
+              {{ card.campaign_card(campaign, AUTH=True) }}
+            {% endfor %}
 
           {% endif %}
           </md-tab-body>
