@@ -270,24 +270,25 @@
       </md-tabs>
 
       {# {{{ Form Buttons #}
-      {# TODO: choose better place for buttons #}
-      <div id="form_buttons" layout="row">
-        <md-button style="position: fixed; bottom: 75px; right: 10%;" class="md-fab md-primary" type="submit">
+      <div id="form_buttons" layout-align-gt-sm="end" layout-gt-sm="row" layout="column">
+        {# TODO: implement DOUBLE dialog confirmation upon deletion #}
+        <md-button class="md-raised md-primary" type="submit" flex-gt-sm="25">
           <md-icon>
             <i class="material-icons">save</i>
           </md-icon>
+          Save
         </md-button>
 
         {% if not start and campaign %}
-        <br><br>
-        <md-button class="md-icon-button md-raised md-warn">
-          <a style="color: #FFF; text-decoration: none;" href="{{ url_for('ministry:delete_campaign', kwargs={'campaign_id': campaign.id}) }}">
+          <br>
+          <md-button class="md-warn" style="text-decoration: none;"
+                     href="{{ url_for('ministry:delete_campaign', kwargs={'campaign_id': campaign.id}) }}"
+                     flex-order-gt-sm="-1">
             <md-icon>
               <i class="material-icons">delete</i>
             </md-icon>
-          </a>
-          {# TODO: implement DOUBLE dialog confirmation #}
-        </md-button>
+            Delete
+          </md-button>
         {% endif %}
 
       </div><!-- /#form_buttons -->

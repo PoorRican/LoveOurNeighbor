@@ -495,21 +495,24 @@
       </md-tabs>
 
       {# {{{ Form Buttons #}
-      <div id="form_buttons" layout="row">
+      <div id="form_buttons" layout-align-gt-sm="end" layout-gt-sm="row" layout="column">
         {# TODO: implement DOUBLE dialog confirmation upon deletion #}
-        {# TODO: implement FAB toolbar #}
-        <md-button style="position: fixed; bottom: 75px; right: 10%; z-index: 500" class="md-fab md-primary" type="submit">
+        <md-button class="md-primary md-raised" type="submit" flex-gt-sm="25">
           <md-icon>
             <i class="material-icons">save</i>
           </md-icon>
+          Save
         </md-button>
 
         {% if not start and ministry %}
-          <md-button class="md-icon-button md-raised md-warn"
-                     ng-href="{{ url_for('ministry:delete_ministry', kwargs={'ministry_id': ministry.id}) }}">
+          <br>
+          <md-button class="md-warn" style="text-decoration: none;"
+                     href="{{ url_for('ministry:delete_ministry', kwargs={'ministry_id': ministry.id}) }}"
+                     flex-order-gt-sm="-1">
             <md-icon>
               <i class="material-icons">delete</i>
             </md-icon>
+            Delete
           </md-button>
         {% endif %}
       </div><!-- /#form_buttons -->

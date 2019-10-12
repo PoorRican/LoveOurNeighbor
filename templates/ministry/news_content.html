@@ -43,18 +43,28 @@
 
       </md-input-container>
 
-      <md-button class="md-raised md-primary" type="submit">Save</md-button>
-
-      {% if not start and post %}
-
-        <md-button class="md-raised md-warn">
-          <a style="color: #FFF; text-decoration: none;" href="{{ url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
-            Delete
-          </a>
-          {# TODO: implement DOUBLE dialog confirmation #}
+      <div id="form_buttons" layout-align-gt-sm="end" layout-gt-sm="row" layout="column">
+        {# TODO: implement DOUBLE dialog confirmation upon deletion #}
+        <md-button class="md-raised md-primary" type="submit" flex-gt-sm="25">
+          <md-icon>
+            <i class="material-icons">save</i>
+          </md-icon>
+          Save
         </md-button>
 
-      {% endif %}
+        {% if not start and post %}
+          <br>
+          <md-button class="md-warn" style="text-decoration: none;"
+                     href="{{ url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}"
+                     flex-order-gt-sm="-1">
+            <md-icon>
+              <i class="material-icons">delete</i>
+            </md-icon>
+            Delete
+          </md-button>
+        {% endif %}
+      </div><!-- /#form_buttons -->
+
     </div>
 
   </form>
