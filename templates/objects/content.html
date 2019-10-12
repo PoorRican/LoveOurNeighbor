@@ -374,10 +374,12 @@
 
     <md-card-title>
       <md-truncate class="md-title">
-        {{ post.title }}
+        <a href="#{{ post.url }}" style="color: black; text-decoration: none;">
+          {{ post.title }}
+        </a>
       </md-truncate>
     </md-card-title>
-    <md-card-actions layout="row" layout-align="start center">
+    <md-card-actions layout="row" layout-align="end center" layout-align-gt-sm="start center">
       <md-button class="md-icon-button">
         <i class="material-icons">comment</i>
       </md-button>
@@ -445,7 +447,9 @@
     {% endif %}
     <md-card-title>
       <md-truncate class="md-headline">
-        {{ campaign.title }}
+        <a href="#{{ campaign.url }}" style="color: black; text-decoration: none;">
+          {{ campaign.title }}
+        </a>
       </md-truncate>
       {% if AUTH %}
         <md-menu>
@@ -469,7 +473,7 @@
         </md-menu>
       {% endif %}
     </md-card-title>
-    <md-card-actions layout="row" layout-align="start center">
+    <md-card-actions layout="row" layout-align="end center" layout-align-gt-sm="start center">
     {# TODO: show tooltips #}
       <md-button class="md-icon-button">
         <i class="material-icons">comment</i>
