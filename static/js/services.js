@@ -551,4 +551,30 @@ function shareThisWrapper($timeout) {
   }
 }
 
+
+// Deletion Confirmation Dialog Service
+nav_layout.factory('confirmDeleteDialogService', confirmDeleteDialogService);
+confirmDeleteDialogService.$inject = ['$mdDialog'];
+
+function confirmDeleteDialogService($mdDialog) {
+  return {
+    'close': close,
+    'show': show
+  };
+
+  function close() {
+    $mdDialog.hide();
+  }
+
+  function show(ev, name) {
+    console.log('test');
+    $mdDialog.show({
+      contentElement: '#' + name,
+      targetEvent: ev,
+      clickOutsideToClose: false,
+      fullscreen: true
+    })
+  }
+}
+
 // vim:foldmethod=syntax shiftwidth=2 tabstop=2:

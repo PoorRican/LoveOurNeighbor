@@ -108,9 +108,9 @@ function campaignCtrl($scope, $routeParams, $timeout, objectService, likeButtonS
 }
 
 nav_layout.controller('campaignActionCtrl', campaignActionCtrl);
-campaignActionCtrl.$inject = ['$scope', '$routeParams', 'tagService', 'objectService', 'bannerImageService'];
+campaignActionCtrl.$inject = ['$scope', '$routeParams', 'tagService', 'objectService', 'bannerImageService', 'confirmDeleteDialogService'];
 
-function campaignActionCtrl($scope, $routeParams, tagService, objectService, bannerImageService) {
+function campaignActionCtrl($scope, $routeParams, tagService, objectService, bannerImageService, confirmDeleteDialogService) {
   // TODO: change title block
 
   $scope.currentNavItem = 'Home';
@@ -136,6 +136,8 @@ function campaignActionCtrl($scope, $routeParams, tagService, objectService, ban
     $scope.select_profile_img = select_profile_img;
     $scope.profile_img_dialog = bannerImageService;
     $scope.selected_profile_img = $scope.profile_img_dialog.selected;
+
+    $scope.confirmDelete = confirmDeleteDialogService;
 
     activate();
 
@@ -280,9 +282,9 @@ function ministryCtrl($scope, $routeParams, $timeout, objectService, likeButtonS
 }
 
 nav_layout.controller('ministryActionCtrl', ministryActionCtrl);
-ministryActionCtrl.$inject = ['$scope', '$location', '$routeParams', 'tagService', 'userFilterService', 'objectService', 'bannerImageService'];
+ministryActionCtrl.$inject = ['$scope', '$location', '$routeParams', 'tagService', 'userFilterService', 'objectService', 'bannerImageService', 'confirmDeleteDialogService'];
 
-function ministryActionCtrl($scope, $location, $routeParams, tagService, userFilterService, objectService, bannerImageService) {
+function ministryActionCtrl($scope, $location, $routeParams, tagService, userFilterService, objectService, bannerImageService, confirmDeleteDialogService) {
   // TODO: change title block
 
   $scope.currentNavItem = null;
@@ -305,6 +307,8 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
     $scope.select_profile_img = select_profile_img;
     $scope.profile_img_dialog = bannerImageService;
     $scope.selected_profile_img = $scope.profile_img_dialog.selected;
+
+    $scope.confirmDelete = confirmDeleteDialogService;
 
 
     if ($routeParams.ministry_action === 'edit') {

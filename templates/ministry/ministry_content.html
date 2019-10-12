@@ -507,7 +507,7 @@
         {% if not start and ministry %}
           <br>
           <md-button class="md-warn" style="text-decoration: none;"
-                     href="{{ url_for('ministry:delete_ministry', kwargs={'ministry_id': ministry.id}) }}"
+                     ng-click="confirmDelete.show($event, 'deleteContent')"
                      flex-order-gt-sm="-1">
             <md-icon>
               <i class="material-icons">delete</i>
@@ -515,7 +515,28 @@
             Delete
           </md-button>
         {% endif %}
-      </div><!-- /#form_buttons -->
+        <div style="visibility: hidden;">
+          <div class="md-dialog-container" id="deleteContent">
+            <md-dialog layout-padding>
+              <md-dialog-content>
+                <h2>Are you sure?</h2>
+                <p>Please confirm that you want to delete this ministry. This cannot be undone.</p>
+              </md-dialog-content>
+
+              <md-dialog-actions layout="row">
+                <md-button class="md-primary" ng-click="confirmDelete.close()">Cancel</md-button>
+                <md-button class="md-warn" style="text-decoration: none;"
+                           href="{{ url_for('ministry:delete_ministry', kwargs={'ministry_id': ministry.id}) }}">
+                  <md-icon>
+                    <i class="material-icons">delete</i>
+                  </md-icon>
+                  Delete
+                </md-button>
+              </md-dialog-actions>
+
+            </md-dialog>
+          </div>
+        </div><!-- /#form_buttons -->
       {# }}} #}
 
     </div><!-- /.md-inline-form -->

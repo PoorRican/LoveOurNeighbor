@@ -282,7 +282,7 @@
         {% if not start and campaign %}
           <br>
           <md-button class="md-warn" style="text-decoration: none;"
-                     href="{{ url_for('ministry:delete_campaign', kwargs={'campaign_id': campaign.id}) }}"
+                     ng-click="confirmDelete.show($event, 'deleteContent')"
                      flex-order-gt-sm="-1">
             <md-icon>
               <i class="material-icons">delete</i>
@@ -290,6 +290,29 @@
             Delete
           </md-button>
         {% endif %}
+
+        <div style="visibility: hidden;">
+          <div class="md-dialog-container" id="deleteContent">
+            <md-dialog layout-padding>
+              <md-dialog-content>
+                <h2>Are you sure?</h2>
+                <p>Please confirm that you want to delete this campaign. This cannot be undone.</p>
+              </md-dialog-content>
+
+              <md-dialog-actions layout="row">
+                <md-button class="md-primary" ng-click="confirmDelete.close()">Cancel</md-button>
+                <md-button class="md-warn" style="text-decoration: none;"
+                           href="{{ url_for('ministry:delete_campaign', kwargs={'campaign_id': campaign.id}) }}">
+                  <md-icon>
+                    <i class="material-icons">delete</i>
+                  </md-icon>
+                  Delete
+                </md-button>
+              </md-dialog-actions>
+
+            </md-dialog>
+          </div>
+        </div>
 
       </div><!-- /#form_buttons -->
       {# }}} #}
