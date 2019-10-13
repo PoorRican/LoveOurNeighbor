@@ -104,23 +104,64 @@
           Ministries
         </md-tab-label>
         <md-tab-body>
+
+          <md-button class="md-accent" style="text-decoration: none;"
+                     ng-href="#{{ url_for('ministry:create_ministry') }}">
+            <md-icon>
+              <i class="material-icons">add</i>
+            </md-icon>
+            New Ministry
+          </md-button>
+
           {% if len(request.user.administers.all()) %}
-            <h1>Ministries You Administer:</h1>
 
-            {# TODO: implement md-list #}
-            <ul>
-            {% for ministry in request.user.administers.all() %}
-                <li><a href="#{{ ministry.url }}">{{ ministry }}</a></li>
-            {% endfor %}
-            </ul>
-
-            <a href="#{{ url_for('ministry:create_ministry') }}"><p>Create a new ministry</p></a>
+            <md-list>
+              <md-subheader>Ministries You Administer:</md-subheader>
+              {% for ministry in request.user.administers.all() %}
+                <md-list-item class="md-2-line" ng-href="#{{ ministry.url }}">
+                  <img src="{{ ministry.profile_img.url }}" class="md-avatar" alt="{{ ministry.name }}">
+                  <div class="md-list-item-text" layout="column">
+                    <h3>
+                      {{ ministry.name }}
+                    </h3>
+                  </div>
+                  <md-button class="md-secondary md-icon-button" ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
+                    <md-icon>
+                      <i class="material-icons">settings</i>
+                    </md-icon>
+                  </md-button>
+                </md-list-item>
+              {% endfor %}
+            </md-list>
 
           {% else %}
 
             <a href="#{{ url_for('ministry:create_ministry') }}"><p>Would you like to create a profile for your Ministry?</p></a>
 
           {% endif %}
+          {% if len(request.user.represents.all()) %}
+
+            <md-list>
+              <md-subheader>Ministries You Represent:</md-subheader>
+              {% for ministry in request.user.represents.all() %}
+                <md-list-item class="md-2-line" ng-href="#{{ ministry.url }}">
+                  <img src="{{ static("media" + ministry.profile_img) }}" class="md-avatar" alt="{{ ministry.name }}">
+                  <div class="md-list-item-text" layout="column">
+                    <h3>
+                      {{ ministry.name }}
+                    </h3>
+                  </div>
+                  <md-button class="md-secondary md-icon-button" ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
+                    <md-icon>
+                      <i class="material-icons">settings</i>
+                    </md-icon>
+                  </md-button>
+                </md-list-item>
+              {% endfor %}
+            </md-list>
+
+          {% endif %}
+
         </md-tab-body>
       </md-tab>
       {# }}} #}
