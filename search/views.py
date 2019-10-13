@@ -25,7 +25,7 @@ def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
     for i in ministries:
         _ministry = serialize_ministry(i)
 
-        _ministry['type'] = 'minsitry'
+        _ministry['type'] = 'ministry'
         _ministry['url'] = reverse('ministry:ministry_profile',
                                    kwargs={'ministry_id': i.id})
         if request:

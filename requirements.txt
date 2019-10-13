@@ -3,3 +3,5 @@ jinja2
 django
 pyyaml
 pillow
+django-ipware
+requests
