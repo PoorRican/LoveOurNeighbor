@@ -89,6 +89,13 @@ def be_me_again(request):
     This is initiated after deliberate user action
     """
     clear_previous_ministry_login(request, request.user)
+
+    if request.user.display_name is not '':
+        _w = request.user.display_name
+    else:
+        _w = request.user.email
+    messages.add_message(request, messages.INFO, "Logged in as %s" % _w)
+
     _url = "/#%s" % reverse('people:user_profile')
     return HttpResponseRedirect(_url)
 

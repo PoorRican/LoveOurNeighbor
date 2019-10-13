@@ -69,10 +69,6 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
       );
     }
   }
-  if ($routeParams.ministry_action === 'login') {
-    $location.url('/ministry/' + $routeParams.ministry_id);
-    location.reload();
-  }
 
   ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);
 }
