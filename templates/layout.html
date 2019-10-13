@@ -103,56 +103,6 @@
 
   <!-- Angular Material Library -->
   <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
-
-
-  <script>
-
-    var nav_layout = angular.module('loveOurNeighborApp',
-      ['ngMaterial', 'ngRoute', 'ngParallax', 'ngMessages', 'ui.tinymce']);
-
-    // Layout controller and config //
-    nav_layout.controller('LayoutCtrl', LayoutCtrl);
-
-    LayoutCtrl.$inject = ['$scope', '$location', 'searchBarService', 'commentService', 'sideNavService', 'notificationService', 'shareThisWrapper'];
-
-    function LayoutCtrl($scope, $location, searchBarService, commentService, sideNavService, notificationService, shareThisWrapper) {
-
-      $scope.sidenav = sideNavService;
-
-      $scope.search = searchBarService.search;
-      $scope.comment = commentService;
-      $scope.share = shareThisWrapper;
-
-      $scope.goto = function (url) {
-        $location.url(url);
-      };
-
-      notificationService.update();
-
-      $scope.tinymceOptions = {
-        height: 500,
-        max_height: 750,
-        min_width: 300,
-        width: 650,
-        resize: true,
-        mobile: {
-          theme: 'mobile',
-//          toolbar: [ 'undo', 'bold', 'italic', 'styleselect' ]
-        }
-      }
-
-    }
-    nav_layout.config(function($mdThemingProvider) {
-      $mdThemingProvider.theme('default')
-        .primaryPalette('orange')
-        .accentPalette('purple')
-    });
-
-    nav_layout.config(['$httpProvider', function($httpProvider) {
-      $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-      $httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token }}';
-    }])
-  </script>
   {# }}} #}
 
   {# {{{ Other JS #}
@@ -161,10 +111,6 @@
     [
       'jquery-2.1.1.min.js',
       'ngParallax.min.js',
-      'filters.js',
-      'services.js',
-      'routes.js',
-      'controllers.js',
       'angularjs_tinymce.min.js',
     ]
   -%}
@@ -172,6 +118,10 @@
   {%- for s in scripts %}
       <script type="text/javascript" src="{{ static("js/%s" % s) }}"></script>
   {% endfor -%}
+
+  {% assets "angular_js" %}
+    <script type="application/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
 
   <!-- WYSIWYG Editor -->
   {% set TINY_API_KEY = 'ropl0dvkzt3bbjqb9e8dk06ff578n2fkfvgun5yxa1zgb234' %}

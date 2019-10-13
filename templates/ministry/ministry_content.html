@@ -461,7 +461,7 @@
           {% elif not start %}
             <br>
             {# TODO: differentiate between current and previous fundraisers #}
-            <md-button class="md-accent" style="color: white; text-decoration: none;"
+            <md-button class="md-accent" style="text-decoration: none;"
                        ng-href="#{{ url_for('ministry:create_campaign', kwargs={'ministry_id': ministry.id}) }}">
               <md-icon>
                 <i class="material-icons">add</i>
@@ -471,6 +471,8 @@
 
             {% for campaign in ministry.campaigns.all() %}
               {{ card.campaign_card(campaign, AUTH=True) }}
+            {% else %}
+              <p>You have no fundraising campaigns at this time.</p>
             {% endfor %}
 
           {% endif %}

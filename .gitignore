@@ -5,6 +5,8 @@
 *.pyc
 *.pyo
 
+/venv/
+
 # vim temp files
 *.sw[a-z]
 
@@ -14,3 +16,7 @@ db.*
 
 # media stuff
 static/media/*
+
+# webassets bundled contents
+static/js/packed.js
+/static/js/.webassets-cache/

@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'donation.apps.DonationConfig',
     'explore.apps.ExploreConfig',
 
+    'django_assets',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -166,3 +168,9 @@ STATICFILES_DIRS = (
 )
 MEDIA_ROOT = 'static/media/'
 MEDIA_URL = 'static/media/'
+
+ASSETS_MODULES = [
+    'frontend.assets'
+]
+
+ASSETS_URL = '/static/'

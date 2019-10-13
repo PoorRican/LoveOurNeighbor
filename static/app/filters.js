@@ -1,10 +1,10 @@
-nav_layout.filter('stripHTML', function() {
+angular.module('LON').filter('stripHTML', function() {
   return function(text) {
     return  text ? String(text).replace(/<[^>]+>/gm, '  ') : '  ';
   };
 });
 
-nav_layout.filter('withinDistance', function() {
+angular.module('LON').filter('withinDistance', function() {
   return function(items, distance) {
     if (items) {
       var results = [];
