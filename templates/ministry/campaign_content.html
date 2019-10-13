@@ -74,12 +74,13 @@
 
                 <div hide-gt-sm>
                   <label for="start_date">{{ form.start_date.label }}</label>
-                  <input id="start_date" type="date" ng-model="object.start_date">
+                  <input id="start_date" type="date" ng-model="object.start_date" required>
                 </div>
 
                 <div hide-sm hide-xs>
                   <md-subheader>{{ form.start_date.label }}</md-subheader>
-                  <md-calendar required id="{{ form.start_date.id_for_label }}" ng-model="object.start_date"></md-calendar>
+                  <md-calendar id="{{ form.start_date.id_for_label }}" ng-model="object.start_date"
+                               required></md-calendar>
                 </div>
 
               </div>
@@ -90,12 +91,12 @@
 
                 <div hide-gt-sm>
                   <label for="end_date">{{ form.end_date.label }}</label>
-                  <input id="end_date" type="date" ng-model="object.end_date">
+                  <input id="end_date" type="date" ng-model="object.end_date" required>
                 </div>
 
                 <div hide-sm hide-xs>
                   <md-subheader>{{ form.end_date.label }}</md-subheader>
-                  <md-calendar required id="{{ form.end_date.id_for_label }}" ng-model="object.end_date"></md-calendar>
+                  <md-calendar id="{{ form.end_date.id_for_label }}" ng-model="object.end_date" required></md-calendar>
                 </div>
               </div>
               {# }}} #}
