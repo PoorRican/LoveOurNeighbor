@@ -100,6 +100,12 @@ function config($locationProvider, $routeProvider) {
     },
     controller: 'searchTagCtrl'
   })
+  .otherwise({
+      templateUrl: function() {
+        return '/error'
+      }
+    }
+  )
 }
 
 

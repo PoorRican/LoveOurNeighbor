@@ -35,6 +35,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.root),
     path('favicon.ico', favicon_view),
+    path('error', views.error),
 
     # Main Pages
     path('t/home', views.home),

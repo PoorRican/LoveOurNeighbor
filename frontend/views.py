@@ -96,3 +96,7 @@ def faq(request):
     faqs = FaqSection.objects.all()
     context = {'faqs': faqs}
     return render(request, "faq.html", context)
+
+
+def error(request):
+    return render(request, "error.html")
