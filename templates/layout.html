@@ -39,24 +39,16 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     {# Local Scripts #}
-    {# TODO: minify and fetch these from CDN while on production #}
-    {%- set stylesheets =
-      [
-        'animations.css',
-        'header.css',
-        'body.css',
-        'footer.css',
-        'LON.css'
-      ]
-    -%}
-    {% for s in stylesheets %}
-      <link rel="stylesheet" href="{{ static('css/%s' % s) }}" type="text/css">
-    {% endfor %}
+    {# TODO: fetch these from CDN while on production #}
+    {% assets "css" %}
+      <link rel="stylesheet" href="{{ ASSET_URL }}">
+    {% endassets %}
+
     {# }}} #}
 
   </head>
 
-  <body ng-app="loveOurNeighborApp">
+  <body ng-app="LON">
 
   <div ng-controller="LayoutCtrl">
 

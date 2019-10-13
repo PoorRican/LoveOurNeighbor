@@ -6,7 +6,8 @@ from jinja2 import Environment
 from webassets import Environment as AssetsEnvironment
 from webassets.ext.jinja2 import AssetsExtension
 
-from frontend.assets import angular_js
+from frontend.settings import ASSETS_DEBUG, ASSETS_AUTO_BUILD
+from frontend.assets import angular_js, css
 
 from .utils import (
     friendly_time,
@@ -15,8 +16,9 @@ from .utils import (
     )
 
 # Manually register Bundles for webassets (for some reason django_assets is not working)
-_assets = AssetsEnvironment('./static/js', 'static/js')
+_assets = AssetsEnvironment('./static', 'static', debug=ASSETS_DEBUG, auto_build=ASSETS_AUTO_BUILD)
 _assets.register('angular_js', angular_js)
+_assets.register('css', css)
 
 
 def environment(**options):

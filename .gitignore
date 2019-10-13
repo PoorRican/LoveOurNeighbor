@@ -15,8 +15,10 @@ db.*
 */migrations/*
 
 # media stuff
-static/media/*
+static/media/
 
 # webassets bundled contents
-static/js/packed.js
-/static/js/.webassets-cache/
+static/assets/
+static/.webassets-cache/
+static/*/.webassets-cache/
+static/*/webassets-external/

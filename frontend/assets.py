@@ -8,6 +8,7 @@ fn = ['app.module.js', 'app.config.js', 'filters.js', 'routes.js']
 _path = join(BASE_DIR, "static/app/")
 _dirs = ('campaign', 'donations', 'layout', 'ministry', 'news', 'people', 'search', 'services', 'static')
 
+# iterate through `static/app` directory and crawl for relevant .js files
 for _ in _dirs:
     _dir = join(_path, _)
     files = ls(_dir)
@@ -15,5 +16,11 @@ for _ in _dirs:
 
 fn = [join(_path, i) for i in fn]                   # join the filepath with `_path`
 
-angular_js = Bundle(*fn, filters='jsmin', output='packed.js')
+angular_js = Bundle(*fn, filters='jsmin', output='assets/packed.js')
+
+_css = ('body.css', 'footer.css', 'header.css', 'LON.css')
+css = Bundle(*[join('css', i) for i in _css], filters='cssmin', output='assets/packed.css')
+
+
 register('angular_js', angular_js)
+register('css', css)
