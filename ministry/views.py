@@ -71,8 +71,10 @@ def create_ministry(request):
             # handle custom form attributes
             ministry = min_form.save(commit=False)      # `ministry` is type MinistryProfile
             ministry.admin = request.user  # set the admin as the user responsible for creating the page
-            if min_form['social_media']:
-                ministry.social_media = json.loads(min_form['social_media'].value())
+            if request.POST['social_media']:
+                ministry.social_media = json.loads(request.POST['social_media'])
+            else:
+                ministry.social_media = []              # convert something to pickle
             ministry.save()                             # object must exist before relationships with other objects
 
             # handle relationships with other objects
@@ -626,7 +628,6 @@ def delete_news(request, post_id):
             messages.add_message(request, messages.ERROR, _feedback)
     elif not ministry:
         _feedback = "UNKOWN ERROR: NewsPost '%s' was malformatted!" % post.id
-        print("NewsPost '%s' was malformatted!" % post.id)
         messages.add_message(request, messages.ERROR, _feedback)
     else:
         _feedback = "You don't have permissions to be deleting this NewsPost object!"
@@ -684,6 +685,7 @@ def create_campaign(request, ministry_id):
             return HttpResponseRedirect(_url)
         else:
             # TODO: properly return form errors
+            print("Form Errors: ")
             print(cam_form.errors)
     else:
         _form = CampaignEditForm()
@@ -860,8 +862,6 @@ def campaign_gallery_json(request, campaign_id):
         if i.attachment is not None:
             gallery.append(i)
     gallery.sort(key=lambda np: np.pub_date, reverse=True)
-
-    print(gallery)
 
     _gallery = []
     try:

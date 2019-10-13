@@ -73,7 +73,7 @@ class MinistryProfile(models.Model):
     founded = models.DateField(blank=True, null=True)
     pub_date = models.DateField(auto_now_add=True)
     staff = models.SmallIntegerField(default=1)
-    _social_media = models.BinaryField(max_length=1024, default="")
+    _social_media = models.BinaryField(max_length=1024, default="", null=True)
 
     # Ministry Content
     description = models.TextField(blank=True, null=True)
