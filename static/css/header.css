@@ -50,6 +50,8 @@ nav a.md-unselected {
   font-size: 22px;
   margin: auto 10px auto auto;
   text-decoration: none;
+  color: white !important;
+  font-weight: 400;
 }
 .profile-area .login {
   font-size: 18px;
