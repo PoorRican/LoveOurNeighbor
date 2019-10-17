@@ -103,17 +103,7 @@
             </div>
             {# }}} #}
 
-          </md-tab-body>
-        </md-tab>
-        {# }}} #}
-
-        {# {{{ Content Section #}
-        <md-tab>
-          <md-tab-label>
-            <md-icon><i class="material-icons">description</i></md-icon>&nbsp;
-            Content
-          </md-tab-label>
-          <md-tab-body>
+            <br>
 
             {# {{{ INPUT banner_img #}
             {# TODO: show custom file selector displaying previous images #}
@@ -203,7 +193,6 @@
             {# }}} #}
             {# {{{ INPUT content (WYSIWYG editor) #}
             <md-input-container>
-              {# TODO: render WYSIWYG editor #}
               <md-icon><i class="material-icons">subject</i></md-icon>
               {{ form.content.label_tag() }}
               {% if start %}
