@@ -1,4 +1,4 @@
-{% import "parts.html" as parts %}
+{% from "misc_layout.html" import section_start, section_close %}
 
   <div class="col s12 m9 l10 scroll-content">
     {% for i in faqs %}
@@ -7,12 +7,12 @@
         </div>
       </div>
 
-      {{ parts.section_start(i.title) }}
+      {{ section_start(i.title) }}
 
       <h1>{{ i.title }}</h1>
       <p>{{ i.content|safe }}</p>
 
-      {{ parts.section_close() }}
+      {{ section_close() }}
 
     {% endfor %}
 

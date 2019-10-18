@@ -1,0 +1,12 @@
+{% macro searchbar(sidenav=False) %}
+  <div layout="row" class="search-bar" {% if not sidenav %}hide-xs hide-sm hide-md{% endif %}>
+    <form method="GET" ng-submit="search(query)">
+      {% if not sidenav %}
+        <md-icon flex="10">
+          <i class="material-icons" style="color: white">search</i>
+        </md-icon>
+      {% endif %}
+      <input ng-model="query" placeholder="Search"{% if not sidenav %} flex="80"{% endif %}>
+    </form>
+  </div>
+{% endmacro %}

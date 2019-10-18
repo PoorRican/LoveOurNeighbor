@@ -1,7 +1,7 @@
 {# vim: foldmethod=marker tabstop=2 shiftwidth=2:
-    templates/ministry/campaign_content.html
+    templates/campaign/edit_campaign.html
 #}
-{% import "parts.html" as parts %}
+{% from "wysiwyg_editor.html" import wysiwyg_editor %}
 {% import "cards.html" as card %}
 
 <section class="wrapper" xmlns="">
@@ -196,9 +196,9 @@
               <md-icon><i class="material-icons">subject</i></md-icon>
               {{ form.content.label_tag() }}
               {% if start %}
-                {{ parts.wysiwyg_editor(form.content.name) }}
+                {{ wysiwyg_editor(form.content.name) }}
               {% elif not start %}
-                {{ parts.wysiwyg_editor(form.content.name, 'object.content') }}
+                {{ wysiwyg_editor(form.content.name, 'object.content') }}
               {% endif %}
               <br><br>
               <div class="hint">Describe the project!</div>

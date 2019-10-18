@@ -1,7 +1,7 @@
 {# vim: foldmethod=marker tabstop=2 shiftwidth=2:
-    templates/ministry/news_content.html
+    templates/news/view_news.html
 #}
-{% import "parts.html" as parts %}
+{% from "wysiwyg_editor.html" import wysiwyg_editor %}
 
 <section class="wrapper">
   <!-- ministry/news_content -->
@@ -36,9 +36,9 @@
         {{ form.content.label_tag() }}
 
         {% if start %}
-          {{ parts.wysiwyg_editor(form.content.name) }}
+          {{ wysiwyg_editor(form.content.name) }}
         {% else %}
-          {{ parts.wysiwyg_editor(form.content.name, 'news_editor', value=post.content) }}
+          {{ wysiwyg_editor(form.content.name, 'news_editor', value=post.content) }}
         {% endif %}
 
       </md-input-container>

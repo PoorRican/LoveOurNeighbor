@@ -1,18 +1,18 @@
-{% import "parts.html" as parts %}
+{% from "misc_layout.html" import section_start, section_close %}
 
     <div>
     {% for i in about %}
-      <div class="parallax-container" style='height: 250;'>
+      <div class="parallax-container" style='height: 250px;'>
         <div ng-parallax class="parallax-img" pattern="'.{% if i.img_path %}{{ static(i.img_path) }}{% endif %}'" speed="1">
         </div>
       </div>
 
-      {{ parts.section_start(i.title) }}
+      {{ section_start(i.title) }}
 
       <h1>{{ i.title }}</h1>
       <p>{{ i.content|safe }}</p>
 
-      {{ parts.section_close() }}
+      {{ section_close() }}
 
     {% endfor %}
 

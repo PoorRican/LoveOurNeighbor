@@ -53,7 +53,7 @@ def create_ministry(request):
 
     Template
     --------
-    "ministry/ministry_content.html"
+    "ministry/edit_ministry.html"
 
     See Also
     --------
@@ -104,7 +104,7 @@ def create_ministry(request):
         _form = MinistryEditForm(initial={'website': 'https://'})
         context = {"form": _form,
                    "start": True}
-        return render(request, "ministry_content.html", context)
+        return render(request, "edit_ministry.html", context)
 
 
 @login_required
@@ -118,7 +118,7 @@ def edit_ministry(request, ministry_id):
 
     Template
     --------
-    "ministry/ministry_content.html"
+    "ministry/edit_ministry.html"
 
     See Also
     --------
@@ -203,7 +203,7 @@ def edit_ministry(request, ministry_id):
                 context = {"form": _form,
                            "ministry": ministry,
                            "start": False}
-                return render(request, "ministry_content.html", context)
+                return render(request, "edit_ministry.html", context)
         else:
             # this creates a recursive redirect as a deterrant
 
@@ -301,7 +301,7 @@ def ministry_profile(request, ministry_id):
 
     Template
     --------
-    "ministry/ministry.html"
+    "ministry/view_ministry.html"
 
     Note
     ----
@@ -332,7 +332,7 @@ def ministry_profile(request, ministry_id):
                'campaigns': _c,
                'form': comments,
                }
-    return render(request, "ministry.html", context)
+    return render(request, "view_ministry.html", context)
 
 
 @login_required
@@ -562,7 +562,7 @@ def create_news(request, obj_type, obj_id):
                    "start": True,
                    "kwargs": {'obj_type': obj_type, 'obj_id': obj_id}
                    }
-        return render(request, "news_content.html", context)
+        return render(request, "edit_news.html", context)
 
 
 @login_required
@@ -596,7 +596,7 @@ def edit_news(request, post_id):
             context = {"form": _form,
                        "post": post,
                        "start": False}
-            return render(request, "news_content.html", context)
+            return render(request, "edit_news.html", context)
     else:
         # TODO: have more meaningful error
         return HttpResponseRedirect("/")
@@ -654,7 +654,7 @@ def news_detail(request, post_id):
                'AUTH': AUTH,
                'form': comments,
                }
-    return render(request, "news_post.html", context)
+    return render(request, "view_news.html", context)
 
 
 # Campaign views
@@ -692,7 +692,7 @@ def create_campaign(request, ministry_id):
         context = {"form": _form,
                    "start": True,
                    "ministry": ministry}
-        return render(request, "campaign_content.html", context)
+        return render(request, "edit_campaign.html", context)
 
 
 @login_required
@@ -726,7 +726,7 @@ def edit_campaign(request, campaign_id):
                 context = {"form": _form,
                            "campaign": campaign,
                            "start": False}
-                return render(request, "campaign_content.html", context)
+                return render(request, "edit_campaign.html", context)
         else:
             # this creates a recursive redirect...
             #   i'm not against this being a deterrant
@@ -803,7 +803,7 @@ def campaign_detail(request, campaign_id):
                'all_news': all_news,
                'form': comments,
                }
-    return render(request, "campaign.html", context)
+    return render(request, "view_campaign.html", context)
 
 
 def campaign_json(request, campaign_id):

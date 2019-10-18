@@ -1,0 +1,80 @@
+{# vim: foldmethod=marker tabstop=2 shiftwidth=2:
+    templates/news/edit_news.html
+#}
+  <!-- ministry/news_post -->
+
+{# TODO: group by month and randomly (or scroll) through images per section #}
+<div class="section">
+  <article class="wrapper">
+
+    <p id="section-info">
+      <span>Published:</span>&nbsp;{{ post.pub_date.strftime("%h %d, %Y") }}
+    </p>
+
+    <h1>
+      {{ post.title.upper() }}
+
+      {# {{{ Action Menu #}
+      <md-menu>
+        <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
+          <md-icon>
+            <i class="material-icons">arrow_drop_down</i>
+          </md-icon>
+        </md-button>
+        <md-menu-content>
+          {% if AUTH %}
+            <md-menu-item>
+              <md-button ng-href="#{{ post.edit }}">
+                <md-icon>
+                  <i class="material-icons">create</i>
+                </md-icon>&nbsp;
+                Edit News Post
+              </md-button>
+            </md-menu-item>
+            <md-menu-item>
+              <md-button ng-href="{{url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}">
+                <md-icon>
+                  <i class="material-icons">delete</i>
+                </md-icon>&nbsp;
+                Delete News Post
+              </md-button>
+            </md-menu-item>
+            <md-menu-divider></md-menu-divider>
+          {% endif %}
+
+          <md-menu-item>
+            <md-button ng-href="#{{ post.url }}">
+              <md-icon>
+                <i class="material-icons">link</i>
+              </md-icon>&nbsp;
+              Link to news
+            </md-button>
+          </md-menu-item>
+        </md-menu-content>
+      </md-menu>
+      {# }}} #}
+
+    </h1>
+
+    {% if post.campaign %}
+      <h6>
+        <span>For:&nbsp;</span>
+        <a href="#{{ post.campaign.url }}">
+          {{ post.campaign }}
+        </a>
+      </h6>
+    {% endif %}
+
+    {% if post.attachment %}
+      <img src="{{ post.attachment.url }}" class="news_post_media">
+    {% endif %}
+
+    <p class="">{{ post.content|safe }}</p>
+
+    {{ comments_section(post, 'news_post', request, form=form, csrf_token=csrf_token) }}
+
+  </article>
+</div>
+
+<!-- Google Analytics Virtual Pageview -->
+<script>ga('send', 'pageview', 'news_post')</script>

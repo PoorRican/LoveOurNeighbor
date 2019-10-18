@@ -84,8 +84,15 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
         'DIRS': ['templates/',
-                 'templates/objects/',
+
+                 'templates/macros/',
+                 'templates/macros/parts',
+                 'templates/macros/layout',
+
                  'templates/ministry/',
+                 'templates/campaign/',
+                 'templates/news/',
+
                  'templates/donation/',
                  'templates/people/',
                  'templates/public/',

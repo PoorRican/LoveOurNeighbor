@@ -1,7 +1,7 @@
 {# vim: foldmethod=marker tabstop=2 shiftwidth=2:
-    templates/ministry/ministry_content.html
+    templates/ministry/edit_ministry.html
 #}
-{% import "parts.html" as parts %}
+{% from "wysiwyg_editor.html" import wysiwyg_editor %}
 {% import "cards.html" as card %}
 {# TODO: total donated amount #}
 
@@ -341,9 +341,9 @@
               <md-icon><i class="material-icons">subject</i></md-icon>
               {{ form.description.label_tag() }}
               {% if start %}
-                {{ parts.wysiwyg_editor(form.description.name) }}
+                {{ wysiwyg_editor(form.description.name) }}
               {% else%}
-                {{ parts.wysiwyg_editor(form.description.name, 'object.description') }}
+                {{ wysiwyg_editor(form.description.name, 'object.description') }}
               {% endif %}
               <br><br>
               <div class="hint">Describe yourself</div>

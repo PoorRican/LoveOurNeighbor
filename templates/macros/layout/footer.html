@@ -1,0 +1,81 @@
+{% macro footer() %}
+
+  <footer class="md-primary" layout-padding ng-cloak>
+    <div id="footer-content"
+         layout-align="space-between start"
+         layout="column" layout-gt-sm="row" flex="100">
+
+      {# {{{ Sitemap #}
+      <div id="sitemap"
+           layout="column" layout-align="center start"
+           flex-gt-sm="20">
+
+        <ul>
+          {%- for _link in links -%}
+            <li>
+              <a href="{{ _link[0] }}" name="{{ _link[1] }}">
+                {{ _link[1] }}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+
+      </div><!-- /#sitemap -->
+      {# }}} #}
+
+      {# {{{ Social Media Links #}
+      <div id="social-media-links"
+           layout="row"
+           layout-align="end start"
+           flex-gt-sm="25">
+        <a class="waves-effect waves-teal btn-flat">
+          <img src="{{ static('img/igram-icon.png') }}">
+        </a>
+        <a class="waves-effect waves-teal btn-flat">
+          <img src="{{ static('img/facebook-icon.png') }}">
+        </a>
+        {# TODO: import YouTube and other SM links #}
+      </div><!-- /#social-media-links -->
+      {# }}} #}
+
+    </div><!-- /#footer-content -->
+
+    {# TODO: move donate section beneath sitemap in mobile media view #}
+
+    <div layout="column" layout-gt-sm="row"
+         layout-align-gt-sm="space-between end">
+
+      <div id="footer-donate-button"
+           flex-gt-sm="50"
+           layout="column" layout-gt-sm="row"
+           layout-align-gt-sm="end center">
+        <md-button class="md-primary md-raised" style="margin: 0px; margin-right: 5px;"
+                   ng-href="/#{{ url_for('donation:admin_donation') }}">
+          Donate
+        </md-button>
+
+        <br hide-gt-sm>
+
+        <span>Love Our Neighbor does not take any money from the ministries you donate to.
+               Help support our mission by donating to Love Our Neighbor.</span>
+      </div><!-- /#donate-footer-button -->
+
+      <br hide-gt-sm>
+      <br hide-gt-sm>
+
+      <div id="footer-copyright"
+           flex-gt-sm="20"
+           layout="row"
+           layout-align="start start"
+           layout-align-gt-sm="end start">
+
+            <span>
+              © 2019 Love Our Neighbor
+            </span>
+      </div><!-- /#footer-copyright -->
+
+    </div>
+
+  </footer><!-- /#page-footer -->
+
+{% endmacro %}

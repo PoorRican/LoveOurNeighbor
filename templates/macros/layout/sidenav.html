@@ -1,0 +1,129 @@
+{% from "user_widget.html" import user_widget %}
+{% from "searchbar.html" import searchbar %}
+
+{% macro sidenav(request, links) %}
+
+  <md-sidenav class="md-sidenav-right md-whiteframe-4dp" id="sidenav"
+              md-component-id="right" layout="column" ng-cloak>
+
+    <md-toolbar layout="row">
+      <div class="md-toolbar-tools">
+
+        <div class="profile-area" ng-hide="searching" flex="70">
+          {{ user_widget(request, sidenav=True) }}
+        </div>
+
+        <md-button ng-hide="searching" ng-click="searching = !searching" class="md-icon-button">
+          <md-icon><i class="material-icons">search</i></md-icon>
+        </md-button>
+        <md-button ng-hide="!searching" ng-click="get_search()" class="md-icon-button">
+          <md-icon><i class="material-icons" style="color: white;">search</i></md-icon>
+        </md-button>
+        <div ng-if="searching" flex=70>
+          {{ searchbar(sidenav=True) }}
+        </div>
+
+        <md-button ng-hide="!searching" ng-click="searching = !searching" class="md-icon-button">
+          <md-icon><i class="material-icons">cancel</i></md-icon>
+        </md-button>
+        <md-button ng-if="!searching" ng-click="sidenav.close()" class="md-icon-button">
+          <md-icon>
+            <i class="material-icons" aria-hidden="true">close</i>
+          </md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    {% if request.user.is_authenticated %}
+      <md-list ng-if="switching" layout="column" ng-click="sidenav.close()">
+        <md-list-item class="md-line-1">
+          {% if request.user.logged_in_as %}
+            <md-button ng-href="{{ url_for('people:be_me_again') }}">
+              Your Profile
+            </md-button>
+          {% else %}
+            <md-button ng-href="#{{ url_for('people:user_profile') }}">
+              Your Profile
+            </md-button>
+          {% endif %}
+        </md-list-item>
+
+        {% if len(request.user.administers.all()) %}
+          <md-divider></md-divider>
+          <md-list-item class="md-line-1">
+            <md-button disabled>
+              Ministries You Administer:
+            </md-button>
+          </md-list-item>
+          {% for ministry in request.user.administers.all() %}
+            {% set ALIAS = (request.user.logged_in_as == ministry) %}
+            <md-list-item class="md-line-1">
+              <md-button ng-href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"{% if ALIAS %} class="md-primary"{% endif %}>
+                {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
+                {{ ministry }}
+              </md-button>
+              <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}" class="md-icon-button">
+                <i class="material-icons">settings</i>
+              </md-button>
+            </md-list-item>
+          {% endfor %}
+        {% endif %}
+
+        {% if len(request.user.represents.all()) %}
+          <md-divider></md-divider>
+          <md-list-item class="md-line-1">
+            <md-button disabled>
+              Ministries You Represent:
+            </md-button>
+          </md-list-item>
+          {% for ministry in request.user.represents.all() %}
+            {% set ALIAS = (request.user.logged_in_as == ministry) %}
+            <md-list-item class="md-line-1">
+              <md-button ng-href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"{% if ALIAS %} class="md-primary"{% endif %}>
+                {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
+                {{ ministry }}
+              </md-button>
+              <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}" class="md-icon-button">
+                <i class="material-icons">settings</i>
+              </md-button>
+            </md-list-item>
+          {% endfor %}
+
+        {% endif %}
+
+        <md-divider></md-divider>
+        <md-list-item class="md-line-1">
+          <md-button ng-href="{{ url_for('people:logout') }}">
+            Logout
+          </md-button>
+        </md-list-item>
+      </md-list>
+
+      <md-divider></md-divider>
+
+    {% endif %}
+
+
+    <md-list>
+      {%- for _link in links -%}
+        <a href="{{ _link[0] }}" name="{{ _link[1] }}">
+          <md-list-item class="md-line-1" ng-click="sidenav.close()">{{ _link[1] }}</md-list-item>
+        </a>
+      {%- endfor -%}
+    </md-list>
+
+    <div id="sidebar-donate-button"
+         layout="column">
+      <md-button class="md-primary md-raised"
+                 ng-href="#{{ url_for('donation:admin_donation') }}"
+                 ng-click="sidenav.close()">
+        Donate Now
+      </md-button>
+
+      <span>Love Our Neighbor does not take any money from the ministries you donate to.
+         Help support our mission by donating to Love Our Neighbor.</span>
+    </div>
+
+  </md-sidenav>
+
+{% endmacro %}

@@ -1,0 +1,42 @@
+{% from "user_widget.html" import user_widget %}
+{% from "searchbar.html" import searchbar %}
+
+{% macro navbar_links(request, links) %}
+
+  <md-toolbar class="md-primary" ng-cloak>
+    <div class="md-toolbar-tools" layout="row" layout-align="left end">
+
+      <a class="brand-logo center" href="#home" layout="row">
+        <img id="logo" src="{{ static('img/brand/LON_logo.svg') }}">
+        <img id="brand-text" src="{{ static('img/brand/LON_straight.png') }}">
+        {# TODO: Hide logo text when searchbar is clicked #}
+      </a>
+      <md-nav-bar md-selected-nav-item="currentNavItem" hide-xs hide-sm hide-md>
+        {%- for _link in links -%}
+          <md-nav-item md-nav-href="{{ _link[0] }}" name="{{ _link[1] }}">
+            {{ _link[1] }}
+          </md-nav-item>
+        {%- endfor -%}
+        <md-nav-item md-nav-href="/#{{ url_for('donation:admin_donation') }}">
+          <span style="color: rgb(213,0,249) !important;">Donate Now</span>
+        </md-nav-item>
+      </md-nav-bar>
+
+
+      {{ searchbar() }}
+
+      <div hide-xs hide-sm hide-md>
+        {{ user_widget(request) }}
+      </div>
+
+      {# Hidden Side Nav Button #}
+      <md-button class="md-icon-button" style="font-size: 1em; margin: auto 0 auto auto;"
+                 ng-click="sidenav.toggleRight()" hide-gt-md>
+        <md-icon>
+          <i class="material-icons" aria-hidden="true">menu</i>
+        </md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+
+{% endmacro %}

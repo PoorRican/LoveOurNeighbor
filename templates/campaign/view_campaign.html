@@ -1,0 +1,146 @@
+{# vim: foldmethod=marker tabstop=2 shiftwidth=2:
+    templates/campaign/view_campaign.html
+#}
+
+{% from "misc_layout.html" import section_start, section_close %}
+{% from "comments_section.html" import comments_section %}
+{% from "gallery.html" import gallery %}
+{% from "like_button.html" import like_button %}
+{% from "tag_chips.html" import tag_chips %}
+
+{% import "cards.html" as card %}
+
+{% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
+
+
+<input type="hidden" id="current_object_json" value="{{ cam.json }}">
+{% if AUTH == None %}
+  {% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
+{% endif %}
+
+{# {{{ Top Section Overlay #}
+<div class="parallax-container" style='height: {{ height }};'>
+  <div ng-parallax class="parallax-img" pattern="'{% if cam.banner_img %}{{ cam.banner_img.url }}{% endif %}'" speed="1">
+    <div class="overlay wrapper">
+      <h1>
+        {{ cam.title.upper() }}
+        {# {{{ Action Menu #}
+        {% if AUTH %}
+          <md-menu>
+            <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
+              <md-icon>
+                <i class="material-icons" style="color: white">arrow_drop_down</i>
+              </md-icon>
+            </md-button>
+            <md-menu-content>
+              {% for opt in campaign_admin_urls(cam) %}
+                <md-menu-item>
+                  <md-button ng-href="#{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                    <md-icon>
+                      <i class="material-icons">{{ opt['icon'] }}</i>
+                    </md-icon>&nbsp;
+                    {{ opt['label'] }}
+                  </md-button>
+                </md-menu-item>
+              {% endfor %}
+            </md-menu-content>
+          </md-menu>
+        {% endif %}
+        {# }}} #}
+      </h1>
+
+      <span class="md-subhead">By:
+              <a href="#{{ url_for("ministry:ministry_profile", kwargs={'ministry_id': cam.ministry.id}) }}">
+                {{ cam.ministry }}
+              </a>
+            </span>
+
+      <h3>Progress:</h3>
+      <div class="progress">
+        {% if cam.donated %}
+          <div class="current" style="width: {{ round((cam.donated / cam.goal) * 100) }}%">
+                <span>
+                  ${% raw %}{{ object().donated }}{% endraw %}
+                </span>
+          </div>
+        {% endif %}
+        <div class="remaining" style="width: {{ round(((cam.goal - cam.donated) / cam.goal) * 90) }}%">
+                <span>
+                  ${% raw %}{{ object().goal - object().donated }}{% endraw %}
+                </span>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="donate" flex>
+        {# TODO: create anonymous donations #}
+        <md-button class="md-raised md-accent"
+                   ng-href="#{{ url_for('donation:select_payment', kwargs={'campaign_id': cam.id}) }}">
+          Donate
+          <md-icon>
+            <i class="material-icons">redeem</i>
+          </md-icon>
+        </md-button>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+{# }}} #}
+
+{{ section_start("") }}
+{# TODO: show countdown as 'days left' #}
+
+<div hide-sm hide-xs>{{ tag_chips(cam) }}<br></div>
+
+<div layout-gt-sm="row" layout="column">
+
+  {{ like_button(cam, request) }}
+
+  <div hide-gt-sm>{{ tag_chips(cam) }}</div>
+
+  <p class="section-info">
+    <span>Began:</span>&nbsp;
+    {{ cam.start_date.strftime("%h %d, %Y") }}&nbsp;
+    <span>({{ f_time(cam.start_date) }})</span>
+    <br>
+    <span>Until:</span>&nbsp;
+    {{ cam.end_date.strftime("%h %d, %Y") }}&nbsp;
+    <span>({{ f_time(cam.end_date) }})</span>
+    <br>
+    <span>Contributions:</span>&nbsp;
+    {% raw %}{{ object().donations }}{% endraw %} have supported so far
+    <br>
+    <span>Views:</span>&nbsp;
+    {% raw %}{{ object().views }}{% endraw %}
+  </p>
+</div>
+
+<p class="flow-text">{{ cam.content|safe }}</p>
+{% if detail %}
+  <md-button ng-href="#{{ cam.url }}" class="md-accent md-raised" style="text-decoration: none;">
+    Link to this&nbsp;
+    <md-icon>
+      <i class="material-icons">link</i>
+    </md-icon>
+  </md-button>
+{% endif %}
+
+{{ comments_section(cam, 'campaign', request, form=form, csrf_token=csrf_token) }}
+
+{{ section_close() }}
+
+{# TODO: move comments section to tabs #}
+
+<section class="wrapper">
+  <!-- ministry/campaign_details -->
+
+  {{ card.card_area(all_news, AUTH=AUTH) }}
+
+</section>
+
+
+<!-- Google Analytics Virtual Pageview -->
+<script>ga('send', 'pageview', 'campaign')</script>

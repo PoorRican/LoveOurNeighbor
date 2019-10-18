@@ -1,0 +1,15 @@
+{% macro section_start(id) -%}
+
+  {# TODO: experiment w/ z-depth #}
+  <div id="{{ id }}" class="section">
+  <div class="wrapper">
+
+{%- endmacro %}
+
+
+{% macro section_close() -%}
+
+  </div>
+  </div>
+
+{%- endmacro %}

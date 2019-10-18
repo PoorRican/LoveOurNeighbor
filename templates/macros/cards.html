@@ -1,4 +1,5 @@
-{% import "parts.html" as parts %}
+{% from "gallery.html" import gallery  %}
+
 {# {{{ NewsPost Card #}
 {% macro news_card(post, AUTH=False) %}
   <md-card>
@@ -228,9 +229,9 @@
     {# }}} #}
 
     {# {{{ Gallery Section #}
-    <md-tab label="Gallery">
+    <md-tab label="Gallery" ng-if="{% raw %}{{ gallery }}{% endraw %}">
       <md-content>
-        {{ parts.gallery() }}
+        {{ gallery() }}
       </md-content>
     </md-tab>
     {# }}} #}

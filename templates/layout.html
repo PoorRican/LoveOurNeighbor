@@ -3,11 +3,15 @@
     templates/layout.html
 
 #}
-{% import "layout_parts.html" as layout %}
+
+{% from "navbar_links.html" import navbar_links %}
+{% from "searchbar.html" import searchbar %}
+{% from "sidenav.html" import sidenav %}
+{% from "footer.html" import footer %}
 
 
 
-<html>
+<html lang="en">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="keywords" content="{{ ', '.join(keywords) }}">
@@ -52,7 +56,14 @@
 
   <div ng-controller="LayoutCtrl">
 
-    {{ layout.navbar_links(request) }}
+    {% set links =
+      [
+        ('/#/home', 'Home'),
+        ('/#/faq', 'FAQ'),
+        ('/#/about', 'About Us')
+      ] %}
+
+    {{ navbar_links(request, links) }}
 
     <div id="notificationArea"></div>
 
@@ -64,14 +75,14 @@
 
     </md-content><!-- #/content -->
 
-    {{ layout.footer() }}
+    {{ footer() }}
 
-    {{ layout.sidenav(request) }}
+    {{ sidenav(request, links) }}
 
   </div><!-- /ng-controller -->
 
   {# {{{ Google Analytics #}
-  <!-- Globalr site tag (gtag.js) - Google Analytics -->
+  <!-- Global site tag (gtag.js) - Google Analytics -->
   {% set GA_TRACKING_ID = "UA-135736820-1" %}
 
   <script async src=https://www.googletagmanager.com/gtag/js?id={{ GA_TRACKING_ID }}"></script>
@@ -119,8 +130,6 @@
   {% set TINY_API_KEY = 'ropl0dvkzt3bbjqb9e8dk06ff578n2fkfvgun5yxa1zgb234' %}
   <script src="https://cdn.tiny.cloud/1/{{ TINY_API_KEY }}/tinymce/4/tinymce.min.js" referrerpolicy="origin"></script>
   {# }}} #}
-
-
 
   </body>
 </html>

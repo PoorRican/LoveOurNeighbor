@@ -1,0 +1,18 @@
+{% macro tag_chips(obj) %}
+
+  {% if len(obj.tags.all()) %}
+    <h3 style="margin: 5px 0;">Tags:</h3>
+
+    <md-chips>
+      {% for i in obj.tags.all() %}
+
+        {# TODO: link to search query showing related objects #}
+
+        <md-chip ng-click="goto('{{ url_for('search:search_tag', kwargs={'tag_name': i.name}) }}')">{{ i.name }}</md-chip>
+
+      {% endfor %}
+    </md-chips>
+
+  {% endif %}
+
+{% endmacro %}
