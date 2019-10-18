@@ -1,7 +1,7 @@
 angular.module('LON').controller('peopleCtrl', peopleCtrl);
-peopleCtrl.$inject = ['$scope', '$route', '$routeParams', '$location'];
+peopleCtrl.$inject = ['$scope', '$route', '$routeParams', '$location', 'transactionTableService'];
 
-function peopleCtrl($scope, $route, $routeParams, $location) {
+function peopleCtrl($scope, $route, $routeParams, $location, transactionTableService) {
   // TODO: change title block
 
   $scope.currentNavItem  = null;
@@ -32,6 +32,20 @@ function peopleCtrl($scope, $route, $routeParams, $location) {
         }
         return cleaned;
       }
+    }
+  }
+  if ($routeParams.people_action === 'profile') {
+    $scope.donations = {};
+    $scope.donationTableService = transactionTableService;
+
+    activate();
+
+    function activate() {
+      const donation_url = '/people/donations/json';
+      return $scope.donationTableService.fetch(donation_url).then(function(data){
+        $scope.donations = data;
+        return $scope.donations;
+      });
     }
   }
   if ($routeParams.people_action === 'login') {

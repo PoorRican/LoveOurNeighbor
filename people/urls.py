@@ -19,5 +19,7 @@ urlpatterns = [
          RedirectView.as_view(url='/#/people/create')),
     path('profile/',
          RedirectView.as_view(url='/#/people/profile')),
+
     path('messages/json', views.messages_json),
+    path('donations/json', views.donation_json),
 ]

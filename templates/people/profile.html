@@ -11,7 +11,7 @@
 {# TODO: messages #}
 
 <section class="wrapper">
-  <!-- people/profile -->
+<!-- people/profile -->
 
     <md-tabs md-dynamic-height md-border-bottom>
 
@@ -105,6 +105,7 @@
         </md-tab-label>
         <md-tab-body>
 
+          <br>
           <md-button class="md-accent" style="text-decoration: none;"
                      ng-href="#{{ url_for('ministry:create_ministry') }}">
             <md-icon>
@@ -192,7 +193,37 @@
             {# {{{ Donations Subsection #}
             <md-tab label="Donations">
               <md-content>
-                <p>This part of the website is under construction.</p>
+                {# TODO: cards describing donation statistics #}
+                <table>
+                  <tr>
+                    <td>#</td>
+                    <td>Payment Date</td>
+                    <td>TX ID</td>
+                    <td>Amount</td>
+                    <td hide-sm hide-xs>Confirmation</td>
+                    <td>Campaign</td>
+                    <td hide-sm hide-xs>Ministry</td>
+                  </tr>
+                  <tr ng-repeat="(num, tx) in donations">
+                    {% raw %}
+                    <td>{{ num }}</td>
+                    <td>
+                      <a ng-href="#{{ tx.url }}">{{ tx.payment_date }}</a>
+                    </td>
+                    <td>
+                      <a ng-href="#{{ tx.url }}">{{ tx.id }}</a>
+                    </td>
+                    <td>{{ tx.amount }}</td>
+                    <td hide-sm hide-xs>{{ tx.confirmation }}</td>
+                    <td>
+                      <a ng-href="#{{ tx.campaign.url }}">{{ tx.campaign.title }}</a>
+                    </td>
+                    <td hide-sm hide-xs>
+                      <a ng-href="#{{ tx.ministry.url }}">{{ tx.ministry.title }}</a>
+                    </td>
+                    {% endraw %}
+                  </tr>
+                </table>
               </md-content>
             </md-tab>
             {# }}} #}

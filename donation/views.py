@@ -171,3 +171,14 @@ def coinbase_payment(request, donation_id):
     elif request.method == "GET":
         context = {'donation': donation}
         return render("btc_payment.html", context)
+
+
+def view_donation(request, donation_id):
+    donation = Donation.objects.get(pk=donation_id)
+    # TODO: auth. Allow anonymous donations to be viewed
+    if donation.user == request.user:
+        return render(request, "view_donation.html", {'donation': donation})
+    else:
+        msg = "Invalid permission to view transaction."
+        messages.add_message(request, messages.ERROR, msg)
+        return HttpResponseRedirect(reverse('frontend:error'))

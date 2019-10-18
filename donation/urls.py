@@ -17,6 +17,9 @@ urlpatterns = (
     path('<int:donation_id>/btc', views.coinbase_payment,
          name='coinbase_payment'),
 
-    path('campaign/<int:donation_id>/complete', views.payment_complete,
+    path('<int:donation_id>/complete', views.payment_complete,
          name='payment_complete'),
+
+    path('<int:donation_id>/view', views.view_donation,
+         name='view_donation'),
 )

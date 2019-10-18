@@ -3,11 +3,13 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.contrib.messages import get_messages
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
 import json
+
+from donation.utils import serialize_donation
 
 from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
@@ -157,3 +159,14 @@ def messages_json(request):
         _json.append({'message': str(msg),
                       'type': msg.tags})
     return HttpResponse(json.dumps(_json))
+
+
+@login_required
+def donation_json(request):
+    _json = {}
+    user = request.user
+    count = 0
+    for donation in user.donations.all():
+        _json[count] = serialize_donation(donation)
+        count += 1
+    return JsonResponse(_json)

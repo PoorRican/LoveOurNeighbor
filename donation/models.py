@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from yaml import load
 from datetime import datetime
@@ -98,6 +99,11 @@ class Donation(models.Model):
             if hasattr(self, p):
                 return getattr(self, p)
         raise ValueError("Donation object does not have a payment")
+
+    @property
+    def url(self):
+        return reverse('donation:view_donation',
+                       kwargs={'donation_id': self.id})
 
     @property
     def date(self):

@@ -1,0 +1,41 @@
+<div class="section">
+  <div class="wrapper">
+    <div layout="column">
+      <h1>Donation Details</h1>
+
+      <p>Donated to <a href="#{{ donation.campaign.url }}">{{ donation.campaign.title }}</a>
+        by <a href="#{{ donation.campaign.ministry.url }}">{{ donation.campaign.ministry.name }}</a>
+      </p>
+
+      {% if hasattr(donation.payment, 'card_number') %}
+        <h4>Payment Card Info:</h4>
+        <md-input-container>
+          <label>First/Last Name</label>
+          <input value="{{ donation.payment.first_name }} {{ donation.payment.last_name }}" disabled>
+        </md-input-container>
+        <md-input-container>
+          <label>Credit Card #</label>
+          <input value="****-****-****-{{ str(donation.payment.card_number)[-5:-1] }}" disabled>
+        </md-input-container>
+      {% endif %}
+
+      <h4>Other Details:</h4>
+      <md-input-container>
+        <label>Transaction ID</label>
+        <input value="{{ donation.id }}" disabled>
+      </md-input-container>
+      <md-input-container>
+        <label>Donation Amount</label>
+        <input value="{{ donation.amount }}" disabled>
+      </md-input-container>
+      <md-input-container>
+        <label>Confirmation ID</label>
+        <input value="{{ donation.payment.confirmation }}" disabled>
+      </md-input-container>
+      <md-input-container>
+        <label>Payment Date</label>
+        <input value="{{ donation.payment.payment_date }}" disabled>
+      </md-input-container>
+    </div>
+  </div>
+</div>
