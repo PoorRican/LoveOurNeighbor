@@ -85,7 +85,10 @@ class MinistryProfile(models.Model):
 
     @property
     def social_media(self):
-        return loads(self._social_media)
+        try:
+            return loads(self._social_media)
+        except EOFError:
+            return {}
 
     @social_media.setter
     def social_media(self, links):
