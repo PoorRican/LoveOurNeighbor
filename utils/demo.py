@@ -309,10 +309,8 @@ def sim_likes(obj):
 
 if __name__ == "__main__":
     from people.models import User
-    from ministry.models import (
-         MinistryProfile,
-         Campaign,
-    )
+    from ministry.models import MinistryProfile
+    from campaign.models import Campaign
     from tag.models import Tag
     from news.models import NewsPost
 
