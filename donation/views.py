@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from .models import Donation
 from .forms import SelectPaymentForm, ccPaymentForm
-from ministry.models import Campaign
+from campaign.models import Campaign
 from people.models import User
 
 

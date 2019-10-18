@@ -34,7 +34,13 @@ ALLOWED_HOSTS = ["localhost", "dev.loveourneighbor.org", "loveourneighbor.org"]
 
 INSTALLED_APPS = [
     'public.apps.PublicConfig',
+
     'ministry.apps.MinistryConfig',
+    'campaign.apps.CampaignConfig',
+    'news.apps.NewsConfig',
+
+    'tag.apps.TagConfig',
+    'comment.apps.CommentConfig',
     'people.apps.PeopleConfig',
     'donation.apps.DonationConfig',
     'explore.apps.ExploreConfig',

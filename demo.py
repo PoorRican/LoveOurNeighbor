@@ -312,8 +312,9 @@ if __name__ == "__main__":
     from ministry.models import (
          MinistryProfile,
          Campaign,
-         NewsPost,
-         Tag,)
+    )
+    from tag.models import Tag
+    from news.models import NewsPost
 
     print("Beginning to populate database...\n")
     print("Starting with User objects...")

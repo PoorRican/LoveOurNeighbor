@@ -5,7 +5,7 @@ from datetime import datetime
 from uuid import uuid4
 from base64 import b64encode
 
-from ministry.models import Campaign
+from campaign.models import Campaign
 from people.models import User
 
 

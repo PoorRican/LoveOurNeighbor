@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from public.models import AboutSection, FaqSection
-from ministry.models import NewsPost, Campaign
-from ministry.forms import CommentForm
-
+from campaign.models import Campaign
+from news.models import NewsPost
+from comment.forms import CommentForm
 
 seo_keywords = ['new jersey', 'non profit']
 

@@ -5,13 +5,15 @@ from django.urls import reverse
 
 import json
 
-from ministry.models import NewsPost, Campaign, MinistryProfile, Tag
+from campaign.models import Campaign
+from ministry.models import MinistryProfile
+from tag.models import Tag
+from news.models import NewsPost
 from ministry.utils import (
     serialize_ministry,
-    serialize_campaign,
-    serialize_newspost,
     F_TIME,
     )
+from news.utils import serialize_newspost
 
 from explore.utils import calc_distance
 
