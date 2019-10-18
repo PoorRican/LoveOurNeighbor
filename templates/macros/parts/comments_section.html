@@ -41,7 +41,7 @@
 
       {% if request and request.user.is_authenticated %}
         <form enctype="multipart/form-data" method="POST" style="display: none;"
-              action="{{ url_for("ministry:create_comment", kwargs={'obj_type': obj_type, 'obj_id': obj.id}) }}">
+              action="{{ url_for("comment:create_comment", kwargs={'obj_type': obj_type, 'obj_id': obj.id}) }}">
           <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
           <md-input-container>
 

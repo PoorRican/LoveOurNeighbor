@@ -44,12 +44,12 @@ def campaign_admin_urls(campaign):
     urls = [
         {'label': 'Edit',
          'icon': 'create',
-         'reverse_url': 'ministry:edit_campaign',
+         'reverse_url': 'campaign:edit_campaign',
          'kwargs': {'campaign_id': campaign.id},
          },
         {'label': 'Post News',
          'icon': 'note_add',
-         'reverse_url': 'ministry:create_news',
+         'reverse_url': 'news:create_news',
          'kwargs': {'obj_type': 'campaign',
                     'obj_id': campaign.id},
          }]
@@ -66,7 +66,7 @@ def ministry_admin_urls(ministry):
          },
         {'label': 'Post News',
          'icon': 'note_add',
-         'reverse_url': 'ministry:create_news',
+         'reverse_url': 'news:create_news',
          'kwargs': {'obj_type': 'ministry',
                     'obj_id': ministry.id},
          }]

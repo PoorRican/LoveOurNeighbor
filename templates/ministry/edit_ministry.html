@@ -450,7 +450,7 @@
             <br>
             {# TODO: differentiate between current and previous fundraisers #}
             <md-button class="md-accent" style="text-decoration: none;"
-                       ng-href="#{{ url_for('ministry:create_campaign', kwargs={'ministry_id': ministry.id}) }}">
+                       ng-href="#{{ url_for('campaign:create_campaign', kwargs={'ministry_id': ministry.id}) }}">
               <md-icon>
                 <i class="material-icons">add</i>
               </md-icon>

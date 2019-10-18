@@ -48,12 +48,18 @@ urlpatterns = [
     path('about', RedirectView.as_view(url='/#/about'), name='about'),
     path('faq', RedirectView.as_view(url='/#/faq'), name='faq'),
     path('ministry/<str:orig>', PrettyRedirect.as_view()),
+    path('campaign/<str:orig>', PrettyRedirect.as_view()),
+    path('news/<str:orig>', PrettyRedirect.as_view()),
     path('donation/<str:orig>', PrettyRedirect.as_view()),
     path('search/<str:orig>', PrettyRedirect.as_view()),
 
     # Main functionality
     path('t/ministry/', include('ministry.urls')),
+    path('t/campaign/', include('campaign.urls')),
     path('t/donation/', include('donation.urls')),
+    path('t/news/', include('news.urls')),
+    path('t/tag/', include('tag.urls')),
+    path('t/comment/', include('comment.urls')),
     path('t/search/', include('search.urls')),
     path('people/', include('people.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

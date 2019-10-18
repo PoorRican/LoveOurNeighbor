@@ -24,10 +24,10 @@ class NewsPost(models.Model):
 
     @property
     def url(self):
-        return reverse('ministry:news_detail',
+        return reverse('news:news_detail',
                        kwargs={'post_id': self.id})
 
     @property
     def edit(self):
-        return reverse('ministry:edit_news',
+        return reverse('news:edit_news',
                        kwargs={'post_id': self.id})

@@ -25,7 +25,7 @@ function campaignCtrl($scope, $routeParams, $timeout, objectService, likeButtonS
     objectService.periodically_fetch();
 
     // get gallery content
-    var gallery_url = "/t/ministry/campaign/" + $routeParams.campaign_id + "/gallery/json";
+    const gallery_url = "/t/campaign/" + $routeParams.campaign_id + "/gallery/json";
     return galleryService.get(gallery_url)
     .then(function(data) {
       $scope.gallery = data;

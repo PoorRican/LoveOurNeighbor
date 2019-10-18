@@ -10,7 +10,7 @@
   {# {{{ Form Header #}
   <form
   {% if start %}
-  enctype="multipart/form-data" method="POST" action="{{ url_for('ministry:create_campaign', kwargs={"ministry_id": ministry.id}) }}">
+  enctype="multipart/form-data" method="POST" action="{{ url_for('campaign:create_campaign', kwargs={"ministry_id": ministry.id}) }}">
 
   <h1>New Campaign:</h1>
 
@@ -247,7 +247,7 @@
             {% elif not start %}
               <br>
               <md-button class="md-accent" style="text-decoration: none;"
-                         href="#{{ url_for('ministry:create_news', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}">
+                         href="#{{ url_for('news:create_news', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}">
                 <md-icon>
                   <i class="material-icons">add</i>
                 </md-icon>
@@ -296,7 +296,7 @@
                 <md-dialog-actions layout="row">
                   <md-button class="md-primary" ng-click="confirmDelete.close()">Cancel</md-button>
                   <md-button class="md-warn" style="text-decoration: none;"
-                             href="{{ url_for('ministry:delete_campaign', kwargs={'campaign_id': campaign.id}) }}">
+                             href="{{ url_for('campaign:delete_campaign', kwargs={'campaign_id': campaign.id}) }}">
                     <md-icon>
                       <i class="material-icons">delete</i>
                     </md-icon>

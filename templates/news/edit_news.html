@@ -10,12 +10,12 @@
     <h1>Create News Post:</h1>
     <!-- TODO: make link for more information -->
 
-    <form method="POST" action="{{ url_for('ministry:create_news', kwargs=kwargs) }}">
+    <form method="POST" action="{{ url_for('news:create_news', kwargs=kwargs) }}">
 
   {% else %}
     <h1>Edit Ministry Profile:</h1>
 
-    <form enctype="multipart/form-data" method="POST" action="{{ url_for('ministry:edit_news', kwargs={'post_id': post.id}) }}">
+    <form enctype="multipart/form-data" method="POST" action="{{ url_for('news:edit_news', kwargs={'post_id': post.id}) }}">
 
   {% endif %}
 
@@ -55,7 +55,7 @@
         {% if not start and post %}
           <br>
           <md-button class="md-warn" style="text-decoration: none;"
-                     href="{{ url_for('ministry:delete_news', kwargs={'post_id': post.id}) }}"
+                     href="{{ url_for('news:delete_news', kwargs={'post_id': post.id}) }}"
                      flex-order-gt-sm="-1">
             <md-icon>
               <i class="material-icons">delete</i>

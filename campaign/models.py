@@ -51,16 +51,16 @@ class Campaign(models.Model):
 
     @property
     def url(self):
-        return reverse('ministry:campaign_detail',
+        return reverse('campaign:campaign_detail',
                        kwargs={'campaign_id': self.id})
 
     @property
     def edit(self):
-        return reverse('ministry:edit_campaign',
+        return reverse('campaign:edit_campaign',
                        kwargs={'campaign_id': self.id})
 
     @property
     def json(self):
-        return reverse('ministry:campaign_json',
+        return reverse('campaign:campaign_json',
                        kwargs={'campaign_id': self.id})
 

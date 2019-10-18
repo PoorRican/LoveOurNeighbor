@@ -31,19 +31,19 @@ function config($locationProvider, $routeProvider) {
   })
 
   // Campaign Routes
-  .when('/t/ministry/campaign/:campaign_id', {
+  .when('/t/campaign/:campaign_id', {
     templateUrl: function (params) {
-      return '/t/ministry/campaign/' + params.campaign_id;
+      return '/t/campaign/' + params.campaign_id;
     },
     controller: 'campaignCtrl'
   })
-  .when('/t/ministry/campaign/:campaign_id/:campaign_action*', {
+  .when('/t/campaign/:campaign_id/:campaign_action*', {
     templateUrl: function (params) {
-      return '/t/ministry/campaign/' + params.campaign_id + '/' + params.campaign_action;
+      return '/t/campaign/' + params.campaign_id + '/' + params.campaign_action;
     },
     controller: 'campaignActionCtrl'
   })
-  .when('/t/ministry/:ministry_id/campaign/:campaign_action', {
+  .when('/t/campaign/ministry/:ministry_id/:campaign_action', {
     templateUrl: function (params) {
       return '/t/ministry/' + params.ministry_id + '/campaign/' + params.campaign_action;
     },
@@ -51,13 +51,13 @@ function config($locationProvider, $routeProvider) {
   })
 
   // News Routes
-  .when('/t/ministry/news/:obj_type/:obj_id/:action', {
+  .when('/t/news/:obj_type/:obj_id/:action', {
     templateUrl: function (params) {
       return '/t/ministry/news/' + params.obj_type + '/' + params.obj_id + '/' + params.action;
     },
     controller: 'newsCtrl'
   })
-  .when('/t/ministry/news/:obj_id/:action', {
+  .when('/t/news/:obj_id/:action', {
     templateUrl: function (params) {
       console.log("here");
       return '/t/ministry/news/' + params.obj_id + '/' + params.action;

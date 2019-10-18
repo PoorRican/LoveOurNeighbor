@@ -1,16 +1,5 @@
-{% import "content.html" as content %}
 
-{% if current_campaign %}
-  {{ content.show_campaign(current_campaign, request=request, form=form, csrf_token=csrf_token) }}
-{% endif %}
-
-{% if all_news %}
-    {% for i in all_news %}
-
-        {{ content.news_post(i, request=request, AUTH=AUTH, form=form, csrf_token=csrf_token) }}
-
-    {% endfor %}
-{% endif %}
+<p>Testing</p>
 
 
 <!-- Google Analytics Virtual Pageview -->
