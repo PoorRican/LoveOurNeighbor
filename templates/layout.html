@@ -16,11 +16,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="keywords" content="{{ ', '.join(keywords) }}">
 
-  <!-- sharethis.js -->
-  <script type='text/javascript'
-          src='https://platform-api.sharethis.com/js/sharethis.js#property=5d86a3a539dead0012285037&product=inline-share-buttons'
-          async='async'></script>
-
 
   <!-- Facebook OpenGraph meta properties -->
   <meta property="og:type" content="website" />
@@ -66,8 +61,6 @@
     {{ navbar_links(request, links) }}
 
     <div id="notificationArea"></div>
-
-    <div ng-hide="share.disabled" class="sharethis-sticky-share-buttons share-button"></div>
 
     <md-content id="content" layout-align="center top" flex>
 
