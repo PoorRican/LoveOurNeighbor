@@ -1,27 +1,35 @@
+Immediate TODO:
+    - Infinite loop when trying to login as a ministry when already logged in
+    - remove store purchases from user profile page
+    - Transition over to Angular.io
+    - Make content in WYSIWYG editor required (via js)
+
+
 Urgent TODO:
+    - Campaign and MinistryProfiles should not display parallax if no banner image
+    - MinistryProfiles should display profile image on main page
+    - Make home page more functional (eg: write news. Personalized feed.)
     - $Campaign bar breaks when donated amount is larger than goal$
     - Implement Braintree for payment
     - Enable user to user messages
-    - Enable anonymous donations (must capture email). Enable user creation via donate page. Enable user creation via email link. Enable cookie persistence for returning users.
     - Dynamically create comment forms to enable parent/child commenting
-    - $Enable commenting 'as ministry' editable from comment form.$
-    - $Social media links for ministries$
     - Map displaying ministry location (via 'explore' tab)
     - $Fix bug in f_time$
     - Re-implement `set_initial_user_names` from people.models
     - MinistryProfile should only have website as required
     - $Implement "next page" in login functionality$
     - Implement unique error feedback for title and name attributes in Campaign and MinsitryProfile objects
-    - Check `is_active` before logging in User
-    - Implement User verification with email
+    - Donation dashboard:
+        - momnthly
+        active monthly givers
+        total monthly givers
+        progress to monthly goal
+        3-month view
 
 Styling/Javascript Fixes:
     - Fix on Mobile:
         - $banner uploads$
-        - WYSIWYG Editor
     - Fix Google Analytics virtual pageviews
-    - Clear trix content upon navigating views (eg: ministry > news post; ministry > campaign; campaign > news post)
-    - Make campaign start and end dates required, while still dynamic
 
 Overall TODOs:
     - Static Link to Receipts and other tabs
@@ -34,7 +42,6 @@ Overall TODOs:
     - Add detailed logging (individual log files: requests, user creation, donation, etc)
     - Secure logout function (logout on POST, not GET)
     - $enable dynamic width for progress bar$
-    - Create more admin like page for Profile management
     - Implement page history via js
     - Implement donation guestbook-like functionality. "people who have donated have said:"
     - Implement `User.first_login` for displaying help-text on profile template
@@ -42,9 +49,7 @@ Overall TODOs:
     - Clear comment form when canceled
     - Style payment selection to show icons next to radio buttons
     - Enable multiple admins, and permissions.
-    - User alias functionality should not reload page twice (to refresh name in header)
     - Enable "unlike" functionality
-    - $Enable unified image input of files or urls via dialog (with tabs)$
     - Enable MinistryProfile broadcasted to all Reps and admins upon profile edits
     - Enable broadcasted notifications for all reps and admins for campaign milestones and edits
     - Move campaign / news post to dedicated app:
@@ -54,7 +59,6 @@ Overall TODOs:
     - Enable tooltips for icon-only buttons
     - Enable comments via full-screen dialog
     - Implement authors for NewsPost objects
-    - Implement the sharethis.com button (already have an entry in KeePass for social@loveourneighbor.org)
 
 Long-term TODOs:
     - Angular is going to be defunct soon. Convert website to angular.io (there is a Material library for angular.io)
