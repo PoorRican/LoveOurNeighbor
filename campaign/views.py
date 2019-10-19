@@ -14,6 +14,7 @@ from frontend.settings import MEDIA_ROOT
 from ministry.models import MinistryProfile
 from news.models import NewsPost
 from tag.models import Tag
+from donation.utils import serialize_donation
 
 from comment.forms import CommentForm
 
@@ -251,3 +252,22 @@ def like_campaign(request, campaign_id):
     cam.likes.add(request.user)
     cam.save()
     return HttpResponse(json.dumps(True))
+
+
+@login_required
+def donation_statistics(request, campaign_id):
+    cam = Campaign.objects.get(id=campaign_id)
+
+    donations = {}
+    count = 0
+
+    for i in cam.donations.all():
+        d = serialize_donation(i)
+        # prune unnecessary data
+        del d['campaign']
+        del d['ministry']
+        del d['url']
+        donations[count] = d
+        count += 1
+
+    return JsonResponse(donations)
