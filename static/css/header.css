@@ -7,10 +7,6 @@ header {
   border-bottom: solid 1px #FF7100;
 }
 
-nav a.md-unselected {
-    color: #EEE !important;
-}
-
 .brand-logo.center {
   left: auto !important;
   margin-top: auto;
@@ -23,6 +19,7 @@ nav a.md-unselected {
   color: #eee;
   height: 100%;
 
+  transform: none !important;
 }
 
 .brand-logo #logo {
@@ -34,31 +31,11 @@ nav a.md-unselected {
   margin-bottom: .7em;
 }
 
-.title-shadow-orange {
-  text-shadow: 0 3px 7px #FF7100;
-  text-shadow: 3px 0 7px #FF7100;
-}
-
-.profile-area {
-  float: right;
-  margin: auto 15px auto 0;
-  border: solid 1px #FF7100;
-  padding: 2px 16px;
-  background-color: rgba(255,255,255,0.2);
-}
 .uname {
   font-size: 22px;
-  margin: auto 10px auto auto;
   text-decoration: none;
   color: white !important;
   font-weight: 400;
-}
-.profile-area .login {
-  font-size: 18px;
-}
-.profile-area .logout {
-  font-size: 14px;
-  margin: auto;
 }
 .profile-img {
   margin: 8px 16px 8px -4px;
@@ -71,13 +48,94 @@ nav a.md-unselected {
   flex-shrink: 0;
   flex-basis: 0;
 }
-.profile-link {
-  padding: 0 16px;
-  display: flex;
+.user-widget {
+  min-width: 13em;
+  height: 100%;
+}
+a.profile-menu-trigger .inside > i {
+  display: inline;
+}
+.profile-menu-trigger,
+.profile-menu-trigger .inside {
+  height: 100%;
+}
+.profile-menu-trigger .inside {
+  margin-left: auto;
+  width: fit-content;
+}
+.profile-menu-trigger .profile-img {
+  float: left;
+}
+#navbar-menu {
+  font-size: 14px;
+}
+#navbar-menu.dropdown-content li.disabled {
+  color: #9e9e9e;
+  min-height: 2.4em;
+  line-height: 2.5em;
+  padding-left: 12px;
+}
+#navbar-menu.dropdown-content li.disabled:hover {
+  background-color: rgba(0,0,0,0);
+}
+#navbar-menu li.profile-area {
+  grid-template-rows: 4.5em;
+  height: 4.5em;
+}
+li.profile-area {
+  display: grid;
+  grid-template-columns: 50px auto 5em;
   overflow: hidden;
+  padding: 12px 4px;
+}
+#navbar-menu li.profile-area {
+  padding: 12px 4px 12px 12px;
+}
+.profile-area:hover {
+  background-color: #eee;
+}
+#navbar-menu .profile-area span {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.profile-area .view_profile:hover {
+  background-color: rgba(0,0,0,0);
+}
+.profile-area > a:first-child {
+    padding: 0;
+    grid-column: 1 / 3;
+}
+.profile-area a div {
+  display: inline-grid;
+  grid-column: 2;
+  height: 100%;
+  padding-left: 8px;
+}
+.profile-area .profile-img {
+  margin: 0;
+  display: inline;
+  grid-column: 1;
+  float: left;
+}
+.profile-area .edit-btn {
+  max-width: 3em;
+  grid-column: 3;
+}
+#navbar-menu .profile-menu .edit-btn {
+  padding: 10px;
+}
+.profile-area .edit-btn i {
+  margin: 0;
+}
+#sidenav .profile-area .view_profile {
+  margin-left: 16px;
+}
+#sidenav .edit-btn {
+  margin: 0;
 }
 
 
+/**
 #sidenav {
   z-index: 250;
   color: #8B0053;
@@ -94,8 +152,6 @@ nav a.md-unselected {
   border: none;
   background-color: transparent;
   float: left;
-  margin: 0 6px;
-  padding: 0;
 }
 #sidenav .profile-area a {
   color: #FF7100;
@@ -107,10 +163,11 @@ nav a.md-unselected {
   #sidenav .profile-area .uname {
     font-size: .75em;
   }
-}
+}*/
 
 .search-bar {
   margin: auto 0 auto auto;
+  max-width: 20em;
 }
 .search-bar form {
   margin: auto 0;

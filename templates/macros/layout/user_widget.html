@@ -1,109 +1,87 @@
 {% macro user_widget(request, sidenav=False) %}
 
   {% if request.user.is_authenticated %}
-    <div layout="row">
-      {% if request.user.logged_in_as %}
+    <div class="user-widget hide-on-med-and-down">
+      <a class="profile-menu-trigger" href="#" data-target="navbar-menu">
+        {% if request.user.logged_in_as %}
 
-        <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': request.user.logged_in_as.id}) }}"
-            {% if sidenav %} ng-click="sidenav.close()"{% endif %}
-           class="profile-link">
-          <img class="profile-img" src="{{ request.user.logged_in_as.profile_img.url }}" alt="Ministry Profile Img">
-          <md-truncate class="uname">
-            {{- request.user.logged_in_as.name -}}
-          </md-truncate>
-        </a>
+          <div class="inside">
+            <img class="profile-img" src="{{ request.user.logged_in_as.profile_img.url }}" alt="Ministry Profile Img">
+            <span class="uname">
+              {{- request.user.logged_in_as.name -}}
+            </span>
+            <i class="material-icons">arrow_drop_down</i>
+          </div>
 
-      {% else %}
+        {% else %}
 
-        <a href="#{{ url_for('people:user_profile') }}"
-            {% if sidenav %} ng-click="sidenav.close()"{% endif %}
-           class="profile-link">
-          <img class="profile-img" src="{{ request.user.profile_img }}" alt="Profile Img">
-          <md-truncate class="uname">{{- request.user.name -}}</md-truncate>
-        </a>
+          <div class="inside">
+            <img class="profile-img" src="{{ request.user.profile_img }}" alt="Profile Img">
+            <span class="uname">{{- request.user.name -}}</span>
+            <i class="material-icons">arrow_drop_down</i>
+          </div>
 
-      {% endif %}
+        {% endif %}
+      </a>
+
+      <ul id="navbar-menu" class="dropdown-content">
+
+        <li>
+          {% if request.user.logged_in_as %}
+            <a title="User Profile" href="{{ url_for('people:be_me_again') }}">
+              Your Profile
+            </a>
+          {% else %}
+            <a title="User Profile" href="{{ url_for('people:user_profile') }}">
+              Your Profile
+            </a>
+          {% endif %}
+        </li>
+
+        <li class="divider"></li>
+
+        {% set aliases = [{'label': 'Ministries You Administer',
+                            'profiles': request.user.administers.all()},
+                           {'label': 'Ministries You Represent',
+                            'profiles': request.user.represents.all()}] %}
+
+        {% for i in aliases %}
+          {% if len(i['profiles']) %}
+
+            <li class="disabled" style="height: 1em;">{{ i['label'] }}:</li>
+
+            {% for ministry in i['profiles'] %}
+              {% set ALIAS = (request.user.logged_in_as == ministry) %}
+              <li class="profile-area">
+                <a href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"
+                   class="view_profile {% if ALIAS %} orange{% endif %}">
+                  <img class="profile-img" src="/{{ ministry.profile_img.url }}">
+                  <div>
+                    <span class="truncate">
+                      {{ ministry }}
+                    </span>
+                  </div>
+                  {% if ALIAS %}<i class="material-icons">how_to_reg</i>{% endif %}
+                </a>
+                <a href="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}"
+                   class="edit-btn btn-flat waves-effect right">
+                  <i class="material-icons">settings</i>
+                </a>
+              </li>
+            {% endfor %}
+
+            <li class="divider"></li>
+
+          {% endif %}
+        {% endfor %}
+
+        <li><a href="{{ url_for('people:logout') }}">Logout</a></li>
+      </ul>
 
       {# {{{ Profile Menu #}
       {% if not sidenav %}
-        <md-menu md-position-mode="target-right bottom" ng-cloak>
-          <md-button ng-click="$mdMenu.open($event)" class="md-icon-button">
-            <md-icon md-menu-origin>
-              <i class="material-icons">arrow_drop_down</i>
-            </md-icon>
-          </md-button>
-          <md-menu-content width="4" style="overflow-y: hidden; z-index: 300;">
-            <md-menu-item>
-              {% if request.user.logged_in_as %}
-                <md-button ng-href="{{ url_for('people:be_me_again') }}">
-                  Your Profile
-                </md-button>
-              {% else %}
-                <md-button ng-href="#{{ url_for('people:user_profile') }}">
-                  Your Profile
-                </md-button>
-              {% endif %}
 
-            </md-menu-item>
-
-            {% if len(request.user.administers.all()) %}
-              <md-menu-divider></md-menu-divider>
-              <md-menu-item>
-                <md-button disabled>
-                  Ministries You Administer:
-                </md-button>
-              </md-menu-item>
-              {% for ministry in request.user.administers.all() %}
-                {% set ALIAS = (request.user.logged_in_as == ministry) %}
-                <md-menu-item>
-                  <md-button ng-href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"{% if ALIAS %} class="md-primary"{% endif %}>
-                    <md-icon>
-                      <img class="md-avatar" src="{{ ministry.profile_img.url }}">
-                    </md-icon>
-                    {{ ministry }}
-                    {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
-                  </md-button>
-                  <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}" class="md-icon-button">
-                    <md-icon>
-                      <i class="material-icons">settings</i>
-                    </md-icon>
-                  </md-button>
-                </md-menu-item>
-              {% endfor %}
-            {% endif %}
-
-            {% if len(request.user.represents.all()) %}
-              <md-menu-divider></md-menu-divider>
-              <md-menu-item>
-                <md-button disabled>
-                  Ministries You Represent:
-                </md-button>
-              </md-menu-item>
-              {% for ministry in request.user.represents.all() %}
-                {% set ALIAS = (request.user.logged_in_as == ministry) %}
-                <md-menu-item >
-                  <md-button ng-href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"{% if ALIAS %} class="md-primary"{% endif %}>
-                    {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
-                    {{ ministry }}
-                  </md-button>
-                  <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}" class="md-icon-button">
-                    <i class="material-icons">settings</i>
-                  </md-button>
-                </md-menu-item>
-              {% endfor %}
-            {% endif %}
-
-            <md-menu-divider></md-menu-divider>
-            <md-menu-item>
-              <md-button ng-href="{{ url_for('people:logout') }}">
-                Logout
-              </md-button>
-            </md-menu-item>
-          </md-menu-content>
-        </md-menu>
-
-
-      {% elif sidenav %}
+      {# elif sidenav %}
         <md-button ng-click="switching = !switching" class="md-icon-button" style="margin-top: auto; margin-bottom: auto;">
           <md-icon ng-if="!switching" md-menu-origin>
             <i class="material-icons">arrow_drop_down</i>
@@ -112,6 +90,7 @@
             <i class="material-icons">arrow_drop_up</i>
           </md-icon>
         </md-button>
+      #}
       {% endif %}
       {# }}} #}
 
@@ -120,11 +99,7 @@
   {% else %}
 
     <div layout="row">
-      <md-list>
-        <md-list-item class="md-1-line">
-          <md-button ng-href="#/people/login"{% if sidenav %} ng-click="sidenav.close()"{% endif %}>Login</md-button>
-        </md-list-item>
-      </md-list>
+      <a href="{{ url_for('people:login') }}">Login</a>
     </div>
 
   {% endif %}
