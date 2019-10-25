@@ -3,127 +3,116 @@
 
 {% macro sidenav(request, links) %}
 
-  <md-sidenav class="md-sidenav-right md-whiteframe-4dp" id="sidenav"
-              md-component-id="right" layout="column" ng-cloak>
+  <ul class="sidenav" id="sidenav">
 
-    <md-toolbar layout="row">
-      <div class="md-toolbar-tools">
 
-        <div class="profile-area" ng-hide="searching" flex="70">
-          {{ user_widget(request, sidenav=True) }}
-        </div>
+    {# Current User Header  #}
 
-        <md-button ng-hide="searching" ng-click="searching = !searching" class="md-icon-button">
-          <md-icon><i class="material-icons">search</i></md-icon>
-        </md-button>
-        <md-button ng-hide="!searching" ng-click="get_search()" class="md-icon-button">
-          <md-icon><i class="material-icons" style="color: white;">search</i></md-icon>
-        </md-button>
-        <div ng-if="searching" flex=70>
-          {{ searchbar(sidenav=True) }}
-        </div>
+    <li>
+      <div class="user-view orange lighten-2">
+        {% if request.user.is_authenticated %}
+          {% if request.user.logged_in_as %}
 
-        <md-button ng-hide="!searching" ng-click="searching = !searching" class="md-icon-button">
-          <md-icon><i class="material-icons">cancel</i></md-icon>
-        </md-button>
-        <md-button ng-if="!searching" ng-click="sidenav.close()" class="md-icon-button">
-          <md-icon>
-            <i class="material-icons" aria-hidden="true">close</i>
-          </md-icon>
-        </md-button>
+            <a href="{{ request.user.logged_in_as.url }}" title="View {{ request.user.logged_in_as.name }}">
+              <img class="circle" src="{{ request.user.logged_in_as.profile_img.url }}" alt="Ministry Profile Img">
+
+              <span class="white-text name">
+              {{- request.user.logged_in_as.name -}}
+            </span>
+            </a>
+
+            <a class="white-text" title="User Profile" href="{{ url_for('people:be_me_again') }}">
+              Your Profile
+            </a>
+            <br>
+
+          {% else %}
+
+            <a href="{{ url_for('people:user_profile') }}" title="Your Profile">
+              <img class="circle" src="{{ request.user.profile_img }}" alt="Profile Img">
+              <span class="white-text name">{{- request.user.name -}}</span>
+            </a>
+
+          {% endif %}
+
+          <a class="white-text" href="{{ url_for('people:logout') }}">Logout</a>
+
+        {% else %}
+
+          <a class="white-text" href="{{ url_for('people:login') }}">Login</a>
+
+        {% endif %}
       </div>
-    </md-toolbar>
+    </li>
+
+
+    {# Profile Selection #}
 
     {% if request.user.is_authenticated %}
-      <md-list ng-if="switching" layout="column" ng-click="sidenav.close()">
-        <md-list-item class="md-line-1">
-          {% if request.user.logged_in_as %}
-            <md-button ng-href="{{ url_for('people:be_me_again') }}">
-              Your Profile
-            </md-button>
-          {% else %}
-            <md-button ng-href="#{{ url_for('people:user_profile') }}">
-              Your Profile
-            </md-button>
-          {% endif %}
-        </md-list-item>
 
-        {% if len(request.user.administers.all()) %}
-          <md-divider></md-divider>
-          <md-list-item class="md-line-1">
-            <md-button disabled>
-              Ministries You Administer:
-            </md-button>
-          </md-list-item>
-          {% for ministry in request.user.administers.all() %}
-            {% set ALIAS = (request.user.logged_in_as == ministry) %}
-            <md-list-item class="md-line-1">
-              <md-button ng-href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"{% if ALIAS %} class="md-primary"{% endif %}>
-                {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
-                {{ ministry }}
-              </md-button>
-              <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}" class="md-icon-button">
-                <i class="material-icons">settings</i>
-              </md-button>
-            </md-list-item>
-          {% endfor %}
-        {% endif %}
+      {% set aliases = [{'label': 'Ministries You Administer',
+                              'profiles': request.user.administers.all()},
+                             {'label': 'Ministries You Represent',
+                              'profiles': request.user.represents.all()}] %}
 
-        {% if len(request.user.represents.all()) %}
-          <md-divider></md-divider>
-          <md-list-item class="md-line-1">
-            <md-button disabled>
-              Ministries You Represent:
-            </md-button>
-          </md-list-item>
-          {% for ministry in request.user.represents.all() %}
+      {% for i in aliases %}
+        {% if len(i['profiles']) %}
+
+          <li><a class="subheader">{{ i['label'] }}:</a></li>
+
+          {% for ministry in i['profiles'] %}
             {% set ALIAS = (request.user.logged_in_as == ministry) %}
-            <md-list-item class="md-line-1">
-              <md-button ng-href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"{% if ALIAS %} class="md-primary"{% endif %}>
-                {% if ALIAS %}<md-icon><i class="material-icons">how_to_reg</i></md-icon>{% endif %}
-                {{ ministry }}
-              </md-button>
-              <md-button ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}" class="md-icon-button">
+            <li class="profile-area">
+              <a href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"
+                 class="view_profile">
+                <img class="profile-img" src="/{{ ministry.profile_img.url }}">
+                <div>
+                      <span class="{% if ALIAS %}orange-text{% endif %}">
+                        {{ ministry }}
+                      </span>
+                </div>
+                {% if ALIAS %}<i class="material-icons orange-text right">how_to_reg</i>{% endif %}
+              </a>
+              <a href="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}"
+                 class="btn-flat waves-effect edit-btn">
                 <i class="material-icons">settings</i>
-              </md-button>
-            </md-list-item>
+              </a>
+            </li>
           {% endfor %}
 
+          <li class="divider"></li>
+
         {% endif %}
-
-        <md-divider></md-divider>
-        <md-list-item class="md-line-1">
-          <md-button ng-href="{{ url_for('people:logout') }}">
-            Logout
-          </md-button>
-        </md-list-item>
-      </md-list>
-
-      <md-divider></md-divider>
+      {% endfor %}
 
     {% endif %}
 
 
-    <md-list>
-      {%- for _link in links -%}
-        <a href="{{ _link[0] }}" name="{{ _link[1] }}">
-          <md-list-item class="md-line-1" ng-click="sidenav.close()">{{ _link[1] }}</md-list-item>
+    {# Navigation Links  #}
+
+    <li><a class="subheader">Navigation</a></li>
+    {%- for _link in links -%}
+      <li>
+        <a href="{{ _link[0] }}" title="{{ _link[1] }}"
+           class="waves-effect">
+          {{ _link[1] }}
         </a>
-      {%- endfor -%}
-    </md-list>
+      </li>
+    {%- endfor -%}
 
-    <div id="sidebar-donate-button"
+    <li class="spacer"></li>
+
+    <li id="sidebar-donate-button"
          layout="column">
-      <md-button class="md-primary md-raised"
-                 ng-href="#{{ url_for('donation:admin_donation') }}"
-                 ng-click="sidenav.close()">
-        Donate Now
-      </md-button>
+      <a class="btn-small orange"
+         href="{{ url_for('donation:admin_donation') }}">
+        Donate
+      </a>
 
-      <span>Love Our Neighbor does not take any money from the ministries you donate to.
-         Help support our mission by donating to Love Our Neighbor.</span>
-    </div>
+      <p>Love Our Neighbor does not take any money from the ministries you donate to.
+         Help support our mission by donating to Love Our Neighbor.</p>
+    </li>
 
-  </md-sidenav>
+  </ul>
 
 {% endmacro %}

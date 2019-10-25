@@ -1,0 +1,36 @@
+#sidenav {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+#sidenav .profile-area .view_profile {
+  margin-left: 16px;
+}
+#sidenav .edit-btn {
+  margin: 0;
+}
+
+#sidenav .spacer {
+  flex-grow: 1;
+}
+
+#sidenav .profile-area {
+  min-height: 4.5em;
+}
+
+#sidebar-donate-button {
+  margin: 12px;
+  font-size: 14px;
+  line-height: 1.5em;
+  align-self: flex-end;
+}
+
+#sidebar-donate-button .btn-small {
+  line-height: 32.4px;
+  height: 32.4px;
+  display: inline-block;
+}
+
+#sidebar-donate-button p {
+  margin-bottom: 0;
+}

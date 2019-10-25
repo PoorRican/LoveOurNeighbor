@@ -18,8 +18,8 @@ fn = [join(_path, i) for i in fn]                   # join the filepath with `_p
 
 angular_js = Bundle(*fn, filters='jsmin', output='assets/packed.js')
 
-_css = ('body.css', 'footer.css', 'header.css', 'LON.css')
-css = Bundle(*[join('css', i) for i in _css], filters='cssmin', output='assets/packed.css')
+_path = join(BASE_DIR, "static/css")
+css = Bundle(*[join('css', i) for i in ls(_path)], filters='cssmin', output='assets/packed.css')
 
 
 register('angular_js', angular_js)
