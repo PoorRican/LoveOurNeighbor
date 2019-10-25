@@ -8,22 +8,31 @@ footer {
   bottom: 0;
 }
 
--footer {
-  padding: 20px;
+footer div {
+  width: 95%;
+  margin: auto;
+}
+
+/** Big Screen **/
+@media screen and (min-width: 850px) {
+  footer div {
+    width: 95%;
+    margin: auto;
+  }
 
 }
-@media screen and (min-width: 850px) {
-  .page-footer {
-    width: 80%;
-    margin: auto;
+
+/** Small Screen **/
+@media screen and (max-width: 850px) {
+  #footer-donate-button .btn,
+  #footer-donate-button a {
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 15px;
   }
 }
 
-footer.page-footer {
-  margin-left: 10%;
-  margin-right: 10%;
-  margin-bottom: 10px;
-}
 footer #sitemap ul {
   font-size: 14px;
   text-align: left !important;
@@ -46,6 +55,9 @@ footer #sitemap ul li {
   width: 40px;
 }
 
+#footer-copyright {
+  bottom: 0;
+}
 
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */
