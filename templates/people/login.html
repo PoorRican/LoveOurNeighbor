@@ -1,57 +1,44 @@
 {# vim: foldmethod=marker tabstop=2 shiftwidth=2:
     templates/people/login.html
 #}
+{% extends "layout.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
 <section class="wrapper">
   <!-- people/login -->
 
   <h1>Sign In</h1>
 
   <p>If you have not created an account yet, then please
-  <a href="#people/create">sign up</a> first.</p>
+  <a href="{{ url_for('people:create_user') }}">sign up</a> first.</p>
 
-  <form name="loginForm" class="login" method="POST" action="/people/login">
+  <form name="loginForm" class="login" method="POST" action="{{ url_for('people:login') }}">
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    <div layout="column" layout-padding class="md-inline-form" flex-gt-sm="50">
-      <md-input-container>
-        <label>Email</label>
-        <input name="email" type="email" required
+    <div class="row">
+      <div class="input-field col s12">
+        <label for="email">Email</label>
+        <input name="email" type="email" id="email"
+               class="validate"
                minlength="9" maxlength="64" 
-               ng-model="email"
-               ng-pattern="/^.+@.+\..+$/" />
-        <div ng-messages="loginForm.email.$error" role="alert">
-          <div ng-message-exp="['required']">
-            This field is required.
-          </div>
-          <div ng-message-exp="['pattern']">
-            Please enter a valid email address.
-          </div>
-          <div ng-message-exp="['minlength', 'maxlength']">
-            Your email must be between 9 and 64 characters long.
-          </div>
-        </div>
-      </md-input-container>
-      <md-input-container>
-        {{ form.password.label_tag() }}
-        <input type="password" name="password" required
+               required/>
+      </div>
+      <div class="input-field col s12">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" class="validate"
                minlength="9" maxlength="64"
-               ng-model="password"/>
-        <div ng-messages="loginForm.password.$error" role="alert">
-          <div ng-message-exp="['required']">
-            You must enter a password silly.
-          </div>
-          <div ng-message-exp="['minlength', 'maxlength']">
-            Your password must be between 9 and 64 characters long.
-          </div>
-        </div>
-      </md-input-container>
+               required/>
+      </div>
     </div>
 
-    <md-button class="md-raised md-primary" type="submit">Sign In</md-button>
+    <button class="btn btn-waves orange" type="submit">Sign In</button>
 
   </form>
 
   <a class="button secondaryAction" href="'account_reset_password'">Forgot Password?</a>
 
 </section>
+{% endblock %}
