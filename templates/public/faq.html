@@ -1,11 +1,12 @@
-{% from "misc_layout.html" import section_start, section_close %}
+{% extends "layout.html" %}
+{% from "macros/layout/misc_layout.html" import section_start, section_close %}
+
+{% block title %}FAQ{% endblock %}
+
+{% block content %}
 
   <div class="col s12 m9 l10 scroll-content">
     {% for i in faqs %}
-      <div class="parallax-container" style='height: 250;'>
-        <div ng-parallax class="parallax-img" pattern="'.{% if i.img_path %}{{ static(i.img_path) }}{% endif %}'" speed="1">
-        </div>
-      </div>
 
       {{ section_start(i.title) }}
 
@@ -15,7 +16,6 @@
       {{ section_close() }}
 
     {% endfor %}
+  </div>
 
-
-<!-- Google Analytics Virtual Pageview -->
-<script>ga('send', 'pageview', 'faq')</script>
+  {% endblock %}

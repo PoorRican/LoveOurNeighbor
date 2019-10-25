@@ -1,21 +1,17 @@
-{% from "misc_layout.html" import section_start, section_close %}
+{% extends "layout.html" %}
+{% from "macros/layout/misc_layout.html" import section_start, section_close %}
 
+{% block content %}
     <div>
-    {% for i in about %}
-      <div class="parallax-container" style='height: 250px;'>
-        <div ng-parallax class="parallax-img" pattern="'.{% if i.img_path %}{{ static(i.img_path) }}{% endif %}'" speed="1">
-        </div>
-      </div>
+      {% for i in about %}
 
-      {{ section_start(i.title) }}
+        {{ section_start(i.title) }}
 
-      <h1>{{ i.title }}</h1>
-      <p>{{ i.content|safe }}</p>
+        <h1>{{ i.title }}</h1>
+        <p>{{ i.content|safe }}</p>
 
-      {{ section_close() }}
+        {{ section_close() }}
 
-    {% endfor %}
-
-
-<!-- Google Analytics Virtual Pageview -->
-<script>ga('send', 'pageview', 'about')</script>
+      {% endfor %}
+    </div>
+{% endblock %}
