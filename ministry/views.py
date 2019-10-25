@@ -83,14 +83,14 @@ def create_ministry(request):
             _w = 'Ministry Profile Created!'
             messages.add_message(request, messages.SUCCESS, _w)
 
-            _url = '/#%s' % reverse('ministry:ministry_profile',
-                                    kwargs={'ministry_id': ministry.id})
+            _url = reverse('ministry:ministry_profile',
+                           kwargs={'ministry_id': ministry.id})
             return HttpResponseRedirect(_url)
 
         else:
             for _, message in min_form.errors.items():
                 messages.add_message(request, messages.ERROR, message[0])
-            _url = '/#%s' % reverse('ministry:create_ministry')
+            _url = reverse('ministry:create_ministry')
             return HttpResponseRedirect(_url)
     else:
         _form = MinistryEditForm(initial={'website': 'https://'})
@@ -121,6 +121,8 @@ def edit_ministry(request, ministry_id):
     The template differentiates from editing existing and creating
         new objects by being passed a boolean variable `start`
     """
+    _url = ''
+
     try:
         ministry = MinistryProfile.objects.get(pk=ministry_id)
         # TODO: set up ministry permissions
@@ -211,7 +213,6 @@ def edit_ministry(request, ministry_id):
         messages.add_message(request, messages.ERROR, _w)
         _url = ''
 
-    _url = '/#%s' % _url
     return HttpResponseRedirect(_url)
 
 
@@ -276,7 +277,6 @@ def delete_ministry(request, ministry_id):
 
         _url = ''
 
-    _url = '/#%s' % _url
     return HttpResponseRedirect(_url)
 
 
@@ -360,7 +360,7 @@ def login_as_ministry(request, ministry_id):
         _w = 'Logged in as %s!' % ministry.name
         messages.add_message(request, messages.INFO, _w)
 
-        _url = "/#%s" % reverse('ministry:ministry_profile', kwargs={'ministry_id': ministry_id})
+        _url = reverse('ministry:ministry_profile', kwargs={'ministry_id': ministry_id})
         return HttpResponseRedirect(_url)
     else:
         # we shouldn't really get here, but redirect to originating page

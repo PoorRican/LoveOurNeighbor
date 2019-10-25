@@ -47,8 +47,8 @@ def create_campaign(request, ministry_id):
             _w = 'Ministry Profile Created!'
             messages.add_message(request, messages.SUCCESS, _w)
 
-            _url = '/#%s' % reverse('ministry:campaign_detail',
-                                    kwargs={'campaign_id': cam.id})
+            _url = reverse('ministry:campaign_detail',
+                           kwargs={'campaign_id': cam.id})
             return HttpResponseRedirect(_url)
         else:
             # TODO: properly return form errors
@@ -110,7 +110,6 @@ def edit_campaign(request, campaign_id):
 
         _url = ''
 
-    _url = '/#%s' % _url
     return HttpResponseRedirect(_url)
 
 
@@ -146,7 +145,6 @@ def delete_campaign(request, campaign_id):
 
         _url = ''
 
-    _url = '/#%s' % _url
     # return HttpResponse(json.dumps(True))
     return HttpResponseRedirect(_url)
 

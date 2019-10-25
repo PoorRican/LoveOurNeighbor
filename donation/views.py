@@ -87,7 +87,6 @@ def select_payment(request, campaign_id):
             # TODO: raise an error
             _url = '/'
 
-        _url = '/#%s' % _url
         return HttpResponseRedirect(_url)
 
     elif request.method == "GET":
