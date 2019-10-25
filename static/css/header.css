@@ -1,12 +1,4 @@
 /** Header Styling **/
-header {
-  position: fixed;
-  z-index: 500;
-  background-color: #8B0053 !important;
-  width: 100%;
-  border-bottom: solid 1px #FF7100;
-}
-
 .brand-logo.center {
   left: auto !important;
   margin-top: auto;
@@ -51,6 +43,9 @@ header {
 .user-widget {
   min-width: 13em;
   height: 100%;
+}
+.user-widget .dropdown-content li >  a {
+  color: #242424dd;
 }
 a.profile-menu-trigger .inside > i {
   display: inline;

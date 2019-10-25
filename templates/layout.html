@@ -51,24 +51,24 @@
 
   <body>
 
-  <div>
-
+  <header>
     {% set links =
-      [
-        ('/home', 'Home'),
-        ('/faq', 'FAQ'),
-        ('/about', 'About Us')
-      ] %}
+    [
+      ('/home', 'Home'),
+      ('/faq', 'FAQ'),
+      ('/about', 'About Us')
+    ] %}
     {{ navbar_links(request, links) }}
+  </header>
 
+  <main>
     {% block content %}
     {% endblock %}
+  </main>
 
-    {{ footer(links) }}
+  {{ footer(links) }}
 
-    {{ sidenav(request, links) }}
-
-  </div><!-- /ng-controller -->
+  {{ sidenav(request, links) }}
 
   {# {{{ Google Analytics #}
   <!-- Global site tag (gtag.js) - Google Analytics -->

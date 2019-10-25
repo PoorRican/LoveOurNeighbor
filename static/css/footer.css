@@ -8,40 +8,12 @@ footer {
   bottom: 0;
 }
 
-footer div {
-  width: 95%;
-  margin: auto;
-}
-
-/** Big Screen **/
-@media screen and (min-width: 850px) {
-  footer div {
-    width: 95%;
-    margin: auto;
-  }
-
-}
-
-/** Small Screen **/
-@media screen and (max-width: 850px) {
-  #footer-donate-button .btn,
-  #footer-donate-button a {
-    width: 90%;
-    margin-left: 5%;
-    margin-right: 5%;
-    margin-bottom: 15px;
-  }
-}
 
 footer #sitemap ul {
   font-size: 14px;
   text-align: left !important;
 
-  list-style-type: circle !important;
   color: #EEE !important;
-}
-footer #sitemap ul li {
-  margin-bottom: 5px;
 }
 
 #social-media-links a {
@@ -49,6 +21,7 @@ footer #sitemap ul li {
   width: 50px;
   padding: 5px 5px;
   margin-bottom: 15px;
+  display: inline;
 }
 #social-media-links a img {
   height: 40px;

@@ -1,62 +1,63 @@
 {% macro footer(links) %}
 
   <footer class="page-footer">
-    <div id="footer-content" class="row">
+    <div id="footer-content" class="container">
+      <div class="row">
 
-      {# {{{ Sitemap #}
-      <div class="col l3 s12">
+        {# {{{ Sitemap #}
+        <div class="col l6 s12">
+          <h5 class="grey-text text-lighten-2">Links</h5>
+          <div id="sitemap">
+            <ul>
+              {%- for _link in links -%}
+                <li>
+                  <a href="{{ _link[0] }}" title="{{ _link[1] }}">
+                    {{ _link[1] }}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div><!-- /#sitemap -->
+          {# }}} #}
 
-        <div id="sitemap" class="left">
-          <ul>
-            {%- for _link in links -%}
-              <li>
-                <a href="{{ _link[0] }}" title="{{ _link[1] }}">
-                  {{ _link[1] }}
-                </a>
-              </li>
-            {%- endfor -%}
-          </ul>
-        </div><!-- /#sitemap -->
+          {# {{{ Social Media Links #}
+          <div id="social-media-links">
+            <a class="waves-effect waves-teal btn-flat">
+              <img src="{{ static('img/igram-icon.png') }}">
+            </a>
+            <a class="waves-effect waves-teal btn-flat">
+              <img src="{{ static('img/facebook-icon.png') }}">
+            </a>
+            {# TODO: import YouTube and other SM links #}
+          </div><!-- /#social-media-links -->
+        </div><!-- /.col .l6 -->
 
-      </div>
-      {# }}} #}
+        <div class="col l6 s12">
+          <div id="mission-statement">
+            <h5 class="grey-text text-lighten-2">Mission Statement</h5>
+            <p>Mission statement</p>
+          </div>
+          <div id="footer-donate-button">
+            <a class="btn orange lighten-1 waves-effect waves-light s12"
+               href="{{ url_for('donation:admin_donation') }}">
+              Donate
+            </a>
+            <p>Love Our Neighbor does not take any money from the ministries you donate to.
+               Help support our mission by donating to Love Our Neighbor.</p>
+          </div>
+        </div><!-- /#donate-footer-button -->
 
-      {# {{{ Social Media Links #}
-      <div id="social-media-links" class="col s12 l4 right">
-        <a class="waves-effect waves-teal btn-flat right">
-          <img src="{{ static('img/igram-icon.png') }}">
-        </a>
-        <a class="waves-effect waves-teal btn-flat right">
-          <img src="{{ static('img/facebook-icon.png') }}">
-        </a>
-        {# TODO: import YouTube and other SM links #}
-      </div><!-- /#social-media-links -->
-      {# }}} #}
+      </div><!-- /#row -->
 
     </div><!-- /#footer-content -->
 
-    {# TODO: move donate section beneath sitemap in mobile media view #}
-
-    <div>
-
-      <div id="footer-donate-button">
-        <a class="btn orange lighten-1 waves-effect waves-light s12"
-           href="{{ url_for('donation:admin_donation') }}">
-          Donate
-        </a>
-        <span>Love Our Neighbor does not take any money from the ministries you donate to.
-               Help support our mission by donating to Love Our Neighbor.</span>
-      </div><!-- /#donate-footer-button -->
-
-      <br>
-
-      <div id="footer-copyright">
+    <div id="footer-copyright" class="footer-copyright">
+      <div class="container">
         <span>
-          © 2019 Love Our Neighbor
+          © 2018 Love Our Neighbor
         </span>
-      </div><!-- /#footer-copyright -->
-
-    </div>
+      </div>
+    </div><!-- /#footer-copyright -->
 
   </footer><!-- /#page-footer -->
 
