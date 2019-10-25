@@ -70,6 +70,26 @@
 }
 
 
+/* Materialize overrides */
+
+/* Change Input Styling */
+.input-field input[type=text]:focus,
+.input-field input[type=email]:focus,
+.input-field input[type=password]:focus {
+  border-bottom: 1px solid #ff4081 !important;
+  -webkit-box-shadow: 0 1px 0 0 #ff4081 !important;
+  box-shadow: 0 1px 0 0 #ff4081 !important;
+}
+
+.input-field input[type=text].valid,
+.input-field input[type=email].valid,
+.input-field input[type=password].valid {
+  border-bottom: 1px solid #ffa726 !important;
+  -webkit-box-shadow: 0 1px 0 0 #ffa726 !important;
+  box-shadow: 0 1px 0 0 #ffa726 !important;
+}
+
+
 /* sharethis.js override */
 .st-total {
   background-color: transparent !important;
