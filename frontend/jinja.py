@@ -8,6 +8,7 @@ from webassets.ext.jinja2 import AssetsExtension
 
 from frontend.settings import ASSETS_DEBUG, ASSETS_AUTO_BUILD
 from frontend.assets import angular_js, css
+from public.models import AboutSection
 
 from .utils import (
     friendly_time,
@@ -19,6 +20,10 @@ from .utils import (
 _assets = AssetsEnvironment('./static', 'static', debug=ASSETS_DEBUG, auto_build=ASSETS_AUTO_BUILD)
 _assets.register('angular_js', angular_js)
 _assets.register('css', css)
+
+
+# hack for getting dynamic mission statement
+_mission_statement = AboutSection.objects.get(title='Mission Statement').content
 
 
 def environment(**options):
@@ -34,6 +39,7 @@ def environment(**options):
         'f_time': friendly_time,
         'ministry_admin_urls': ministry_admin_urls,
         'campaign_admin_urls': campaign_admin_urls,
+        'mission_statement': _mission_statement
     })
     env.add_extension(AssetsExtension)
     env.assets_environment = _assets
