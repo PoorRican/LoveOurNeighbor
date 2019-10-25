@@ -107,7 +107,8 @@ def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
             }
 
 
-def search(request, query):
+def search(request):
+    query = request.GET['query']
     context = {
                'query': query,
                }
