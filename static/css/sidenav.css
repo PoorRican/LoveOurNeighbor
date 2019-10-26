@@ -3,9 +3,6 @@
   min-height: 100vh;
   flex-direction: column;
 }
-#sidenav .profile-area .view_profile {
-  margin-left: 16px;
-}
 #sidenav .edit-btn {
   margin: 0;
 }
@@ -33,4 +30,10 @@
 
 #sidebar-donate-button p {
   margin-bottom: 0;
+}
+
+.user-view .collapsible {
+  margin-top: 12px;
+  margin-left: -16px;
+  margin-right: -16px;
 }

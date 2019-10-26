@@ -87,6 +87,10 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
+  {% assets "js" %}
+    <script type="application/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       let el = document.querySelectorAll('.sidenav');
@@ -95,9 +99,16 @@
       el = document.querySelectorAll('.profile-menu-trigger');
       M.Dropdown.init(el);
 
+      el = document.querySelectorAll('.collapsible');
+      M.Collapsible.init(el, {
+        onOpenStart: open_collapsible,
+        onCloseStart: close_collapsible
+      });
+
   });
 
   </script>
+
 
   <!-- WYSIWYG Editor -->
   {% set TINY_API_KEY = 'ropl0dvkzt3bbjqb9e8dk06ff578n2fkfvgun5yxa1zgb234' %}

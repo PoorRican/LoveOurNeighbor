@@ -7,7 +7,7 @@ from webassets import Environment as AssetsEnvironment
 from webassets.ext.jinja2 import AssetsExtension
 
 from frontend.settings import ASSETS_DEBUG, ASSETS_AUTO_BUILD
-from frontend.assets import angular_js, css
+from frontend.assets import js, css
 from public.models import AboutSection
 
 from .utils import (
@@ -18,7 +18,7 @@ from .utils import (
 
 # Manually register Bundles for webassets (for some reason django_assets is not working)
 _assets = AssetsEnvironment('./static', 'static', debug=ASSETS_DEBUG, auto_build=ASSETS_AUTO_BUILD)
-_assets.register('angular_js', angular_js)
+_assets.register('js', js)
 _assets.register('css', css)
 
 

@@ -6,36 +6,102 @@
   <ul class="sidenav" id="sidenav">
 
 
-    {# Current User Header  #}
+    {# Current User and Profile Selection Header  #}
 
     <li>
-      <div class="user-view orange lighten-2">
+      <div class="user-view orange lighten-1">
         {% if request.user.is_authenticated %}
           {% if request.user.logged_in_as %}
 
             <a href="{{ request.user.logged_in_as.url }}" title="View {{ request.user.logged_in_as.name }}">
               <img class="circle" src="{{ request.user.logged_in_as.profile_img.url }}" alt="Ministry Profile Img">
-
-              <span class="white-text name">
-              {{- request.user.logged_in_as.name -}}
-            </span>
             </a>
 
-            <a class="white-text" title="User Profile" href="{{ url_for('people:be_me_again') }}">
-              Your Profile
-            </a>
             <br>
 
           {% else %}
 
             <a href="{{ url_for('people:user_profile') }}" title="Your Profile">
               <img class="circle" src="{{ request.user.profile_img }}" alt="Profile Img">
-              <span class="white-text name">{{- request.user.name -}}</span>
             </a>
 
           {% endif %}
 
-          <a class="white-text" href="{{ url_for('people:logout') }}">Logout</a>
+          <ul class="collapsible collapsible-accordian">
+            <li>
+              <a class="collapsible-header">
+                <i class="material-icons rotate">arrow_drop_down</i>
+                {%- if request.user.logged_in_as -%}
+
+                  {{- request.user.logged_in_as.name -}}
+
+                {%- else -%}
+
+                  {{- request.user.name -}}
+
+                {%- endif -%}
+              </a>
+
+              <div class="collapsible-body">
+                <ul>
+                  <li class="user-profile">
+                    {% if request.user.logged_in_as %}
+
+                      <a title="User Profile" href="{{ url_for('people:be_me_again') }}">
+                        <span>Your Profile</span>
+                      </a>
+
+                    {% else %}
+
+                      <a href="{{ url_for('people:user_profile') }}" title="Your Profile">
+                        <span>{{- request.user.name -}}</span>
+                      </a>
+
+                    {% endif %}
+                  </li>
+
+                  <li>
+                    <a href="{{ url_for('people:logout') }}">Logout</a>
+                  </li>
+
+                  {% set aliases = [{'label': 'Ministries You Administer',
+                                'profiles': request.user.administers.all()},
+                               {'label': 'Ministries You Represent',
+                                'profiles': request.user.represents.all()}] %}
+                  {% for i in aliases %}
+                    {% if len(i['profiles']) %}
+
+                      <li><a class="subheader">{{ i['label'] }}:</a></li>
+
+                      {% for ministry in i['profiles'] %}
+                        {% set ALIAS = (request.user.logged_in_as == ministry) %}
+                        <li class="profile-area">
+                          <a href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"
+                             class="view_profile">
+                            <img class="profile-img" src="/{{ ministry.profile_img.url }}">
+                            <div>
+                        <span class="{% if ALIAS %}orange-text{% endif %}">
+                          {{ ministry }}
+                        </span>
+                            </div>
+                            {% if ALIAS %}<i class="material-icons orange-text right">how_to_reg</i>{% endif %}
+                          </a>
+                          <a href="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}"
+                             class="btn-flat waves-effect edit-btn">
+                            <i class="material-icons">settings</i>
+                          </a>
+                        </li>
+                      {% endfor %}
+
+                      <li class="divider"></li>
+
+                    {% endif %}
+                  {% endfor %}
+
+                </ul>
+              </div>
+            </li>
+          </ul>
 
         {% else %}
 
@@ -44,48 +110,6 @@
         {% endif %}
       </div>
     </li>
-
-
-    {# Profile Selection #}
-
-    {% if request.user.is_authenticated %}
-
-      {% set aliases = [{'label': 'Ministries You Administer',
-                              'profiles': request.user.administers.all()},
-                             {'label': 'Ministries You Represent',
-                              'profiles': request.user.represents.all()}] %}
-
-      {% for i in aliases %}
-        {% if len(i['profiles']) %}
-
-          <li><a class="subheader">{{ i['label'] }}:</a></li>
-
-          {% for ministry in i['profiles'] %}
-            {% set ALIAS = (request.user.logged_in_as == ministry) %}
-            <li class="profile-area">
-              <a href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"
-                 class="view_profile">
-                <img class="profile-img" src="/{{ ministry.profile_img.url }}">
-                <div>
-                      <span class="{% if ALIAS %}orange-text{% endif %}">
-                        {{ ministry }}
-                      </span>
-                </div>
-                {% if ALIAS %}<i class="material-icons orange-text right">how_to_reg</i>{% endif %}
-              </a>
-              <a href="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}"
-                 class="btn-flat waves-effect edit-btn">
-                <i class="material-icons">settings</i>
-              </a>
-            </li>
-          {% endfor %}
-
-          <li class="divider"></li>
-
-        {% endif %}
-      {% endfor %}
-
-    {% endif %}
 
 
     {# Navigation Links  #}
