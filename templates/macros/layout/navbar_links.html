@@ -12,8 +12,8 @@
         {# TODO: Hide logo text when searchbar is clicked #}
       </a>
 
-      <div class="right">
-        <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <div class="navbar-content right">
+        <ul id="nav-mobile" class="right hide-on-small-only">
           <li>
             {{ searchbar() }}
           </li>
@@ -24,11 +24,11 @@
               </a>
             </li>
           {%- endfor -%}
-          <li>
+          <li class="user-widget">
             {{ user_widget(request) }}
           </li>
         </ul>
-        <a class="btn btn-flat hide-on-med-and-up sidenav-trigger" data-target="sidenav">
+        <a class="btn-flat hide-on-med-and-up sidenav-trigger" data-target="sidenav">
           <i class="material-icons">menu</i>
         </a>
       </div>

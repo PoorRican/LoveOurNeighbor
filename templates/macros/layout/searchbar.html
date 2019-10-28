@@ -1,9 +1,9 @@
 {% macro searchbar(sidenav=False) %}
-  <div class="search-bar l4 row {% if not sidenav %} hide-on-med-and-down{% endif %}">
-    <form method="GET" action="{{ url_for('search:search') }}">
-      <input id="search{% if sidenav %}_side{% endif %}" type="search" name="query" required>
-      <label class="label-icon" for="search{% if sidenav %}_side{% endif %}"><i class="material-icons">search</i></label>
-      <i class="material-icons">close</i>
-    </form>
-  </div>
+  <form method="GET" action="{{ url_for('search:search') }}"
+        class="search-bar {% if not sidenav %} hide-on-med-and-down{% endif %}">
+    <div class="input-field">
+      <input id="search" type="search" name="query" required>
+      <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+    </div>
+  </form>
 {% endmacro %}

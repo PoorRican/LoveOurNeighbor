@@ -1,0 +1,49 @@
+{% macro rep_selection(form) %}
+  <input id="rep_data" name="{{ form.reps.name }}" type="hidden">
+  <div class="chips reps"></div>
+{% endmacro %}
+
+{% macro rep_selection_script(object) %}
+  <script>
+    var requests = [];
+    var reps = [];
+
+    /**
+     * @brief Moves a chip from requests to reps
+     */
+    function addRep(el, index) {
+      console.debug(el);
+      console.debug(index);
+    }
+
+    /**
+     * @brief Initializes the Rep Request input using a tag input component.
+     *
+     * Please See: https://materializecss.com/chips.html for more info on the Tags component
+     *
+     * @param obj JSON for an object (which may be MinistryProfile or Campaign).
+     *    If it is not provided, it will be fetched
+     * @returns null
+     */
+    async function initRepInput(obj) {
+      let chip = {};    // buffer for iteration
+
+      // Format existing reps
+      if (obj === null || obj === undefined) {
+        const obj_json_response = await fetch('{{ object.json }}');
+        obj = await obj_json_response.json();
+      }
+      for (chip of obj['reps']) {
+        reps.push({tag: chip['email'], image: chip['img']});
+      }
+
+      for (chip of obj['requests']) {
+        requests.push({tag: chip['email'], image: chip['img']});
+      }
+
+      let el = document.querySelectorAll('.reps');
+      const options = {onChipSelect: addRep};
+      M.Chips.init(el, options);
+    }
+  </script>
+{% endmacro %}

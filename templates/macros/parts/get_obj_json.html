@@ -1,0 +1,14 @@
+{% macro get_obj_json(object) %}
+  <script>
+    /**
+     * @brief This is a function that gets the object JSON for dynamic content
+     * This should be called inside of an 'activate' type function
+     * @returns {Promise<void>}
+     */
+    async function get_obj_json() {
+      const obj_json_response = await fetch('{{ object.json }}');
+      const obj = await obj_json_response.json();
+      return await obj;
+    }
+  </script>
+{% endmacro %}

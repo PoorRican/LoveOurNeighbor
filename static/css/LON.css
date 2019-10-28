@@ -78,6 +78,10 @@
   box-shadow: 0 1px 0 0 #ffa726 !important;
 }
 
+[type="submit"] {
+  -webkit-appearance: none;
+}
+
 
 /* sharethis.js override */
 .st-total {

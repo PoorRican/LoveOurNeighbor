@@ -1,242 +1,236 @@
-{% from "gallery.html" import gallery  %}
+{% from "macros/parts/gallery.html" import gallery %}
+{% from "macros/parts/confirm_delete.html" import confirm_delete %}
 
 {# {{{ NewsPost Card #}
 {% macro news_card(post, AUTH=False) %}
-  <md-card>
-    <md-card-header>
-      <md-card-header-text>
-        <span class="md-subhead">
-          Posted: {{ f_time(post.pub_date) }}
-        </span>
-      </md-card-header-text>
-    </md-card-header>
+  <div class="col s12 l6">
+    <div class="card">
 
-    {% if post.attachment %}
-      <img src="{{ post.attachment.url }}" class="md-card-image">
-    {% endif %}
-
-    <md-card-title>
-      <md-truncate class="md-title">
-        <a href="#{{ post.url }}" style="color: black; text-decoration: none;">
-          {{ post.title }}
-        </a>
-      </md-truncate>
-    </md-card-title>
-    <md-card-actions layout="row" layout-align="end center" layout-align-gt-sm="start center">
-      <md-button class="md-icon-button">
-        <i class="material-icons">comment</i>
-      </md-button>
-      <md-button class="md-icon-button"
-                 ng-href="#{{ post.url }}">
-        <i class="material-icons">open_in_new</i>
-      </md-button>
-      {% if AUTH %}
-        {# {{{ Action Menu #}
-        <md-menu>
-          <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
-            <md-icon>
-              <i class="material-icons">arrow_drop_down</i>
-            </md-icon>
-          </md-button>
-          <md-menu-content>
-            {% if AUTH %}
-              <md-menu-item>
-                <md-button ng-href="#{{ post.edit }}">
-                  <md-icon>
-                    <i class="material-icons">create</i>
-                  </md-icon>&nbsp;
-                  Edit News Post
-                </md-button>
-              </md-menu-item>
-              <md-menu-item>
-                <md-button ng-href="{{ url_for('news:delete_news', kwargs={'post_id': post.id}) }}">
-                  <md-icon>
-                    <i class="material-icons">delete</i>
-                  </md-icon>&nbsp;
-                  Delete News Post
-                </md-button>
-              </md-menu-item>
-              <md-menu-divider></md-menu-divider>
-            {% endif %}
-
-            <md-menu-item>
-              <md-button ng-href="#{{ post.url }}">
-                <md-icon>
-                  <i class="material-icons">link</i>
-                </md-icon>&nbsp;
-                Link to news
-              </md-button>
-            </md-menu-item>
-          </md-menu-content>
-        </md-menu>
-        {# }}} #}
+      {% if post.attachment %}
+        <div class="card-image">
+          <img src="{{ post.attachment.url }}">
+          <a class="card-title dropdown-trigger" data-target="news_card_{{ post.id }}">
+            <span class="truncate" style="max-width: 85%; display: inline-block">
+              {{ post.title }}
+            </span>
+            <i class="material-icons">arrow_drop_down</i>
+          </a>
+        </div><!-- /.card-image -->
       {% endif %}
-    </md-card-actions>
-    <md-card-content style="min-height: 50px">
-      <md-truncate>
-        {{ post.content | safe }}
-      </md-truncate>
-    </md-card-content>
-  </md-card>
+
+      <div class="card-content">
+        {% if not post.attachment %}
+          <a href="#" class="dropdown-trigger" data-target="news_card_{{ post.id }}">
+            <span class="truncate" style="max-width: 85%; display: inline-block;">
+              {{ post.title }}
+            </span>
+            <i class="material-icons">arrow_drop_down</i>
+          </a>
+        {% endif %}
+        <p>
+          <span>Posted: </span>
+          <span>{{ f_time(post.pub_date) }}</span>
+        </p>
+        <div style="min-height: 50px;">
+          <p class="truncate">{{ post.description|safe }}</p>
+        </div>
+      </div><!-- /.card-content -->
+
+      <ul id="news_card_{{ post.id }}" class="dropdown-content" style="min-width: 13em;">
+        {% if AUTH %}
+          <li><a href="{{ post.edit }}">
+            <i class="material-icons">create</i>
+            Edit News Post
+          </a></li>
+          <li>{{ confirm_delete('news post', post.id, text='Delete Post', anchor=True, part=0) }}</li>
+        {% endif %}
+        <li><a href="{{ post.url }}">
+          <i class="material-icons">link</i>
+          Link to News
+        </a></li>
+      </ul>
+
+      {{ confirm_delete('news post', post.id, text='Delete Post', anchor=True, part=1) }}
+
+      <div class="card-action">
+        <a href="#" class="btn-flat orange"><i class="material-icons">comment</i></a>
+        <a href="{{ post.url }}" class="btn-flat orange"><i class="material-icons">open_in_new</i></a>
+      </div><!-- /.card-action -->
+
+    </div><!-- /.card -->
+  </div><!-- /.col -->
 {% endmacro %}
 {# }}} #}
 
 
 {# {{{ Campaign Card #}
 {% macro campaign_card(campaign, AUTH=False) %}
-  <md-card>
-    {% if campaign.banner_img %}
-      <img src="{{ campaign.banner_img.url }}" class="md-card-image">
-    {% endif %}
-    <md-card-title>
-      <md-truncate class="md-headline">
-        <a href="#{{ campaign.url }}" style="color: black; text-decoration: none;">
-          {{ campaign.title }}
-        </a>
-      </md-truncate>
-      {% if AUTH %}
-        <md-menu>
-          <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
-            <md-icon class="color: black">
-              <i class="material-icons">arrow_drop_down</i>
-            </md-icon>
-          </md-button>
-          <md-menu-content>
-            {% for opt in campaign_admin_urls(campaign) %}
-              <md-menu-item>
-                <md-button ng-href="#{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
-                  <md-icon>
-                    <i class="material-icons">{{ opt['icon'] }}</i>
-                  </md-icon>&nbsp;
-                  {{ opt['label'] }}
-                </md-button>
-              </md-menu-item>
-            {% endfor %}
-          </md-menu-content>
-        </md-menu>
+  <div class="col s12 l6">
+    <div class="card">
+
+      {% if campaign.banner_img %}
+        <div class="card-image">
+          <img src="{{ campaign.banner_img.url }}">
+          <a class="card-title dropdown-trigger" data-target="campaign_{{ campaign.id }}">
+            <span class="truncate" style="max-width: 85%; display: inline-block">
+              {{ campaign.title }}
+            </span>
+            <i class="material-icons">arrow_drop_down</i>
+          </a>
+        </div><!-- /.card-image -->
       {% endif %}
-    </md-card-title>
-    <md-card-actions layout="row" layout-align="end center" layout-align-gt-sm="start center">
-      {# TODO: show tooltips #}
-      <md-button class="md-icon-button">
-        <i class="material-icons">comment</i>
-      </md-button>
-      <md-button class="md-icon-button"
-                 ng-href="#{{ campaign.url }}">
-        <i class="material-icons">open_in_new</i>
-      </md-button>
-    </md-card-actions>
-    <md-card-content style="min-height: 50px">
-      <md-truncate>
-        {{ campaign.content | safe }}
-      </md-truncate>
-    </md-card-content>
-  </md-card>
+
+      <div class="card-content">
+        {% if not campaign.banner_img %}
+          <a href="#" class="dropdown-trigger" data-target="campaign_{{ campaign.id }}">
+            <span class="truncate" style="max-width: 85%; display: inline-block;">
+              {{ campaign.title }}
+            </span>
+            <i class="material-icons">arrow_drop_down</i>
+          </a>
+        {% endif %}
+        <div style="min-height: 50px;">
+          <p class="truncate">{{ campaign.content|safe }}</p>
+        </div>
+      </div><!-- /.card-content -->
+
+      <ul id="campaign_{{ campaign.id }}" class="dropdown-content" style="min-width: 13em;">
+        {% if AUTH %}
+          {% for opt in campaign_admin_urls(campaign) %}
+            <li><a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+              <i class="material-icons">{{ opt['icon'] }}</i>
+              {{ opt['label'] }}
+            </a></li>
+          {% endfor %}
+          <li>{{ confirm_delete('campaign', campaign.id, text='Delete Campaign', anchor=True, part=0) }}</li>
+        {% endif %}
+        <li><a href="{{ campaign.url }}">
+          <i class="material-icons">link</i>
+          Link to Campaign
+        </a></li>
+      </ul>
+
+      {{ confirm_delete('campaign', campaign.id, text='Delete Campaign', anchor=True, part=1) }}
+
+      <div class="card-action">
+        <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
+        <a href="{{ campaign.url }}" class="btn-flat text-orange"><i class="material-icons">open_in_new</i></a>
+      </div><!-- /.card-action -->
+
+    </div><!-- /.card -->
+  </div><!-- /.col -->
 {% endmacro %}
 {# }}} #}
 
 
 {% macro ministry_card(ministry, AUTH=False) %}
 
-  <md-card>
-    {% if ministry.banner_img %}
-      <img src="{{ campaign.banner_img.url }}" class="md-card-image">
-    {% endif %}
+  <div class="col s12 l6">
+    <div class="card">
 
-    <md-card-title>
-      <md-truncate class="md-headline">
-        <a href="#{{ ministry.url }}" style="color: black; text-decoration: none;">
-          {{ ministry.name }}
-        </a>
-      </md-truncate>
-      {% if AUTH %}
-        <md-menu>
-          <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
-            <md-icon class="color: black">
-              <i class="material-icons">arrow_drop_down</i>
-            </md-icon>
-          </md-button>
-          <md-menu-content>
-            {% for opt in ministry_admin_urls(campaign) %}
-              <md-menu-item>
-                <md-button ng-href="#{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
-                  <md-icon>
-                    <i class="material-icons">{{ opt['icon'] }}</i>
-                  </md-icon>&nbsp;
-                  {{ opt['label'] }}
-                </md-button>
-              </md-menu-item>
-            {% endfor %}
-          </md-menu-content>
-        </md-menu>
+      {% if ministry.banner_img %}
+        <div class="card-image">
+          <img src="{{ ministry.banner_img.url }}">
+          <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
+            <span class="truncate" style="max-width: 85%; display: inline-block">
+              {{ ministry.name }}
+            </span>
+            <i class="material-icons">arrow_drop_down</i>
+          </a>
+        </div><!-- /.card-image -->
       {% endif %}
-    </md-card-title>
 
-    <md-card-actions layout="row" layout-align="end center" layout-align-gt-sm="start center">
-      {# TODO: show tooltips #}
-      <md-button class="md-icon-button"
-                 ng-href="#{{ campaign.url }}">
-        <i class="material-icons">open_in_new</i>
-      </md-button>
-    </md-card-actions>
+      <div class="card-content">
+        {% if not ministry.banner_img %}
+          <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
+            <span class="truncate" style="max-width: 85%; display: inline-block">
+              {{ ministry.name }}
+            </span>
+            <i class="material-icons">arrow_drop_down</i>
+          </a>
+        {% endif %}
+        <div style="min-height: 50px">
+          <p class="truncate">{{ ministry.description|safe }}</p>
+        </div>
+      </div><!-- /.card-content -->
 
-    <md-card-content style="min-height: 50px">
-      <md-truncate>
-        {{ ministry.description | safe }}
-      </md-truncate>
-    </md-card-content>
+      <ul id="ministry_{{ ministry.id }}">
+        {% if AUTH %}
+          {% for opt in ministry_admin_urls(ministry) %}
+            <li><a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+              <i class="material-icons">{{ opt['icon'] }}</i>
+              {{ opt['label'] }}
+            </a></li>
+          {% endfor %}
+          <li>{{ confirm_delete('ministry', ministry.id, text='Delete Ministry', anchor=True, part=0) }}</li>
+        {% endif %}
+        <li><a href="{{ ministry.url }}">
+          <i class="material-icons">link</i>
+          Link to Ministry
+        </a></li>
+      </ul>
 
-  </md-card>
+      {{ confirm_delete('ministry', ministry.id, text='Delete Ministry', anchor=True, part=1) }}
+
+      <div class="card-action">
+        <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
+        <a href="{{ ministry.url }}" class="btn-flat text-orange"><i class="material-icons">open_in_new</i></a>
+      </div><!-- /.card-action -->
+
+    </div><!-- /.card -->
+  </div><!-- /.col -->
 
 {% endmacro %}
 
 
 {# {{{ Card Area #}
+{# Arguments
+   =========
+  campaigns[0] determines if a campaigns tab should be displayed (eg: there are no campaigns of campaigns)
+  campaigns[1] is the actual Campaign object data
+#}
 {% macro card_area(news, campaigns=(False, []), AUTH=None) %}
-  <md-tabs md-dynamic-height>
 
-    {# {{{ News Section #}
-    <md-tab label="News">
-      <md-content>
-        {% if news %}
-          {# TODO: generate different card types (both randomly and per parent object type) #}
-          {% for n in news %}
-            {{ news_card(n, AUTH) }}
-          {% endfor %}
-        {% else %}
-          <br>
-          <p>There is no news to show at this time.</p>
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a href="#news">News</a></li>
+        {% if campaigns[0] %}
+          <li class="tab col s3"><a href="#campaigns">Campaigns</a></li>
         {% endif %}
-      </md-content>
-    </md-tab>
-    {# }}} #}
+        <li class="tab col s3"><a href="#gallery">Gallery</a></li>
+      </ul>
+    </div>
+  </div>
 
-    {# {{{ Campaigns Section #}
-    {% if campaigns[0] %}
-      <md-tab label="Campaigns">
-        <md-content>
-          {% if campaigns[1] %}
-            {% for c in campaigns[1] %}
-              {{ campaign_card(c, AUTH) }}
-            {% endfor %}
-          {% else %}
-            <br>
-            <p>There are no campaigns to show at this time.</p>
-          {% endif %}
-        </md-content>
-      </md-tab>
+  <div id="news" class="col s12">
+    {% if news %}
+      {# TODO: generate different card types (both randomly and per parent object type) #}
+      {% for n in news %}
+        {{ news_card(n, AUTH) }}
+      {% endfor %}
+    {% else %}
+      <br>
+      <p>There is no news to show at this time.</p>
     {% endif %}
-    {# }}} #}
+  </div><!-- /#news -->
 
-    {# {{{ Gallery Section #}
-    <md-tab label="Gallery" ng-if="{% raw %}{{ gallery }}{% endraw %}">
-      <md-content>
-        {{ gallery() }}
-      </md-content>
-    </md-tab>
-    {# }}} #}
+  {% if campaigns[0] %}
+    <div id="campaigns" class="col s12">
+      {% if campaigns[1] %}
+        {% for c in campaigns[1] %}
+          {{ campaign_card(c, AUTH) }}
+        {% endfor %}
+      {% else %}
+        <br>
+        <p>There are no campaigns to show at this time.</p>
+      {% endif %}
+    </div><!-- /#campaign -->
+  {% endif %}
 
+  <div id="gallery" class="col s12">
+    {{ gallery() }}
+  </div><!-- /# gallery -->
 
-  </md-tabs>
 {% endmacro %}
 {# }}} #}

@@ -4,13 +4,13 @@
 
 #}
 
-{% from "navbar_links.html" import navbar_links %}
-{% from "searchbar.html" import searchbar %}
-{% from "sidenav.html" import sidenav %}
-{% from "footer.html" import footer %}
+{% from "macros/layout/navbar_links.html" import navbar_links %}
+{% from "macros/layout/searchbar.html" import searchbar %}
+{% from "macros/layout/sidenav.html" import sidenav %}
+{% from "macros/layout/footer.html" import footer %}
 
 
-
+<!DOCTYPE html>
 <html lang="en">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -62,7 +62,7 @@
   </header>
 
   <main>
-    {% block content %}
+    {% block body %}
     {% endblock %}
   </main>
 
@@ -88,31 +88,64 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
   {% assets "js" %}
-    <script type="application/javascript" src="{{ ASSET_URL }}"></script>
+    <script type="application/javascript" src="/{{ ASSET_URL }}"></script>
   {% endassets %}
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      let options = {};
+      // Initialize Sidebar Component
       let el = document.querySelectorAll('.sidenav');
       M.Sidenav.init(el);
 
-      el = document.querySelectorAll('.profile-menu-trigger');
+      // Initialize Dropdown Components
+      el = document.querySelectorAll('.dropdown-trigger');
       M.Dropdown.init(el);
 
+      // Initialize Collapsible Components
       el = document.querySelectorAll('.collapsible');
       M.Collapsible.init(el, {
         onOpenStart: open_collapsible,
         onCloseStart: close_collapsible
       });
 
+      // Initialize Datepicker components
+      el = document.querySelectorAll('.datepicker');
+      options = {format: 'mm/dd/yyyy'};
+      M.Datepicker.init(el, options);
+
+      el = document.querySelectorAll('.modal');
+      M.Modal.init(el);
+
+      // Initialize Tab Components
+      el = document.querySelectorAll('.tabs');
+      M.Tabs.init(el);
+
   });
 
   </script>
 
+  {% block scripts %}{% endblock %}
+
 
   <!-- WYSIWYG Editor -->
-  {% set TINY_API_KEY = 'ropl0dvkzt3bbjqb9e8dk06ff578n2fkfvgun5yxa1zgb234' %}
-  <script src="https://cdn.tiny.cloud/1/{{ TINY_API_KEY }}/tinymce/4/tinymce.min.js" referrerpolicy="origin"></script>
+  <script src="https://cdn.tiny.cloud/1/ropl0dvkzt3bbjqb9e8dk06ff578n2fkfvgun5yxa1zgb234/tinymce/5/tinymce.min.js"
+          referrerpolicy="origin"></script>
+
+  <script>
+    tinymce.init({
+      selector: '#tinyEditor',
+      height: 500,
+      max_height: 750,
+      min_width: 300,
+      width: 650,
+      resize: true,
+      mobile: {
+        theme: 'mobile',
+//          toolbar: [ 'undo', 'bold', 'italic', 'styleselect' ]
+      }
+    })
+  </script>
   {# }}} #}
 
   </body>

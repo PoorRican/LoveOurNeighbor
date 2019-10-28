@@ -1,3 +1,8 @@
+nav .navbar-content,
+.navbar-content > ul {
+  height: 100%;
+}
+
 /** Header Styling **/
 .brand-logo.center {
   left: auto !important;
@@ -41,36 +46,41 @@
   flex-basis: 0;
 }
 .user-widget {
-  min-width: 13em;
   height: 100%;
 }
-.user-widget .dropdown-content li >  a {
-  color: #242424dd;
-}
-a.profile-menu-trigger .inside > i {
+
+.user-widget .dropdown-trigger > i {
   display: inline;
 }
-.profile-menu-trigger,
-.profile-menu-trigger .inside {
+
+.user-widget .dropdown-trigger {
   height: 100%;
 }
-.profile-menu-trigger .inside {
+
+.user-widget .dropdown-trigger {
   margin-left: auto;
   width: fit-content;
 }
-.profile-menu-trigger .profile-img {
+
+.user-widget .dropdown-trigger .profile-img {
   float: left;
 }
 #navbar-menu {
   font-size: 14px;
 }
-#navbar-menu.dropdown-content li.disabled {
+
+#navbar-menu li > a {
+  color: #242424dd;
+}
+
+#navbar-menu li.disabled {
   color: #9e9e9e;
   min-height: 2.4em;
   line-height: 2.5em;
   padding-left: 12px;
 }
-#navbar-menu.dropdown-content li.disabled:hover {
+
+#navbar-menu li.disabled:hover {
   background-color: rgba(0,0,0,0);
 }
 #navbar-menu li.profile-area {
@@ -123,28 +133,21 @@ li.profile-area {
   margin: 0;
 }
 
-.search-bar {
-  margin: auto 0 auto auto;
-  max-width: 20em;
-}
-.search-bar form {
-  margin: auto 0;
-  overflow: hidden;
-}
-.search-bar form input {
-  background-color: transparent;
-  padding: 2px;
-  border: none;
-  border-bottom: solid 1px #EEE;
-  color: #EEE;
+form.search-bar div.input-field {
+  margin-right: 12px;
 }
 
-.search-bar form input:focus {
-  background-color: rgba(255,255,255,0.2);
-  outline: none;
+form.search-bar div.input-field input {
+  display: inline;
+  height: 100%;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.1);
 }
-.search-bar form ::placeholder {
-  color: #EEE !important;
+
+form.search-bar div.input-field input:focus {
+  height: 100%;
 }
 
 
