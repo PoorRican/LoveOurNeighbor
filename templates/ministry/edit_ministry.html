@@ -1,37 +1,39 @@
 {# vim: foldmethod=marker tabstop=2 shiftwidth=2:
     templates/ministry/edit_ministry.html
 #}
-{% from "wysiwyg_editor.html" import wysiwyg_editor %}
+{% extends "layout.html" %}
+
+{% from "macros/parts/confirm_delete.html" import confirm_delete %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor %}
+{% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
+{% from "macros/parts/get_obj_json.html" import get_obj_json %}
+{% from "macros/parts/rep_request_selection.html" import rep_selection, rep_selection_script %}
+
 {% import "cards.html" as card %}
 {# TODO: total donated amount #}
 
+{% block title %}
+  {% if start %}
+    New Ministry
+  {% else %}
+    {{ ministry.name }} Edit Page
+  {% endif %}
+{% endblock %}
+
+{% block body %}
 <section class="wrapper">
   <!-- ministry/ministry_content -->
 
   {# {{{ Form Header #}
   {% if start %}
-    <h1>New Ministry Profile:</h1>
+    <h2>New Ministry Profile:</h2>
     <!-- TODO: make link for more information -->
-    <h3>Please note that all ministry profiles are must be approved before they are made public</h3>
+    <h4>Please note that all ministry profiles are must be approved before they are made public</h4>
 
     <form method="POST" name="ministryForm" enctype="multipart/form-data"
           action="{{ url_for('ministry:create_ministry') }}">
 
   {% else %}
-    {#
-    <h1>
-
-      Edit Ministry Profile:&nbsp;
-
-      <a href="#{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': ministry.id}) }}"
-       style="text-decoration: none;">
-        <md-button class="md-raised md-primary">
-          View
-        </md-button>
-      </a>
-
-    </h1>
-    #}
 
     <form method="POST" name="ministryForm" enctype="multipart/form-data" action="{{ ministry.edit }}">
       <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
@@ -41,502 +43,261 @@
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    <div layout="column" class="md-inline-form">
+  <div class="row">
+    <div id="tab_bar" class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a href="#details"><i class="material-icons">info</i>
+          <span class="hide-on-small-only">
+          &nbsp;Details
+        </span>
+        </a></li>
+        <li class="tab col s3"><a href="#administration"><i class="material-icons">lock</i>
+          <span class="hide-on-small-only">
+          &nbsp;Administration
+        </span>
+        </a></li>
+        <li class="tab col s3"><a href="#campaigns"><i class="material-icons">public</i>
+          <span class="hide-on-small-only">
+          &nbsp;Campaigns
+        </span>
+        </a></li>
+        <li class="tab col s3"><a href="#statistics"><i class="material-icons">poll</i>
+          <span class="hide-on-small-only">
+          &nbsp;Statistics
+        </span>
+        </a></li>
+      </ul>
+    </div><!-- /#tab_bar -->
 
-      <md-tabs id="form_inputs" md-dynamic-height md-border-bottom>
+    <div id="details" class="col s12">
+      <div class="row">
 
-        {# {{{ Detail Section #}
-        <md-tab label="Ministry">
-          <md-tab-label>
-            <md-icon><i class="material-icons">info</i></md-icon>&nbsp;
-            Ministry
-          </md-tab-label>
-          <md-tab-body>
+        <h4 class="hide-on-med-and-up">Details</h4>
 
-            {# {{{ INPUT profile_img #}
-            <div id="image_input">
-              <h5>Profile Image:</h5>
-              {% if not start %}
-              <!-- TODO: dynamically get the updated url from input value via angular -->
-                <img style="height: 120px; width: 120px; margin: auto;" src="{{ ministry.profile_img.url }}"
-                     ng-click="profile_img_dialog.show($event, 'profileImgDialog')"/>
-              {% endif %}
-
-              {# {{{ Banner Selection Dialog #}
-              <div style="visibility: hidden">
-                <div class="md-dialog-container" id="profileImgDialog">
-                  <md-dialog>
-
-                    <md-toolbar>
-                      <div class="md-toolbar-tools">
-                        <h2>Banner Selection</h2>
-                        <span flex></span>
-                        <md-button class="md-icon-button" ng-click="profile_img_dialog.close()">
-                          <i class="material-icons">close</i>
-                        </md-button>
-                      </div><!-- /.md-toolbar-tools -->
-                    </md-toolbar>
-
-                    <md-dialog-content>
-                      <div class="md-dialog-content">
-                        <div class="previous-images">
-                            <md-grid-list
-                                  md-cols="1" md-cols-sm="4" md-cols-md="4" md-cols-gt-md="8"
-                                  md-row-height="1:1"
-                                  md-gutter="8px">
-
-                              <md-grid-tile ng-repeat="(name, src) in profile_img_urls"
-                                            {# TODO: dynamically allocate this #}
-                                            md-rowspan="1"
-                                            md-colspan="1"
-                                            md-rowspan-gt-xs="2"
-                                            md-colspan-gt-xs="2">
-                                <img style="width: 100%; bottom: 0; position: absolute;"
-                                     ng-click="select_profile_img(name)"
-                                     ng-src="{% raw %}{{ src }}{% endraw %}"
-                                     ng-class="[{banner_current:  profile_img_dialog.banner_current(name),
-                                                 banner_selected: profile_img_dialog.banner_selected(name)}]">
-                                <md-grid-tile-footer>
-                                  <h3>
-                                    <span ng-if="profile_img_dialog.banner_selected(name)"
-                                          class="banner_selected_label">
-                                      <md-icon><i class="material-icons">check_circle</i></md-icon>
-                                    </span>
-                                    <span ng-if="profile_img_dialog.banner_current(name)"
-                                          ng-hide="profile_img_dialog.banner_selected(name)"
-                                          class="banner_current_label">
-                                      Current
-                                    </span>
-                                    {% raw %}{{ name }}{% endraw %}
-                                  </h3>
-                                </md-grid-tile-footer>
-                              </md-grid-tile>
-                            </md-grid-list>
-                        </div><!-- /.previous-images -->
-
-                        <h3 class="md-headline" ng-hide="profile_img_urls">You haven't uploaded a profile picture yet</h3>
-
-                        {#{{ form.banner_img.label_tag() }}
-                        {{ form.banner_img }}#}
-                        <input type="hidden" name="selected_profile_img"
-                               value="{% raw %}{{ selected_profile_img }}{% endraw %}">
-                        <br>Upload New:
-                        <input type="file" name="profile_img" accept="image/*" id="id_banner_img"
-                               ng-click="banner_img_dialog.clear()">
-                        <input type="checkbox" name="profile_img-clear" id="profile_img-clear_id">
-                        <label for="profile_img-clear_id">Clear</label>
-
-                      </div><!-- /.md-dialog-content -->
-                    </md-dialog-content>
-
-                    <md-dialog-actions layout="row">
-                      <md-button ng-click="profile_img_dialog.close()">
-                        Cancel
-                      </md-button>
-                      <md-button class="md-raised md-primary" ng-click="profile_img_dialog.close()">
-                        Done
-                      </md-button>
-                    </md-dialog-actions>
-
-                  </md-dialog>
-                </div>
-              </div>
-              {# }}} #}
-              {# }}} #}
-            </div>
-            <br>
-            {# }}} #}
-
-            <md-divider></md-divider>
-            <br>
-
-            <div layout="column">
-              {# {{{ INPUT name #}
-              <md-input-container>
-                {# TODO: ensure that all ministry titles are unique #}
-                {{ form.name.label_tag() }}
-                <md-icon><i class="material-icons">group</i></md-icon>
-                {{ form.name }}
-              </md-input-container>
-              {# }}} #}
-              <div layout-gt-sm="row" layout="column">
-                {# {{{ INPUT phone_number #}
-                <md-input-container flex-gt-sm="50">
-                  {{ form.phone_number.label_tag() }}
-                  {# TODO: render styled phone number input for international phone numbers #}
-                  <md-icon><i class="material-icons">phone</i></md-icon>
-                  {{ form.phone_number }}
-                </md-input-container>
-                {# }}} #}
-                <div hide-sm hide-xs>&nbsp;&nbsp;</div>
-                {# {{{ INPUT website #}
-                <md-input-container flex-gt-sm="50">
-                  {{ form.website.label_tag() }}
-                  <md-icon><i class="material-icons">explore</i></md-icon>
-                  {{ form.website }}
-                </md-input-container>
-                {# }}} #}
-              </div>
-              {# {{{ INPUT address #}
-              <md-input-container>
-                {# TODO: render custom address input #}
-                {{ form.address.label_tag() }}
-                <md-icon><i class="material-icons">place</i></md-icon>
-                {{ form.address }}
-              </md-input-container>
-              {# }}} #}
-              <div layout-gt-sm="row" layout="column">
-                {# {{{ INPUT employee count #}
-                <md-input-container flex-gt-sm="50">
-                  {{ form.staff.label_tag() }}
-                  <md-icon><i class="material-icons">people</i></md-icon>
-                  {{ form.staff }}
-                </md-input-container>
-
-                <div hide-sm hide-xs>&nbsp;&nbsp;</div>
-                {# }}} #}
-
-                {# {{{ INPUT date founded #}
-                <div flex-gt-sm="50">
-                  <input type="hidden" name="{{ form.founded.name }}"
-                         value="{% raw %}{{ object.founded | date:'yyyy-MM-dd' }}{% endraw %}">
-                  <md-input-container flex-gt-sm="50" hide-sm hide-xs>
-                    <md-datepicker name="founded_ui" id="{{ form.founded.id_for_label }}"
-                                   ng-model="object.founded"
-                                   md-placeholder="Date Founded"
-                                   md-open-on-focus
-                                   hide-sm hide-xs
-                                   required></md-datepicker>
-                    <div ng-hide="ministryForm.founded_ui.$touched" class="hint">When did this ministry start?</div>
-                    <div ng-messages="ministryForm.founded_ui.$error" role="alert">
-                      <div ng-message="required">
-                        A date is required
-                      </div>
-                    </div>
-                  </md-input-container>
-                  <md-input-container flex-gt-sm="50" hide-gt-sm>
-                    <span>Date Founded:</span>
-                    <md-icon><i class="material-icons">cake</i></md-icon>
-                    <input type="date" ng-model="object.founded">
-                  </md-input-container>
-                </div>
-                {# }}} #}
-
-              </div>
-
-              {# {{{ INPUT social media links }} #}
-              <h5>Social Media Links:</h5>
-              <div layout="column" layout-gt-sm="row">
-                {# TODO: Add social media Icons #}
-                <input type="hidden" name="social_media" value="{% raw %}{{ object.social_media }}{% endraw %}">
-                {% set sm_links = [['sm_fb', 'facebook', 'Facebook'],
-                                 ['sm_ig', 'instagram', 'Instagram'],
-                                 ['sm_yt', 'youtube', 'YouTube'],
-                                 ['sm_t', 'twitter', 'Twitter']] %}
-                {% for form_name, attr_name, ui_name in sm_links %}
-                  <md-input-container flex-gt-sm="25">
-                    <label for="{{ form_name }}">{{ ui_name }}</label>
-                    <input id="{{ form_name }}" name="{{ form_name }}" type="url"
-                           ng-model="object.social_media.{{ attr_name }}">
-                    <div ng-messages="ministryForm.{{ form_name }}.$error" role="alert">
-                      <div ng-message="url">
-                        Link should start with http:// or https://
-                      </div>
-                    </div>
-                  </md-input-container>
-                {% endfor %}
-              </div>
-            </div><!-- Ministry Detail Inputs -->
-
-            {# {{{ INPUT banner_image #}
-            <md-button ng-click="banner_img_dialog.show($event, 'bannerDialog')">
-              <md-icon><i class="material-icons">image</i></md-icon>
-              Banner Img
-            </md-button>
-
-            {# {{{ Banner Selection Dialog #}
-            <div style="visibility: hidden">
-              <div class="md-dialog-container" id="bannerDialog">
-                <md-dialog>
-
-                  <md-toolbar>
-                    <div class="md-toolbar-tools">
-                      <h2>Banner Selection</h2>
-                      <span flex></span>
-                      <md-button class="md-icon-button" ng-click="banner_img_dialog.close()">
-                        <i class="material-icons">close</i>
-                      </md-button>
-                    </div><!-- /.md-toolbar-tools -->
-                  </md-toolbar>
-
-                  <md-dialog-content>
-                    <div class="md-dialog-content">
-                      <div class="previous-images">
-                          <md-grid-list
-                                md-cols="1" md-cols-sm="4" md-cols-md="4" md-cols-gt-md="8"
-                                md-row-height-gt-md="1:1" md-row-height="16:10"
-                                md-gutter="8px">
-
-                            <md-grid-tile ng-repeat="(name, src) in banner_urls"
-                                          {# TODO: dynamically allocate this #}
-                                          md-rowspan="1"
-                                          md-colspan="1"
-                                          md-rowspan-gt-xs="2"
-                                          md-colspan-gt-xs="2">
-                              <img style="width: 100%; bottom: 0; position: absolute;"
-                                   ng-click="select_banner(name)"
-                                   ng-src="{% raw %}{{ src }}{% endraw %}"
-                                   ng-class="[{banner_current:  banner_img_dialog.banner_current(name),
-                                               banner_selected: banner_img_dialog.banner_selected(name)}]" alt="Profile Image">
-                              <md-grid-tile-footer>
-                                <h3>
-                                  <span ng-if="banner_img_dialog.banner_selected(name)"
-                                        class="banner_selected_label">
-                                    <md-icon><i class="material-icons">check_circle</i></md-icon>
-                                  </span>
-                                  <span ng-if="banner_img_dialog.banner_current(name)"
-                                        ng-hide="banner_img_dialog.banner_selected(name)"
-                                        class="banner_current_label">
-                                    Current
-                                  </span>
-                                  {% raw %}{{ name }}{% endraw %}
-                                </h3>
-                              </md-grid-tile-footer>
-                            </md-grid-tile>
-                          </md-grid-list>
-                      </div><!-- /.previous-images -->
-
-                      <h3 ng-class="md-headline" ng-hide="banner_urls">You haven't uploaded any banner pictures yet</h3>
-
-                      {#{{ form.banner_img.label_tag() }}
-                      {{ form.banner_img }}#}
-                      <input type="hidden" name="selected_banner_img"
-                             value="{% raw %}{{ selected_banner }}{% endraw %}">
-                      <br>Upload New:
-                      <input type="file" name="banner_img" accept="image/*" id="id_banner_img"
-                             ng-click="banner_img_dialog.clear()">
-                      <input type="checkbox" name="banner_img-clear" id="banner_img-clear_id">
-                      <label for="banner_img-clear_id">Clear</label>
-
-                    </div><!-- /.md-dialog-content -->
-                  </md-dialog-content>
-
-                  <md-dialog-actions layout="row">
-                    <md-button ng-click="banner_img_dialog.close()">
-                      Cancel
-                    </md-button>
-                    <md-button class="md-raised md-primary" ng-click="banner_img_dialog.close()">
-                      Done
-                    </md-button>
-                  </md-dialog-actions>
-
-                </md-dialog>
-              </div>
-            </div>
-            {# }}} #}
-
-            {# }}} #}
-            {# {{{ INPUT description (WYSIWYG) #}
-            <md-input-container>
-              <md-icon><i class="material-icons">subject</i></md-icon>
-              {{ form.description.label_tag() }}
-              {% if start %}
-                {{ wysiwyg_editor(form.description.name) }}
-              {% else%}
-                {{ wysiwyg_editor(form.description.name, 'object.description') }}
-              {% endif %}
-              <br><br>
-              <div class="hint">Describe yourself</div>
-            </md-input-container>
-            {# }}} #}
-            {# {{{ INPUT tags #}
-            <br>
-            <md-input-container layout="column">
-              <md-icon><i class="material-icons">class</i></md-icon>
-              {{ form.tags.label_tag() }}
-              <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
-              <md-chips ng-model="object.tags" md-autocomplete-snap
-                        md-transform-chip="tagService.transform_chip($chip)"
-                        md-separator-keys="tagService.separatorKeys">
-                <md-autocomplete
-                    md-search-text="tagText"
-                    md-items="tag in filter_tags(tagText)"
-                    md-item-text="tag"
-                    md-min-length="1">
-                  <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
-                </md-autocomplete>
-                <md-chip-template>
-                  <span>
-                    <span>{% raw %}{{ $chip }}{% endraw %}</span>
-                  </span>
-                </md-chip-template>
-              </md-chips>
-              <br><br>
-              <div class="hint">Select from existing tags, or create new ones by entering a comma.</div>
-            </md-input-container>
-            {# }}} #}
-
-          </md-tab-body>
-        </md-tab>
+        {# {{{ INPUT name #}
+        <div class="col l6 s12 input-field">
+          {# TODO: ensure that all ministry titles are unique #}
+          {{ form.name.label_tag() }}
+          <i class="material-icons prefix">group</i>
+          {{ form.name }}
+        </div>
         {# }}} #}
 
-      {# {{{ Administration Section #}
-        {# uncreated MinistryProfile objects should have no rep functionality yet #}
-        <md-tab label="Administration">
-          <md-tab-label>
-            <md-icon><i class="material-icons">lock</i></md-icon>&nbsp;
-            Administration
-          </md-tab-label>
-          <md-tab-body>
-          {% if start %}
-            <p>Finish creating your ministry before starting to administer other users.</p>
-          {% elif not start %}
+        {# {{{ INPUT phone_number #}
+        <div class="col l6 s12 input-field">
+          {{ form.phone_number.label_tag() }}
+          {# TODO: render styled phone number input for international phone numbers #}
+          <i class="material-icons prefix">phone</i>
+          {{ form.phone_number }}
+        </div>
+        {# }}} #}
 
-            {# {{{ INPUT representative selection #}
-            <md-content layout="column" class="md-padding autocomplete rep_requests">
-              <input type="hidden" name="{{ form.reps.name }}" value="{% raw %}{{ object.reps }}{% endraw %}">
-              <label>
-                <md-icon><i class="material-icons">group_add</i></md-icon>
-                {{ form.reps.label }}:
-              </label>
-              <md-contact-chips ng-model="object.reps"
-                                md-contacts="filter_users($query)"
-                                md-require-match="true"
-                                md-contact-name="name"
-                                md-contact-image="img"
-                                md-contact-email="email"
-                                placeholder="Select by name or email"
-                                secondary-placeholder="Add another representative">
-              </md-contact-chips>
-              {# TODO: button to clear all pending requests #}
-              <md-list class="available_contacts">
-                <md-subheader>
-                  Representative Requests
-                </md-subheader>
-                {% if len(ministry.requests.all()) %}
-                  <md-list-item class="md-2-line contact-item" ng-repeat="(index, contact) in object.requests">
-                    {% raw %}
-                      <img class="md-avatar" ng-src="{{ contact.img }}">
-                      <div class="md-list-item-text compact">
-                        <h3>{{ contact.name }}</h3>
-                        <p>{{ contact.email }}</p>
-                      </div>
-                    {% endraw %}
-                  </md-list-item>
-                {% else %}
-                  <md-list-item class="md-1-line">
-                    <h3>There are no requests to show</h3>
-                  </md-list-item>
-                {% endif %}
-              </md-list>
-            </md-content>
-            {# }}} #}
+        {# {{{ INPUT website #}
+        <div class="col l6 s12 input-field">
+          {{ form.website.label_tag() }}
+          <i class="material-icons prefix">explore</i>
+          {{ form.website }}
+        </div>
+        {# }}} #}
 
-          {% endif %}
-          </md-tab-body>
-        </md-tab>
+        {# {{{ INPUT address #}
+        <div class="col l6 s12 input-field">
+          {# TODO: render custom address input #}
+          <i class="material-icons prefix">place</i>
+          <textarea id="id_address" name="{{ form.address.name }}" class="materialize-textarea"></textarea>
+          {{ form.address.label_tag() }}
+        </div>
+        {# }}} #}
+
+        {# {{{ INPUT employee count #}
+        <div class="col l6 s12 input-field">
+          {{ form.staff.label_tag() }}
+          <i class="material-icons prefix">people</i>
+          {{ form.staff }}
+        </div>
+        {# }}} #}
+
+        {# {{{ INPUT date founded #}
+        <div class="col l6 s12 input-field">
+          <i class="material-icons prefix">cake</i>
+          <input type="text" name="{{ form.founded.name }}" id="id_founded" class="datepicker">
+          {{ form.founded.label_tag() }}
+        </div>
+        {# }}} #}
+      </div>
+
+      {# {{{ INPUT social media links }} #}
+      <div class="row">
+        <h6>Social Media Links:</h6>
+        {# TODO: Add social media Icons #}
+        {% set sm_links = [['sm_fb', 'facebook', 'Facebook'],
+                               ['sm_ig', 'instagram', 'Instagram'],
+                               ['sm_yt', 'youtube', 'YouTube'],
+                               ['sm_t', 'twitter', 'Twitter']] %}
+        {% for form_name, attr_name, ui_name in sm_links %}
+          <div class="col l3 s12 input-field">
+            <label for="{{ form_name }}">{{ ui_name }}</label>
+            <input id="{{ form_name }}" name="{{ form_name }}" type="url">
+          </div>
+        {% endfor %}
+      </div>
       {# }}} #}
 
-        {# {{{ Campaign Section #}
-        <md-tab label="Campaigns">
-          <md-tab-label>
-            <md-icon><i class="material-icons">public</i></md-icon>
-            Campaigns
-          </md-tab-label>
-          <md-tab-body>
-          {% if start %}
-            <p>Finish creating your ministry before starting a campaign.</p>
-          {% elif not start %}
-            <br>
-            {# TODO: differentiate between current and previous fundraisers #}
-            <md-button class="md-accent" style="text-decoration: none;"
-                       ng-href="#{{ url_for('campaign:create_campaign', kwargs={'ministry_id': ministry.id}) }}">
-              <md-icon>
-                <i class="material-icons">add</i>
-              </md-icon>
-              New Campaign
-            </md-button>
+      {# {{{ INPUT description (WYSIWYG) #}
+      <div>
+        <div class="divider"></div>
+        <br>
+        <i class="material-icons">subject</i>
+        {{ form.description.label_tag() }}
 
-            {% for campaign in ministry.campaigns.all() %}
-              {{ card.campaign_card(campaign, AUTH=True) }}
-            {% else %}
-              <p>You have no fundraising campaigns at this time.</p>
-            {% endfor %}
+        {% if start %}
+          {{ wysiwyg_editor(form.description.name) }}
+        {% else %}
+          {{ wysiwyg_editor(form.description.name, ministry.description) }}
+        {% endif %}
+      </div>
+      {# }}} #}
 
-          {% endif %}
-          </md-tab-body>
-        </md-tab>
-        {# }}} #}
-
-        {# {{{ Statistics Section #}
-        <md-tab label="Statistics">
-          <md-tab-label>
-            <md-icon><i class="material-icons">poll</i></md-icon>&nbsp;
-            Statistics
-          </md-tab-label>
-          <md-tab-body>
-            <p>This part of the website is under construction</p>
-          </md-tab-body>
-        </md-tab>
-        {# }}} #}
-
-
-      </md-tabs>
+      {# {{{ INPUT tags #}
+      {{ tag_selection(form) }}
+      {# }}} #}
 
       {# {{{ Form Buttons #}
-      <div id="form_buttons" layout-align-gt-sm="end" layout-gt-sm="row" layout="column">
-        {# TODO: implement DOUBLE dialog confirmation upon deletion #}
-        <md-button class="md-primary md-raised" type="submit" flex-gt-sm="25">
-          <md-icon>
+      <div id="form_buttons" class="row">
+        <div class="col l3 s12">
+          <button class="btn orange" type="submit">
             <i class="material-icons">save</i>
-          </md-icon>
+            Save
+          </button>
+        </div>
+
+        <div class="col l3 s12">
+          {% if not start and ministry %}
+            {{ confirm_delete('ministry', ministry.id) }}
+          {% endif %}
+        </div>
+      </div><!-- /#form_buttons -->
+
+      {# }}} #}
+    </div>
+    <div id="administration" class="col s12">
+
+      <h4 class="hide-on-med-and-up">Administration</h4>
+
+      {% if start %}
+        <p>Finish creating your ministry before starting to administer other users.</p>
+      {% elif not start %}
+
+        {# {{{ INPUT representative selection #}
+        {{ rep_selection(ministry) }}
+        <md-content layout="column" class="md-padding autocomplete rep_requests">
+          <input type="hidden" name="{{ form.reps.name }}" value="{% raw %}{{ object.reps }}{% endraw %}">
+          <label>
+            <md-icon><i class="material-icons">group_add</i></md-icon>
+            {{ form.reps.label }}:
+          </label>
+          <md-contact-chips ng-model="object.reps"
+                            md-contacts="filter_users($query)"
+                            md-require-match="true"
+                            md-contact-name="name"
+                            md-contact-image="img"
+                            md-contact-email="email"
+                            placeholder="Select by name or email"
+                            secondary-placeholder="Add another representative">
+          </md-contact-chips>
+          {# TODO: button to clear all pending requests #}
+          <md-list class="available_contacts">
+            <md-subheader>
+              Representative Requests
+            </md-subheader>
+            {% if len(ministry.requests.all()) %}
+              <md-list-item class="md-2-line contact-item" ng-repeat="(index, contact) in object.requests">
+                {% raw %}
+                <img class="md-avatar" ng-src="{{ contact.img }}">
+                <div class="md-list-item-text compact">
+                  <h3>{{ contact.name }}</h3>
+                  <p>{{ contact.email }}</p>
+                </div>
+                {% endraw %}
+              </md-list-item>
+            {% else %}
+              <md-list-item class="md-1-line">
+                <h3>There are no requests to show</h3>
+              </md-list-item>
+            {% endif %}
+          </md-list>
+        </md-content>
+        {# }}} #}
+
+      {% endif %}
+
+      {# {{{ Form Buttons #}
+      <div id="form_buttons">
+        <a class="col l3 s12 btn" type="submit">
+          <i class="material-icons">save</i>
           Save
-        </md-button>
+        </a>
 
         {% if not start and ministry %}
-          <br>
-          <md-button class="md-warn" style="text-decoration: none;"
-                     ng-click="confirmDelete.show($event, 'deleteContent')"
-                     flex-order-gt-sm="-1">
-            <md-icon>
-              <i class="material-icons">delete</i>
-            </md-icon>
-            Delete
-          </md-button>
-
-          <div style="visibility: hidden;">
-            <div class="md-dialog-container" id="deleteContent">
-              <md-dialog layout-padding>
-                <md-dialog-content>
-                  <h2>Are you sure?</h2>
-                  <p>Please confirm that you want to delete this ministry. This cannot be undone.</p>
-                </md-dialog-content>
-
-                <md-dialog-actions layout="row">
-                  <md-button class="md-primary" ng-click="confirmDelete.close()">Cancel</md-button>
-                  <md-button class="md-warn" style="text-decoration: none;"
-                             href="{{ url_for('ministry:delete_ministry', kwargs={'ministry_id': ministry.id}) }}">
-                    <md-icon>
-                      <i class="material-icons">delete</i>
-                    </md-icon>
-                    Delete
-                  </md-button>
-                </md-dialog-actions>
-
-              </md-dialog>
-            </div>
-          </div><!-- /#form_buttons -->
+          {{ confirm_delete('ministry', ministry.id) }}
         {% endif %}
+      </div><!-- /#form_buttons -->
+
       {# }}} #}
+    </div>
+    <div id="campaigns" class="col s12">
 
-    </div><!-- /.md-inline-form -->
+      <h4 class="hide-on-med-and-up">Campaigns</h4>
 
+      {% if start %}
+        <p>Finish creating your ministry before starting a campaign.</p>
+      {% elif not start %}
+        {# TODO: differentiate between current and previous fundraisers #}
+        <a class="btn purple lighten-2"
+           href="{{ url_for('campaign:create_campaign', kwargs={'ministry_id': ministry.id}) }}"
+           style="margin-bottom: 12px">
+          <i class="material-icons">add</i>
+          New Campaign
+        </a>
+
+        <div class="row">
+          {% for campaign in ministry.campaigns.all() %}
+            {{ card.campaign_card(campaign, AUTH=True) }}
+          {% else %}
+            <p>You have no fundraising campaigns at this time.</p>
+          {% endfor %}
+        </div>
+
+      {% endif %}
+    </div>
+    <div id="statistics" class="col s12">
+
+      <h4 class="hide-on-med-and-up">Statistics</h4>
+
+      <p>This part of the website is under construction</p>
+    </div>
+  </div>
   </form>
 
-
-
 </section>
+{% endblock %}
 
+{% block scripts %}
+  {{ get_obj_json(ministry) }}
+  {{ tag_selection_script(ministry) }}
+  {{ rep_selection_script(ministry) }}
 
-<!-- Google Analytics Virtual Pageview -->
-<script>ga('send', 'pageview', 'ministry edit')</script>
+  <script>
+    /**
+     * This wraps up the functions that are defined above
+     * @returns {Promise<void>}
+     */
+    async function activate() {
+      const obj = await get_obj_json();
+      await initRepInput(obj);
+      await initTagInput(obj);
+    }
+
+    activate();
+  </script>
+{% endblock %}

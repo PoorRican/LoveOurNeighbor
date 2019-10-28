@@ -1,100 +1,97 @@
 {# vim: foldmethod=marker tabstop=2 shiftwidth=2:
     templates/ministry/view_ministry.html
 #}
+{% extends "layout.html" %}
 
-{% from "misc_layout.html" import section_start, section_close %}
-{% from "comments_section.html" import comments_section %}
-{% from "gallery.html" import gallery %}
-{% from "like_button.html" import like_button %}
-{% from "tag_chips.html" import tag_chips %}
+{% from "macros/layout/misc_layout.html" import section_start, section_close %}
+{% from "macros/parts/comments_section.html" import comments_section %}
+{% from "macros/parts/gallery.html" import gallery %}
+{% from "macros/parts/like_button.html" import like_button %}
+{% from "macros/parts/tag_chips.html" import tag_chips %}
 
 {% import "cards.html" as card %}
 
 {% set AUTH = (request.user == ministry.admin or request.user in ministry.reps.all()) %}
 
+{% block title %}{{ ministry.name }}{% endblock %}
 
+{% block body %}
 <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
 {% if AUTH == None %}
   {% set AUTH = request.user == ministry.admin or request.user in ministry.reps.all() %}
 {% endif %}
 
-{# {{{ Top Section Overlay #}
-<div class="parallax-container" style='height: 250px;'>
-  <div ng-parallax class="parallax-img" pattern="'{% if ministry.banner_img %}{{ ministry.banner_img.url }}{% endif %}'" speed="3">
-    <div class="overlay wrapper">
-      <h1>
-        {{ ministry.name.upper() }}
-        {# {{{ Action Menu #}
-        {% if request.user.is_authenticated %}
-          <md-menu>
-            <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
-              <md-icon>
-                <i class="material-icons" style="color: white">arrow_drop_down</i>
-              </md-icon>
-            </md-button>
-            <md-menu-content>
-              {% if AUTH %}
-                {% for opt in ministry_admin_urls(ministry) %}
-                  <md-menu-item>
-                    <md-button ng-href="#{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
-                      <md-icon>
-                        <i class="material-icons">{{ opt['icon'] }}</i>
-                      </md-icon>&nbsp;
-                      {{ opt['label'] }}
-                    </md-button>
-                  </md-menu-item>
-                {% endfor %}
-              {% elif not AUTH %}
-                <md-button ng-href="#{{ url_for('ministry:request_to_be_rep', kwargs={'ministry_id': ministry.id}) }}">
-                  Request to be a representative
-                </md-button>
-              {% endif %}
-            </md-menu-content>
-          </md-menu>
-        {% endif %}
-        {# }}} #}
-      </h1>
-
-      <div layout="row" layout-sm="column">
-
-        {{ like_button(ministry, request) }}
-
-        <div hide-xs hide-sm flex="30" style="margin: auto 0">
-          <p class="section-info">
-            <span># of Projects:</span>&nbsp;
-            {{ len(ministry.campaigns.all()) }}
-            <br>
-            <span>Total Donations:</span>&nbsp;
-            {{ ministry.donated }}
-            <br>
-            <span>Views:</span>&nbsp;
-            {% raw %}{{ object().views }}{% endraw %}
-          </p>
-        </div>
-
-      </div><!-- /layout -->
-
+  {# {{{ Top Section Overlay #}
+  {% if ministry.banner_img %}
+    <div class="parallax-container" style='height: 250px;'>
+      <div ng-parallax class="parallax-img">
+        <img src="{{ ministry.banner_img.url }}" alt="">
+      </div>
     </div>
-  </div>
-</div>
-{# }}} #}
+  {% endif %}
+  {# }}} #}
 
-{{ section_start("") }}
+  {{ section_start("") }}
+
+  <h1 class="action-header truncate">
+    {% if request.user.is_authenticated %}
+      <a class="dropdown-trigger" href="#" data-target="actionMenu">
+        {{ ministry.name.upper() }}
+        <i class="material-icons">arrow_drop_down</i>
+      </a>
+    {% else %}
+      {{ ministry.name.upper() }}
+    {% endif %}
+  </h1>
+
+  {# {{{ Action Menu #}
+  <ul id="actionMenu" class="dropdown-content">
+    {% if AUTH %}
+      {% for opt in ministry_admin_urls(ministry) %}
+        <li>
+          <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+            <i class="material-icons">{{ opt['icon'] }}</i>
+            {{ opt['label'] }}
+          </a>
+        </li>
+      {% endfor %}
+    {% elif not AUTH %}
+      <a href="{{ url_for('ministry:request_to_be_rep', kwargs={'ministry_id': ministry.id}) }}">
+        Request to be a representative
+      </a>
+    {% endif %}
+  </ul>
+  {# }}} #}
+
+  <div class="row">
+
+    <div class="col l3 s12">
+      {{ like_button(ministry, request) }}
+    </div>
+
+    <div class="col l4 s12" style="margin: auto 0">
+      <p class="section-info">
+        <span># of Projects:</span>&nbsp;
+        {{ len(ministry.campaigns.all()) }}
+        <br>
+        <span>Total Donations:</span>&nbsp;
+        {{ ministry.donated }}
+        <br>
+        <span>Views:</span>&nbsp;
+        {{ ministry.views }}
+      </p>
+    </div>
+
+  </div><!-- /layout -->
 
 {% if ministry.description %}
   <h3>Description:</h3>
   <p class="flow-text">{{ ministry.description|safe }}</p>
-  {% if detail %}
-    <md-button ng-href="#{{ ministry.url }}" class="md-raised md-accent">
-      See More
-    </md-button>
-  {% endif %}
 {% endif %}
 
 {{ tag_chips(ministry) }}
 
-<div layout-sm="row">
-  <div flex>
+  <div>
     <h3>Ministry Information:</h3>
     <p class="section-info">
       <span>Website:</span>&nbsp;
@@ -107,12 +104,12 @@
         <br>
       {% endif %}
       {% set info = {
-                  'phone_number': 'Phone',
-                  'address': 'Address',
-                  'founded': 'Date Founded',
-                  'staff': 'Number of Staff Members',
-                  'pub_date': 'Profile Created'
-              } %}
+                'phone_number': 'Phone',
+                'address': 'Address',
+                'founded': 'Date Founded',
+                'staff': 'Number of Staff Members',
+                'pub_date': 'Profile Created'
+            } %}
       {# TODO: make intuitive date for `pub_date`. eg: "1 year ago" #}
       {% for attr, str in info.items() %}
         {% if ministry.__dict__[attr] %}
@@ -122,20 +119,6 @@
         {% endif %}
       {% endfor %}
     </p><!-- /.section-info -->
-  </div><!-- /flex -->
-  <div hide-gt-sm flex>
-    <h3>Statistics:</h3>
-    <p class="section-info">
-      <span># of Projects:</span>&nbsp;
-      {{ len(ministry.campaigns.all()) }}
-      <br>
-      <span>Total Donations:</span>&nbsp;
-      {{ ministry.donated }}
-      <br>
-      <span>Views:</span>&nbsp;
-      {% raw %}{{ object().views }}{% endraw %}
-    </p><!-- /.section-info -->
-  </div><!-- /flex -->
 </div><!-- /row -->
 
 {{ comments_section(ministry, 'ministry', request, form=form, csrf_token=csrf_token) }}
@@ -151,7 +134,4 @@
   {{ card.card_area(all_news, campaigns=(True, campaigns), AUTH=AUTH) }}
 
 </section>
-
-
-<!-- Google Analytics Virtual Pageview -->
-<script>ga('send', 'pageview', 'ministry')</script>
+{% endblock %}
