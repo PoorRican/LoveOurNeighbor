@@ -54,12 +54,13 @@ def create_news(request, obj_type, obj_id):
             _w = "News Post Created!"
             messages.add_message(request, messages.SUCCESS, _w)
 
+            _url = '/'
             if obj_type == 'ministry':
-                _url = '/#%s' % reverse('ministry:ministry_profile',
-                                        kwargs={'ministry_id': obj.id})
+                _url = '%s' % reverse('ministry:ministry_profile',
+                                      kwargs={'ministry_id': obj.id})
             elif obj_type == 'campaign':
-                _url = '/#%s' % reverse('ministry:campaign_detail',
-                                        kwargs={'campaign_id': obj.id})
+                _url = '%s' % reverse('campaign:campaign_detail',
+                                      kwargs={'campaign_id': obj.id})
             return HttpResponseRedirect(_url)
 
     else:
@@ -88,13 +89,14 @@ def edit_news(request, post_id):
                                  instance=post)
             _form.save()
             # TODO: redirect to referrer or something
+            _url = ''
             if post.campaign:
-                _url = '/#%s' % reverse('ministry:campaign_detail',
-                                        kwargs={'campaign_id':
+                _url = '%s' % reverse('campaign:campaign_detail',
+                                      kwargs={'campaign_id':
                                                 post.campaign.id})
             elif post.ministry:
-                _url = '/#%s' % reverse('ministry:ministry_profile',
-                                        kwargs={'ministry_id':
+                _url = '%s' % reverse('ministry:ministry_profile',
+                                      kwargs={'ministry_id':
                                                 post.ministry.id})
             return HttpResponseRedirect(_url)
         else:
@@ -133,7 +135,7 @@ def delete_news(request, post_id):
             _feedback = "There was an error deleting '%s'" % post.title
             messages.add_message(request, messages.ERROR, _feedback)
     elif not ministry:
-        _feedback = "UNKOWN ERROR: NewsPost '%s' was malformatted!" % post.id
+        _feedback = "UNKNOWN ERROR: NewsPost '%s' was malformatted!" % post.id
         messages.add_message(request, messages.ERROR, _feedback)
     else:
         _feedback = "You don't have permissions to be deleting this NewsPost object!"

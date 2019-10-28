@@ -2,6 +2,11 @@
     templates/news/edit_news.html
 #}
   <!-- ministry/news_post -->
+{% extends "layout.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block body %}
 
 {# TODO: group by month and randomly (or scroll) through images per section #}
 <div class="section">
@@ -12,49 +17,30 @@
     </p>
 
     <h1>
-      {{ post.title.upper() }}
-
-      {# {{{ Action Menu #}
-      <md-menu>
-        <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
-          <md-icon>
-            <i class="material-icons">arrow_drop_down</i>
-          </md-icon>
-        </md-button>
-        <md-menu-content>
-          {% if AUTH %}
-            <md-menu-item>
-              <md-button ng-href="#{{ post.edit }}">
-                <md-icon>
-                  <i class="material-icons">create</i>
-                </md-icon>&nbsp;
-                Edit News Post
-              </md-button>
-            </md-menu-item>
-            <md-menu-item>
-              <md-button ng-href="{{url_for('news:delete_news', kwargs={'post_id': post.id}) }}">
-                <md-icon>
-                  <i class="material-icons">delete</i>
-                </md-icon>&nbsp;
-                Delete News Post
-              </md-button>
-            </md-menu-item>
-            <md-menu-divider></md-menu-divider>
-          {% endif %}
-
-          <md-menu-item>
-            <md-button ng-href="#{{ post.url }}">
-              <md-icon>
-                <i class="material-icons">link</i>
-              </md-icon>&nbsp;
-              Link to news
-            </md-button>
-          </md-menu-item>
-        </md-menu-content>
-      </md-menu>
-      {# }}} #}
-
+      <a class="dropdown-trigger" href="#" data-target="actionMenu">
+        {{ post.title.upper() }}
+        <i class="material-icons">arrow_drop_down</i>
+      </a>
     </h1>
+
+    <ul id="actionMenu" class="dropdown-content">
+      {% if AUTH %}
+        <li><a href="{{ post.edit }}">
+          <i class="material-icons">create</i>
+          Edit News Post
+        </a></li>
+
+        <li><a href="{{ url_for('news:delete_news', kwargs={'post_id': post.id}) }}">
+          <i class="material-icons">delete</i>
+          Delete News Post
+        </a></li>
+      {% endif %}
+
+      <li><a href="{{ post.url }}">
+        <i class="material-icons">link</i>
+        Link to news
+      </a></li>
+    </ul>
 
     {% if post.campaign %}
       <h6>
@@ -75,6 +61,4 @@
 
   </article>
 </div>
-
-<!-- Google Analytics Virtual Pageview -->
-<script>ga('send', 'pageview', 'news_post')</script>
+{% endblock %}

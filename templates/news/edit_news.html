@@ -1,76 +1,88 @@
 {# vim: foldmethod=marker tabstop=2 shiftwidth=2:
     templates/news/view_news.html
 #}
-{% from "wysiwyg_editor.html" import wysiwyg_editor %}
+{% extends "layout.html" %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor %}
+{% from "macros/parts/confirm_delete.html" import confirm_delete %}
 
-<section class="wrapper">
-  <!-- ministry/news_content -->
 
+{% block title %}
   {% if start %}
-    <h1>Create News Post:</h1>
-    <!-- TODO: make link for more information -->
-
-    <form method="POST" action="{{ url_for('news:create_news', kwargs=kwargs) }}">
-
+    Creating News Post
   {% else %}
-    <h1>Edit Ministry Profile:</h1>
-
-    <form enctype="multipart/form-data" method="POST" action="{{ url_for('news:edit_news', kwargs={'post_id': post.id}) }}">
-
+    {{ post.title }} Edit Post
   {% endif %}
+{% endblock %}
+
+
+{% block body %}
+  <section class="wrapper">
+    <!-- ministry/news_content -->
+
+    {% if start %}
+      <h2>Create News Post:</h2>
+      <!-- TODO: make link for more information -->
+
+      <form method="POST" action="{{ url_for('news:create_news', kwargs=kwargs) }}">
+
+    {% else %}
+      <h1>Edit Ministry Profile:</h1>
+
+      <form enctype="multipart/form-data" method="POST"
+            action="{{ url_for('news:edit_news', kwargs={'post_id': post.id}) }}">
+
+    {% endif %}
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    <div layout="column" layout-padding class="md-inline-form">
-      {{ form.attachment.label_tag() }}
-      {{ form.attachment }}
+    <div class="row">
 
-      <md-input-container>
-        {# TODO: ensure that all ministry titles are unique #}
+      <div class="col s12 input-field">
         {{ form.title.label_tag() }}
         {{ form.title }}
-      </md-input-container>
+      </div><!-- /title -->
 
-      <md-input-container>
-        {# TODO: render WYSIWYG editor #}
+      <div>
+        {{ form.attachment.label_tag() }}
+        {{ form.attachment }}
+      </div><!-- /attachment -->
+
+      <br>
+      <div class="divider"></div>
+      <br>
+
+      <div>
+        <i class="material-icons">subject</i>
         {{ form.content.label_tag() }}
 
         {% if start %}
           {{ wysiwyg_editor(form.content.name) }}
         {% else %}
-          {{ wysiwyg_editor(form.content.name, 'news_editor', value=post.content) }}
+          {{ wysiwyg_editor(form.content.name, post.content) }}
         {% endif %}
+      </div><!-- /WYSIWYG Editor -->
 
-      </md-input-container>
+      <br>
 
-      <div id="form_buttons" layout-align-gt-sm="end" layout-gt-sm="row" layout="column">
-        {# TODO: implement DOUBLE dialog confirmation upon deletion #}
-        <md-button class="md-raised md-primary" type="submit" flex-gt-sm="25">
-          <md-icon>
+      <div id="form_buttons" class="row">
+        <div class="col l3 s12">
+          <button class="btn orange" type="submit">
             <i class="material-icons">save</i>
-          </md-icon>
-          Save
-        </md-button>
+            Save
+          </button>
+        </div>
 
-        {% if not start and post %}
-          <br>
-          <md-button class="md-warn" style="text-decoration: none;"
-                     href="{{ url_for('news:delete_news', kwargs={'post_id': post.id}) }}"
-                     flex-order-gt-sm="-1">
-            <md-icon>
-              <i class="material-icons">delete</i>
-            </md-icon>
-            Delete
-          </md-button>
-        {% endif %}
+        <div class="col l3 s12">
+          {% if not start and post %}
+            {{ confirm_delete('news post', post.id) }}
+          {% endif %}
+        </div>
       </div><!-- /#form_buttons -->
 
     </div>
 
-  </form>
+    </form>
 
-</section>
+  </section>
 
-
-<!-- Google Analytics Virtual Pageview -->
-<script>ga('send', 'pageview', 'news post edit')</script>
+{% endblock %}
