@@ -211,5 +211,16 @@ md-list.available_contacts {
   color: #242424dd;
 }
 
+
+td a {
+  color: #ef6c00;
+}
+
+
+.input-field > .hint {
+  color: dimgray;
+  font-size: 12px;
+}
+
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */

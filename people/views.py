@@ -74,9 +74,17 @@ def user_profile(request):
 
     elif request.method == 'GET':
         user = request.user
+
+        _donations = {}
+        count = 0
+        for donation in user.donations.all():
+            _donations[count] = serialize_donation(donation)
+            count += 1
+
         form = UserEditForm(instance=user)
         context = {'form': form,
-                   'request': request
+                   'request': request,
+                   'donations': _donations
                    }
         return render(request, "profile.html", context)
 

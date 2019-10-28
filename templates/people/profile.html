@@ -2,6 +2,9 @@
     templates/people/profile.html
 #}
 
+{% extends "layout.html" %}
+
+
 {# TODO: liked ministries/campaigns #}
 {# TODO: total donated amount #}
 {# TODO: campaigns involved in #}
@@ -10,244 +13,187 @@
 {# TODO: show linked social media accounts #}
 {# TODO: messages #}
 
+{% block body %}
 <section class="wrapper">
 <!-- people/profile -->
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a href="#profile">
+          <i class="material-icons">account_circle</i>
+          <span class="hide-on-small-only">
+            &nbsp;My Profile
+          </span>
+        </a></li>
+        <li class="tab col s3"><a href="#ministries">
+          <i class="material-icons">public</i>
+          <span class="hide-on-small-only">
+            &nbsp;Ministries
+          </span>
+        </a></li>
+        <li class="tab col s3"><a href="#likes">
+          <i class="material-icons">loyalty</i>
+          <span class="hide-on-small-only">
+            &nbsp;Likes
+          </span>
+        </a></li>
+        <li class="tab col s3"><a href="#receipts">
+          <i class="material-icons">receipt</i>
+          <span class="hide-on-small-only">
+            &nbsp;Receipt
+          </span>
+        </a></li>
+      </ul><!-- /.tabs -->
+    </div><!-- /tabs -->
 
-    <md-tabs md-dynamic-height md-border-bottom>
+    <div id="profile" class="col s12">
 
+      <h4 class="hide-on-med-and-up">My Profile</h4>
+      <br>
 
-      {# {{{ User Profile Section #}
-      <md-tab label="My Profile">
-        <md-tab-label>
-          <md-icon><i class="material-icons">account_circle</i></md-icon>&nbsp;
-          My Profile
-        </md-tab-label>
-        <md-tab-body>
-          <form method="POST" enctype="multipart/form-data" action="{{ url_for('people:user_profile') }}">
-            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-            <div layout="column" layout-padding class="md-inline-form">
+      <form method="POST" enctype="multipart/form-data" action="{{ url_for('people:user_profile') }}">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        <div class="row">
 
-              {# {{{ INPUT profile_img #}
-              <div layout="row">
-                <img src="{{ request.user.profile_img_url }}">
-                <!-- TODO: dynamically get the updated url from input value via angular -->
-                <md-input-container>
-                  {{ form.profile_img_url.label_tag() }}
-                  {{ form.profile_img_url }}
-                </md-input-container>
-              </div>
-
-              <div>
-                {{ form._profile_img.label_tag() }}
-                {{ form._profile_img }}
-                <!-- TODO: show previous images for selection -->
-                <!-- TODO: unify input via file or url via dialog -->
-              </div>
-              <br>
-              {# }}} #}
-
-              {# {{{ INPUT name (first, last, display_name) #}
-              <div layout-gt-sm="row">
-                <md-input-container flex-gt-sm=50 style="margin: 0">
-                  {# TODO: render WYSIWYG editor #}
-                  {{ form.first_name.label_tag() }}
-                  {{ form.first_name }}
-                </md-input-container>
-                <md-input-container flex-gt-sm=50 style="margin: 0">
-                  {# TODO: render WYSIWYG editor #}
-                  {{ form.last_name.label_tag() }}
-                  {{ form.last_name }}
-                </md-input-container>
-              </div>
-
-              <md-input-container>
-                <md-icon><i class="material-icons">face</i></md-icon>
-                {{ form.display_name.label_tag() }}
-                {{ form.display_name }}
-                <div class="hint">Tell us what we should call you!</div>
-              </md-input-container>
-              {# }}} #}
-
-              {# {{{ INPUT location #}
-              <md-input-container>
-                {# TODO: render WYSIWYG editor #}
-                <md-icon><i class="material-icons">place</i></md-icon>
-                {{ form._location.label_tag() }}
-                {{ form._location }}
-                <div class="hint">Where are you?</div>
-                {# TODO: show hint that this can be country, state, or city #}
-                {# TODO: show dialog on what this is used for #}
-              </md-input-container>
-              {# }}} #}
-
+          <div layout="col s12 l6">
+            <img src="{{ request.user.profile_img_url }}">
+            <!-- TODO: dynamically get the updated url from input value via angular -->
+            <div class="input-field">
+              {{ form.profile_img_url.label_tag() }}
+              {{ form.profile_img_url }}
             </div>
+          </div><!-- /profile_img -->
 
-            <div id="form_buttons"
-                 layout="row"
-                 layout-align="start center" layout-align-gt-sm="end center">
-              <md-button type="submit" class="md-primary md-raised" flex-gt-sm="25" flex="100">
-                <md-icon>
-                  <i class="material-icons">save</i>
-                </md-icon>
-                Save
-              </md-button>
+          <div layout="col s12 l6">
+            <div class="input-field">
+              {{ form._profile_img.label_tag() }}
+              {{ form._profile_img }}
+              <!-- TODO: show previous images for selection -->
+              <!-- TODO: unify input via file or url via dialog -->
             </div>
-          </form>
-        </md-tab-body>
-      </md-tab>
-      {# }}} #}
+          </div><!-- /_profile_img -->
 
-      {# {{{ Ministry Section #}
-      <md-tab label="Ministries">
-        <md-tab-label>
-          <md-icon><i class="material-icons">public</i></md-icon>&nbsp;
-          Ministries
-        </md-tab-label>
-        <md-tab-body>
+          <div class="col s12 l6 input-field">
+            {{ form.first_name.label_tag() }}
+            {{ form.first_name }}
+          </div><!-- /first_name -->
+          <div class="col s12 l6 input-field">
+            {{ form.last_name.label_tag() }}
+            {{ form.last_name }}
+          </div><!-- /last_name -->
 
-          <br>
-          <md-button class="md-accent" style="text-decoration: none;"
-                     ng-href="#{{ url_for('ministry:create_ministry') }}">
-            <md-icon>
-              <i class="material-icons">add</i>
-            </md-icon>
-            New Ministry
-          </md-button>
+          <div class="col s12 input-field">
+            <i class="material-icons prefix">face</i>
+            {{ form.display_name }}
+            {{ form.display_name.label_tag() }}
+            <div class="hint">Tell us what we should call you!</div>
+          </div><!-- /display_name -->
 
-          {% if len(request.user.administers.all()) %}
+          <div class="col s12 input-field">
+            <i class="material-icons prefix">place</i>
+            {{ form._location }}
+            {{ form._location.label_tag() }}
+            <div class="hint">Where are you?</div>
+            {# TODO: show hint that this can be country, state, or city #}
+            {# TODO: show dialog on what this is used for #}
+          </div><!-- /_location -->
 
-            <md-list>
-              <md-subheader>Ministries You Administer:</md-subheader>
-              {% for ministry in request.user.administers.all() %}
-                <md-list-item class="md-2-line" ng-href="#{{ ministry.url }}">
-                  <img src="{{ ministry.profile_img.url }}" class="md-avatar" alt="{{ ministry.name }}">
-                  <div class="md-list-item-text" layout="column">
-                    <h3>
+        </div><!-- /.row -->
+
+        <div id="form_buttons">
+          <button class="btn orange" type="submit">
+            <i class="material-icons">save</i>&nbsp;
+            Save
+          </button>
+        </div>
+      </form>
+    </div><!-- /#profile -->
+
+    <div id="ministries" class="col s12">
+
+      <h4 class="hide-on-med-and-up">Ministries</h4>
+      <br>
+
+      <a class="btn purple lighten-2" href="{{ url_for('ministry:create_ministry') }}">
+        <i class="material-icons">add</i>&nbsp;New Ministry
+      </a>
+
+      {% set ministries = {'Minsitries You Administer': request.user.administers.all(),
+                     'Ministries You Represent': request.user.represents.all()} %}
+      {# make each section half-size on large screen if there are both categories to represent #}
+      {% set full = len(ministries.values()[0]) and len(ministries.values()[1]) %}
+
+      <div class="row">
+        {% for text, iter in ministries.items() %}
+          {% if len(iter) %}
+            <div class="col {% if full %}l6{% endif %} s12">
+              <h5 class="text-grey darken-2">{{ text }}</h5>
+              <ul class="collection">
+                {% for ministry in iter %}
+                  <li class="collection-item avatar">
+                    <img src="/{{ ministry.profile_img.url }}" class="circle">
+                    <a href="{{ ministry.url }}" class="title">
                       {{ ministry.name }}
-                    </h3>
-                  </div>
-                  <md-button class="md-secondary md-icon-button" ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
-                    <md-icon>
+                    </a>
+                    <a href="{{ ministry.edit }}" class="secondary-content">
                       <i class="material-icons">settings</i>
-                    </md-icon>
-                  </md-button>
-                </md-list-item>
-              {% endfor %}
-            </md-list>
-
-          {% else %}
-
-            <a href="#{{ url_for('ministry:create_ministry') }}"><p>Would you like to create a profile for your Ministry?</p></a>
-
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul><!-- /.collection -->
+            </div><!-- /.col -->
           {% endif %}
-          {% if len(request.user.represents.all()) %}
+        {% endfor %}
+      </div><!-- /.row -->
+    </div><!-- /#ministries -->
 
-            <md-list>
-              <md-subheader>Ministries You Represent:</md-subheader>
-              {% for ministry in request.user.represents.all() %}
-                <md-list-item class="md-2-line" ng-href="#{{ ministry.url }}">
-                  <img src="{{ static("media" + ministry.profile_img) }}" class="md-avatar" alt="{{ ministry.name }}">
-                  <div class="md-list-item-text" layout="column">
-                    <h3>
-                      {{ ministry.name }}
-                    </h3>
-                  </div>
-                  <md-button class="md-secondary md-icon-button" ng-href="#{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}">
-                    <md-icon>
-                      <i class="material-icons">settings</i>
-                    </md-icon>
-                  </md-button>
-                </md-list-item>
-              {% endfor %}
-            </md-list>
+    <div id="likes" class="col s12">
 
-          {% endif %}
+      <h4 class="hide-on-med-and-up">Likes</h4>
 
-        </md-tab-body>
-      </md-tab>
-      {# }}} #}
+      {# TODO: show liked ministries here #}
+      <p>This part of the website is under construction.</p>
+    </div><!-- /#likes -->
 
-      {# {{{ Likes Section #}
-      <md-tab label="Likes">
-        <md-tab-label>
-          <md-icon><i class="material-icons">loyalty</i></md-icon>&nbsp;
-          Likes
-        </md-tab-label>
-        <md-tab-body>
-          {# TODO: show liked ministries here #}
-          <p>This part of the website is under construction.</p>
-        </md-tab-body>
-      </md-tab>
-      {# }}} #}
+    <div id="receipts" class="col s12">
 
-      {# {{{ Receipts Section #}
-      <md-tab label="Receipts">
-        <md-tab-label>
-          <md-icon><i class="material-icons">receipt</i></md-icon>&nbsp;
-          Receipts
-        </md-tab-label>
-        <md-tab-body>
+      <h4 class="hide-on-med-and-up">Donations</h4>
 
-          <md-tabs md-dynamic-height>
+      {# TODO: cards describing donation statistics #}
+      <table>
+        <tr class="header">
+          <td>#</td>
+          <td>Payment Date</td>
+          <td class="hide-on-med-and-down">TX ID</td>
+          <td>Amount</td>
+          <td class="hide-on-med-and-down">Confirmation</td>
+          <td>Campaign</td>
+          <td class="hide-on-med-and-down">Ministry</td>
+        </tr>
+        {# TODO: implement sorting #}
+        {% for num, tx in donations.items() %}
+          <tr>
+            <td class="grey-text darken-2">{{ num }}</td>
+            <td>
+              <a href="{{ tx.url }}">{{ tx.payment_date.strftime('%m/%d/%Y') }}</a>
+            </td>
+            <td class="hide-on-med-and-down">
+              <a href="{{ tx.url }}">{{ tx.id }}</a>
+            </td>
+            <td>{{ tx.amount }}</td>
+            <td class="hide-on-med-and-down">{{ tx.confirmation }}</td>
+            <td>
+              <a ng-href="{{ tx.campaign.url }}">{{ tx.campaign.title }}</a>
+            </td>
+            <td class="hide-on-med-and-down">
+              <a ng-href="{{ tx.ministry.url }}">{{ tx.ministry.title }}</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div><!-- /#receipts -->
+  </div>
 
-            {# {{{ Donations Subsection #}
-            <md-tab label="Donations">
-              <md-content>
-                {# TODO: cards describing donation statistics #}
-                <table>
-                  <tr>
-                    <td>#</td>
-                    <td>Payment Date</td>
-                    <td>TX ID</td>
-                    <td>Amount</td>
-                    <td hide-sm hide-xs>Confirmation</td>
-                    <td>Campaign</td>
-                    <td hide-sm hide-xs>Ministry</td>
-                  </tr>
-                  <tr ng-repeat="(num, tx) in donations">
-                    {% raw %}
-                    <td>{{ num }}</td>
-                    <td>
-                      <a ng-href="#{{ tx.url }}">{{ tx.payment_date }}</a>
-                    </td>
-                    <td>
-                      <a ng-href="#{{ tx.url }}">{{ tx.id }}</a>
-                    </td>
-                    <td>{{ tx.amount }}</td>
-                    <td hide-sm hide-xs>{{ tx.confirmation }}</td>
-                    <td>
-                      <a ng-href="#{{ tx.campaign.url }}">{{ tx.campaign.title }}</a>
-                    </td>
-                    <td hide-sm hide-xs>
-                      <a ng-href="#{{ tx.ministry.url }}">{{ tx.ministry.title }}</a>
-                    </td>
-                    {% endraw %}
-                  </tr>
-                </table>
-              </md-content>
-            </md-tab>
-            {# }}} #}
-
-            {# {{{ Purchases Subsection #}
-            <md-tab label="Purchases">
-              <md-content>
-                <p>This part of the website is under construction.</p>
-              </md-content>
-            </md-tab>
-            {# }}} #}
-
-          </md-tabs>
-
-        </md-tab-body>
-
-      </md-tab>
-      {# }}} #}
-
-
-    </md-tabs>
 
 </section>
-
-
-<!-- Google Analytics Virtual Pageview -->
-<script>ga('send', 'pageview', 'profile edit')</script>
+{% endblock %}

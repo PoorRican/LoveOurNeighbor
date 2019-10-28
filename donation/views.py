@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -172,6 +173,7 @@ def coinbase_payment(request, donation_id):
         return render("btc_payment.html", context)
 
 
+@login_required
 def view_donation(request, donation_id):
     donation = Donation.objects.get(pk=donation_id)
     # TODO: auth. Allow anonymous donations to be viewed
