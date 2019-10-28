@@ -47,7 +47,7 @@ def create_campaign(request, ministry_id):
             _w = 'Ministry Profile Created!'
             messages.add_message(request, messages.SUCCESS, _w)
 
-            _url = reverse('ministry:campaign_detail',
+            _url = reverse('campaign:campaign_detail',
                            kwargs={'campaign_id': cam.id})
             return HttpResponseRedirect(_url)
         else:
@@ -77,7 +77,8 @@ def edit_campaign(request, campaign_id):
 
                     Tag.process_tags(cam, _form['tags'].value())
 
-                    if request.POST['selected_banner_img']:
+                    banner_img = request.POST.get('selected_banner_img', False)
+                    if banner_img:
                         prev_banner = request.POST['selected_banner_img']
                         campaign.banner_img = campaign_banner_dir(campaign,
                                                                   prev_banner)
@@ -86,7 +87,7 @@ def edit_campaign(request, campaign_id):
                     _w = 'Edit successful!'
                     messages.add_message(request, messages.SUCCESS, _w)
 
-                    _url = reverse('ministry:campaign_detail',
+                    _url = reverse('campaign:campaign_detail',
                                    kwargs={'campaign_id': campaign_id})
             else:
                 _form = CampaignEditForm(instance=campaign)
@@ -101,7 +102,7 @@ def edit_campaign(request, campaign_id):
             _w = 'You do not have permission to edit this ministry.'
             messages.add_message(request, messages.WARNING, _w)
 
-            _url = reverse('ministry:campaign_detail',
+            _url = reverse('campaign:campaign_detail',
                            kwargs={'campaign_id': campaign_id})
 
     except Campaign.DoesNotExist:
@@ -126,7 +127,7 @@ def delete_campaign(request, campaign_id):
                 _w = 'There are News Posts that are preventing deletion'
                 messages.add_message(request, messages.WARNING, _w)
 
-                _url = reverse('ministry:campaign_detail',
+                _url = reverse('campaign:campaign_detail',
                                kwargs={'campaign_id': campaign_id})
         else:
             # this creates a recursive redirect...
@@ -135,7 +136,7 @@ def delete_campaign(request, campaign_id):
             _w = 'You do not have permission to delete this campaign.'
             messages.add_message(request, messages.WARNING, _w)
 
-            _url = reverse('ministry:campaign_detail',
+            _url = reverse('campaign:campaign_detail',
                            kwargs={'campaign_id': campaign_id})
 
     except Campaign.DoesNotExist:

@@ -158,11 +158,14 @@ def edit_ministry(request, ministry_id):
                             create_ministry_dir(ministry)
 
                     # handle selection of previously uploaded media
-                    if request.POST['selected_banner_img']:
+                    _img = request.POST.get('selected_banner_img', False)
+                    if _img:
                         prev_banner = request.POST['selected_banner_img']
                         ministry.banner_img = ministry_banner_dir(ministry,
                                                                   prev_banner)
-                    if request.POST['selected_profile_img']:
+
+                    _img = request.POST.get('selected_profile_img', False)
+                    if _img:
                         prev_banner = request.POST['selected_profile_img']
                         ministry.profile_img = ministry_profile_image_dir(ministry,
                                                                           prev_banner)
@@ -199,7 +202,7 @@ def edit_ministry(request, ministry_id):
                            "start": False}
                 return render(request, "edit_ministry.html", context)
         else:
-            # this creates a recursive redirect as a deterrant
+            # this creates a recursive redirect as a deterrent
 
             _w = 'You do not have permission to edit this ministry.'
             messages.add_message(request, messages.WARNING, _w)
