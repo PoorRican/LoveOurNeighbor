@@ -54,6 +54,7 @@
                   <img class="profile-img" src="/{{ ministry.profile_img.url }}">
                   <div>
                     <span class="truncate">
+                    {% if ALIAS %}<i class="material-icons" style="display: inline;">how_to_reg</i>{% endif %}
                       {{ ministry }}
                     </span>
                   </div>
