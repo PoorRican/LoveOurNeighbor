@@ -35,6 +35,7 @@ def environment(**options):
         'round': round,
         'get_messages': messages.get_messages,
         'hasattr': hasattr,
+        'getattr': getattr,
         'str': str,
         'f_time': friendly_time,
         'ministry_admin_urls': ministry_admin_urls,

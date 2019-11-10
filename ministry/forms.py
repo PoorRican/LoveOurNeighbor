@@ -20,6 +20,7 @@ class MinistryEditForm(forms.ModelForm):
         model = MinistryProfile
         fields = ('profile_img', 'banner_img',
                   'name', 'address', 'phone_number', 'website', 'founded',
+                  'facebook', 'instagram', 'youtube', 'twitter',
                   'admin', 'description', 'staff',)
         exclude = ('admin',)
         widgets = {'description': forms.Textarea(attrs={'rows': 20,

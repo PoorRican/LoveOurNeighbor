@@ -171,10 +171,6 @@ def edit_ministry(request, ministry_id):
                                                                           prev_banner)
                     ministry.save()
 
-                    # handle custom form attributes
-                    if _form['social_media'].value():
-                        ministry.social_media = json.loads(_form['social_media'].value())
-
                     # handle relationships with other objects
                     _min = _form.save(commit=False)
                     if _min.address:
@@ -183,11 +179,14 @@ def edit_ministry(request, ministry_id):
 
                     Tag.process_tags(ministry, _form['tags'].value())
                     if _form['reps'].value():
-                        for r in json.loads(_form['reps'].value()):
-                            # TODO: notify user
-                            u = User.objects.get(email=r['email'])
-                            ministry.reps.add(u)
-                            ministry.requests.remove(u)
+                        try:
+                            for r in json.loads(_form['reps'].value()):
+                                # TODO: notify user
+                                u = User.objects.get(email=r['email'])
+                                ministry.reps.add(u)
+                                ministry.requests.remove(u)
+                        except json.JSONDecodeError:
+                            pass
 
                     # handle response and generate UI feedback
                     _w = 'Changes saved to %s!' % ministry.name
@@ -195,6 +194,8 @@ def edit_ministry(request, ministry_id):
 
                     _url = reverse('ministry:ministry_profile',
                                    kwargs={'ministry_id': ministry_id})
+                else:
+                    print("error")
             else:
                 _form = MinistryEditForm(instance=ministry)
                 context = {"form": _form,

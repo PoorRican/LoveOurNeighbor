@@ -104,7 +104,11 @@
         <div class="col l6 s12 input-field">
           {# TODO: render custom address input #}
           <i class="material-icons prefix">place</i>
-          <textarea id="id_address" name="{{ form.address.name }}" class="materialize-textarea"></textarea>
+          <textarea class="materialize-textarea"
+                    id="{{ form.address.id_for_label }}" name="{{ form.address.name }}"
+                    required>
+            {{- form.address.value() -}}
+          </textarea>
           {{ form.address.label_tag() }}
         </div>
         {# }}} #}
@@ -130,16 +134,22 @@
       <div class="row">
         <h6>Social Media Links:</h6>
         {# TODO: Add social media Icons #}
-        {% set sm_links = [['sm_fb', 'facebook', 'Facebook'],
-                               ['sm_ig', 'instagram', 'Instagram'],
-                               ['sm_yt', 'youtube', 'YouTube'],
-                               ['sm_t', 'twitter', 'Twitter']] %}
-        {% for form_name, attr_name, ui_name in sm_links %}
-          <div class="col l3 s12 input-field">
-            <label for="{{ form_name }}">{{ ui_name }}</label>
-            <input id="{{ form_name }}" name="{{ form_name }}" type="url">
-          </div>
-        {% endfor %}
+        <div class="col l3 s12 input-field">
+          {{ form.facebook.label_tag() }}
+          {{ form.facebook }}
+        </div>
+        <div class="col l3 s12 input-field">
+          {{ form.instagram.label_tag() }}
+          {{ form.instagram }}
+        </div>
+        <div class="col l3 s12 input-field">
+          {{ form.youtube.label_tag() }}
+          {{ form.youtube }}
+        </div>
+        <div class="col l3 s12 input-field">
+          {{ form.twitter.label_tag() }}
+          {{ form.twitter }}
+        </div>
       </div>
       {# }}} #}
 

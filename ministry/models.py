@@ -57,6 +57,12 @@ class MinistryProfile(models.Model):
     banner_img = models.ImageField('Banner Image', blank=True, null=True,
                                    upload_to=ministry_banner_dir)
 
+    # Social Media Links
+    facebook = models.URLField('Facebook', blank=True, null=True)
+    instagram = models.URLField('Instagram', blank=True, null=True)
+    youtube = models.URLField('YouTube', blank=True, null=True)
+    twitter = models.URLField('Twitter', blank=True, null=True)
+
     def __str__(self):
         return self.name
 
