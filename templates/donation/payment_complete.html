@@ -1,3 +1,6 @@
+{% extends "layout.html" %}
+
+{% block body %}
 <section class="wrapper">
   <!-- donation/payment_complete -->
 
@@ -6,7 +9,7 @@
   {% if campaign %}
     <h3>Thank you for donating to <a href="#{{ campaign.url }}">{{ campaign }}</a></h3>
   {% else %}
-    <h3>Thank you for donating to Love Our Neighbor.<h3>
+    <h3>Thank you for donating to Love Our Neighbor.</h3>
   {% endif %}
 
   <p>Your confirmation number is {{ payment.confirmation }}.
@@ -20,6 +23,7 @@
   </p>
 
 </section>
+{% endbloc %}
 
 
 <!-- Google Analytics Virtual Pageview -->
