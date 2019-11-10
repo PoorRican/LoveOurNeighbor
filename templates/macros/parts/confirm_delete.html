@@ -24,7 +24,7 @@ Arguments
 
   {% if part == -1 or part == 0 %}
     {% if anchor %}
-      <a href="#" class="modal-trigger" data-target="confirmDeleteModal">
+      <a href="#" class="modal-trigger" data-target="confirmDeleteModal_{{ type }}_{{ id }}">
         <i class="material-icons">delete</i>
         {{ text }}
       </a>

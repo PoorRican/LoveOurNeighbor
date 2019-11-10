@@ -116,7 +116,7 @@ def edit_campaign(request, campaign_id):
 
 @login_required
 def delete_campaign(request, campaign_id):
-    _url = reverse('people:user_profile')      # url if operation successful
+    _url = request.META.get('HTTP_REFERER')  # url if operation successful
     try:
         campaign = Campaign.objects.get(id=campaign_id)
         # TODO: set up permissions

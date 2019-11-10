@@ -253,7 +253,7 @@ def delete_ministry(request, ministry_id):
         objects that are associated, and the user is notified if this occurs.
         The `MinistryProfile` can be edited after permissions have been set up.
     """
-    _url = reverse('people:user_profile')      # url if operation successful
+    _url = request.META.get('HTTP_REFERER')  # url if operation successful
     try:
         ministry = MinistryProfile.objects.get(pk=ministry_id)
         # TODO: set up ministry permissions

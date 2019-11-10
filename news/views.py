@@ -114,13 +114,12 @@ def edit_news(request, post_id):
 def delete_news(request, post_id):
     post = NewsPost.objects.get(id=post_id)
 
+    _url = request.META.get('HTTP_REFERER')  # url if operation successful
     # Setup redirect url
     if post.ministry:
         ministry = post.ministry            # for checking auth
-        _url = reverse('ministry:ministry_profile', kwargs={'ministry_id': post.ministry.id})
     elif post.campaign:
         ministry = post.campaign.ministry   # for checking auth
-        _url = reverse('ministry:campaign_detail', kwargs={'campaign_id': post.campaign.id})
     else:
         _url = ''
         ministry = None
@@ -141,7 +140,6 @@ def delete_news(request, post_id):
         _feedback = "You don't have permissions to be deleting this NewsPost object!"
         messages.add_message(request, messages.ERROR, _feedback)
 
-    _url = '/#%s' % _url
     return HttpResponseRedirect(_url)
 
 
