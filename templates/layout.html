@@ -103,11 +103,13 @@
       M.Dropdown.init(el);
 
       // Initialize Collapsible Components
-      el = document.querySelectorAll('.collapsible');
+      el = document.querySelectorAll('.sidenav-accordian');
       M.Collapsible.init(el, {
         onOpenStart: open_collapsible,
         onCloseStart: close_collapsible
       });
+      el = document.querySelectorAll('.collapsible');
+      M.Collapsible.init(el);
 
       // Initialize Datepicker components
       el = document.querySelectorAll('.datepicker');

@@ -3,19 +3,28 @@
 
 {% block title %}FAQ{% endblock %}
 
-{% block content %}
+{% block body %}
 
-  <div class="col s12 m9 l10 scroll-content">
-    {% for i in faqs %}
+  <div class="wrapper">
+    <h2 style="margin-bottom: 24px;">Frequently Asked Questions</h2>
 
-      {{ section_start(i.title) }}
+    <ul class="collapsible popout">
+      {% for i in faqs %}
 
-      <h1>{{ i.title }}</h1>
-      <p>{{ i.content|safe }}</p>
+        <div class="collapsible-header">
+          <h5>
+            {{ i.title }}
+          </h5>
+        </div>
 
-      {{ section_close() }}
+        <div class="collapsible-body">
+          <div class="flow-text">
+            {{ i.content|safe }}
+          </div>
+        </div>
 
-    {% endfor %}
+      {% endfor %}
+    </ul>
   </div>
 
   {% endblock %}
