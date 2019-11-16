@@ -88,5 +88,13 @@
   background-color: transparent !important;
 }
 
+
+/* materialize overrides to accommodate ng-material */
+md-checkbox {
+  position: relative !important;
+  opacity: 100 !important;
+  pointer-events: auto !important;
+}
+
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */

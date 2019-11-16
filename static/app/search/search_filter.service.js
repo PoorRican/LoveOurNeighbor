@@ -18,9 +18,7 @@ function searchFilteringService(objectService) {
     }
   }
 
-  function populate() {
-
-    var object = objectService.get();
+  function populate(object) {
 
     if (object.ministries && object.ministries.length) {
       filter_types['ministry'] = true;
