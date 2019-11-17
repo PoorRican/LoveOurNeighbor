@@ -2,7 +2,7 @@
 
   {# TODO: implement "unlike" in django view #}
   {% if request and not request.user.is_authenticated %}
-    <a href="#/people/login" style="text-decoration: none;">
+    <a href="{{ url_for('people:login') }}" style="text-decoration: none;">
   {% endif %}
 <div class="like-button" flex
     {# TODO: do better object detection here #}
@@ -12,8 +12,8 @@
      ng-click="likeButton.like('{{ url_for('campaign:like_campaign', kwargs={"campaign_id": _obj.id}) }}')"
     {% endif %}
      ng-style="likeButton.style()"
-     style="">
-  <div style="text-height: 36px !important;">
+     style="" ng-cloak>
+  <div style="margin-bottom: -15px;">
     <span ng-if="object().liked"><i class="material-icons" style="font-size: 1.7em;">favorite</i></span>
     <span ng-if="!object().liked"><i class="material-icons" style="font-size: 1.7em;">favorite_border</i></span>
     <br>

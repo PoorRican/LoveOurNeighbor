@@ -16,122 +16,145 @@
 {% block title %}{{ ministry.name }}{% endblock %}
 
 {% block body %}
-<input type="hidden" id="current_object_json" value="{{ ministry.json }}">
-{% if AUTH == None %}
-  {% set AUTH = request.user == ministry.admin or request.user in ministry.reps.all() %}
-{% endif %}
+  <div ng-app="LON">
+    <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
+    <input type="hidden" id="ministry_id" value="{{ ministry.id }}">
+    {% if AUTH == None %}
+      {% set AUTH = request.user == ministry.admin or request.user in ministry.reps.all() %}
+    {% endif %}
 
-  {# {{{ Top Section Overlay #}
-  {% if ministry.banner_img %}
-    <div class="parallax-container" style='height: 250px;'>
-      <div ng-parallax class="parallax-img">
-        <img src="{{ ministry.banner_img.url }}" alt="">
+    {# {{{ Top Section Overlay #}
+    {% if ministry.banner_img %}
+      <div class="parallax-container" style='height: 250px;'>
+        <div ng-parallax class="parallax-img">
+          <img src="{{ ministry.banner_img.url }}" alt="">
+        </div>
       </div>
-    </div>
-  {% endif %}
-  {# }}} #}
-
-  {{ section_start("") }}
-
-  <h1 class="action-header truncate">
-    {% if request.user.is_authenticated %}
-      <a class="dropdown-trigger" href="#" data-target="actionMenu">
-        {{ ministry.name.upper() }}
-        <i class="material-icons">arrow_drop_down</i>
-      </a>
-    {% else %}
-      {{ ministry.name.upper() }}
     {% endif %}
-  </h1>
+    {# }}} #}
 
-  {# {{{ Action Menu #}
-  <ul id="actionMenu" class="dropdown-content">
-    {% if AUTH %}
-      {% for opt in ministry_admin_urls(ministry) %}
-        <li>
-          <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
-            <i class="material-icons">{{ opt['icon'] }}</i>
-            {{ opt['label'] }}
-          </a>
-        </li>
-      {% endfor %}
-    {% elif not AUTH %}
-      <a href="{{ url_for('ministry:request_to_be_rep', kwargs={'ministry_id': ministry.id}) }}">
-        Request to be a representative
-      </a>
-    {% endif %}
-  </ul>
-  {# }}} #}
+    <div id="{{ id }}" class="section">
+      <div class="wrapper" ng-controller="ministryCtrl">
 
-  <div class="row">
+        <h1 class="action-header truncate">
+          {% if request.user.is_authenticated %}
+            <a class="dropdown-trigger" href="#" data-target="actionMenu">
+              {{ ministry.name.upper() }}
+              <i class="material-icons">arrow_drop_down</i>
+            </a>
+          {% else %}
+            {{ ministry.name.upper() }}
+          {% endif %}
+        </h1>
 
-    <div class="col l3 s12">
-      {{ like_button(ministry, request) }}
-    </div>
+        {# {{{ Action Menu #}
+        <ul id="actionMenu" class="dropdown-content">
+          {% if AUTH %}
+            {% for opt in ministry_admin_urls(ministry) %}
+              <li>
+                <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                  <i class="material-icons">{{ opt['icon'] }}</i>
+                  {{ opt['label'] }}
+                </a>
+              </li>
+            {% endfor %}
+          {% elif not AUTH %}
+            <a href="{{ url_for('ministry:request_to_be_rep', kwargs={'ministry_id': ministry.id}) }}">
+              Request to be a representative
+            </a>
+          {% endif %}
+        </ul>
+        {# }}} #}
 
-    <div class="col l4 s12" style="margin: auto 0">
-      <p class="section-info">
-        <span># of Projects:</span>&nbsp;
-        {{ len(ministry.campaigns.all()) }}
-        <br>
-        <span>Total Donations:</span>&nbsp;
-        {{ ministry.donated }}
-        <br>
-        <span>Views:</span>&nbsp;
-        {{ ministry.views }}
-      </p>
-    </div>
+        <div class="row">
 
-  </div><!-- /layout -->
+          <div class="col l3 s12">
+            {{ like_button(ministry, request) }}
+          </div>
 
-{% if ministry.description %}
-  <h3>Description:</h3>
-  <p class="flow-text">{{ ministry.description|safe }}</p>
-{% endif %}
+          <div class="col l4 s12" style="margin: auto 0">
+            <p class="section-info">
+              <span># of Projects:</span>&nbsp;
+              {{ len(ministry.campaigns.all()) }}
+              <br>
+              <span>Total Donations:</span>&nbsp;
+              {{ ministry.donated }}
+              <br>
+              <span>Views:</span>&nbsp;
+              {{ ministry.views }}
+            </p>
+          </div>
 
-{{ tag_chips(ministry) }}
+        </div><!-- /layout -->
 
-  <div>
-    <h3>Ministry Information:</h3>
-    <p class="section-info">
-      <span>Website:</span>&nbsp;
-      <a href="{{ ministry.website }}">{{ ministry.website.split("://")[1] }}</a><br>
-      {% if ministry.social_media %}
-        <span>Social Media:&nbsp;</span>
-        {% for site, url in ministry.social_media.items() %}
-          <a href="{{ url }}">{{ site }}</a>&nbsp;
-        {% endfor %}
-        <br>
-      {% endif %}
-      {% set info = {
+        {% if ministry.description %}
+          <h3>Description:</h3>
+          <p class="flow-text">{{ ministry.description|safe }}</p>
+        {% endif %}
+
+        {{ tag_chips(ministry) }}
+
+        <div>
+          <h3>Ministry Information:</h3>
+          <p class="section-info">
+            <span>Website:</span>&nbsp;
+            <a href="{{ ministry.website }}">{{ ministry.website.split("://")[1] }}</a><br>
+            {% if ministry.social_media %}
+              <span>Social Media:&nbsp;</span>
+              {% for site, url in ministry.social_media.items() %}
+                <a href="{{ url }}">{{ site }}</a>&nbsp;
+              {% endfor %}
+              <br>
+            {% endif %}
+            {% set info = {
                 'phone_number': 'Phone',
                 'address': 'Address',
                 'founded': 'Date Founded',
                 'staff': 'Number of Staff Members',
                 'pub_date': 'Profile Created'
             } %}
-      {# TODO: make intuitive date for `pub_date`. eg: "1 year ago" #}
-      {% for attr, str in info.items() %}
-        {% if ministry.__dict__[attr] %}
-          <span>{{ str }}:</span>&nbsp;
-          {{ ministry.__dict__[attr] }}
-          <br>
-        {% endif %}
-      {% endfor %}
-    </p><!-- /.section-info -->
-</div><!-- /row -->
+            {# TODO: make intuitive date for `pub_date`. eg: "1 year ago" #}
+            {% for attr, str in info.items() %}
+              {% if ministry.__dict__[attr] %}
+                <span>{{ str }}:</span>&nbsp;
+                {{ ministry.__dict__[attr] }}
+                <br>
+              {% endif %}
+            {% endfor %}
+          </p><!-- /.section-info -->
+        </div><!-- /row -->
 
-{{ comments_section(ministry, 'ministry', request, form=form, csrf_token=csrf_token) }}
+        {{ comments_section(ministry, 'ministry', request, form=form, csrf_token=csrf_token) }}
 
-{{ section_close() }}
+      </div>
+    </div>
+
+    {# TODO: move comments section to tabs #}
+
+    <section class="wrapper">
+      <!-- ministry/ministry_details -->
+
+      {{ card.card_area(all_news, campaigns=(True, campaigns), AUTH=AUTH) }}
+
+    </section>
+  </div>
+{% endblock %}
 
 
-{# TODO: move comments section to tabs #}
+{% block scripts %}
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
 
-<section class="wrapper">
-  <!-- ministry/ministry_details -->
+  {% assets "app" %}
+    <script type="application/javascript" src="/{{ ASSET_URL }}"></script>
+  {% endassets %}
 
-  {{ card.card_area(all_news, campaigns=(True, campaigns), AUTH=AUTH) }}
+{% endblock %}
 
-</section>
+
+{% block css %}
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
 {% endblock %}

@@ -20,134 +20,158 @@
 
 
 {% block body %}
-  <input type="hidden" id="current_object_json" value="{{ cam.json }}">
-  {% if AUTH == None %}
-    {% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
-  {% endif %}
+  <div ng-app="LON">
+    <input type="hidden" id="current_object_json" value="{{ cam.json }}">
+    <input type="hidden" id="campaign_id" value="{{ cam.id }}">
+    {% if AUTH == None %}
+      {% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
+    {% endif %}
 
-  {# {{{ Top Section Overlay #}
-  {% if cam.banner_img %}
-    <div class="parallax-container" style='height: {{ height }};'>
-      <div class="parallax">
-        <img src="{{ cam.banner_img.url }}" alt="">
+    {# {{{ Top Section Overlay #}
+    {% if cam.banner_img %}
+      <div class="parallax-container" style='height: {{ height }};'>
+        <div class="parallax">
+          <img src="{{ cam.banner_img.url }}" alt="">
+        </div>
       </div>
-    </div>
-  {% endif %}
-  {# }}} #}
+    {% endif %}
+    {# }}} #}
 
-  {{ section_start("") }}
+    <div id="{{ id }}" class="section">
+      <div class="wrapper" ng-controller="campaignCtrl">
 
-  <h1>
-    {# {{{ Action Menu #}
-    {% if AUTH %}
+        <h1>
+          {# {{{ Action Menu #}
+          {% if AUTH %}
 
-      <a class="dropdown-trigger" href="#" data-target="actionMenu">
+            <a class="dropdown-trigger" href="#" data-target="actionMenu">
         <span class="truncate" style="max-width: 85%; display: inline-block;">
           {{ cam.title.upper() }}
         </span>
-        <i class="material-icons">arrow_drop_down</i>
-      </a>
-
-      <ul id="actionMenu" class="dropdown-content">
-        {% for opt in campaign_admin_urls(cam) %}
-          <li>
-            <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
-              <i class="material-icons">{{ opt['icon'] }}</i>
-              {{ opt['label'] }}
+              <i class="material-icons">arrow_drop_down</i>
             </a>
-          </li>
-        {% endfor %}
-        <li>{{ confirm_delete('campaign', cam.id, text='Delete Campaign', anchor=True, part=0) }}</li>
-      </ul>
 
-    {% else %}
+            <ul id="actionMenu" class="dropdown-content">
+              {% for opt in campaign_admin_urls(cam) %}
+                <li>
+                  <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                    <i class="material-icons">{{ opt['icon'] }}</i>
+                    {{ opt['label'] }}
+                  </a>
+                </li>
+              {% endfor %}
+              <li>{{ confirm_delete('campaign', cam.id, text='Delete Campaign', anchor=True, part=0) }}</li>
+            </ul>
 
-      {{ cam.title.upper() }}
+          {% else %}
 
-    {% endif %}
-    {# }}} #}
-  </h1>
+            {{ cam.title.upper() }}
 
-  {{ confirm_delete('campaign', cam.id, text='Delete Campaign', anchor=True, part=1) }}
+          {% endif %}
+          {# }}} #}
+        </h1>
 
-  <h6 class="grey-text">By:
-    <a href="{{ url_for("ministry:ministry_profile", kwargs={'ministry_id': cam.ministry.id}) }}">
-      {{ cam.ministry }}
-    </a>
-  </h6>
+        {{ confirm_delete('campaign', cam.id, text='Delete Campaign', anchor=True, part=1) }}
 
-  <h5>Progress:</h5>
-  <div class="progress">
-    {% if cam.donated %}
-      <div class="current" style="width: {{ round((cam.donated / cam.goal) * 100) }}%">
+        <h6 class="grey-text">By:
+          <a href="{{ url_for("ministry:ministry_profile", kwargs={'ministry_id': cam.ministry.id}) }}">
+            {{ cam.ministry }}
+          </a>
+        </h6>
+
+        <h5>Progress:</h5>
+        <div class="progress">
+          {% if cam.donated %}
+            <div class="current" style="width: {{ round((cam.donated / cam.goal) * 100) }}%">
                   <span>
                     ${{ cam.donated }}
                   </span>
-      </div>
-    {% endif %}
-    <div class="remaining" style="width: {{ round(((cam.goal - cam.donated) / cam.goal) * 90) }}%">
+            </div>
+          {% endif %}
+          <div class="remaining" style="width: {{ round(((cam.goal - cam.donated) / cam.goal) * 90) }}%">
             <span>
               ${{ cam.goal - cam.donated }}
             </span>
-    </div>
-  </div>
+          </div>
+        </div>
 
-  <br>
-
-  <div class="donate">
-    <a class="btn orange"
-       href="{{ url_for('donation:select_payment', kwargs={'campaign_id': cam.id}) }}">
-      <i class="material-icons">redeem</i>
-      Donate
-    </a>
-  </div>
-  {# TODO: show countdown as 'days left' #}
-
-  <br>
-
-  <div class="row">
-
-    <div class="col l3 s12">
-      {{ like_button(cam, request) }}
-    </div>
-
-    <div class="col l4 s12" style="margin: auto 0;">
-      <p class="section-info">
-        <span>Began:</span>&nbsp;
-        {{ cam.start_date.strftime("%h %d, %Y") }}&nbsp;
-        <span>({{ f_time(cam.start_date) }})</span>
         <br>
-        <span>Until:</span>&nbsp;
-        {{ cam.end_date.strftime("%h %d, %Y") }}&nbsp;
-        <span>({{ f_time(cam.end_date) }})</span>
+
+        <div class="donate">
+          <a class="btn orange"
+             href="{{ url_for('donation:select_payment', kwargs={'campaign_id': cam.id}) }}">
+            <i class="material-icons">redeem</i>
+            Donate
+          </a>
+        </div>
+        {# TODO: show countdown as 'days left' #}
+
         <br>
-        <span>Contributions:</span>&nbsp;
-        {{ len(cam.donations.all()) }} have supported so far
-        <br>
-        <span>Views:</span>&nbsp;
-        {{ cam.views }}
-      </p>
+
+        <div class="row">
+
+          <div class="col l3 s12">
+            {{ like_button(cam, request) }}
+          </div>
+
+          <div class="col l4 s12" style="margin: auto 0;">
+            <p class="section-info">
+              <span>Began:</span>&nbsp;
+              {{ cam.start_date.strftime("%h %d, %Y") }}&nbsp;
+              <span>({{ f_time(cam.start_date) }})</span>
+              <br>
+              <span>Until:</span>&nbsp;
+              {{ cam.end_date.strftime("%h %d, %Y") }}&nbsp;
+              <span>({{ f_time(cam.end_date) }})</span>
+              <br>
+              <span>Contributions:</span>&nbsp;
+              {{ len(cam.donations.all()) }} have supported so far
+              <br>
+              <span>Views:</span>&nbsp;
+              {{ cam.views }}
+            </p>
+          </div>
+
+        </div>
+
+        <div class="tags">
+          <h5>Tags:</h5>
+          {{ tag_chips(cam) }}
+        </div>
+
+        <p class="flow-text">{{ cam.content|safe }}</p>
+
+        {{ comments_section(cam, 'campaign', request, form=form, csrf_token=csrf_token) }}
+
+      </div>
     </div>
 
+    {# TODO: move comments section to tabs #}
+
+    <section class="wrapper">
+      <!-- ministry/campaign_details -->
+
+      {{ card.card_area(all_news, AUTH=AUTH) }}
+
+    </section>
   </div>
+{% endblock %}
 
-  <div class="tags">
-    <h5>Tags:</h5>
-    {{ tag_chips(cam) }}
-  </div>
 
-  <p class="flow-text">{{ cam.content|safe }}</p>
+{% block scripts %}
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
 
-  {{ comments_section(cam, 'campaign', request, form=form, csrf_token=csrf_token) }}
+  {% assets "app" %}
+    <script type="application/javascript" src="/{{ ASSET_URL }}"></script>
+  {% endassets %}
 
-  {{ section_close() }}
+{% endblock %}
 
-  {# TODO: move comments section to tabs #}
 
-  <section class="wrapper">
-    <!-- ministry/campaign_details -->
-
-    {{ card.card_area(all_news, AUTH=AUTH) }}
-
-  </section>
+{% block css %}
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
 {% endblock %}
