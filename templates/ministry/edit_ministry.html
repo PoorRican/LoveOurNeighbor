@@ -21,7 +21,7 @@
 {% endblock %}
 
 {% block body %}
-<section class="wrapper">
+  <section class="wrapper" ng-app="LON" ng-cloak>
   <!-- ministry/ministry_content -->
 
   {# {{{ Form Header #}
@@ -37,13 +37,14 @@
 
     <form method="POST" name="ministryForm" enctype="multipart/form-data" action="{{ ministry.edit }}">
       <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
+    <input type="hidden" id="ministry_id" value="{{ ministry.id }}">
 
   {% endif %}
   {# }}} #}
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-  <div class="row">
+    <div class="row" ng-controller="ministryActionCtrl">
     <div id="tab_bar" class="col s12">
       <ul class="tabs">
         <li class="tab col s3"><a href="#details"><i class="material-icons">info</i>
@@ -169,7 +170,29 @@
       {# }}} #}
 
       {# {{{ INPUT tags #}
-      {{ tag_selection(form) }}
+      <md-input-container layout="column">
+        <md-icon><i class="material-icons">class</i></md-icon>
+        {{ form.tags.label_tag() }}
+        <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
+        <md-chips ng-model="object.tags" md-autocomplete-snap
+                  md-transform-chip="tagService.transform_chip($chip)"
+                  md-separator-keys="tagService.separatorKeys">
+          <md-autocomplete
+              md-search-text="tagText"
+              md-items="tag in filter_tags(tagText)"
+              md-item-text="tag"
+              md-min-length="1">
+            <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
+          </md-autocomplete>
+          <md-chip-template>
+                  <span>
+                    <span>{% raw %}{{ $chip }}{% endraw %}</span>
+                  </span>
+          </md-chip-template>
+        </md-chips>
+        <br><br>
+        <div class="hint">Select from existing tags, or create new ones by entering a comma.</div>
+      </md-input-container>
       {# }}} #}
 
       {# {{{ Form Buttons #}
@@ -199,7 +222,6 @@
       {% elif not start %}
 
         {# {{{ INPUT representative selection #}
-        {{ rep_selection(ministry) }}
         <md-content layout="column" class="md-padding autocomplete rep_requests">
           <input type="hidden" name="{{ form.reps.name }}" value="{% raw %}{{ object.reps }}{% endraw %}">
           <label>
@@ -292,22 +314,21 @@
 </section>
 {% endblock %}
 
+
 {% block scripts %}
-  {{ get_obj_json(ministry) }}
-  {{ tag_selection_script(ministry) }}
-  {{ rep_selection_script(ministry) }}
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
 
-  <script>
-    /**
-     * This wraps up the functions that are defined above
-     * @returns {Promise<void>}
-     */
-    async function activate() {
-      const obj = await get_obj_json();
-      await initRepInput(obj);
-      await initTagInput(obj);
-    }
+  {% assets "app" %}
+    <script type="application/javascript" src="/{{ ASSET_URL }}"></script>
+  {% endassets %}
 
-    activate();
-  </script>
+{% endblock %}
+
+
+{% block css %}
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
 {% endblock %}

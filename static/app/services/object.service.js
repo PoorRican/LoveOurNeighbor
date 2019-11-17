@@ -2,8 +2,8 @@ angular.module('LON').factory('objectService', objectService);
 objectService.$inject = ['$http', '$interval', '$log'];
 
 function objectService($http, $interval, $log) {
-  var interval_id = 0;
-  var object = {};
+  let interval_id = 0;
+  let object = {};
 
   return {
     fetch: fetch,
@@ -23,7 +23,7 @@ function objectService($http, $interval, $log) {
     }
     return $http.get(url)
     .then(function (response) {
-      var data = response.data;
+      let data = response.data;
       if (data.founded) {
         data.founded = new Date(data.founded);
       }

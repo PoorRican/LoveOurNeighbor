@@ -1,19 +1,18 @@
 angular.module('LON').controller('campaignActionCtrl', campaignActionCtrl);
-campaignActionCtrl.$inject = ['$scope', '$routeParams', 'tagService', 'objectService', 'selectImageDialogService', 'confirmDeleteDialogService'];
+campaignActionCtrl.$inject = ['$scope', 'tagService', 'objectService', 'selectImageDialogService', 'confirmDeleteDialogService'];
 
-function campaignActionCtrl($scope, $routeParams, tagService, objectService, bannerImageService, confirmDeleteDialogService) {
-  // TODO: change title block
+function campaignActionCtrl($scope, tagService, objectService, bannerImageService, confirmDeleteDialogService) {
+  const campaign_id = document.getElementById('campaign_id').value;
 
-  $scope.currentNavItem = 'Home';
-  $scope.share.disabled = true;
-
-  if ($routeParams.campaign_action === 'create') {
+  // create a new campaign
+  if (campaign_id === null) {
     $scope.object = {'tags': []};     // work around
     $scope.filter_tags = tagService.search;
     $scope.tag_service = tagService;
     tagService.fetch();
   }
-  if ($routeParams.campaign_action === 'edit') {
+  // edit campaign
+  else {
     $scope.object = objectService.get;
     $scope.filter_tags = tagService.search;
     $scope.tag_service = tagService;
@@ -47,15 +46,15 @@ function campaignActionCtrl($scope, $routeParams, tagService, objectService, ban
     }
 
     function activate() {
-      if ($routeParams.campaign_id) {
-        var banners_url = "/t/ministry/campaign/" + $routeParams.campaign_id + "/banners/json";
+      if (!(campaign_id === null)) {
+        const banners_url = "/ministry/campaign/" + campaign_id + "/banners/json";
         bannerImageService.get(banners_url)
         .then(function (data) {
           $scope.banner_urls = data;
 
         });
 
-        var profile_img_url = "/t/ministry/campaign/" + $routeParams.campaign_id + "/profile_img/json";
+        const profile_img_url = "/ministry/campaign/" + campaign_id + "/profile_img/json";
         bannerImageService.get(profile_img_url)
         .then(function (data) {
           $scope.profile_img_urls = data;
@@ -72,6 +71,4 @@ function campaignActionCtrl($scope, $routeParams, tagService, objectService, ban
       );
     }
   }
-
-  ga('send', 'pageview', '/campaigns/' + $routeParams.campaign_id);
 }

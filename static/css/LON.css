@@ -96,5 +96,16 @@ md-checkbox {
   pointer-events: auto !important;
 }
 
+section[ng-app] div#tab_bar a,
+section[ng-app] div#tab_bar ul {
+  background-color: rgb(250, 250, 250) !important;
+}
+
+md-chips input[type=search] {
+  border-bottom: none !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */

@@ -1,13 +1,7 @@
 angular.module('LON').controller('ministryActionCtrl', ministryActionCtrl);
-ministryActionCtrl.$inject = ['$scope', '$location', '$routeParams', 'tagService', 'userFilterService', 'objectService', 'selectImageDialogService', 'confirmDeleteDialogService'];
+ministryActionCtrl.$inject = ['$scope', 'tagService', 'userFilterService', 'objectService', 'selectImageDialogService'];
 
-function ministryActionCtrl($scope, $location, $routeParams, tagService, userFilterService, objectService, bannerImageService, confirmDeleteDialogService) {
-  // TODO: change title block
-
-  $scope.currentNavItem = null;
-  $scope.share.disabled = true;
-
-  if ($routeParams.ministry_action === 'edit' || $routeParams.ministry_action === 'create') {
+function ministryActionCtrl($scope, tagService, userFilterService, objectService, bannerImageService) {
     $scope.object = {};
 
     $scope.filter_users = userFilterService.search;
@@ -25,13 +19,8 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
     $scope.profile_img_dialog = bannerImageService;
     $scope.selected_profile_img = $scope.profile_img_dialog.selected;
 
-    $scope.confirmDelete = confirmDeleteDialogService;
-
-
-    if ($routeParams.ministry_action === 'edit') {
-      activate();
-      tagService.fetch();
-    }
+  activate();
+  tagService.fetch();
 
     function select_banner(name) {
       // this is a dirty hack, but it works.....
@@ -48,14 +37,15 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
     }
 
     function activate() {
-      var banners_url = "/t/ministry/" + $routeParams.ministry_id + "/banners/json";
+      const ministry_id = document.getElementById("ministry_id").value;
+      const banners_url = "/ministry/" + ministry_id + "/banners/json";
       bannerImageService.get(banners_url)
       .then(function(data) {
         $scope.banner_urls = data;
 
       });
 
-      var profile_img_url = "/t/ministry/" + $routeParams.ministry_id + "/profile_img/json";
+      const profile_img_url = "/ministry/" + ministry_id + "/profile_img/json";
       bannerImageService.get(profile_img_url)
       .then(function(data) {
         $scope.profile_img_urls = data;
@@ -68,7 +58,4 @@ function ministryActionCtrl($scope, $location, $routeParams, tagService, userFil
         }
       );
     }
-  }
-
-  ga('send', 'pageview', '/ministry/' + $routeParams.ministry_id + '/' + $routeParams.ministry_action);
 }

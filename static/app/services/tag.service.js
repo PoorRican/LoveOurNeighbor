@@ -13,7 +13,7 @@ function tagService($http, $log, $mdConstant) {
   };
 
   function fetch() {
-    var url = '/ministry/tags/all';
+    const url = '/tag/all';
     return $http.get(url).then(success, failure);
 
     function success(response) {
@@ -26,7 +26,7 @@ function tagService($http, $log, $mdConstant) {
 
   function search(query) {
     function createTagFilter(query) {
-      var loweredQuery = query.toLowerCase();
+      let loweredQuery = query.toLowerCase();
 
       return function filterFn(tag) {
         return (tag.indexOf(loweredQuery) === 0);
