@@ -191,3 +191,9 @@ ASSETS_URL = '/static/'
 ASSETS_DEBUG = DEBUG
 
 ASSETS_AUTO_BUILD = True
+
+# Google Analytics
+GA_TRACKING_ID = ''
+
+# PAYEEZY
+PAYEEZY_TEST_BUTTON = True  # determines if jinja template uses test network or not
