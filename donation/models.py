@@ -3,8 +3,8 @@ from django.urls import reverse
 
 from yaml import load
 from datetime import datetime
-from uuid import uuid4
-from base64 import b64encode
+
+from .utils import generate_confirmation_id
 
 from campaign.models import Campaign
 from people.models import User
@@ -69,6 +69,7 @@ class Donation(models.Model):
             to an database column.
     """
     campaign = models.ForeignKey(Campaign, related_name="donations",
+                                 null=True, blank=True,
                                  on_delete=models.PROTECT)
     user = models.ForeignKey(User, related_name="donations",
                              on_delete=models.PROTECT)
@@ -175,20 +176,15 @@ class Payment(models.Model):
     """
     payment_date = models.DateTimeField(default=datetime.now, editable=False)
     # this stores any confirmation data
-    confirmation = models.CharField(max_length=256, blank=True, default='')
+    confirmation = models.CharField(max_length=42)
 
     # Transaction Details
-    # TODO: figure out what details braintree gives
-    # TODO: store current btc/usd rate. however if btc,
-    #       USD amount is stored via `self.donation.amount`
-    #       therefore, for UI, `Donation.amount` should always be used
-    # stores btc transaction amount
     amount = models.DecimalField(max_digits=7, decimal_places=2)
 
     def confirm(self):
         """ Used to generate a 'receipt' confirmation number.
         """
-        self.confirmation = str(b64encode(uuid4().bytes))[2:-1]
+        self.confirmation = generate_confirmation_id()
         self.save()
 
     class Meta:
@@ -197,10 +193,6 @@ class Payment(models.Model):
 
 class ccPayment(Payment):
     """ Stores data for a credit-card transaction.
-
-    TODO: this is not ready to go live
-    TODO: there must be a method that deletes ALL old cc numbers.
-    TODO: there should be some level of encryption on sensitive attributes.
 
     Attributes
     ==========
@@ -213,18 +205,12 @@ class ccPayment(Payment):
                                     null=True, blank=True,
                                     on_delete=models.CASCADE)
 
-    card_number = models.PositiveIntegerField()
-    ccv2 = models.PositiveIntegerField("3-digit Code")
-    expiration_date = models.CharField(max_length=5)
+    card_number = models.PositiveSmallIntegerField()
+    name = models.CharField(max_length=32)
+    zipcode = models.CharField(max_length=10)  # alphanum to accommodate international transactions
 
-    first_name = models.CharField("First Name", max_length=32, default=None)
-    last_name = models.CharField("Last Name", max_length=32, default=None)
-
-    address = models.CharField(max_length=64, default=None)
-    state = models.CharField(max_length=32, default=None)
-    city = models.CharField(max_length=32, default=None)
-    zipcode = models.PositiveIntegerField()
-    country = models.CharField(max_length=32, choices=COUNTRIES, default=None)
+    auth_num = models.CharField(max_length=10)
+    tx_id = models.PositiveIntegerField()
 
 
 class btcPayment(Payment):

@@ -9,6 +9,7 @@ from webassets.ext.jinja2 import AssetsExtension
 from frontend.settings import ASSETS_DEBUG, ASSETS_AUTO_BUILD
 from frontend.assets import js, css, app
 from public.models import AboutSection
+from donation.utils import generate_confirmation_id
 
 from .utils import (
     friendly_time,

@@ -10,19 +10,24 @@
     <div class="row">
       <h2>Donation Details</h2>
 
+      {% if donation.campaign %}
       <p>Donated to <a href="{{ donation.campaign.url }}">{{ donation.campaign.title }}</a>
         by <a href="{{ donation.campaign.ministry.url }}">{{ donation.campaign.ministry.name }}</a>
       </p>
+      {% else %}
+        <p>Donated to Love Our Neighbor Administration Costs</p>
+        <p>Thank you for Donating!</p>
+      {% endif %}
 
       {% if hasattr(donation.payment, 'card_number') %}
         <h5>Payment Card Info:</h5>
         <div class="col s12 input-field">
-          <input type="text" id="payment" value="{{ donation.payment.first_name }} {{ donation.payment.last_name }}"
+          <input type="text" id="payment" value="{{ donation.payment.name }}"
                  disabled>
-          <label for="payment">First/Last Name</label>
+          <label for="payment">Cardholder Name</label>
         </div>
         <div class="col s12 input-field">
-          <input type="text" id="cc" value="****-****-****-{{ str(donation.payment.card_number)[-5:-1] }}" disabled>
+          <input type="text" id="cc" value="****-****-****-{{ str(donation.payment.card_number) }}" disabled>
           <label for="cc">Credit Card #</label>
         </div>
       {% endif %}

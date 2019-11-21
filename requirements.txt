@@ -1,3 +1,5 @@
+hmac
+hashlib
 geopy
 jinja2
 django

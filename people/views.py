@@ -78,8 +78,12 @@ def user_profile(request):
         _donations = {}
         count = 0
         for donation in user.donations.all():
-            _donations[count] = serialize_donation(donation)
-            count += 1
+            try:
+                _donations[count] = serialize_donation(donation)
+                count += 1
+            except ValueError:
+                # this might happen when Donation object does not have a payment
+                pass
 
         form = UserEditForm(instance=user)
         context = {'form': form,

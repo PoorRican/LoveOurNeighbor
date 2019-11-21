@@ -183,10 +183,20 @@
             <td>{{ tx.amount }}</td>
             <td class="hide-on-med-and-down">{{ tx.confirmation }}</td>
             <td>
-              <a ng-href="{{ tx.campaign.url }}">{{ tx.campaign.title }}</a>
+              {% if tx.campaign.url == '#' %}
+                {# 'Administration Donation' #}
+                {{ tx.campaign.title }}
+              {% else %}
+                <a href="{{ tx.campaign.url }}">{{ tx.campaign.title }}</a>
+              {% endif %}
             </td>
             <td class="hide-on-med-and-down">
-              <a ng-href="{{ tx.ministry.url }}">{{ tx.ministry.title }}</a>
+              {% if tx.ministry.url == '#' %}
+                {# 'Love Our Neighbor' #}
+                {{ tx.ministry.title }}
+              {% else %}
+                <a href="{{ tx.ministry.url }}">{{ tx.ministry.title }}</a>
+              {% endif %}
             </td>
           </tr>
         {% endfor %}

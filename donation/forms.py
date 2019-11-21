@@ -15,6 +15,4 @@ class SelectPaymentForm(forms.Form):
 class ccPaymentForm(forms.ModelForm):
     class Meta:
         model = ccPayment
-        fields = ('first_name', 'last_name',
-                  'address', 'state', 'city', 'zipcode', 'country',
-                  'amount', 'card_number', 'ccv2', 'expiration_date')
+        fields = ('name', 'card_number', 'auth_num', 'tx_id')

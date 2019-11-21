@@ -4,8 +4,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import Donation
+from .models import Donation, ccPayment
 from .forms import SelectPaymentForm, ccPaymentForm
+from .utils import extract_exact_ctr, check_anonymous_donation
+
 from campaign.models import Campaign
 from people.models import User
 
@@ -173,7 +175,6 @@ def coinbase_payment(request, donation_id):
         return render("btc_payment.html", context)
 
 
-@login_required
 def view_donation(request, donation_id):
     donation = Donation.objects.get(pk=donation_id)
     # TODO: auth. Allow anonymous donations to be viewed
@@ -182,4 +183,51 @@ def view_donation(request, donation_id):
     else:
         msg = "Invalid permission to view transaction."
         messages.add_message(request, messages.ERROR, msg)
-        return HttpResponseRedirect(reverse('frontend:error'))
+        return HttpResponseRedirect(reverse('error'))
+
+
+def confirm_donation(request):
+    if request.method == "GET":
+        data = request.GET
+        if data['x_response_code'] == '1':
+            user = check_anonymous_donation(request, data['x_email'])
+
+            # create the donation object
+            confirmation = data['x_invoice_num']
+            if confirmation[0] == 'C':  # extract campaign id from confirmation
+                _id, _ = confirmation.split('-')
+                _id = _id[1:]
+                campaign = Campaign.objects.get(id=_id)
+                donation = Donation.objects.create(user=user, campaign=campaign)
+            else:
+                # `Donation` objects w/o `campaign` is an admin donation
+                donation = Donation.objects.create(user=user)
+
+            # create Payment object
+            kwargs = {
+                'amount': data['x_amount'],
+                'confirmation': confirmation,
+                'donation': donation,
+                'card_number': data['Card_Number'][-4:],
+                'name': extract_exact_ctr(data['exact_ctr']),
+                'zipcode': data['x_zip'],
+                'auth_num': data['x_auth_code'],
+                'tx_id': data['x_trans_id'],
+            }
+            ccPayment.objects.create(**kwargs)
+
+            return HttpResponseRedirect(reverse('donation:view_donation',
+                                                kwargs={'donation_id': donation.id}))
+
+        elif data['x_response_code'] == '2':
+            # tx was declined
+            pass
+        elif data['x_response_code'] == '3':
+            # an error occurred
+            pass
+        else:
+            # unknown error occurred
+            pass
+
+    else:
+        print("POST request by Payeezy")

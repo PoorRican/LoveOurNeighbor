@@ -22,4 +22,6 @@ urlpatterns = (
 
     path('<int:donation_id>/view', views.view_donation,
          name='view_donation'),
+
+    path('confirm', views.confirm_donation)
 )
