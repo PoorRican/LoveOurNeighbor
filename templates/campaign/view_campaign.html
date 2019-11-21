@@ -10,6 +10,7 @@
 {% from "macros/parts/like_button.html" import like_button %}
 {% from "macros/parts/tag_chips.html" import tag_chips %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
+{% from "macros/parts/donate_button.html" import donate_button %}
 
 {% import "cards.html" as card %}
 
@@ -98,11 +99,7 @@
         <br>
 
         <div class="donate">
-          <a class="btn orange"
-             href="{{ url_for('donation:select_payment', kwargs={'campaign_id': cam.id}) }}">
-            <i class="material-icons">redeem</i>
-            Donate
-          </a>
+          {{ donate_button(cam) }}
         </div>
         {# TODO: show countdown as 'days left' #}
 

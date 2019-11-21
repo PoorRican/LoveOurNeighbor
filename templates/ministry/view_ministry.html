@@ -98,7 +98,9 @@
           <h3>Ministry Information:</h3>
           <p class="section-info">
             <span>Website:</span>&nbsp;
-            <a href="{{ ministry.website }}">{{ ministry.website.split("://")[1] }}</a><br>
+            {% if ministry.website %}
+              <a href="{{ ministry.website }}">{{ ministry.website.split("://")[1] }}</a><br>
+            {% endif %}
             {% if ministry.social_media %}
               <span>Social Media:&nbsp;</span>
               {% for site, url in ministry.social_media.items() %}

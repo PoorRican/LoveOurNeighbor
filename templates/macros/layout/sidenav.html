@@ -1,5 +1,7 @@
-{% from "user_widget.html" import user_widget %}
-{% from "searchbar.html" import searchbar %}
+{% from "macros/layout/user_widget.html" import user_widget %}
+{% from "macros/layout/searchbar.html" import searchbar %}
+
+{% from "macros/parts/donate_button.html" import donate_button %}
 
 {% macro sidenav(request, links) %}
 
@@ -126,10 +128,7 @@
 
     <li id="sidebar-donate-button"
          layout="column">
-      <a class="btn-small orange"
-         href="{{ url_for('donation:admin_donation') }}">
-        Donate
-      </a>
+      {{ donate_button() }}
 
       <p>Love Our Neighbor does not take any money from the ministries you donate to.
          Help support our mission by donating to Love Our Neighbor.</p>

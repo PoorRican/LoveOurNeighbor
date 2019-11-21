@@ -1,7 +1,7 @@
 angular.module('LON').controller('campaignCtrl', campaignCtrl);
-campaignCtrl.$inject = ['$scope', '$routeParams', '$timeout', 'objectService', 'likeButtonService', 'galleryService'];
+campaignCtrl.$inject = ['$scope', '$timeout', 'objectService', 'likeButtonService', 'galleryService'];
 
-function campaignCtrl($scope, $routeParams, $timeout, objectService, likeButtonService, galleryService) {
+function campaignCtrl($scope, $timeout, objectService, likeButtonService, galleryService) {
   $scope.object = objectService.get;
   $scope.likeButton = likeButtonService;
 
@@ -9,12 +9,6 @@ function campaignCtrl($scope, $routeParams, $timeout, objectService, likeButtonS
 
   // activate dynamic content
   activate();
-
-  // activate dynamic content
-  $scope.$on('$destroy', function() {
-    // Make sure the interval is no longer running
-    objectService.stop();
-  });
 
   function activate() {
     const campaign_id = document.getElementById('campaign_id').value;

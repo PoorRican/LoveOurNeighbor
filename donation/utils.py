@@ -2,7 +2,7 @@ import os
 import hmac
 import time
 from base64 import b64encode
-from hashlib import md5
+from hashlib import md5, sha1
 from uuid import uuid4
 
 from people.models import User
@@ -52,7 +52,7 @@ def extract_exact_ctr(exact_ctr):
             return _.split(_str)[1]
 
 
-def gen_hash(login, tx_key, amount, currency='USD'):
+def generate_payeezy_hash(login, tx_key, amount='', currency='USD', digest='sha1'):
     """ Generates a correct `x_fp_hash` value for use with the Payeezy Gateway.
 
     The parameters are login, and tx_key can be found on the 'Payments Page' in the Payeezy site.
@@ -70,10 +70,12 @@ def gen_hash(login, tx_key, amount, currency='USD'):
         String that identifies payment form in the Payeezy Gateway
     tx_key: (str)
         string to convert to bytes. This is used to sign the hash.
-    amount: (int)
-        Total dollar amount to be charged. This is to be generated/validated outside of this function.
+    amount: (int/str)
+        (optional) Total dollar amount to be charged. This is to be generated/validated outside of this function.
     currency: (str)
         Defaults to 'USD'.
+    digest: (str)
+        Determines what digest algorithm to use for computing HMAC hash
 
     Returns
     =======
@@ -84,16 +86,22 @@ def gen_hash(login, tx_key, amount, currency='USD'):
     sequence = int(os.urandom(16).hex(), 16)
     timestamp = int(round(time.time() * 1000))
 
-    message = '^'.join((login, str(sequence), str(timestamp), str(amount), currency))
-    return hmac.new(bytes(tx_key, 'utf-8'), msg=bytes(message, 'utf-8'), digestmod=md5).hexdigest(), \
-           sequence, timestamp
+    attr = (login, str(sequence), str(timestamp), str(amount), currency)
+    message = '^'.join(attr)
+
+    if digest is not 'sha1':
+        digestmod = md5
+    else:
+        digestmod = sha1
+    _digest = hmac.new(bytes(tx_key, 'utf-8'), msg=bytes(message, 'utf-8'), digestmod=digestmod).hexdigest()
+    return _digest, sequence, timestamp
 
 
 def generate_confirmation_id(campaign=None):
     """ Generates string to be used as internal confirmation id for Donation objects """
     _ = ''
     if campaign:
-        _ = 'C' + campaign.id + '-'
+        _ = 'C' + str(campaign.id) + '-'
     return _ + str(b64encode(uuid4().bytes))[2:-3]
 
 
