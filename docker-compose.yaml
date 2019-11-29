@@ -11,16 +11,31 @@ services:
       - POSTGRES_DB=lon_django
 
   django:
-    build: .
-    command:  python3 manage.py runserver 0.0.0.0:8000
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: gunicorn frontend.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - .:/LON
+      - static_volume:/home/django/lon/staticfiles
+      - media_volume:/home/django/lon/mediafiles
     ports:
       - 8000:8000
     env_file:
-      - configs/django/env.conf
+      - ./configs/django/env.prod.conf
     depends_on:
       - db
 
+  nginx:
+    build: ./configs/nginx
+    volumes:
+      - static_volume:/home/django/lon/staticfiles
+      - media_volume:/home/django/lon/mediafiles
+    ports:
+      - 80:80   # could be "8000:80" if necessary
+    depends_on:
+      - django
+
 volumes:
   postgres_data:
+  static_volume:
+  media_volume:

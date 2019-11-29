@@ -1,33 +1,71 @@
-FROM python:3.7
+# retrieved from: https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/
+###########
+# BUILDER #
+###########
 
-ENV PYTHONBUFFERED 1
+# pull official base image
+FROM python:3.8.0-alpine as builder
+
+# set work directory
+WORKDIR /usr/src/LON
+
+# set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-RUN mkdir /LON
-WORKDIR /LON
+# install psycopg2 dependencies
+RUN apk update \
+    && apk add postgresql-dev gcc python3-dev musl-dev
+RUN apk add build-base python-dev py-pip jpeg-dev zlib-dev
 
-# packages for postgresql
-RUN apt-get update && apt-get install postgresql libpq-dev postgresql-contrib -y
-# packages for python-pillow
-#RUN apt-get install build-base python-dev py-pip jpeg-dev zlib-dev
+# lint
+# RUN pip install --upgrade pip
+# RUN pip install flake8
+# COPY . /usr/src/LON/
+# RUN flake8 --ignore=E501,F401 .
 
+# install dependencies
+COPY ./requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/LON/wheels -r requirements.txt
 
-COPY requirements.txt /LON/
-RUN pip install -r requirements.txt
+#########
+# FINAL #
+#########
 
-COPY . /LON/
+# pull official base image
+FROM python:3.8.0-alpine
 
-RUN chmod +x /LON/configs/django/entrypoint.sh
+# create home directory for the app user
+ENV HOME=/home/django
+RUN mkdir -p $HOME
 
-#=========================#
-# DATABASE INITIALIZATION #
-#=========================#
-RUN bash utils/clear_migrations.sh
+# create the app user
+RUN addgroup -S django && adduser -S django -G django
 
-RUN python manage.py makemigrations public people tag campaign ministry donation news
-RUN python manage.py migrate --noinput
-# delay migration to avoid `django.db.InconsistentMigrationHistory` being thrown
-RUN python manage.py makemigrations explore comment
-RUN python manage.py migrate --noinput
+# create the appropriate directories
+ENV APP_HOME=$HOME/lon
+RUN mkdir $APP_HOME
+RUN mkdir $APP_HOME/staticfiles
+RUN mkdir $APP_HOME/mediafiles
+WORKDIR $APP_HOME
 
-RUN python populate.py
+# install dependencies
+RUN apk update && apk add libpq
+RUN apk add build-base python-dev py-pip jpeg-dev zlib-dev
+COPY --from=builder /usr/src/LON/wheels /wheels
+COPY --from=builder /usr/src/LON/requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache /wheels/*
+
+# copy project
+COPY . $APP_HOME
+
+# chown all the files to the app user
+RUN chown -R django:django $APP_HOME
+RUN chmod +x $APP_HOME/configs/django/entrypoint.sh
+
+# change to the app user
+USER django
+
+# run entrypoint.prod.sh
+ENTRYPOINT ["/home/django/lon/configs/django/entrypoint.sh"]

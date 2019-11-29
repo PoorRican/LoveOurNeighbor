@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=lon_django
+      - POSTGRES_PASSWORD=aoeuaoeuLONDJANGO
+      - POSTGRES_DB=lon_django
+
+  django:
+    build: .
+    command:  python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/LON
+    ports:
+      - 8000:8000
+    env_file:
+      - configs/django/env.conf
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
