@@ -1,3 +1,4 @@
+from django.db.utils import ProgrammingError, OperationalError
 from django.templatetags.static import static
 from django.urls import reverse
 from django.contrib import messages
@@ -25,7 +26,18 @@ _assets.register('css', css)
 
 
 # hack for getting dynamic mission statement
-_mission_statement = AboutSection.objects.get(title='Mission Statement').content
+# exceptions occur when db has not been fully initialized
+def mission_statement():
+    _mission_statement = ''
+    try:
+        _mission_statement = AboutSection.objects.get(title__icontains='Mission Statement').content
+    except ProgrammingError:
+        pass
+    except AboutSection.DoesNotExist:
+        pass
+    except OperationalError:
+        pass
+    return _mission_statement
 
 
 def environment(**options):
@@ -42,7 +54,7 @@ def environment(**options):
         'f_time': friendly_time,
         'ministry_admin_urls': ministry_admin_urls,
         'campaign_admin_urls': campaign_admin_urls,
-        'mission_statement': _mission_statement,
+        'mission_statement': mission_statement,
         'generate_confirmation_id': generate_confirmation_id,
         'GA_TRACKING_ID': GA_TRACKING_ID,
         'generate_payeezy_hash': generate_payeezy_hash,

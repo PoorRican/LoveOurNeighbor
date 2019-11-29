@@ -9,3 +9,4 @@ webassets
 django-assets
 jsmin
 cssmin
+psycopg2-binary

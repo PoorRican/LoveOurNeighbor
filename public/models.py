@@ -2,7 +2,7 @@ from django.db import models
 
 
 class FaqSection(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=256)
     content = models.TextField()
     img_path = models.CharField(default='img/parallax1.jpg', max_length=100)
 
@@ -11,7 +11,7 @@ class FaqSection(models.Model):
 
 
 class AboutSection(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=256)
     content = models.TextField()
     img_path = models.CharField(default='img/parallax1.jpg', max_length=100)
 
