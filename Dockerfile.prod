@@ -19,9 +19,9 @@ RUN apk update \
 RUN apk add build-base python-dev py-pip jpeg-dev zlib-dev
 
 # lint
-RUN pip install --upgrade pip
-RUN pip install flake8
-COPY . /usr/src/LON/
+# RUN pip install --upgrade pip
+# RUN pip install flake8
+# COPY . /usr/src/LON/
 # RUN flake8 --ignore=E501,F401 .
 
 # install dependencies
@@ -36,15 +36,17 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/LON/wheels -r requir
 FROM python:3.8.0-alpine
 
 # create home directory for the app user
-RUN mkdir -p /home/django
+ENV HOME=/home/django
+RUN mkdir -p $HOME
 
 # create the app user
 RUN addgroup -S django && adduser -S django -G django
 
 # create the appropriate directories
-ENV HOME=/home/django
-ENV APP_HOME=/home/django/lon
+ENV APP_HOME=$HOME/lon
 RUN mkdir $APP_HOME
+RUN mkdir $APP_HOME/staticfiles
+RUN mkdir $APP_HOME/mediafiles
 WORKDIR $APP_HOME
 
 # install dependencies

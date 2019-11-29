@@ -21,7 +21,7 @@ for _ in _dirs:
 
 fn = [join(_path, i) for i in fn]  # join the filepath with `_path`
 
-app = Bundle(*fn, filters='jsmin', output='assets/packed.js')
+app = Bundle(*fn, filters='jsmin', output='assets/app.js')
 
 # CSS
 _path = join(BASE_DIR, "static/css")

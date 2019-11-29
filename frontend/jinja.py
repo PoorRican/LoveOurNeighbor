@@ -7,7 +7,11 @@ from jinja2 import Environment
 from webassets import Environment as AssetsEnvironment
 from webassets.ext.jinja2 import AssetsExtension
 
-from frontend.settings import ASSETS_DEBUG, ASSETS_AUTO_BUILD, GA_TRACKING_ID, PAYEEZY_TEST_BUTTON
+from frontend.settings import (
+    ASSETS_DEBUG, ASSETS_AUTO_BUILD, STATIC_URL,
+    GA_TRACKING_ID,
+    PAYEEZY_TEST_BUTTON,
+)
 from frontend.assets import js, css, app
 from public.models import AboutSection
 from donation.utils import generate_confirmation_id, generate_payeezy_hash
@@ -19,7 +23,10 @@ from .utils import (
     )
 
 # Manually register Bundles for webassets (for some reason django_assets is not working)
-_assets = AssetsEnvironment('./static', 'static', debug=ASSETS_DEBUG, auto_build=ASSETS_AUTO_BUILD)
+_url = STATIC_URL
+if _url[0] == '/':
+    _url = _url[1:]
+_assets = AssetsEnvironment('./static', _url, debug=ASSETS_DEBUG, auto_build=ASSETS_AUTO_BUILD)
 _assets.register('js', js)
 _assets.register('app', app)
 _assets.register('css', css)

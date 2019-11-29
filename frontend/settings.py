@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'qh*ctnmwh9xbzjtndzgaqm3x)3zmkxzlpa!411xvm0xdl99d+g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.environ.get('DEBUG', 0)))
 
 ALLOWED_HOSTS = ["localhost", "dev.loveourneighbor.org", "loveourneighbor.org", "repo.loveourneighbor.org"]
 
@@ -179,25 +179,44 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATICFILES_FINDERS = (
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "django_assets.finders.AssetsFinder"
+)
+
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
-MEDIA_ROOT = 'static/media/'
-MEDIA_URL = 'static/media/'
 
+# bundled assets config
 ASSETS_MODULES = [
     'frontend.assets'
 ]
-
-ASSETS_URL = '/static/'
-
 ASSETS_DEBUG = DEBUG
 
-ASSETS_AUTO_BUILD = True
+if DEBUG:
+    STATIC_URL = '/static/'
+
+    # just place media files in 'static' directory while debugging
+    MEDIA_ROOT = 'static/media/'
+    MEDIA_URL = 'static/media/'
+
+    ASSETS_URL = '/static/'
+    ASSETS_AUTO_BUILD = True
+
+else:
+    STATIC_URL = '/staticfiles/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+    MEDIA_URL = '/mediafiles/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+
+    ASSETS_URL = STATIC_URL
+    ASSETS_AUTO_BUILD = False
 
 # Google Analytics
 GA_TRACKING_ID = ''
 
 # PAYEEZY
-PAYEEZY_TEST_BUTTON = True  # determines if jinja template uses test network or not
+PAYEEZY_TEST_BUTTON = DEBUG  # determines if jinja template uses test network or not
