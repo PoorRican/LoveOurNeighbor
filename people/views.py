@@ -104,7 +104,7 @@ def be_me_again(request):
     """
     clear_previous_ministry_login(request, request.user)
 
-    if request.user.display_name is not '':
+    if request.user.display_name != '':
         _w = request.user.display_name
     else:
         _w = request.user.email
