@@ -28,6 +28,7 @@ services:
   nginx:
     build: ./configs/nginx
     volumes:
+      - nginx_logs:/var/log
       - static_volume:/home/django/lon/staticfiles
       - media_volume:/home/django/lon/mediafiles
     ports:
