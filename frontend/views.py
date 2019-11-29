@@ -77,8 +77,8 @@ def about(request):
     Since this is assumed to rarely be updated, it is only accessible
         from the django admin console.
     """
-    about = AboutSection.objects.all()
-    context = {'about': about}
+    _about = AboutSection.objects.all()
+    context = {'about': _about}
     return render(request, "about.html", context)
 
 
