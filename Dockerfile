@@ -21,6 +21,7 @@ COPY . /LON/
 # DATABASE INITIALIZATION #
 #=========================#
 RUN bash utils/clear_migrations.sh
+RUN python manage.py flush --no-input
 
 RUN python manage.py makemigrations public people tag campaign ministry donation news
 RUN python manage.py migrate --noinput
