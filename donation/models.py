@@ -16,12 +16,6 @@ PAYMENT_TYPES = (('cc', 'Credit Card'),
                  ('btc', 'Bitcoin'))     # alt currencies?
 
 
-# This is a massive list of most countries
-with open("countries.yaml", 'r') as f:
-    COUNTRIES = sorted(load(f)['COUNTRIES'])
-    COUNTRIES = tuple(i for i in zip(COUNTRIES, COUNTRIES))
-
-
 class Donation(models.Model):
     """ Connects the local `User` to `Payment`.
 
