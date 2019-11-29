@@ -14,6 +14,7 @@ from ministry.utils import (
     F_TIME,
     )
 from news.utils import serialize_newspost
+from campaign.utils import serialize_campaign
 
 from explore.utils import calc_distance
 
@@ -49,7 +50,7 @@ def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
     for i in campaigns:
         _campaign = serialize_campaign(i)
         _campaign['type'] = 'campaign'
-        _campaign['url'] = reverse('ministry:campaign_detail',
+        _campaign['url'] = reverse('campaign:campaign_detail',
                                    kwargs={'campaign_id': i.id})
         if request:
             _dist = calc_distance(request, i.ministry.location)
@@ -117,7 +118,7 @@ def search(request):
 
 def search_json(request, query):
     ministries = []
-    # NOTE: for other db types switch to '__icontains' for fuzzy matching
+    # TODO: for other db types switch to '__icontains' for fuzzy matching
     for i in MinistryProfile.objects.filter(Q(name__contains=query) |
                                             Q(description__contains=query) |
                                             Q(address__contains=query)):
