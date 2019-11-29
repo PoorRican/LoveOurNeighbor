@@ -16,14 +16,15 @@ footer #sitemap a {
   color: #EEE !important;
 }
 
-#social-media-links a {
+#sm-links a {
   height: 50px;
   width: 50px;
   padding: 5px 5px;
   margin-bottom: 15px;
   display: inline;
 }
-#social-media-links a img {
+
+#sm-links a img {
   height: 40px;
   width: 40px;
 }
