@@ -139,7 +139,7 @@ form.search-bar div.input-field {
 
 form.search-bar div.input-field input {
   display: inline;
-  height: 100%;
+  height: 24px !important;
   padding-top: 12px;
   padding-bottom: 12px;
   border-radius: 5px;
