@@ -10,18 +10,15 @@
 
     <ul class="collapsible popout">
       {% for i in faqs %}
-
-        <div class="collapsible-header">
-          <h5>
+        <li>
+          <div class="collapsible-header">
             {{ i.title }}
-          </h5>
-        </div>
+          </div>
 
-        <div class="collapsible-body">
-          <div class="flow-text">
+          <div class="collapsible-body">
             {{ i.content|safe }}
           </div>
-        </div>
+        </li>
 
       {% endfor %}
     </ul>

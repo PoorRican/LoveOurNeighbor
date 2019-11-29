@@ -26,9 +26,9 @@
 
   {# {{{ Form Header #}
   {% if start %}
-    <h2>New Ministry Profile:</h2>
+    <h4>New Ministry Profile:</h4>
     <!-- TODO: make link for more information -->
-    <h4>Please note that all ministry profiles are must be approved before they are made public</h4>
+    <h6>Please note that all ministry profiles are must be approved before they are made public</h6>
 
     <form method="POST" name="ministryForm" enctype="multipart/form-data"
           action="{{ url_for('ministry:create_ministry') }}">
@@ -74,30 +74,31 @@
       <div class="row">
 
         <h4 class="hide-on-med-and-up">Details</h4>
+        <br>
 
         {# {{{ INPUT name #}
         <div class="col l6 s12 input-field">
           {# TODO: ensure that all ministry titles are unique #}
-          {{ form.name.label_tag() }}
           <i class="material-icons prefix">group</i>
           {{ form.name }}
+          {{ form.name.label_tag() }}
         </div>
         {# }}} #}
 
         {# {{{ INPUT phone_number #}
         <div class="col l6 s12 input-field">
-          {{ form.phone_number.label_tag() }}
           {# TODO: render styled phone number input for international phone numbers #}
           <i class="material-icons prefix">phone</i>
           {{ form.phone_number }}
+          {{ form.phone_number.label_tag() }}
         </div>
         {# }}} #}
 
         {# {{{ INPUT website #}
         <div class="col l6 s12 input-field">
-          {{ form.website.label_tag() }}
           <i class="material-icons prefix">explore</i>
           {{ form.website }}
+          {{ form.website.label_tag() }}
         </div>
         {# }}} #}
 
@@ -116,9 +117,9 @@
 
         {# {{{ INPUT employee count #}
         <div class="col l6 s12 input-field">
-          {{ form.staff.label_tag() }}
           <i class="material-icons prefix">people</i>
           {{ form.staff }}
+          {{ form.staff.label_tag() }}
         </div>
         {# }}} #}
 
@@ -136,20 +137,20 @@
         <h6>Social Media Links:</h6>
         {# TODO: Add social media Icons #}
         <div class="col l3 s12 input-field">
-          {{ form.facebook.label_tag() }}
           {{ form.facebook }}
+          {{ form.facebook.label_tag() }}
         </div>
         <div class="col l3 s12 input-field">
-          {{ form.instagram.label_tag() }}
           {{ form.instagram }}
+          {{ form.instagram.label_tag() }}
         </div>
         <div class="col l3 s12 input-field">
-          {{ form.youtube.label_tag() }}
           {{ form.youtube }}
+          {{ form.youtube.label_tag() }}
         </div>
         <div class="col l3 s12 input-field">
-          {{ form.twitter.label_tag() }}
           {{ form.twitter }}
+          {{ form.twitter.label_tag() }}
         </div>
       </div>
       {# }}} #}
@@ -216,6 +217,7 @@
     <div id="administration" class="col s12">
 
       <h4 class="hide-on-med-and-up">Administration</h4>
+      <br>
 
       {% if start %}
         <p>Finish creating your ministry before starting to administer other users.</p>
@@ -280,6 +282,7 @@
     <div id="campaigns" class="col s12">
 
       <h4 class="hide-on-med-and-up">Campaigns</h4>
+      <br>
 
       {% if start %}
         <p>Finish creating your ministry before starting a campaign.</p>
@@ -305,6 +308,7 @@
     <div id="statistics" class="col s12">
 
       <h4 class="hide-on-med-and-up">Statistics</h4>
+      <br>
 
       <p>This part of the website is under construction</p>
     </div>

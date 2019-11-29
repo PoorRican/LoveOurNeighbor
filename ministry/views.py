@@ -63,10 +63,6 @@ def create_ministry(request):
             # handle custom form attributes
             ministry = min_form.save(commit=False)      # `ministry` is type MinistryProfile
             ministry.admin = request.user  # set the admin as the user responsible for creating the page
-            if request.POST['social_media']:
-                ministry.social_media = json.loads(request.POST['social_media'])
-            else:
-                ministry.social_media = []              # convert something to pickle
             ministry.save()                             # object must exist before relationships with other objects
 
             # handle relationships with other objects

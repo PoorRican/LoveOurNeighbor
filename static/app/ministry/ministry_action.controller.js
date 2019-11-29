@@ -2,6 +2,17 @@ angular.module('LON').controller('ministryActionCtrl', ministryActionCtrl);
 ministryActionCtrl.$inject = ['$scope', 'tagService', 'userFilterService', 'objectService', 'selectImageDialogService'];
 
 function ministryActionCtrl($scope, tagService, userFilterService, objectService, bannerImageService) {
+  const ministry_id = document.getElementById('ministry_id');
+
+  // creating a new ministry
+  if (ministry_id === null) {
+    $scope.object = {'tags': []};     // work around
+    $scope.filter_tags = tagService.search;
+    $scope.tag_service = tagService;
+    tagService.fetch();
+  }
+  // editing ministry
+  else {
     $scope.object = {};
 
     $scope.filter_users = userFilterService.search;
@@ -19,8 +30,8 @@ function ministryActionCtrl($scope, tagService, userFilterService, objectService
     $scope.profile_img_dialog = bannerImageService;
     $scope.selected_profile_img = $scope.profile_img_dialog.selected;
 
-  activate();
-  tagService.fetch();
+    activate();
+    tagService.fetch();
 
     function select_banner(name) {
       // this is a dirty hack, but it works.....
@@ -37,25 +48,25 @@ function ministryActionCtrl($scope, tagService, userFilterService, objectService
     }
 
     function activate() {
-      const ministry_id = document.getElementById("ministry_id").value;
-      const banners_url = "/ministry/" + ministry_id + "/banners/json";
+      const banners_url = "/ministry/" + ministry_id.value + "/banners/json";
       bannerImageService.get(banners_url)
-      .then(function(data) {
+      .then(function (data) {
         $scope.banner_urls = data;
 
       });
 
-      const profile_img_url = "/ministry/" + ministry_id + "/profile_img/json";
+      const profile_img_url = "/ministry/" + ministry_id.value + "/profile_img/json";
       bannerImageService.get(profile_img_url)
-      .then(function(data) {
+      .then(function (data) {
         $scope.profile_img_urls = data;
 
       });
 
       return objectService.fetch()
-      .then(function(data) {
+      .then(function (data) {
           $scope.object = data;
         }
       );
     }
+  }
 }

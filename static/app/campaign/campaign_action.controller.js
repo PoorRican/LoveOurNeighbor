@@ -2,9 +2,9 @@ angular.module('LON').controller('campaignActionCtrl', campaignActionCtrl);
 campaignActionCtrl.$inject = ['$scope', 'tagService', 'objectService', 'selectImageDialogService', 'confirmDeleteDialogService'];
 
 function campaignActionCtrl($scope, tagService, objectService, bannerImageService, confirmDeleteDialogService) {
-  const campaign_id = document.getElementById('campaign_id').value;
+  const campaign_id = document.getElementById('campaign_id');
 
-  // create a new campaign
+  // creating a new campaign
   if (campaign_id === null) {
     $scope.object = {'tags': []};     // work around
     $scope.filter_tags = tagService.search;
@@ -47,14 +47,14 @@ function campaignActionCtrl($scope, tagService, objectService, bannerImageServic
 
     function activate() {
       if (!(campaign_id === null)) {
-        const banners_url = "/ministry/campaign/" + campaign_id + "/banners/json";
+        const banners_url = "/ministry/campaign/" + campaign_id.value + "/banners/json";
         bannerImageService.get(banners_url)
         .then(function (data) {
           $scope.banner_urls = data;
 
         });
 
-        const profile_img_url = "/ministry/campaign/" + campaign_id + "/profile_img/json";
+        const profile_img_url = "/ministry/campaign/" + campaign_id.value + "/profile_img/json";
         bannerImageService.get(profile_img_url)
         .then(function (data) {
           $scope.profile_img_urls = data;

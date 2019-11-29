@@ -28,13 +28,13 @@ django.setup()
 
 faq_sections = (
     ("What is your mission statement and who are you guys?",
-     """Our mission statement and board information can be found <a href="#about">here</a>."""),
+     """Our mission statement and board information can be found <a href="/about">here</a>."""),
 
     ("What type of ministries and campaigns does your platform sponsor?",
      """Our platform solely to sponsors ministries and organizations
         that provide tangible aid to certain humanitarian causes and injustices.&nbsp;&nbsp;
         A non-exclusive list of the types of causes we support can be found here:
-      <ul>
+      <ul style="list-style-type: circle; margin-left: 1.5em; margin-top: 1em;">
         <li>Underserved School Relief &amp; Education Programs</li>
         <li>Food Insecure/Ending Hunger Programs</li>
         <li>Crumbling Infrastructure Relief</li>

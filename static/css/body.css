@@ -217,6 +217,10 @@ td a {
 }
 
 
+input, textarea {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
 .input-field > .hint {
   color: dimgray;
   font-size: 12px;

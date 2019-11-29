@@ -5,7 +5,7 @@
       <a class="dropdown-trigger" href="#" data-target="navbar-menu">
         {% if request.user.logged_in_as %}
 
-          <img class="profile-img" src="/{{ request.user.logged_in_as.profile_img.url }}" alt="Ministry Profile Img">
+          <img class="profile-img" src="/{{ request.user.logged_in_as.profile_img.url }}" alt="">
           <span class="uname">
             {{- request.user.logged_in_as.name -}}
           </span>
@@ -13,7 +13,7 @@
 
         {% else %}
 
-          <img class="profile-img" src="{{ request.user.profile_img }}" alt="Profile Img">
+          <img class="profile-img" src="{{ request.user.profile_img }}" alt="">
           <span class="uname">{{- request.user.name -}}</span>
           <i class="material-icons">arrow_drop_down</i>
 
