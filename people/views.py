@@ -8,8 +8,11 @@ from django.shortcuts import render
 from django.urls import reverse
 
 import json
+import os
+from jinja2 import Template
 
 from donation.utils import serialize_donation
+from frontend.settings import REQUIRE_USER_VERIFICATION, BASE_DIR
 
 from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
@@ -23,17 +26,34 @@ def create_user(request):
             if form.is_valid():
                 user = form.save(commit=False)
                 user.password = make_password(user.password)
-                user.save()
-                login(request, user)
 
-                # TODO: send verification email
+                if REQUIRE_USER_VERIFICATION:
+                    email = user.email
+                    _template = os.path.join(BASE_DIR, 'templates/people/email_confirm.html')
+                    with open(_template) as f:
+                        t = f.read()
+                    t = Template(t)
+                    url = reverse('people:verify_user', kwargs={'email': email,
+                                                                'confirmation': user.confirmation.hex})
+                    url = request.build_absolute_uri(url)
+                    html = t.render({'url': url})
+                    user.email_user('Verify Account', html, 'accounts@loveourneighbor.org',
+                                    ['account_verification', 'internal'], 'Love Our Neighbor')
+                    user.save()
 
-                print('account created')
-                _w = 'Your account has been created!'
-                messages.add_message(request, messages.SUCCESS, _w)
+                    _w = 'Your account has been created!'
+                    messages.add_message(request, messages.SUCCESS, _w)
 
-                _url = reverse('people:user_profile')
-                return HttpResponseRedirect(_url)
+                    return render(request, 'verification_email_sent.html', {'email': email})
+                else:
+                    user.save()
+                    login(request, user)
+
+                    _w = 'Your account has been created!'
+                    messages.add_message(request, messages.SUCCESS, _w)
+
+                    return HttpResponseRedirect(reverse('people:user_profile'))
+
             else:
                 for _, error in form.errors.items():
                     for msg in error:
@@ -129,7 +149,11 @@ def login_user(request):
             _url = reverse('people:login')
             return HttpResponseRedirect(_url)
         if user:
-            if user.is_active:
+            if user.is_active and (user.is_verified or user.is_staff):
+                if not user.is_verified:
+                    # staff users will not have to verify their email
+                    user.is_verified = True
+                    user.save()
                 login(request, user)
                 clear_previous_ministry_login(request, user)
 
@@ -139,8 +163,7 @@ def login_user(request):
                 _url = reverse('people:user_profile')
                 return HttpResponseRedirect(_url)
             else:
-                # TODO: show error for inactive user
-                pass
+                return render(request, 'inactive_user.html', {'email': email})
         else:
             _w = 'Incorrect login for %s!' % email
             messages.add_message(request, messages.ERROR, _w)
@@ -161,6 +184,25 @@ def logout_user(request):
     messages.add_message(request, messages.INFO, _w)
 
     return HttpResponseRedirect('/')
+
+
+def verify_user(request, email, confirmation):
+    try:
+        user = User.objects.get(email=email)
+        if confirmation == user.confirmation.hex:
+            user.is_verified = True
+            user.save()
+
+            _w = 'Congratulations! Your account has been verified!'
+            messages.add_message(request, messages.INFO, _w)
+
+            return HttpResponseRedirect(reverse('people:login'))
+        else:
+            # TODO: flag this
+            return HttpResponseRedirect(reverse('error'))
+    except User.DoesNotExist:
+        # TODO: flag this request, this is an indicator of malicious activity
+        return HttpResponseRedirect(reverse('error'))
 
 
 def messages_json(request):

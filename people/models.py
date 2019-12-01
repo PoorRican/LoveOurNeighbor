@@ -1,4 +1,5 @@
 from hashlib import md5
+from uuid import uuid4
 from requests import post
 
 from django.contrib.auth.hashers import check_password
@@ -11,7 +12,7 @@ from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 
 from explore.models import GeoLocation
-from frontend.settings import MG_DOMAIN, MG_API_KEY
+from frontend.settings import REQUIRE_USER_VERIFICATION, MG_DOMAIN, MG_API_KEY
 
 from .utils import user_profile_img_dir
 
@@ -66,6 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(_('active'), default=True,
                                     help_text=_('Designates whether this user should be treated as '
                                                 'active. Unselect this instead of deleting accounts.'))
+    is_verified = models.BooleanField('verified', default=(not REQUIRE_USER_VERIFICATION))
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     # TODO: implement last login
     # TODO: implement login history TextField
@@ -77,6 +79,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_img_url = models.CharField(max_length=256, default=BLANK_AVATAR)
     _profile_img = models.ImageField('Profile Image', blank=True, null=True,
                                      upload_to=user_profile_img_dir)
+
+    confirmation = models.UUIDField(default=uuid4, blank=True, null=True)
 
     objects = MyUserManager()
 

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block title %}Email Verified{% endblock %}
+
+{% block body %}
+  <section class="wrapper">
+    <h1>Email Verified!</h1>
+
+    <p class="flow-text">
+      Your email has been verified! Please <a href="{{ url_for('people:login') }}">login</a> to continue.
+    </p>
+
+  </section>
+{% endblock %}

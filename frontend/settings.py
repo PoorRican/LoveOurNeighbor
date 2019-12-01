@@ -26,6 +26,8 @@ SECRET_KEY = 'qh*ctnmwh9xbzjtndzgaqm3x)3zmkxzlpa!411xvm0xdl99d+g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get('DEBUG', 0)))
+REQUIRE_MINISTRY_VERIFICATION = False
+REQUIRE_USER_VERIFICATION = False
 
 ALLOWED_HOSTS = ["localhost", "dev.loveourneighbor.org", "loveourneighbor.org", "demo.loveourneighbor.org",
                  "repo.loveourneighbor.org"]

@@ -13,6 +13,8 @@ urlpatterns = [
     path('create', views.create_user, name='create_user'),
     path('profile', views.user_profile, name='user_profile'),
 
+    path('verify/<str:email>/<str:confirmation>', views.verify_user, name='verify_user'),
+
     path('messages/json', views.messages_json),
     path('donations/json', views.donation_json),
 ]
