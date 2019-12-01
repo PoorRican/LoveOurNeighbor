@@ -217,7 +217,7 @@ else:
     ASSETS_AUTO_BUILD = False
 
 # Google Analytics
-GA_TRACKING_ID = ''
+GA_TRACKING_ID = 'UA-153638464-1'
 
 # PAYEEZY
 PAYEEZY_TEST_BUTTON = DEBUG  # determines if jinja template uses test network or not
