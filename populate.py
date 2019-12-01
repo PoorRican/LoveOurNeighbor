@@ -51,8 +51,8 @@ faq_sections = (
 
     ("How is your platform different from me uploading a page for our ministry to other social media sites?",
      """Uploading your ministry to other social media websites can be effective and has many benefits,
-        however, the nature of such platforms &mdash to gain revenue by sponsoring and promoting millions of other pages and
-        businesses &mdash obscures the purpose of ministry, and the Kingdom of Christ.&nbsp;&nbsp;
+        however, the nature of such platforms &mdash; to gain revenue by sponsoring and promoting millions of other pages and
+        businesses &mdash; obscures the purpose of ministry, and the Kingdom of Christ.&nbsp;&nbsp;
         Our platform focuses on being a social media space for true Christian ministry whose goal is
         positive humanitarian causes. Our goal is to create a virtual community encouraging others with the posts you share
         and values your presence more than other more crowded platforms."""),
