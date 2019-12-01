@@ -221,3 +221,7 @@ GA_TRACKING_ID = 'UA-153638464-1'
 
 # PAYEEZY
 PAYEEZY_TEST_BUTTON = DEBUG  # determines if jinja template uses test network or not
+
+# Mailgun Values
+MG_DOMAIN = 'mg.loveourneighbor.org'
+MG_API_KEY = 'f64271df50355a0fc10236b82e439ad1-af6c0cec-56113993'

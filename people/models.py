@@ -1,10 +1,9 @@
 from hashlib import md5
-
+from requests import post
 
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import UserManager
-from django.core.mail import send_mail
 from django.db import models
 from django.templatetags.static import static
 from django.utils import timezone
@@ -12,6 +11,7 @@ from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 
 from explore.models import GeoLocation
+from frontend.settings import MG_DOMAIN, MG_API_KEY
 
 from .utils import user_profile_img_dir
 
@@ -124,11 +124,43 @@ class User(AbstractBaseUser, PermissionsMixin):
             dn = 'You'
         self.display_name = dn.strip()
 
-    def email_user(self, subject, message, from_email=None):
+    def email_user(self, subject: str, html: str, from_email: str, tags=None, name=''):
         """
-        Sends an email to this User.
+        Facilitates emailing user via mailgun API.
+        `MG_API_KEY` and `MG_DOMAIN` must first be set in `frontend.settings`.
+
+        Arguments
+        =========
+        subject: (str)
+            Subject text for email messages
+
+        html: (str)
+            HTML text for email message
+
+        from_email: (str)
+            Email for user to see as sent from
+
+        tags: (tuple of str)
+            Tags for use in Mailgun dashboard
+
+        name: (str)
+            Human Readable name to use alongside `form_email` attribute
+
+        Returns
+        =======
+        response:
+            Returns requests.Response object
         """
-        send_mail(subject, message, from_email, [self.email])
+        if tags is None:
+            tags = []
+        return post(
+            "https://api.mailgun.net/v3/%s/messages" % MG_DOMAIN,
+            auth=('api', MG_API_KEY),
+            data={'from': "%s <%s>" % (name, from_email),
+                  'to': self.email,
+                  'subject': subject,
+                  'html': html,
+                  'o:tag': tags})
 
     def __str__(self):
         return self.email
