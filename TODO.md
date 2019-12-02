@@ -44,16 +44,14 @@ Things to do before Users will be using the site:
     * Have a section for highlighting new or popular tags
     * Dynamic MOTD on top
     * Random Featured Ministry
-- Implement Password Recovery Feature
-- Implement Verification:
-    * User Verification
-    * Ministry Verification
+- Implement Ministry Verification:
 - Notifications:
     * Email users:
         - Update on the Ministries they like
         - Update admin and reps on MinistryProfile activity
     * Notify Users in Site:
-        - Re-implement Angular Notifications
+        - Use [this toastr.js library](https://github.com/CodeSeven/toastr) to display notifications retrieved via
+        [js Fetch API](https://scotch.io/tutorials/how-to-use-the-javascript-fetch-api-to-get-data)
         - Create notification history
 - Better Donation/Transaction UI:
     * Payeezy Direct API

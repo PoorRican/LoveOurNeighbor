@@ -15,6 +15,9 @@ urlpatterns = [
 
     path('verify/<str:email>/<str:confirmation>', views.verify_user, name='verify_user'),
 
+    path('forgot', views.forgot_password, name='forgot_password'),
+    path('reset/<str:email>/<str:confirmation>', views.reset_password, name='reset_password'),
+
     path('messages/json', views.messages_json),
     path('donations/json', views.donation_json),
 ]

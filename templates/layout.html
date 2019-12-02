@@ -43,7 +43,7 @@
     </script>
 
 
-    <title>{% block title %}Love Our Neighbor{% endblock %}</title>
+    <title>{% block title %}{% endblock %} - Love Our Neighbor</title>
 
     {#  favicon #}
 
@@ -70,9 +70,9 @@
   <header>
     {% set links =
     [
-      ('/home', 'Home'),
-      ('/faq', 'FAQ'),
-      ('/about', 'About Us')
+      (url_for('home'), 'Home'),
+      (url_for('faq'), 'FAQ'),
+      (url_for('about'), 'About Us')
     ] %}
     {{ navbar_links(request, links) }}
   </header>

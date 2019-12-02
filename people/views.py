@@ -1,3 +1,7 @@
+from jinja2 import Template
+import os
+from uuid import uuid4
+
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -8,8 +12,6 @@ from django.shortcuts import render
 from django.urls import reverse
 
 import json
-import os
-from jinja2 import Template
 
 from donation.utils import serialize_donation
 from frontend.settings import REQUIRE_USER_VERIFICATION, BASE_DIR
@@ -224,3 +226,54 @@ def donation_json(request):
         _json[count] = serialize_donation(donation)
         count += 1
     return JsonResponse(_json)
+
+
+def reset_password(request, email, confirmation):
+    try:
+        user = User.objects.get(email=email)
+        if confirmation == user.confirmation.hex:
+            if request.method == 'POST':
+                if request.POST['password'] == request.POST['password2']:
+                    user.password = request.POST['password']
+                    user.save()
+
+                    _w = 'Your password has been changed!'
+                    messages.add_message(request, messages.SUCCESS, _w)
+
+                    return HttpResponseRedirect(reverse('people:login'))
+            elif request.method == 'GET':
+                context = {'email': email, 'confirmation': confirmation}
+                return render(request, 'reset_password.html', context)
+        # TODO: flag this, this should not happen
+        return HttpResponseRedirect(reverse('error'))
+    except User.DoesNotExist:
+        # TODO: flag this request, this is an indicator of malicious activity
+        return render(request, "forgot_password_error.html")
+
+
+def forgot_password(request):
+    if request.method == 'GET':
+        return render(request, 'forgot_password.html')
+    if request.method == 'POST':
+        email = request.POST['email']
+        try:
+            user = User.objects.get(email=email)
+            if user.is_verified:
+                _template = os.path.join(BASE_DIR, 'templates/people/forgot_password_email_template.html')
+                with open(_template) as f:
+                    t = f.read()
+                t = Template(t)
+                user.confirmation = uuid4()
+                user.save()
+                url = reverse('people:reset_password', kwargs={'email': email,
+                                                               'confirmation': user.confirmation.hex})
+                url = request.build_absolute_uri(url)
+                html = t.render({'url': url})
+                user.email_user('Password Reset Request', html, 'accounts@loveourneighbor.org',
+                                ['password_reset', 'internal'], 'Love Our Neighbor')
+                return render(request, 'forgot_password_email_sent.html', {'email': email})
+            else:
+                return render(request, 'inactive_user.html', {'email': email})
+
+        except User.DoesNotExist:
+            return render(request, "forgot_password_error.html", {'email': email})
