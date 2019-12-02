@@ -2,6 +2,7 @@ from hashlib import md5
 from uuid import uuid4
 from requests import post
 
+from django.conf import settings
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import UserManager
@@ -12,9 +13,8 @@ from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 
 from explore.models import GeoLocation
-from frontend.settings import REQUIRE_USER_VERIFICATION, MG_DOMAIN, MG_API_KEY
 
-from .utils import user_profile_img_dir
+from .utils import user_profile_img_dir, verification_required
 
 
 BLANK_AVATAR = 'https://gravatar.com/avatar/blank'
@@ -67,7 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(_('active'), default=True,
                                     help_text=_('Designates whether this user should be treated as '
                                                 'active. Unselect this instead of deleting accounts.'))
-    is_verified = models.BooleanField('verified', default=(not REQUIRE_USER_VERIFICATION))
+    is_verified = models.BooleanField('verified', default=verification_required)
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     # TODO: implement last login
     # TODO: implement login history TextField
@@ -158,8 +158,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         if tags is None:
             tags = []
         return post(
-            "https://api.mailgun.net/v3/%s/messages" % MG_DOMAIN,
-            auth=('api', MG_API_KEY),
+            "https://api.mailgun.net/v3/%s/messages" % settings.MG_DOMAIN,
+            auth=('api', settings.MG_API_KEY),
             data={'from': "%s <%s>" % (name, from_email),
                   'to': self.email,
                   'subject': subject,

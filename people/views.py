@@ -2,6 +2,7 @@ from jinja2 import Template
 import os
 from uuid import uuid4
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -14,7 +15,6 @@ from django.urls import reverse
 import json
 
 from donation.utils import serialize_donation
-from frontend.settings import REQUIRE_USER_VERIFICATION, BASE_DIR
 
 from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
@@ -29,9 +29,9 @@ def create_user(request):
                 user = form.save(commit=False)
                 user.password = make_password(user.password)
 
-                if REQUIRE_USER_VERIFICATION:
+                if settings.REQUIRE_USER_VERIFICATION:
                     email = user.email
-                    _template = os.path.join(BASE_DIR, 'templates/people/email_confirm.html')
+                    _template = os.path.join(settings.BASE_DIR, 'templates/people/email_confirm.html')
                     with open(_template) as f:
                         t = f.read()
                     t = Template(t)
@@ -259,7 +259,7 @@ def forgot_password(request):
         try:
             user = User.objects.get(email=email)
             if user.is_verified:
-                _template = os.path.join(BASE_DIR, 'templates/people/forgot_password_email_template.html')
+                _template = os.path.join(settings.BASE_DIR, 'templates/people/forgot_password_email_template.html')
                 with open(_template) as f:
                     t = f.read()
                 t = Template(t)
