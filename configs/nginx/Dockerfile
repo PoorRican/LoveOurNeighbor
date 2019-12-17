@@ -2,7 +2,6 @@ FROM nginx
 
 ENV SITE=demo.loveourneighbor.org
 
-VOLUME /var/www/letsencrypt
 VOLUME /etc/letsencrypt
 
 RUN apt-get update

@@ -1,3 +1,4 @@
+#!/bin/bash
 # This formats a new Amazon AMI 2 instance
 
 # TODO: check for sudo
@@ -13,3 +14,8 @@ sudo curl -L https://github.com/docker/compose/releases/download/1.25.0/docker-c
 chmod +x /usr/local/bin/docker-compose
 
 echo "alias d-c='docker-compose'" >> /home/ec2-user/.bash_profile
+echo "alias docker-clean=' \
+    docker container prune -f; \
+    docker image prune -f; \
+    docker network prune -f; \
+    docker volume prune -f'" >> /home/ec2-user/.bash_profile

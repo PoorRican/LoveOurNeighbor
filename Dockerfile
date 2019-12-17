@@ -47,6 +47,7 @@ ENV APP_HOME=$HOME/lon
 RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/staticfiles
 RUN mkdir $APP_HOME/mediafiles
+RUN mkdir /var/log/gunicorn
 WORKDIR $APP_HOME
 
 # install dependencies
@@ -62,10 +63,13 @@ COPY . $APP_HOME
 
 # chown all the files to the app user
 RUN chown -R django:django $APP_HOME
+RUN chown -R django:django /var/log/gunicorn
+
 RUN chmod +x $APP_HOME/configs/django/entrypoint.sh
+RUN chmod +x $APP_HOME/configs/django/gunicorn_start.sh
 
 # change to the app user
 USER django
 
 # run entrypoint.prod.sh
-ENTRYPOINT ["/home/django/lon/configs/django/entrypoint.sh"]
+#ENTRYPOINT ["/home/django/lon/configs/django/entrypoint.sh"]

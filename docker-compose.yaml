@@ -14,11 +14,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: gunicorn frontend.wsgi:application --bind 0.0.0.0:8000
+    command: sh /home/django/lon/configs/django/gunicorn_start.sh
     volumes:
       - static_volume:/home/django/lon/staticfiles
       - media_volume:/home/django/lon/mediafiles
-      - uwsgi_socket:/home/django/uwsgi
     expose:
       - 8000
     env_file:
@@ -33,7 +32,6 @@ services:
       - static_volume:/home/django/lon/staticfiles
       - media_volume:/home/django/lon/mediafiles
       - letsencrypt_certs:/etc/letsencrypt
-      - uwsgi_socket:/tmp/uwsgi
     ports:
       - 80:80   # could be "8000:80" if necessary
       - 443:443
@@ -48,4 +46,3 @@ volumes:
   static_volume:
   media_volume:
   letsencrypt_certs:
-  uwsgi_socket:
