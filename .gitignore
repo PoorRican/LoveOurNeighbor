@@ -22,3 +22,6 @@ static/assets/
 static/.webassets-cache/
 static/*/.webassets-cache/
 static/*/webassets-external/
+staticfiles/
+
+*.log

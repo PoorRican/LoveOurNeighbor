@@ -26,6 +26,9 @@ SECRET_KEY = 'qh*ctnmwh9xbzjtndzgaqm3x)3zmkxzlpa!411xvm0xdl99d+g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get('DEBUG', 0)))
+
+ASSETS_DEBUG = True
+
 REQUIRE_MINISTRY_VERIFICATION = False
 REQUIRE_USER_VERIFICATION = False
 
@@ -196,7 +199,6 @@ STATICFILES_DIRS = (
 ASSETS_MODULES = [
     'frontend.assets'
 ]
-ASSETS_DEBUG = DEBUG
 
 if DEBUG:
     STATIC_URL = '/static/'
@@ -227,3 +229,22 @@ PAYEEZY_TEST_BUTTON = DEBUG  # determines if jinja template uses test network or
 # Mailgun Values
 MG_DOMAIN = 'mg.loveourneighbor.org'
 MG_API_KEY = 'f64271df50355a0fc10236b82e439ad1-af6c0cec-56113993'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'django_debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

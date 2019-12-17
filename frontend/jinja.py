@@ -8,7 +8,7 @@ from webassets import Environment as AssetsEnvironment
 from webassets.ext.jinja2 import AssetsExtension
 
 from frontend.settings import (
-    ASSETS_DEBUG, ASSETS_AUTO_BUILD, STATIC_URL,
+    ASSETS_DEBUG, ASSETS_AUTO_BUILD, STATIC_URL, STATIC_ROOT,
     GA_TRACKING_ID,
     PAYEEZY_TEST_BUTTON,
 )
@@ -26,7 +26,7 @@ from .utils import (
 _url = STATIC_URL
 if _url[0] == '/':
     _url = _url[1:]
-_assets = AssetsEnvironment('./static', _url, debug=ASSETS_DEBUG, auto_build=ASSETS_AUTO_BUILD)
+_assets = AssetsEnvironment(STATIC_ROOT, _url, debug=ASSETS_DEBUG, auto_build=ASSETS_AUTO_BUILD)
 _assets.register('js', js)
 _assets.register('app', app)
 _assets.register('css', css)
