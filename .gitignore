@@ -5,7 +5,7 @@
 *.pyc
 *.pyo
 
-/venv/
+/.venv/
 
 # vim temp files
 *.sw[a-z]

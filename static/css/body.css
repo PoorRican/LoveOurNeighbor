@@ -61,8 +61,6 @@ main {
 .section .flow-text, section .flow-text {
   padding-top: 30px;
   margin-bottom: 30px;
-
-  border-top: solid 1px #FF7100;
 }
 
 .section-info {

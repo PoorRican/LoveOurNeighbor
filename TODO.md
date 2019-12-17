@@ -1,13 +1,17 @@
-# High Priority
 ## Bugs
 - Fix timezone error
 - GeoIP does not work
 - Tag search functionality
 - create_campaign_dir not defined when posting news
+- Default value of "None" in 'ministry:edit_ministry'
 
 ### Docker Instance exclusive bugs
 - New user sign-up does not work
 - MinistryProfile creation gives 500 response code
+- Accessing 'ministry:ministry_profile' gives 500 response
+- Duplicate how_to_reg icon in user_widget
+- invalid url for MinistryProfile image in user widget '//mediafiles/...'
+
 
 ## Internal Fixes
 - Make content in WYSIWYG editor required (via JS)
@@ -15,6 +19,9 @@
 - Implement Fuzzy matching for search function (case-insensitive search)
 - Profile Image Functionality:
     * Better image uploading
+- Remove comments stub / Remove 'login_in_as' functionality. Add settings flag to enable/disable this feature
+- Display of Users Email
+- Display users likes
 
 
 # Medium Priority 
@@ -30,6 +37,7 @@ Things to do before ministries will be using the site:
     * Progress towards Monthly Goal
     * 3-month view
 - Add Google Forms as feedback
+- News Tabs in Profile Edit Page
 
 
 ## Hard Release Features
