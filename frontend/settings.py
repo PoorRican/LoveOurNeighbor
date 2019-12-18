@@ -29,8 +29,12 @@ DEBUG = bool(int(os.environ.get('DEBUG', 0)))
 
 ASSETS_DEBUG = True
 
-REQUIRE_MINISTRY_VERIFICATION = False
+# Verification Feature Switches
+REQUIRE_MINISTRY_VERIFICATION = False  # TODO: implement
 REQUIRE_USER_VERIFICATION = False
+
+# Feature Switches
+COMMENTS = False
 
 ALLOWED_HOSTS = ["localhost", "dev.loveourneighbor.org", "loveourneighbor.org", "demo.loveourneighbor.org",
                  "repo.loveourneighbor.org"]

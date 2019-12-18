@@ -11,6 +11,7 @@ from frontend.settings import (
     ASSETS_DEBUG, ASSETS_AUTO_BUILD, STATIC_URL, STATIC_ROOT,
     GA_TRACKING_ID,
     PAYEEZY_TEST_BUTTON,
+    COMMENTS,
 )
 from frontend.assets import js, css, app
 from public.models import AboutSection
@@ -67,6 +68,7 @@ def environment(**options):
         'GA_TRACKING_ID': GA_TRACKING_ID,
         'generate_payeezy_hash': generate_payeezy_hash,
         'PAYEEZY_TEST_BUTTON': PAYEEZY_TEST_BUTTON,
+        'COMMENTS': COMMENTS,
     })
     env.add_extension(AssetsExtension)
     env.assets_environment = _assets

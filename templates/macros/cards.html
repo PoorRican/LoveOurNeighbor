@@ -53,7 +53,9 @@
       {{ confirm_delete('news post', post.id, text='Delete Post', anchor=True, part=1) }}
 
       <div class="card-action">
-        <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
+        {% if COMMENTS %}
+          <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
+        {% endif %}
         <a href="{{ post.url }}" class="btn-flat text-orange"><i class="material-icons">open_in_new</i></a>
       </div><!-- /.card-action -->
 
@@ -113,7 +115,9 @@
       {{ confirm_delete('campaign', campaign.id, text='Delete Campaign', anchor=True, part=1) }}
 
       <div class="card-action">
-        <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
+        {% if COMMENTS %}
+          <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
+        {% endif %}
         <a href="{{ campaign.url }}" class="btn-flat text-orange"><i class="material-icons">open_in_new</i></a>
       </div><!-- /.card-action -->
 
@@ -173,7 +177,9 @@
       {{ confirm_delete('ministry', ministry.id, text='Delete Ministry', anchor=True, part=1) }}
 
       <div class="card-action">
-        <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
+        {% if COMMENTS %}
+          <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
+        {% endif %}
         <a href="{{ ministry.url }}" class="btn-flat text-orange"><i class="material-icons">open_in_new</i></a>
       </div><!-- /.card-action -->
 
@@ -269,7 +275,9 @@
       </div><!-- /.card-content -->
 
       <div class="card-action">
-        <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
+        {% if COMMENTS %}
+          <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
+        {% endif %}
         <a href="{{ ministry.url }}" class="btn-flat text-orange"><i class="material-icons">open_in_new</i></a>
       </div><!-- /.card-action -->
 
