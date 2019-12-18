@@ -234,3 +234,46 @@
 
 {% endmacro %}
 {# }}} #}
+
+
+
+{% macro frontpage_ministry_card(ministry) %}
+
+  <div class="col s12 l6">
+    <div class="card">
+
+      {% if ministry.banner_img %}
+        <div class="card-image">
+          <img src="{{ ministry.banner_img.url }}">
+          <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
+            <span class="truncate" style="max-width: 85%; display: inline-block">
+              {{ ministry.name }}
+            </span>
+            <i class="material-icons">arrow_drop_down</i>
+          </a>
+        </div><!-- /.card-image -->
+      {% endif %}
+
+      <div class="card-content">
+        {% if not ministry.banner_img %}
+          <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
+            <span class="truncate" style="max-width: 85%; display: inline-block">
+              {{ ministry.name }}
+            </span>
+            <i class="material-icons">arrow_drop_down</i>
+          </a>
+        {% endif %}
+        <div style="min-height: 50px">
+          <p class="truncate">{{ ministry.description|safe }}</p>
+        </div>
+      </div><!-- /.card-content -->
+
+      <div class="card-action">
+        <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
+        <a href="{{ ministry.url }}" class="btn-flat text-orange"><i class="material-icons">open_in_new</i></a>
+      </div><!-- /.card-action -->
+
+    </div><!-- /.card -->
+  </div><!-- /.col -->
+
+{% endmacro %}

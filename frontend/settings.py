@@ -202,6 +202,7 @@ ASSETS_MODULES = [
 
 if DEBUG:
     STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
 
     # just place media files in 'static' directory while debugging
     MEDIA_ROOT = 'static/media/'

@@ -1,7 +1,57 @@
 {% extends "layout.html" %}
 
+{% from "macros/parts/donate_button.html" import donate_button %}
+{% from "macros/cards.html" import frontpage_ministry_card %}
+
 {% block title %}Home{% endblock %}
 
 {% block body %}
-  <p>Testing</p>
+  <div class="section">
+    <div class="wrapper">
+      <div id="top">
+        {# This should be dynamic (eg: editable via django) #}
+        <h1>Welcome</h1>
+
+        <p>Learn more <a href="{{ url_for('about') }}">About Us</a> and
+          read through at our <a href="{{ url_for('faq') }}">FAQ</a>.
+          Please send us some feedback at <a href="mailto:website@loveourneighor.org">website@loveourneighbor.org</a>.
+        </p>
+
+        <p>We are now accepting applications for new Ministry Profiles! Please <a
+            href="{{ url_for('people:create_user') }}">make an account</a> to begin this process.</p>
+
+        <p>If you already love what we are planning to accomplish,
+          you may donate to our administrative cost using the button below:
+          {{ donate_button() }}
+        </p>
+      </div><!-- /#top -->
+
+
+      {% if len(new_ministrie) and len(random_ministries) %}
+        {# don't show content if there are no MinistryProfile objects #}
+        <div id="main">
+
+          <div id="new_ministries">
+            <h4>New Ministry Profiles:</h4>
+            <p>Check out these ministries who just recently created a profile on Love Our Neighbor!</p>
+            <div class="row">
+              {% for m in new_ministries %}
+                {{ frontpage_ministry_card(m) }}
+              {% endfor %}
+            </div><!-- /.row -->
+          </div><!-- /# new_ministries -->
+
+          <div id="random_ministries">
+            <h4>Ministries You Might Like</h4>
+            <div class="row">
+              {% for m in random_ministries %}
+                {{ frontpage_ministry_card(m) }}
+              {% endfor %}
+            </div><!-- /.row -->
+          </div>
+
+        </div><!-- /#main -->
+      {% endif %}
+    </div><!-- /.wrapper -->
+  </div><!-- /.section -->
 {% endblock %}

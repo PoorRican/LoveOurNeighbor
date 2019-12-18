@@ -38,6 +38,7 @@ Things to do before ministries will be using the site:
     * 3-month view
 - Add Google Forms as feedback
 - News Tabs in Profile Edit Page
+- Unverified Ministries should not be able to create Campaigns
 
 
 ## Hard Release Features
@@ -53,6 +54,10 @@ Things to do before Users will be using the site:
     * Dynamic MOTD on top
     * Random Featured Ministry
 - Implement Ministry Verification:
+- User Attributes:
+    Part of the screening process:
+        * "What Church Do You Attend?":
+        * Testimony
 - Notifications:
     * Email users:
         - Update on the Ministries they like
@@ -68,6 +73,12 @@ Things to do before Users will be using the site:
     * Terms of Service
     * Statement of Faith:
         - "What makes LON a Christian Ministry"
+- Django-Admin
+    * Homepage MOTD should be editable via django
+    * WYSIWYG editor in django-admin page
+    * Admin functions should be better:
+        - logout should work
+        - admin link should be visible for superusers who are logged in
     
     
     

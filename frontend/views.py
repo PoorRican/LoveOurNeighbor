@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from public.models import AboutSection, FaqSection
-from campaign.models import Campaign
+from ministry.models import MinistryProfile
 from news.models import NewsPost
 from comment.forms import CommentForm
 
@@ -44,24 +44,11 @@ def home(request):
         featured content, news, and trending/new content.
         But this is not implemented in any way.
     """
-    try:
-        current_campaign = Campaign.objects.order_by("-end_date")[0]
-        current_campaign.views += 1
-        current_campaign.save()
-        all_news = NewsPost.objects.filter(
-                    campaign=current_campaign).order_by("-pub_date")
-        _admin = current_campaign.ministry.admin
-        _reps = current_campaign.ministry.reps.all()
-        AUTH = bool(request.user == _admin or request.user in _reps)
-    except IndexError:
-        current_campaign, all_news = None, None
-        AUTH = False
 
-    context = {'all_news': all_news,
-               'current_campaign': current_campaign,
-               'form': CommentForm(),
-               'AUTH': AUTH,
+    context = {'new_ministries': list(MinistryProfile.new_ministries()),
+               'random_ministries': list(MinistryProfile.random_ministries())
                }
+
     return render(request, "home.html", context)
 
 

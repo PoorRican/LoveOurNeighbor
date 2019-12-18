@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 
 from pickle import loads, dumps
+from random import shuffle
 
 from explore.models import GeoLocation
 from people.models import User
@@ -115,3 +116,13 @@ class MinistryProfile(models.Model):
     def json(self):
         return reverse('ministry:ministry_json',
                        kwargs={'ministry_id': self.id})
+
+    @classmethod
+    def new_ministries(cls):
+        results = cls.objects.filter(verified='True')
+        return results.order_by('pub_date')[:10]
+
+    @classmethod
+    def random_ministries(cls):
+        results = cls.objects.filter(verified='True')
+        return results.order_by('?')[:10]
