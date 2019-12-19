@@ -113,11 +113,12 @@
 
           <div class="col l4 s12" style="margin: auto 0;">
             <p class="section-info">
+              {# TODO: implement localized time format #}
               <span>Began:</span>&nbsp;
               {{ cam.start_date.strftime("%h %d, %Y") }}&nbsp;
               <span>({{ f_time(cam.start_date) }})</span>
               <br>
-              <span>Until:</span>&nbsp;
+              <span>Ends:</span>&nbsp;
               {{ cam.end_date.strftime("%h %d, %Y") }}&nbsp;
               <span>({{ f_time(cam.end_date) }})</span>
               <br>

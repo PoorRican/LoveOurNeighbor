@@ -1,5 +1,4 @@
 ## Bugs
-- Fix timezone error
 - GeoIP does not work
 - Tag search functionality
 - create_campaign_dir not defined when posting news

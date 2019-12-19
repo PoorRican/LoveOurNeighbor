@@ -115,11 +115,14 @@
                 'staff': 'Number of Staff Members',
                 'pub_date': 'Profile Created'
             } %}
-            {# TODO: make intuitive date for `pub_date`. eg: "1 year ago" #}
             {% for attr, str in info.items() %}
               {% if ministry.__dict__[attr] %}
                 <span>{{ str }}:</span>&nbsp;
-                {{ ministry.__dict__[attr] }}
+                {% if attr == 'pub_date' %}
+                  {{ f_time(ministry.__dict__[attr]) }}
+                {% else %}
+                  {{ ministry.__dict__[attr] }}
+                {% endif %}
                 <br>
               {% endif %}
             {% endfor %}

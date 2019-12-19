@@ -1,4 +1,8 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
+from ipware import get_client_ip
+from pytz import timezone
+
+from explore.utils import get_location_from_ip
 
 
 def friendly_time(dt, past_="ago", future_="from now", default="just now"):
@@ -8,9 +12,9 @@ def friendly_time(dt, past_="ago", future_="from now", default="just now"):
     3 days ago, 5 hours from now etc.
     """
 
-    tz = timezone(timedelta(hours=-5))
+    tz = timezone('UTC')
     now = datetime.now(tz)
-    if not hasattr(dt, 'minutes'):     # quick conversion from date to datetime
+    if not hasattr(dt, 'minute'):  # quick conversion from date to datetime
         dt = datetime(dt.year, dt.month, dt.day, tzinfo=tz)
     if now > dt:
         diff = now - dt
@@ -71,3 +75,25 @@ def ministry_admin_urls(ministry):
                     'obj_id': ministry.id},
          }]
     return urls
+
+
+class TimezoneMiddleware:
+    """ Stores the timezone of the request IP address using GeoIP services within the request session.
+    This is not implemented anywhere in the codebase at the moment,
+    but this will be useful for internationalization and translation.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if not request.session.get('tz'):
+            client_ip, is_routable = get_client_ip(request)
+            if client_ip is not None and is_routable:
+                tzname = get_location_from_ip(client_ip)['time_zone']
+                request.session['tz'] = tzname
+            # TODO: find a more elegant way to test
+            else:
+                request.session['tz'] = 'UTC'
+
+        return self.get_response(request)

@@ -74,6 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'frontend.utils.TimezoneMiddleware'
 ]
 
 ROOT_URLCONF = 'frontend.urls'
@@ -179,7 +180,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-USE_I18N = True
+USE_I18N = False  # temporarily disabled for a performance boost
 
 USE_L10N = True
 
