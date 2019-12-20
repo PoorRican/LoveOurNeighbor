@@ -21,7 +21,7 @@ from .forms import (
 )
 from comment.forms import CommentForm
 from .models import (
-    MinistryProfile, DEFAULT_MP_PROFILE_IMG
+    MinistryProfile, DEFAULT_PROFILE_IMG
     )
 from .utils import (
     # serialization functions
@@ -145,7 +145,7 @@ def edit_ministry(request, ministry_id):
                                 ministry.banner_img = ministry_banner_dir(ministry,
                                                                           _img)
                             if ministry.profile_img and \
-                               ministry.profile_img.path != DEFAULT_MP_PROFILE_IMG:
+                                    ministry.profile_img.path != DEFAULT_PROFILE_IMG:
                                 _img = os.path.basename(ministry.profile_img.path)
                                 _img = ministry_profile_image_dir(ministry, _img)
                                 ministry.profile_img = _img

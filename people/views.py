@@ -14,11 +14,12 @@ from django.urls import reverse
 
 import json
 
+from frontend.settings import MEDIA_ROOT, MEDIA_URL
 from donation.utils import serialize_donation
 
 from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
-from .utils import clear_previous_ministry_login
+from .utils import clear_previous_ministry_login, user_profile_img_dir
 
 
 def create_user(request):
@@ -79,6 +80,12 @@ def user_profile(request):
             user = form.save(commit=False)
             if user._location:
                 user.location = user._location
+            user.save()
+
+            _img = request.POST.get('selected_profile_img', False)
+            if _img:
+                prev_banner = request.POST['selected_profile_img']
+                user.profile_img = user_profile_img_dir(user, prev_banner)
             user.save()
 
             messages.add_message(request, messages.SUCCESS,
@@ -215,6 +222,28 @@ def messages_json(request):
         _json.append({'message': str(msg),
                       'type': msg.tags})
     return HttpResponse(json.dumps(_json))
+
+
+def profile_img_json(request):
+    """ View that returns all images located in dedicated
+    banner directory for MinistryProfile
+    """
+    user = request.user
+    _dir = user_profile_img_dir(user, '')
+    _dir = os.path.join(MEDIA_ROOT, _dir)
+
+    _json = {'available': {}}
+
+    imgs = os.listdir(_dir)
+    for i in imgs:
+        _json['available'][i] = os.path.join(MEDIA_URL, user_profile_img_dir(user, i))
+
+    try:
+        _current = user.profile_img.path
+    except ValueError:
+        _current = ''
+    _json['current'] = os.path.basename(_current)
+    return JsonResponse(_json)
 
 
 @login_required

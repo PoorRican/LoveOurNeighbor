@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 
+from frontend.settings import DEFAULT_PROFILE_IMG
 from explore.models import GeoLocation
 
 from .utils import user_profile_img_dir, verification_required
@@ -76,9 +77,9 @@ class User(AbstractBaseUser, PermissionsMixin):
                                      on_delete=models.PROTECT,
                                      related_name='+')
     _location = models.CharField(max_length=256, blank=True, null=True)
-    profile_img_url = models.CharField(max_length=256, default=BLANK_AVATAR)
-    _profile_img = models.ImageField('Profile Image', blank=True, null=True,
-                                     upload_to=user_profile_img_dir)
+    profile_img = models.ImageField('Profile Image', blank=True, null=True,
+                                    default=DEFAULT_PROFILE_IMG,
+                                    upload_to=user_profile_img_dir)
 
     confirmation = models.UUIDField(default=uuid4, blank=True, null=True)
 
@@ -199,13 +200,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         for i in self.donations.all():
             amt += i.amount
         return amt
-
-    @property
-    def profile_img(self):
-        if self._profile_img:
-            return static(self._profile_img.url)
-        else:
-            return self.profile_img_url
 
     @classmethod
     def authenticate_user(cls, email, password):

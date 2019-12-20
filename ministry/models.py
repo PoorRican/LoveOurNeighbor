@@ -4,6 +4,7 @@ from django.urls import reverse
 from pickle import loads, dumps
 from random import shuffle
 
+from frontend.settings import DEFAULT_PROFILE_IMG
 from explore.models import GeoLocation
 from people.models import User
 from tag.models import Tag
@@ -12,9 +13,6 @@ from .utils import (
     ministry_banner_dir,
     ministry_profile_image_dir,
 )
-
-
-DEFAULT_MP_PROFILE_IMG = 'ministries/blank_profile.jpg'
 
 
 # Backend Functionality
@@ -53,7 +51,7 @@ class MinistryProfile(models.Model):
     tags = models.ManyToManyField(Tag, related_name='ministries',
                                   blank=True, )
     profile_img = models.ImageField('Profile Image',
-                                    default=DEFAULT_MP_PROFILE_IMG,
+                                    default=DEFAULT_PROFILE_IMG,
                                     upload_to=ministry_profile_image_dir)
     banner_img = models.ImageField('Banner Image', blank=True, null=True,
                                    upload_to=ministry_banner_dir)

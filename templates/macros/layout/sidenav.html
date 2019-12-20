@@ -22,7 +22,7 @@
           {% else %}
 
             <a href="{{ url_for('people:user_profile') }}" title="Your Profile">
-              <img class="circle" src="{{ request.user.profile_img }}" alt="Profile Img">
+              <img class="circle" src="{{ request.user.profile_img.url }}" alt="Profile Img">
             </a>
 
           {% endif %}

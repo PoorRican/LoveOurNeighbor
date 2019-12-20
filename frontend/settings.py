@@ -254,3 +254,5 @@ LOGGING = {
         },
     },
 }
+
+DEFAULT_PROFILE_IMG = 'img/blank_profile.jpg'

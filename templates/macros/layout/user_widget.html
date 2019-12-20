@@ -13,7 +13,7 @@
 
         {% else %}
 
-          <img class="profile-img" src="{{ request.user.profile_img }}" alt="">
+          <img class="profile-img" src="{{ request.user.profile_img.url }}" alt="">
           <span class="uname">{{- request.user.name -}}</span>
           <i class="material-icons">arrow_drop_down</i>
 
