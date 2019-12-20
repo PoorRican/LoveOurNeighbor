@@ -1,0 +1,89 @@
+{% macro profile_image_dialog(img) %}
+
+  <div id="profile_img_input">
+
+    <!-- TODO: dynamically get the updated url from input value via angular -->
+    <img style="height: 120px; width: 120px; margin: auto;" src="{{ img }}"
+         ng-click="profile_img_dialog.show($event, 'profileImgDialog')"/>
+
+    <div style="visibility: hidden">
+      <div class="md-dialog-container" id="profileImgDialog">
+        <md-dialog>
+
+          <md-toolbar>
+            <div class="md-toolbar-tools">
+              <h2>Banner Selection</h2>
+              <span flex></span>
+              <md-button class="md-icon-button" ng-click="profile_img_dialog.close()">
+                <i class="material-icons">close</i>
+              </md-button>
+            </div><!-- /.md-toolbar-tools -->
+          </md-toolbar>
+
+          <md-dialog-content>
+            <div class="md-dialog-content">
+              <div class="previous-images">
+                <md-grid-list
+                    md-cols="1" md-cols-sm="4" md-cols-md="4" md-cols-gt-md="8"
+                    md-row-height="1:1"
+                    md-gutter="8px">
+
+                  <md-grid-tile ng-repeat="(name, src) in profile_img_urls"
+                      {# TODO: dynamically allocate this #}
+                                md-rowspan="1"
+                                md-colspan="1"
+                                md-rowspan-gt-xs="2"
+                                md-colspan-gt-xs="2">
+                    <img style="width: 100%; bottom: 0; position: absolute;"
+                         ng-click="select_profile_img(name)"
+                         ng-src="{% raw %}{{ src }}{% endraw %}"
+                         ng-class="[{banner_current:  profile_img_dialog.banner_current(name),
+                                                 banner_selected: profile_img_dialog.banner_selected(name)}]">
+                    <md-grid-tile-footer>
+                      <h3>
+                                    <span ng-if="profile_img_dialog.banner_selected(name)"
+                                          class="banner_selected_label">
+                                      <md-icon><i class="material-icons">check_circle</i></md-icon>
+                                    </span>
+                        <span ng-if="profile_img_dialog.banner_current(name)"
+                              ng-hide="profile_img_dialog.banner_selected(name)"
+                              class="banner_current_label">
+                                      Current
+                                    </span>
+                        {% raw %}{{ name }}{% endraw %}
+                      </h3>
+                    </md-grid-tile-footer>
+                  </md-grid-tile>
+                </md-grid-list>
+              </div><!-- /.previous-images -->
+
+              <h3 class="md-headline" ng-hide="profile_img_urls">You haven't uploaded a profile picture yet</h3>
+
+              {#{{ form.banner_img.label_tag() }}
+                        {{ form.banner_img }}#}
+              <input type="hidden" name="selected_profile_img"
+                     value="{% raw %}{{ selected_profile_img }}{% endraw %}">
+              <br>Upload New:
+              <input type="file" name="profile_img" accept="image/*" id="id_banner_img"
+                     ng-click="banner_img_dialog.clear()">
+              <input type="checkbox" name="profile_img-clear" id="profile_img-clear_id">
+              <label for="profile_img-clear_id">Clear</label>
+
+            </div><!-- /.md-dialog-content -->
+          </md-dialog-content>
+
+          <md-dialog-actions layout="row">
+            <md-button ng-click="profile_img_dialog.close()">
+              Cancel
+            </md-button>
+            <md-button class="md-raised md-primary" ng-click="profile_img_dialog.close()">
+              Done
+            </md-button>
+          </md-dialog-actions>
+
+        </md-dialog>
+      </div><!-- /#profileImgDialog -->
+    </div>
+  </div><!-- /#profileImgInput -->
+
+{% endmacro %}

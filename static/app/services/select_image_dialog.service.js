@@ -50,7 +50,7 @@ function selectImageDialogService($mdDialog, $http, $log) {
     }
 
     function failure(response) {
-      $log.error('Could not fetch images. (Wrong URL?)');
+      $log.error('Could not fetch images from ' + url + '. (Wrong URL?)');
     }
   }
 

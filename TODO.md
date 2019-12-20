@@ -17,6 +17,9 @@
 - Make TinyMCE script to template pages that need it. TinyMCE should not be fetched in 'layout.html'
 - Implement Fuzzy matching for search function (case-insensitive search)
 - Profile Image Functionality:
+    * Unify naming within angular functions. eg: remove 'banner' naming
+    * Dynamically show selected/uploaded image
+    * Dynamic sizing of grid in image selection dialog
     * Better image uploading
 - Remove comments stub / Remove 'login_in_as' functionality. Add settings flag to enable/disable this feature
 - Display of Users Email

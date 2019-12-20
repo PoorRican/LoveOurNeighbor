@@ -11,7 +11,7 @@ import json
 import os
 from datetime import datetime
 
-from frontend.settings import MEDIA_ROOT
+from frontend.settings import MEDIA_ROOT, MEDIA_URL
 from people.models import User
 from tag.models import Tag
 from news.models import NewsPost
@@ -431,9 +431,12 @@ def ministry_banners_json(request, ministry_id):
 
     imgs = os.listdir(_dir)
     for i in imgs:
-        _json['available'][i] = os.path.join('/', _dir, i)
+        _json['available'][i] = os.path.join(MEDIA_URL, ministry_banner_dir(ministry, i))
 
-    _current = ministry.banner_img.path
+    try:
+        _current = ministry.banner_img.path
+    except ValueError:
+        _current = ''
     _json['current'] = os.path.basename(_current)
     return JsonResponse(_json)
 
@@ -450,9 +453,12 @@ def ministry_profile_img_json(request, ministry_id):
 
     imgs = os.listdir(_dir)
     for i in imgs:
-        _json['available'][i] = os.path.join('/', _dir, i)
+        _json['available'][i] = os.path.join(MEDIA_URL, ministry_profile_image_dir(ministry, i))
 
-    _current = ministry.banner_img.path
+    try:
+        _current = ministry.profile_img.path
+    except ValueError:
+        _current = ''
     _json['current'] = os.path.basename(_current)
     return JsonResponse(_json)
 

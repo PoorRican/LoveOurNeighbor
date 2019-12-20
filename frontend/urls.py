@@ -19,7 +19,7 @@ from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
-from . import views
+from . import views, settings
 
 favicon_view = RedirectView.as_view(url='/static/img/favicon.svg', permanent=True)
 
@@ -45,4 +45,5 @@ urlpatterns = [
     path('comment/', include('comment.urls')),
     path('search/', include('search.urls')),
     path('people/', include('people.urls')),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
+              + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

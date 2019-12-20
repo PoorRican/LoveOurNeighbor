@@ -133,7 +133,7 @@
               <ul class="collection">
                 {% for ministry in iter %}
                   <li class="collection-item avatar">
-                    <img src="/{{ ministry.profile_img.url }}" class="circle">
+                    <img src="{{ ministry.profile_img.url }}" class="circle">
                     <a href="{{ ministry.url }}" class="title">
                       {{ ministry.name }}
                     </a>

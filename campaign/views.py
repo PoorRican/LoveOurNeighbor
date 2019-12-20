@@ -9,7 +9,7 @@ from django.http import (
 from django.shortcuts import render
 from django.urls import reverse
 
-from frontend.settings import MEDIA_ROOT
+from frontend.settings import MEDIA_ROOT, MEDIA_URL
 
 from ministry.models import MinistryProfile
 from news.models import NewsPost
@@ -67,6 +67,7 @@ def edit_campaign(request, campaign_id):
     try:
         campaign = Campaign.objects.get(id=campaign_id)
         # TODO: set up permissions
+        _url = ''
         if request.user == campaign.ministry.admin or \
                 request.user in campaign.ministry.reps.all():
             if request.method == 'POST':
@@ -108,8 +109,6 @@ def edit_campaign(request, campaign_id):
     except Campaign.DoesNotExist:
         _w = 'Invalid URL'
         messages.add_message(request, messages.ERROR, _w)
-
-        _url = ''
 
     return HttpResponseRedirect(_url)
 
@@ -204,9 +203,12 @@ def campaign_banners_json(request, campaign_id):
 
     imgs = os.listdir(_dir)
     for i in imgs:
-        _json['available'][i] = os.path.join('/', _dir, i)
+        _json['available'][i] = os.path.join(MEDIA_URL, campaign_banner_dir(campaign, i))
 
-    _current = campaign.banner_img.path
+    try:
+        _current = campaign.banner_img.path
+    except ValueError:
+        _current = ''
     _json['current'] = os.path.basename(_current)
     return JsonResponse(_json)
 

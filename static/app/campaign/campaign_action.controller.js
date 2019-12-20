@@ -1,7 +1,7 @@
 angular.module('LON').controller('campaignActionCtrl', campaignActionCtrl);
 campaignActionCtrl.$inject = ['$scope', 'tagService', 'objectService', 'selectImageDialogService', 'confirmDeleteDialogService'];
 
-function campaignActionCtrl($scope, tagService, objectService, bannerImageService, confirmDeleteDialogService) {
+function campaignActionCtrl($scope, tagService, objectService, selectImageService, confirmDeleteDialogService) {
   const campaign_id = document.getElementById('campaign_id');
 
   // creating a new campaign
@@ -19,12 +19,12 @@ function campaignActionCtrl($scope, tagService, objectService, bannerImageServic
 
     $scope.banner_urls = {};
     $scope.select_banner = select_banner;
-    $scope.banner_img_dialog = bannerImageService;
+    $scope.banner_img_dialog = selectImageService;
     $scope.selected_banner = $scope.banner_img_dialog.selected;
 
     $scope.profile_img_urls = {};
     $scope.select_profile_img = select_profile_img;
-    $scope.profile_img_dialog = bannerImageService;
+    $scope.profile_img_dialog = selectImageService;
     $scope.selected_profile_img = $scope.profile_img_dialog.selected;
 
     $scope.confirmDelete = confirmDeleteDialogService;
@@ -47,17 +47,10 @@ function campaignActionCtrl($scope, tagService, objectService, bannerImageServic
 
     function activate() {
       if (!(campaign_id === null)) {
-        const banners_url = "/ministry/campaign/" + campaign_id.value + "/banners/json";
-        bannerImageService.get(banners_url)
+        const banners_url = "/campaign/" + campaign_id.value + "/banners/json";
+        selectImageService.get(banners_url)
         .then(function (data) {
           $scope.banner_urls = data;
-
-        });
-
-        const profile_img_url = "/ministry/campaign/" + campaign_id.value + "/profile_img/json";
-        bannerImageService.get(profile_img_url)
-        .then(function (data) {
-          $scope.profile_img_urls = data;
 
         });
       }   // TODO: grab ministry banners when creating new campaign

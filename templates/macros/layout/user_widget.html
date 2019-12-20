@@ -5,7 +5,7 @@
       <a class="dropdown-trigger" href="#" data-target="navbar-menu">
         {% if request.user.logged_in_as %}
 
-          <img class="profile-img" src="/{{ request.user.logged_in_as.profile_img.url }}" alt="">
+          <img class="profile-img" src="{{ request.user.logged_in_as.profile_img.url }}" alt="">
           <span class="uname">
             {{- request.user.logged_in_as.name -}}
           </span>
@@ -51,7 +51,7 @@
               <li class="profile-area">
                 <a href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"
                    class="view_profile {% if ALIAS %} orange-text{% endif %}">
-                  <img class="profile-img" src="/{{ ministry.profile_img.url }}">
+                  <img class="profile-img" src="{{ ministry.profile_img.url }}">
                   <div>
                     <span class="truncate">
                     {% if ALIAS %}<i class="material-icons" style="display: inline;">how_to_reg</i>{% endif %}

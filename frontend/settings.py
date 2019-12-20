@@ -210,8 +210,8 @@ if DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
 
     # just place media files in 'static' directory while debugging
-    MEDIA_ROOT = 'static/media/'
-    MEDIA_URL = 'static/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
+    MEDIA_URL = '/media/'
 
     ASSETS_URL = '/static/'
     ASSETS_AUTO_BUILD = True

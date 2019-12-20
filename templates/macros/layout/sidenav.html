@@ -16,7 +16,7 @@
           {% if request.user.logged_in_as %}
 
             <a href="{{ request.user.logged_in_as.url }}" title="View {{ request.user.logged_in_as.name }}">
-              <img class="circle" src="/{{ request.user.logged_in_as.profile_img.url }}" alt="Ministry Profile Img">
+              <img class="circle" src="{{ request.user.logged_in_as.profile_img.url }}" alt="Ministry Profile Img">
             </a>
 
           {% else %}
