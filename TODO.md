@@ -3,13 +3,8 @@
 - Tag search functionality
 - create_campaign_dir not defined when posting news
 - Default value of "None" in 'ministry:edit_ministry'
-
-### Docker Instance exclusive bugs
-- New user sign-up does not work
-- MinistryProfile creation gives 500 response code
-- Accessing 'ministry:ministry_profile' gives 500 response
 - Duplicate how_to_reg icon in user_widget
-- invalid url for MinistryProfile image in user widget '//mediafiles/...'
+- Parallax Image for Campaign View
 
 
 ## Internal Fixes
@@ -21,9 +16,11 @@
     * Dynamically show selected/uploaded image
     * Dynamic sizing of grid in image selection dialog
     * Better image uploading
-- Remove comments stub / Remove 'login_in_as' functionality. Add settings flag to enable/disable this feature
+- Remove 'login_in_as' functionality. Add settings flag to enable/disable this feature
 - Display of Users Email
 - Display users likes
+- Title header in cards should provide a link to object. Dropdown icon should not be visible if not logged in.
+- Dropdown anchor element item 'Link to ...' should be 'View ...'
 
 
 # Medium Priority 
@@ -45,12 +42,8 @@ Things to do before ministries will be using the site:
 
 ## Hard Release Features
 Things to do before Users will be using the site:
-- Remove comment placeholders
 - Show table of liked MinistryProfiles and Campaigns to users
 - Homepage Functionality:
-    * Functions for:
-        - recently created ministries
-        - recently created campaigns
     * Card Display
     * Have a section for highlighting new or popular tags
     * Dynamic MOTD on top
@@ -81,6 +74,7 @@ Things to do before Users will be using the site:
     * Admin functions should be better:
         - logout should work
         - admin link should be visible for superusers who are logged in
+- Unlike Functionality
     
     
     
@@ -93,6 +87,26 @@ Things to do before Users will be using the site:
 - Show start and end dates on campaign card
 - MinistryProfile should display profile images on MinistryProfile page
 - Progress Bar
+- Unify header styling between materialize and angular material
+- Better page loading:
+    * Navbar User Widget Moves/Resizes
+    * In small displays, menu "burger" says 'Menu'
+- Profile/Banner Image:
+    * Dynamically resize trigger image dimensions
+    * Dynamically resize tile dimensions
+    * 'Cancel' should undo change
+    * 'Done' should upload
+
+## Implementation Changes
+- Create custom asset handler:
+    * Override django's collectstatic method
+    * Override django's 'static' function to create url using 'STATIC_URL' and CRM URL while not debugging
+- Implement ClassAsView's:
+    * Image JSON url's should use identical view function/functor-class
+    * Edit Ministry/Create Ministry
+    * Edit Campaign/Create Campaign
+    * Edit News/Create News
+    * Edit User/Create User
 
 ## Features
 - Commenting

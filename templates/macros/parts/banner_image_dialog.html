@@ -1,10 +1,13 @@
-{% macro banner_image_dialog() %}
+{% macro banner_image_dialog(img) %}
 
   {# TODO: dynamically show selected/uploaded image #}
-  <md-button ng-click="banner_img_dialog.show($event, 'bannerDialog')">
-    <md-icon><i class="material-icons">image</i></md-icon>
-    Banner Img
-  </md-button>
+  <h6>Banner Image:</h6>
+  <div class="dialog-trigger" ng-click="banner_img_dialog.show($event, 'bannerDialog')">
+    <div>
+      <i class="material-icons">edit</i>
+    </div>
+    <img src="{{ img }}"/>
+  </div>
 
   {# {{{ Banner Selection Dialog #}
   <div style="visibility: hidden">
@@ -13,7 +16,7 @@
 
         <md-toolbar>
           <div class="md-toolbar-tools">
-            <h2>Banner Selection</h2>
+            <h2>Banner Image</h2>
             <span flex></span>
             <md-button class="md-icon-button" ng-click="banner_img_dialog.close()">
               <i class="material-icons">close</i>

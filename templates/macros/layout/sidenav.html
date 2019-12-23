@@ -78,7 +78,7 @@
                         <li class="profile-area">
                           <a href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"
                              class="view_profile">
-                            <img class="profile-img" src="/{{ ministry.profile_img.url }}">
+                            <img class="profile-img" src="{{ ministry.profile_img.url }}">
                             <div>
                         <span class="{% if ALIAS %}orange-text{% endif %}">
                           {{ ministry }}

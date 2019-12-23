@@ -3,8 +3,13 @@
   <div id="profile_img_input">
 
     <!-- TODO: dynamically get the updated url from input value via angular -->
-    <img style="height: 120px; width: 120px; margin: auto;" src="{{ img }}"
-         ng-click="profile_img_dialog.show($event, 'profileImgDialog')"/>
+    <h6>Profile Image:</h6>
+    <div class="dialog-trigger" ng-click="profile_img_dialog.show($event, 'profileImgDialog')">
+      <div>
+        <i class="material-icons">edit</i>
+      </div>
+      <img src="{{ img }}"/>
+    </div>
 
     <div style="visibility: hidden">
       <div class="md-dialog-container" id="profileImgDialog">
@@ -12,7 +17,7 @@
 
           <md-toolbar>
             <div class="md-toolbar-tools">
-              <h2>Banner Selection</h2>
+              <h2>Profile Image</h2>
               <span flex></span>
               <md-button class="md-icon-button" ng-click="profile_img_dialog.close()">
                 <i class="material-icons">close</i>
