@@ -3,18 +3,10 @@ from django.test import TestCase
 
 from datetime import date, datetime
 
-from donation.models import (
-    Donation,
-    ccPayment,
-    btcPayment,
-    braintreePayment,
-    COUNTRIES
-    )
 from people.models import User
-from ministry.models import (
-    MinistryProfile,
-    Campaign
-)
+from ministry.models import MinistryProfile
+from campaign.models import Campaign
+from donation.models import Donation, ccPayment, braintreePayment, btcPayment
 
 
 CC_DEFAULT = {"amount": 7531.00,
@@ -22,7 +14,7 @@ CC_DEFAULT = {"amount": 7531.00,
               "ccv2": 753, "expiration_date": "01/20",
               "first_name": "John", "last_name": "Doe",
               "address": "123 Fake Street", "city": "Peopletown",
-              "state": "State", "zipcode": 7531, "country": COUNTRIES[-1]}
+              "state": "State", "zipcode": 7531}
 
 
 class BaseTestCase(TestCase):

@@ -72,22 +72,20 @@ class MinistryTestCase(BaseMinistryModelTestCase):
     #######################
 
     def testReps_functionality(self):
-        return NotImplemented
+        self.fail()
 
     def testRequest_functionality(self):
-        return NotImplemented
+        self.fail()
 
     def testMedia_functionality(self):
-        return NotImplemented
+        self.fail()
 
     ##################
     # Property Tests #
     ##################
 
     def testDonated_property(self):
-        return NotImplemented
+        self.fail()
 
     def testLocation_property(self):
-        return NotImplemented
-
-
+        self.fail()

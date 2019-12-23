@@ -1,12 +1,21 @@
 from datetime import date
 
+from django.urls import reverse
+
+from .models import Campaign
+
 from ministry.models import MinistryProfile
-from ministry.test_views import BaseMinistryViewTestCase
+from utils.test_helpers import BaseViewTestCase
+
+email, password = "new@test-users.com", "randombasicpassword1234"
 
 
-class TestCampaignViews(BaseMinistryViewTestCase):
+class TestCampaignViews(BaseViewTestCase):
     def setUp(self):
-        BaseMinistryViewTestCase.setUp(self)
+        super().setUp()
+
+        self.user = self.create_user(self.user_email, self.user_password,
+                                     display_name="Mister Test User")
 
         self.min_name = "Test Ministry"
         self.min = MinistryProfile.objects.create(name=self.min_name,
@@ -14,6 +23,8 @@ class TestCampaignViews(BaseMinistryViewTestCase):
                                                   website="justawebsite.com",
                                                   phone_number="(753)753-7777",
                                                   address="777 validate me ct")
+        self.volatile.append(self.min)
+
         self.obj_name = "Test Campaign"
         self.obj = Campaign.objects.create(title=self.obj_name,
                                            ministry=self.min,
@@ -22,28 +33,21 @@ class TestCampaignViews(BaseMinistryViewTestCase):
                                            content="this is some content",
                                            goal=7531)
 
-    def tearDown(self):
-        del self.obj
-        del self.min
-        del self.user
-
-        BaseMinistryViewTestCase.tearDown(self)
-
     def testCreateCampaign(self):
-        _url = "/ministry/%s/campaign/create" % self.min.id
+        _url = reverse('campaign:create_campaign', kwargs={'ministry_id': self.min.id})
 
-        # assert that User must be logged
+        # assert that User must be logged in
         response = self.client.get(_url)
         self.assertRedirects(response,
                              "/people/login?next=%2Fministry%2F"
                              + "%s" % self.min.id + "%2Fcampaign%2Fcreate")
 
-        # assert correct template after login
+        # assert correct template after user login
         self.login()
         response = self.client.get(_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,       # assert correct template
-                            "ministry/campaign_content")
+        self.assertContains(response,  # assert correct template
+                            "edit_campaign.html")
 
         # assert proper POST data
         _new = {'title': 'a new campaign',
@@ -55,7 +59,7 @@ class TestCampaignViews(BaseMinistryViewTestCase):
         _cam = Campaign.objects.get(title=_new['title'])
         self.volatile.append(_cam)
         self.assertTrue(bool(_cam))
-        self.assertRedirects(response, "/#/ministry/campaign/%s" % _cam.id)
+        self.assertRedirects(response, reverse('campaign:campaign_detail', kwargs={'campaign_id': _cam.id}))
 
         # TODO: test malformed POST and redirect on error
         # TODO: test MinistryProfile.banner_img
@@ -64,23 +68,21 @@ class TestCampaignViews(BaseMinistryViewTestCase):
         # TODO: test feedback on error
 
     def testEditCampaign(self):
-        _id = self.obj.id
-        _url = "/ministry/campaign/%s/edit" % _id
+        _url = reverse('campaign:edit_campaign', kwargs={'campaign_id': self.obj.id})
 
         # assert that User must be logged in
         response = self.client.get(_url)
         self.assertRedirects(response,
-                             "/people/login?next=%2Fministry%2Fcampaign%2F"
-                             + "%s/edit" % _id)
+                             "/people/login?next=%2Fcampaign%2F"
+                             + "%s/edit" % self.obj.id)
 
-        # assert correct template after login
+        # assert correct template after user login
         self.login()
         response = self.client.get(_url)
         self.assertContains(response,
                             "ministry/campaign_content")
 
         # assert redirect when incorrect permissions
-        email, password = "new@test-users.com", "randombasicpassword1234"
         new_user = self.create_user(email, password)
         self.volatile.append(new_user)
         self.login(email, password)
@@ -114,7 +116,7 @@ class TestCampaignViews(BaseMinistryViewTestCase):
             self.assertEqual(getattr(_cam, key), val)
             self.assertRedirects(response, "/#/ministry/campaign/%s" % _cam.id)
 
-    def testDeletecampaign(self):
+    def testDeleteCampaign(self):
         obj = Campaign.objects.create(title="test",
                                       ministry=self.min,
                                       start_date=date(2019, 1, 1),
@@ -123,17 +125,15 @@ class TestCampaignViews(BaseMinistryViewTestCase):
                                       goal=7531)
         self.volatile.append(obj)
 
-        _id = obj.id
-        _url = "/ministry/campaign/%s/delete" % _id
+        _url = reverse('campaign:delete_campaign', kwargs={'campaign_id': self.obj.id})
 
         # assert that User must be logged in
         response = self.client.get(_url)
         self.assertRedirects(response,
-                             "/people/login?next=%2Fministry%2Fcampaign%2F"
-                             + "%s/delete" % _id)
+                             "/people/login?next=%2Fcampaign%2F"
+                             + "%s/delete" % self.obj.id)
 
         # assert denial for reps
-        email, password = "new@test-users.com", "randombasicpassword1234"
         new_user = self.create_user(email, password)
         self.volatile.append(new_user)
         self.login(email, password)
@@ -155,15 +155,13 @@ class TestCampaignViews(BaseMinistryViewTestCase):
                             "people/profile")
 
     def testCampaignDetail(self):
-        _id = self.obj.id
-        _url = "/ministry/campaign/%s" % _id
+        _url = reverse('campaign:campaign_detail', kwargs={'campaign_id': self.obj.id})
 
         response = self.client.get(_url)
-        self.assertContains(response,
-                            "ministry/campaign_details")
+        self.assertContains(response, "view_campaign.html")
 
     def testCampaignJson(self):
-        _url = "/ministry/campaign/%s/json" % self.obj.id
+        _url = reverse('campaign:campaign_json', kwargs={'campaign_id': self.obj.id})
         _attrs = (
             'title', 'id', 'start_date', 'end_date', 'pub_date',
             'views', 'likes', 'liked', 'donated', 'goal', 'tags'

@@ -4,6 +4,8 @@ from django.db import IntegrityError, transaction
 
 from ministry.test_models import BaseMinistryModelTestCase
 
+from .models import Campaign
+
 
 class CampaignTestCase(BaseMinistryModelTestCase):
     def setUp(self):
@@ -36,11 +38,11 @@ class CampaignTestCase(BaseMinistryModelTestCase):
     #######################
 
     def testMedia_functionality(self):
-        return NotImplemented
+        self.fail()
 
     ##################
     # Property Tests #
     ##################
 
     def testDonated_property(self):
-        return NotImplemented
+        self.fail()

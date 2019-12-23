@@ -1,8 +1,10 @@
 from datetime import date
 
+from .models import NewsPost
+
 from ministry.models import MinistryProfile
 from ministry.test_views import BaseMinistryViewTestCase
-from news.models import NewsPost
+from campaign.models import Campaign
 
 
 class TestNewsPostViews(BaseMinistryViewTestCase):
