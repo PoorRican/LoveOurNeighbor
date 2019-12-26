@@ -1,13 +1,27 @@
 {% macro banner_image_dialog(img) %}
+  {#
+
+  Arguments:
+    img:
+      should be django.ImageFieldFile, or at least have `url` attribute
+  #}
 
   {# TODO: dynamically show selected/uploaded image #}
-  <h6>Banner Image:</h6>
-  <div class="dialog-trigger" ng-click="banner_img_dialog.show($event, 'bannerDialog')">
-    <div>
-      <i class="material-icons">edit</i>
+  {% set click_attr="banner_img_dialog.show($event, 'bannerDialog')" %}
+  {% if img.name == '' %}
+    <md-button ng-click="{{ click_attr }}">
+      <md-icon><i class="material-icons">image</i></md-icon>
+      Banner Img
+    </md-button>
+  {% else %}
+    <h6>Banner Image:</h6>
+    <div class="dialog-trigger" ng-click="{{ click_attr }}">
+      <div>
+        <i class="material-icons">edit</i>
+      </div>
+      <img src="{{ img.url }}"/>
     </div>
-    <img src="{{ img }}"/>
-  </div>
+  {% endif %}
 
   {# {{{ Banner Selection Dialog #}
   <div style="visibility: hidden">

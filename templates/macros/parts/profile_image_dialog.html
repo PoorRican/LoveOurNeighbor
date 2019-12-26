@@ -1,14 +1,21 @@
 {% macro profile_image_dialog(img) %}
+  {#
+
+  Arguments:
+    img:
+      should be django.ImageFieldFile, or at least have `url` attribute
+  #}
 
   <div id="profile_img_input">
 
     <!-- TODO: dynamically get the updated url from input value via angular -->
     <h6>Profile Image:</h6>
-    <div class="dialog-trigger" ng-click="profile_img_dialog.show($event, 'profileImgDialog')">
+    {% set click_attr = "profile_img_dialog.show($event, 'profileImgDialog')" %}
+    <div class="dialog-trigger" ng-click="{{ click_attr }}">
       <div>
         <i class="material-icons">edit</i>
       </div>
-      <img src="{{ img }}"/>
+      <img src="{{ img.url }}"/>
     </div>
 
     <div style="visibility: hidden">

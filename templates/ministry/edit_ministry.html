@@ -10,7 +10,7 @@
 {% from "macros/parts/banner_image_dialog.html" import banner_image_dialog %}
 {% from "macros/parts/profile_image_dialog.html" import profile_image_dialog %}
 
-{% import "cards.html" as card %}
+{% import "macros/cards.html" as card %}
 {# TODO: total donated amount #}
 
 {% block title %}
@@ -84,10 +84,10 @@
         <div class="col s12">
           <div class="row">
             <div class="col s6 l3">
-              {{ profile_image_dialog(ministry.profile_img.url) }}
+              {{ profile_image_dialog(ministry.profile_img) }}
             </div>
             <div class="col s6 l3">
-              {{ banner_image_dialog(ministry.banner_img.url) }}
+              {{ banner_image_dialog(ministry.banner_img) }}
             </div>
 
           </div>

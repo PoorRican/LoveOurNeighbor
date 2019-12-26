@@ -56,9 +56,11 @@
       <div id="details" class="col s12" ng-controller="campaignActionCtrl">
         <div class="row">
           <br>
+          {% if not start %}
           <div class="col s12">
-            {{ banner_image_dialog() }}
+            {{ banner_image_dialog(campaign.banner_img.url) }}
           </div>
+          {% endif %}
           {# {{{ INPUT title #}
           <div class="input-field col l6 s12">
             {# TODO: ensure that all ministry titles are unique #}
