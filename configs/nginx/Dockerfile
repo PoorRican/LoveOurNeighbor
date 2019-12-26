@@ -1,6 +1,6 @@
 FROM nginx
 
-ENV SITE=demo.loveourneighbor.org
+ENV SITE="-d demo.loveourneighbor.org -d loveourneighbor.org -d www.loveourneighbor.org"
 
 VOLUME /etc/letsencrypt
 
@@ -8,7 +8,7 @@ RUN apt-get update
 RUN apt-get install certbot python-certbot-nginx -y
 
 RUN nginx
-RUN certbot run --nginx --agree-tos -m swe.fig@gmail.com -d $SITE --non-interactive; exit 0;
+RUN certbot run --nginx --agree-tos -m swe.fig@gmail.com $SITE --non-interactive; exit 0;
 RUN ps -C "nginx" -o pid= | head -1 | xargs kill -9; exit 0;
 
 # Copy config with SSL capabilities

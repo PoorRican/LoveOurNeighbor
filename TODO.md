@@ -21,6 +21,7 @@
 - Display users likes
 - Title header in cards should provide a link to object. Dropdown icon should not be visible if not logged in.
 - Dropdown anchor element item 'Link to ...' should be 'View ...'
+- User should be able to upload profile/banner images during MinistryProfile/Campaign creation
 
 
 # Medium Priority 
@@ -121,3 +122,6 @@ Things to do before Users will be using the site:
 - Map displaying ministry location (via 'explore' tab)
 - User to User messaging
 - Social Media logging
+
+## Deployment Changes
+- nginx container should be built via staged loading to acquire certs and avoid nginx config hacks

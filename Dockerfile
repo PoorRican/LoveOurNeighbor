@@ -60,21 +60,22 @@ RUN pip install --no-cache /wheels/*
 
 # copy project
 COPY . $APP_HOME
+COPY ./static/media/img $APP_HOME/mediafiles/img
 
 # Clear Environment
 RUN sh utils/clear_migrations.sh
-RUN python manage.py makemigrations public people tag campaign ministry donation news
-RUN python manage.py migrate --noinput
+#RUN python manage.py makemigrations public people tag campaign ministry donation news
+#RUN python manage.py migrate --noinput
 # delay migration to avoid `django.db.InconsistentMigrationHistory` being thrown
-RUN python manage.py makemigrations explore comment
-RUN python manage.py migrate --noinput
+#RUN python manage.py makemigrations explore comment
+#RUN python manage.py migrate --noinput
 
-RUN python populate.py
+#RUN python populate.py
 
 # collect staticfiles (maybe they should be manually uploaded to CDN)
 RUN python manage.py collectstatic --no-input --clear
 
-RUN python manage.py assets build
+#RUN python manage.py assets build
 
 # chown all the files to the app user
 RUN chown -R django:django $APP_HOME
