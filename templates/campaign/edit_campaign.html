@@ -57,9 +57,13 @@
         <div class="row">
           <br>
           {% if not start %}
-          <div class="col s12">
-            {{ banner_image_dialog(campaign.banner_img.url) }}
-          </div>
+            <div class="col s12">
+              {{ banner_image_dialog(campaign.banner_img) }}
+            </div>
+          {% else %}
+            <div class="col s12">
+              {{ banner_image_dialog() }}
+            </div>
           {% endif %}
           {# {{{ INPUT title #}
           <div class="input-field col l6 s12">

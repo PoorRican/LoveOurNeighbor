@@ -1,14 +1,14 @@
-{% macro banner_image_dialog(img) %}
+{% macro banner_image_dialog(img=False) %}
   {#
 
   Arguments:
     img:
-      should be django.ImageFieldFile, or at least have `url` attribute
+      should be django.ImageFieldFile, or at least have `url` attribute, or be False
   #}
 
   {# TODO: dynamically show selected/uploaded image #}
   {% set click_attr="banner_img_dialog.show($event, 'bannerDialog')" %}
-  {% if img.name == '' %}
+  {% if (img == False) or (img.name == '') %}
     <md-button ng-click="{{ click_attr }}">
       <md-icon><i class="material-icons">image</i></md-icon>
       Banner Img
