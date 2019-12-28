@@ -88,10 +88,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-  {% assets "js" %}
-    <script type="application/javascript" src="/{{ ASSET_URL }}"></script>
-  {% endassets %}
-
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       let options = {};
@@ -130,6 +126,13 @@
 
   {% block scripts %}{% endblock %}
 
+  {# paths must be relative to static directory #}
+  {% set layout_assets = (
+    'js/ui-feedback.animations.js',
+  ) %}
+  {% for f in layout_assets %}
+    <script src="{{ static('%s' % f) }}"></script>
+  {% endfor %}
 
   <!-- WYSIWYG Editor -->
   <script src="https://cdn.tiny.cloud/1/ropl0dvkzt3bbjqb9e8dk06ff578n2fkfvgun5yxa1zgb234/tinymce/5/tinymce.min.js"

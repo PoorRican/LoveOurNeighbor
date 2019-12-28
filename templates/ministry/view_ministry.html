@@ -153,9 +153,17 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
 
-  {% assets "app" %}
-    <script type="application/javascript" src="/{{ ASSET_URL }}"></script>
-  {% endassets %}
+  {% set page_assets = (
+  'app.module.js',
+  'app.config.js',
+  'services/object.service.js',
+  'services/like__button.service.js',
+  'services/gallery.service.js',
+  'ministry/ministry.controller.js',
+  ) %}
+  {% for f in page_assets %}
+    <script src="{{ static('app/%s' % f) }}"></script>
+  {% endfor %}
 
 {% endblock %}
 
