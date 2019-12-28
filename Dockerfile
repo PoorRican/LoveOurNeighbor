@@ -79,6 +79,7 @@ RUN python manage.py collectstatic --no-input --clear
 
 # chown all the files to the app user
 RUN chown -R django:django $APP_HOME
+RUN chown -R django:django $APP_HOME/mediafiles
 RUN chown -R django:django /var/log/gunicorn
 
 RUN chmod +x $APP_HOME/configs/django/entrypoint.sh

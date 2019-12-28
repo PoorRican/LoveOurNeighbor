@@ -1,4 +1,6 @@
-from os import path, mkdir
+from os import path, makedirs
+
+from frontend.settings import MEDIA_ROOT
 
 P_TIME = '%Y-%m-%d'             # when reading/parsing date objects
 F_TIME = '%Y-%m-%dT23:59:59'    # when writing date objects (for JSON)
@@ -112,7 +114,7 @@ def ministry_profile_image_dir(instance, filename, prepend=''):
                      'profile_images', filename)
 
 
-def create_ministry_dir(instance, prepend='static/media'):
+def create_ministry_dir(instance, prepend=MEDIA_ROOT):
     """ Utility function that creates a dedicated directory and all sub-directories for MinistryProfile media.
 
     Arguments
@@ -129,15 +131,9 @@ def create_ministry_dir(instance, prepend='static/media'):
         None
     """
     # create the top-level directory
-    try:
-        mkdir(dedicated_ministry_dir(instance, prepend))
-    except FileExistsError:
-        pass
+    makedirs(dedicated_ministry_dir(instance, prepend), exist_ok=True)
 
     # create sub-directories
     for _ in (ministry_banner_dir, ministry_profile_image_dir):
         _path = path.split(_(instance, filename="", prepend=prepend))[0]
-        try:
-            mkdir(_path)
-        except FileExistsError:
-            continue
+        makedirs(_path, exist_ok=True)

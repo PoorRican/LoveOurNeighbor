@@ -1,6 +1,7 @@
-from os import path, mkdir
+from os import path, makedirs
 
 from ministry.utils import serialize_ministry, dedicated_ministry_dir
+from frontend.settings import MEDIA_ROOT
 
 P_TIME = '%Y-%m-%d'  # when reading/parsing date objects
 F_TIME = '%Y-%m-%dT23:59:59'  # when writing date objects (for JSON)
@@ -54,7 +55,7 @@ def campaign_banner_dir(instance, filename, prepend=''):
                      'campaign_banners', filename)
 
 
-def create_campaign_dir(instance, prepend='static/media'):
+def create_campaign_dir(instance, prepend=MEDIA_ROOT):
     """ Utility function that creates a dedicated directory for campaign media.
 
     Arguments
@@ -73,13 +74,8 @@ def create_campaign_dir(instance, prepend='static/media'):
     for _ in (campaign_banner_dir,):
         _path = path.split(_(instance, filename="", prepend=prepend))[0]
         try:
-            mkdir(_path)
+            makedirs(_path, exist_ok=True)
         except FileExistsError:
             pass
         except FileNotFoundError:
-            try:
-                dedicated_ministry_dir(instance.ministry, prepend=prepend)
-            except FileExistsError:
-                pass
-            else:
-                pass
+            dedicated_ministry_dir(instance.ministry, prepend=prepend)
