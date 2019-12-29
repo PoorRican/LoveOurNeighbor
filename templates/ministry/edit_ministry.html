@@ -83,12 +83,22 @@
 
         <div class="col s12">
           <div class="row">
-            <div class="col s6 l3">
-              {{ profile_image_dialog(ministry.profile_img) }}
-            </div>
-            <div class="col s6 l3">
-              {{ banner_image_dialog(ministry.banner_img) }}
-            </div>
+            <br>
+            {% if not start %}
+              <div class="col s6 l3">
+                {{ profile_image_dialog(ministry.profile_img) }}
+              </div>
+              <div class="col s6 l3">
+                {{ banner_image_dialog(ministry.banner_img) }}
+              </div>
+            {% else %}
+              <div class="col s6 l3">
+                {{ profile_image_dialog() }}
+              </div>
+              <div class="col s6 l3">
+                {{ banner_image_dialog() }}
+              </div>
+            {% endif %}
 
           </div>
         </div>

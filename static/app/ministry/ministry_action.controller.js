@@ -5,6 +5,16 @@
   function ministryActionCtrl($scope, tagService, userFilterService, objectService, selectImageService) {
     const ministry_id = document.getElementById('ministry_id');
 
+    $scope.banner_urls = {};
+    $scope.select_banner = select_banner;
+    $scope.banner_img_dialog = selectImageService;
+    $scope.selected_banner = $scope.banner_img_dialog.selected;
+
+    $scope.profile_img_urls = {};
+    $scope.select_profile_img = select_profile_img;
+    $scope.profile_img_dialog = selectImageService;
+    $scope.selected_profile_img = $scope.profile_img_dialog.selected;
+
     // creating a new ministry
     if (ministry_id === null) {
       $scope.object = {'tags': []};     // work around
@@ -20,16 +30,6 @@
       $scope.filter_tags = tagService.search;
 
       $scope.tagService = tagService;
-
-      $scope.banner_urls = {};
-      $scope.select_banner = select_banner;
-      $scope.banner_img_dialog = selectImageService;
-      $scope.selected_banner = $scope.banner_img_dialog.selected;
-
-      $scope.profile_img_urls = {};
-      $scope.select_profile_img = select_profile_img;
-      $scope.profile_img_dialog = selectImageService;
-      $scope.selected_profile_img = $scope.profile_img_dialog.selected;
 
       activate();
       tagService.fetch();
