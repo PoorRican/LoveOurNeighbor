@@ -1,5 +1,6 @@
 from os import path, mkdir
 
+from campaign.utils import create_campaign_dir
 from ministry.utils import dedicated_ministry_dir, create_ministry_dir
 
 
