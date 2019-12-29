@@ -1,6 +1,6 @@
 from os import path, makedirs
 
-from frontend.settings import MEDIA_ROOT
+from django.conf import settings
 
 P_TIME = '%Y-%m-%d'             # when reading/parsing date objects
 F_TIME = '%Y-%m-%dT23:59:59'    # when writing date objects (for JSON)
@@ -114,7 +114,7 @@ def ministry_profile_image_dir(instance, filename, prepend=''):
                      'profile_images', filename)
 
 
-def create_ministry_dir(instance, prepend=MEDIA_ROOT):
+def create_ministry_dir(instance, prepend=settings.MEDIA_ROOT):
     """ Utility function that creates a dedicated directory and all sub-directories for MinistryProfile media.
 
     Arguments
@@ -123,8 +123,9 @@ def create_ministry_dir(instance, prepend=MEDIA_ROOT):
         Must be a campaign object, to be passed to `campaign_banner_dir`.
 
     prepend: (str)
-        This is a desired string to prepend to path. This is passed to `dedicated_media_dir`.
-        Defaults to 'static/media'.
+        This is a desired string to prepend to path.
+        This is passed to `dedicated_media_dir` to form an absolute path.
+        Defaults to `MEDIA_ROOT`.
 
     Returns
     =======

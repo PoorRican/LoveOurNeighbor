@@ -1,7 +1,8 @@
 from os import path, makedirs
 
 from ministry.utils import serialize_ministry, dedicated_ministry_dir
-from frontend.settings import MEDIA_ROOT
+
+from django.conf import settings
 
 P_TIME = '%Y-%m-%d'  # when reading/parsing date objects
 F_TIME = '%Y-%m-%dT23:59:59'  # when writing date objects (for JSON)
@@ -55,7 +56,7 @@ def campaign_banner_dir(instance, filename, prepend=''):
                      'campaign_banners', filename)
 
 
-def create_campaign_dir(instance, prepend=MEDIA_ROOT):
+def create_campaign_dir(instance, prepend=settings.MEDIA_ROOT):
     """ Utility function that creates a dedicated directory for campaign media.
 
     Arguments
@@ -65,7 +66,7 @@ def create_campaign_dir(instance, prepend=MEDIA_ROOT):
 
     prepend: (str)
         This is a desired string to prepend to path. This is passed to `dedicated_media_dir`.
-        Defaults to 'static/media'.
+        Defaults to `MEDIA_ROOT`.
 
     Returns
     =======

@@ -19,7 +19,7 @@ from donation.utils import serialize_donation
 
 from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
-from .utils import clear_previous_ministry_login, user_profile_img_dir
+from .utils import clear_previous_ministry_login, user_profile_img_dir, create_profile_img_dir
 
 
 def create_user(request):
@@ -234,7 +234,11 @@ def profile_img_json(request):
 
     _json = {'available': {}}
 
-    imgs = os.listdir(_dir)
+    imgs = []
+    try:
+        imgs = os.listdir(_dir)
+    except FileNotFoundError:
+        create_profile_img_dir(user)
     for i in imgs:
         _json['available'][i] = os.path.join(MEDIA_URL, user_profile_img_dir(user, i))
 
