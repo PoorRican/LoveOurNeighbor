@@ -72,7 +72,7 @@ def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
     for i in posts:
         _post = serialize_newspost(i)
         _post['type'] = 'post'
-        _post['url'] = reverse('ministry:news_detail',
+        _post['url'] = reverse('news:news_detail',
                                kwargs={'post_id': i.id})
         if request:
             _addr = ''
