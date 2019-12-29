@@ -23,7 +23,7 @@ class Campaign(models.Model):
 
     ministry = models.ForeignKey(MinistryProfile, related_name='campaigns',
                                  on_delete=models.CASCADE)
-    content = models.TextField()
+    content = models.TextField(null=True, blank=True)
     likes = models.ManyToManyField(User, blank=True, editable=False,
                                    related_name='likes_c')
 
