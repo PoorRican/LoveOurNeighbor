@@ -67,7 +67,7 @@
 
   <body>
 
-  <header>
+  <header style="z-index: 750">
     {% set links =
     [
       (url_for('home'), 'Home'),
@@ -120,7 +120,15 @@
       el = document.querySelectorAll('.tabs');
       M.Tabs.init(el);
 
-  });
+      // Parallax Banner Images
+      el = document.querySelectorAll('.parallax');
+      M.Parallax.init(el);
+
+      // Image Viewer
+      el = document.querySelectorAll('.materialboxed');
+      M.Materialbox.init(el);
+
+    });
 
   </script>
 
