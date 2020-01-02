@@ -1,24 +1,32 @@
-{% macro gallery() %}
+{% macro gallery(images) %}
+  {# This is used to render images returned from `campaign_images` and `ministry_images` #}
+  {# Arguments
+
+  images:
+    Must be a tuple of dict that has both `src` and `obj` values containing URLs as str,
+    and a 'caption' str.
+
+  #}
+
 
   <br>
-  <md-grid-list
-      md-cols="1" md-cols-sm="4" md-cols-md="6" md-cols-gt-md="8"
-      md-row-height="1:1"
-      md-gutter="16px">
+  {% if images %}
+    <div class="row">
+      {% for img in images %}
+        <div class="col s12 l4 gallery-tile">
+          <img src="{{ img.src }}" class="materialboxed" style="width: 100%"
+               data-caption="{{ img.caption }}">
+          <a href="{{ img.obj }}" class="tile-caption">
+            <div>
+              {{ img.caption }}
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>There are no gallery images at this time</p>
+  {% endif %}
 
-    <md-grid-tile ng-repeat="img in gallery"
-        {# TODO: dynamically allocate this #}
-                  md-rowspan="1"
-                  md-colspan="1"
-                  md-rowspan-gt-xs="2"
-                  md-colspan-gt-xs="2">
-
-      <img style="width: 100%; bottom: 0; position: absolute;"
-           ng-src="{% raw %}{{ img.src }}{% endraw %}">
-
-    </md-grid-tile>
-  </md-grid-list>
-
-  <p ng-hide="gallery">There are no gallery images at this time</p>
 
 {% endmacro %}

@@ -7,7 +7,7 @@ function ministryCtrl($scope, $timeout, objectService, likeButtonService, galler
   $scope.gallery = [];
 
   // activate dynamic content
-  activate();
+  // activate();
 
   function activate() {
     const ministry_id = document.getElementById('ministry_id').value;

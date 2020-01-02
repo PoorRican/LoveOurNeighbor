@@ -243,14 +243,27 @@ div.dialog-trigger div i {
     background-color: rgba(200, 200, 200, 0.2);
     border-bottom-right-radius: 5px;
     padding: 4px;
-    color: rgba(200, 200, 200, 0.8);
+  color: rgba(200, 200, 200, 0.8);
 }
 
 div.dialog-trigger img {
-    height: 120px;
-    width: 120px;
-    border-top-right-radius: 7px;
-    border-bottom-left-radius: 7px;
+  height: 120px;
+  width: 120px;
+  border-top-right-radius: 7px;
+  border-bottom-left-radius: 7px;
+}
+
+
+/* Gallery Styles */
+.gallery-tile .tile-caption {
+  position: relative;
+  bottom: 2.4em;
+  height: 2.4em;
+  width: 100%;
+  padding: 8px;
+  display: inline-block;
+  background-color: rgba(0, 0, 0, 0.25);
+  color: white;
 }
 
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:

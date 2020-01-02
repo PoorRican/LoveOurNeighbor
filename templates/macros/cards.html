@@ -195,7 +195,7 @@
   campaigns[0] determines if a campaigns tab should be displayed (eg: there are no campaigns of campaigns)
   campaigns[1] is the actual Campaign object data
 #}
-{% macro card_area(news, campaigns=(False, []), AUTH=None) %}
+{% macro card_area(news, campaigns=(False, []), AUTH=None, images=[]) %}
 
   <div class="row">
     <div class="col s12">
@@ -235,7 +235,7 @@
   {% endif %}
 
   <div id="gallery" class="col s12">
-    {{ gallery() }}
+    {{ gallery(images) }}
   </div><!-- /# gallery -->
 
 {% endmacro %}

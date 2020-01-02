@@ -22,7 +22,7 @@ from .forms import (
 from comment.forms import CommentForm
 from .models import (
     MinistryProfile, DEFAULT_PROFILE_IMG
-    )
+)
 from .utils import (
     # serialization functions
     serialize_ministry,
@@ -32,7 +32,8 @@ from .utils import (
     ministry_banner_dir,
     ministry_profile_image_dir,
     create_ministry_dir,
-    )
+    ministry_images,
+)
 
 
 strptime = datetime.strptime
@@ -319,10 +320,13 @@ def ministry_profile(request, ministry_id):
 
     comments = CommentForm()
 
+    images = ministry_images(ministry)
+
     context = {'ministry': ministry,
                'all_news': all_news,
                'campaigns': _c,
                'form': comments,
+               'images': images,
                }
     return render(request, "view_ministry.html", context)
 
@@ -474,34 +478,7 @@ def ministry_gallery_json(request, ministry_id):
     """
     ministry = MinistryProfile.objects.get(pk=ministry_id)
 
-    gallery = []
-    for i in ministry.news.all():
-        if i.attachment is not None:
-            gallery.append(i)
-    for i in ministry.campaigns.all():
-        if i.banner_img is not None:
-            gallery.append(i)
-        for n in i.news.all():
-            if n.attachment is not None:
-                gallery.append(n)
-    gallery.sort(key=lambda np: np.pub_date, reverse=True)
-
-    _gallery = []
-    try:
-        _gallery.append({'src': ministry.banner_img.url, 'obj': ministry.url})
-    except ValueError:
-        pass
-
-    for i in gallery:
-        try:
-            if hasattr(i, 'attachment'):
-                _gallery.append({'src': i.attachment.url, 'obj': i.url})
-            elif hasattr(i, 'banner_img'):
-                _gallery.append({'src': i.banner_img.url, 'obj': i.url})
-        except ValueError:
-            pass
-
-    return JsonResponse({'gallery': _gallery})
+    return JsonResponse({'gallery': ministry_images(ministry)})
 
 # User Interaction
 @login_required

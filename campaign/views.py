@@ -22,7 +22,11 @@ import json
 
 from .models import Campaign
 from .forms import CampaignEditForm
-from .utils import create_campaign_dir, serialize_campaign, campaign_banner_dir
+from .utils import (
+    create_campaign_dir, serialize_campaign, campaign_banner_dir,
+    campaign_images,
+)
+
 
 # Create your views here.
 @login_required
@@ -224,26 +228,9 @@ def campaign_gallery_json(request, campaign_id):
     """
     campaign = Campaign.objects.get(pk=campaign_id)
 
-    gallery = []
-    for i in campaign.news.all():
-        if i.attachment is not None:
-            gallery.append(i)
-    gallery.sort(key=lambda np: np.pub_date, reverse=True)
+    gallery = campaign_images(campaign)
 
-    _gallery = []
-    try:
-        _gallery.append({'src': campaign.banner_img.url, 'obj': campaign.url})
-    except ValueError:
-        pass
-
-    for i in gallery:
-        try:
-            if hasattr(i, 'attachment'):
-                _gallery.append({'src': i.attachment.url, 'obj': i.url})
-        except ValueError:
-            pass
-
-    return JsonResponse({'gallery': _gallery})
+    return JsonResponse({'gallery': gallery})
 
 
 @login_required

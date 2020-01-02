@@ -80,3 +80,44 @@ def create_campaign_dir(instance, prepend=settings.MEDIA_ROOT):
             pass
         except FileNotFoundError:
             dedicated_ministry_dir(instance.ministry, prepend=prepend)
+
+
+def campaign_images(campaign):
+    """
+    Aggregates all media images related to the given Campaign object.
+
+    This is used for rendering a gallery section.
+
+    Parameters
+    ----------
+    campaign:
+        Must be a Campaign object to scrape images from
+
+    Returns
+    -------
+    tuple of dict:
+        Each dict contains URL to image as 'src',
+        a URL to the object from which it was retrieved from as 'obj',
+        and a caption string as 'caption'.
+
+    """
+    gallery = []
+    for i in campaign.news.all():
+        if i.attachment is not None:
+            gallery.append(i)
+    gallery.sort(key=lambda np: np.pub_date, reverse=True)
+
+    _gallery = []
+    try:
+        _gallery.append({'src': campaign.banner_img.url, 'obj': campaign.url,
+                         'caption': campaign.title})
+    except ValueError:
+        pass
+
+    for i in gallery:
+        try:
+            if hasattr(i, 'attachment'):
+                _gallery.append({'src': i.attachment.url, 'obj': i.url,
+                                 'caption': i.title})
+        except ValueError:
+            pass

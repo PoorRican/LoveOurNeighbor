@@ -138,3 +138,55 @@ def create_ministry_dir(instance, prepend=settings.MEDIA_ROOT):
     for _ in (ministry_banner_dir, ministry_profile_image_dir):
         _path = path.split(_(instance, filename="", prepend=prepend))[0]
         makedirs(_path, exist_ok=True)
+
+
+def ministry_images(ministry):
+    """
+    Aggregates all media images related to the given MinistryProfile object.
+
+    This is used for rendering a gallery section.
+
+    Parameters
+    ----------
+    ministry:
+        Must be a MinistryProfile object to scrape images from
+
+    Returns
+    -------
+    tuple of dict:
+        Each dict contains URL to image as 'src',
+        a URL to the object from which it was retrieved from as 'obj',
+        and a caption string as 'caption'.
+
+    """
+    gallery = []
+    for i in ministry.news.all():
+        if i.attachment is not None:
+            gallery.append(i)
+    for i in ministry.campaigns.all():
+        if i.banner_img is not None:
+            gallery.append(i)
+        for n in i.news.all():
+            if n.attachment is not None:
+                gallery.append(n)
+    gallery.sort(key=lambda np: np.pub_date, reverse=True)
+
+    _gallery = []
+    try:
+        _gallery.append({'src': ministry.banner_img.url, 'obj': ministry.url,
+                         'caption': ministry.name})
+    except ValueError:
+        pass
+
+    for i in gallery:
+        try:
+            if hasattr(i, 'attachment'):
+                _gallery.append({'src': i.attachment.url, 'obj': i.url,
+                                 'caption': i.title})
+            elif hasattr(i, 'banner_img'):
+                _gallery.append({'src': i.banner_img.url, 'obj': i.url,
+                                 'caption': i.title})
+        except ValueError:
+            pass
+
+    return _gallery

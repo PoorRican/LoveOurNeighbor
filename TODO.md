@@ -1,14 +1,8 @@
 ## Bugs
-- GeoIP does not work
-- Tag search functionality
-- create_campaign_dir not defined when posting news
 - Default value of "None" in 'ministry:edit_ministry'
-- Duplicate how_to_reg icon in user_widget
-- Parallax Image for Campaign View
 
 
 ## Internal Fixes
-- Make content in WYSIWYG editor required (via JS)
 - Make TinyMCE script to template pages that need it. TinyMCE should not be fetched in 'layout.html'
 - Implement Fuzzy matching for search function (case-insensitive search)
 - Profile Image Functionality:
@@ -21,7 +15,8 @@
 - Display users likes
 - Title header in cards should provide a link to object. Dropdown icon should not be visible if not logged in.
 - Dropdown anchor element item 'Link to ...' should be 'View ...'
-- User should be able to upload profile/banner images during MinistryProfile/Campaign creation
+- User Widget should provide a link to view ministries
+- Edit ministry/campaign page should provide a link to view object
 
 
 # Medium Priority 
@@ -86,6 +81,9 @@ Things to do before Users will be using the site:
     * Email Verification
     * Notification/Update Email
 - Show start and end dates on campaign card
+- Date Founded / Staff input-container misalignment in MinistryProfile edit page
+- Clickable area should not be so big in profile/banner image selection dialog triggers
+- 'how_to_reg'/ministry name location in user_widget when 'logged in as'
 - MinistryProfile should display profile images on MinistryProfile page
 - Progress Bar
 - Unify header styling between materialize and angular material
@@ -122,6 +120,7 @@ Things to do before Users will be using the site:
 - Map displaying ministry location (via 'explore' tab)
 - User to User messaging
 - Social Media logging
+- Search functionality should have tags as a search filter
 
 ## Deployment Changes
 - nginx container should be built via staged loading to acquire certs and avoid nginx config hacks
