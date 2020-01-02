@@ -17,6 +17,7 @@
 - Dropdown anchor element item 'Link to ...' should be 'View ...'
 - User Widget should provide a link to view ministries
 - Edit ministry/campaign page should provide a link to view object
+- Rename 'Edit' ministry/campaign pages to 'Admin Panel'
 
 
 # Medium Priority 

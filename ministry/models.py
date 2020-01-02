@@ -73,6 +73,14 @@ class MinistryProfile(models.Model):
         return amt
 
     @property
+    def donations(self):
+        _donations = []
+        for c in self.campaigns.all():
+            for d in c.donations.all():
+                _donations.append(d)
+        return _donations
+
+    @property
     def location(self):
         if self.address:
             gl, _ = GeoLocation.objects.get_or_create(ministry=self)

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import ProtectedError
 from django.http import (
     HttpResponse, HttpResponseRedirect, JsonResponse
-    )
+)
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -11,15 +11,16 @@ import json
 import os
 from datetime import datetime
 
+from comment.forms import CommentForm
+from donation.utils import serialize_donation
 from frontend.settings import MEDIA_ROOT, MEDIA_URL
 from people.models import User
-from tag.models import Tag
 from news.models import NewsPost
+from tag.models import Tag
 
 from .forms import (
     MinistryEditForm,
 )
-from comment.forms import CommentForm
 from .models import (
     MinistryProfile, DEFAULT_PROFILE_IMG
 )
@@ -195,8 +196,20 @@ def edit_ministry(request, ministry_id):
                     print("error")
             else:
                 _form = MinistryEditForm(instance=ministry)
+
+                donations = {}
+                count = 0
+                for donation in ministry.donations:
+                    try:
+                        donations[count] = serialize_donation(donation)
+                        count += 1
+                    except ValueError:
+                        # this might happen when Donation object does not have a payment
+                        pass
+
                 context = {"form": _form,
                            "ministry": ministry,
+                           "donations": donations,
                            "start": False}
                 return render(request, "edit_ministry.html", context)
         else:
