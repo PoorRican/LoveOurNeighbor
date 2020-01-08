@@ -24,7 +24,7 @@ def serialize_donation(donation):
         min_url = '#'
         min_title = 'Love Our Neighbor'
     return {'id': donation.id,
-            'name': donation.user.display_name,
+            'name': donation.payment.name,
             'url': donation.url,
             'amount': donation.amount,
             'confirmation': donation.payment.confirmation,

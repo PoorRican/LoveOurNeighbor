@@ -40,7 +40,8 @@ if __name__ == "__main__":
     cam_title = 'test campaign'
     try:
         campaign = Campaign.objects.create(title=cam_title,
-                                           end_date=date(1001, 1, 1),
+                                           start_date=date(1001, 1, 1),
+                                           end_date=date(1001, 1, 2),
                                            ministry=ministry,
                                            goal=12345)
     except IntegrityError:
@@ -52,15 +53,9 @@ if __name__ == "__main__":
     for _ in range(1, 51):
         donation = Donation.objects.create(campaign=campaign, user=user)
         c = ccPayment.objects.create(donation=donation,
-                                     first_name='First', last_name='Last',
-                                     address='7531 aoeu ave',
-                                     city='bangalore',
-                                     state='NJ',
-                                     country='Iceland',
-                                     card_number=12345656789,
-                                     ccv2=333,
-                                     expiration_date="01/55",
-                                     zipcode=7531,
+                                     card_number=7531,
+                                     name='First Last',
+                                     tx_id=7531902648,
                                      amount=_)
         c.confirm()
         donation.save()

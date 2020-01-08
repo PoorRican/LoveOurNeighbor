@@ -9,6 +9,7 @@
 {% from "macros/parts/rep_request_selection.html" import rep_selection, rep_selection_script %}
 {% from "macros/parts/banner_image_dialog.html" import banner_image_dialog %}
 {% from "macros/parts/profile_image_dialog.html" import profile_image_dialog %}
+{% from "macros/parts/transaction_table.html" import transaction_table %}
 
 {% import "macros/cards.html" as card %}
 {# TODO: total donated amount #}
@@ -67,10 +68,10 @@
           &nbsp;Campaigns
         </span>
         </a></li>
-        <li class="tab col s3"><a href="#transactions"><i class="material-icons">poll</i>
+        <li class="tab col s3"><a href="#donations"><i class="material-icons">poll</i>
           <span class="hide-on-small-only">
-          &nbsp;Transactions
-        </span>
+            Donations
+          </span>
         </a></li>
       </ul>
     </div><!-- /#tab_bar -->
@@ -81,7 +82,7 @@
           <h4 class="hide-on-med-and-up">Details</h4>
           <br>
 
-        <div class="col s12">
+          <div class="col s12">
           <div class="row">
             <br>
             {% if not start %}
@@ -239,102 +240,102 @@
         </div>
       </div><!-- /#form_buttons -->
 
-      {# }}} #}
-    </div>
-    <div id="administration" class="col s12">
-
-      <h4 class="hide-on-med-and-up">Administration</h4>
-      <br>
-
-      {% if start %}
-        <p>Finish creating your ministry before starting to administer other users.</p>
-      {% elif not start %}
-
-        {# {{{ INPUT representative selection #}
-        <md-content layout="column" class="md-padding autocomplete rep_requests">
-          <input type="hidden" name="{{ form.reps.name }}" value="{% raw %}{{ object.reps }}{% endraw %}">
-          <label>
-            <md-icon><i class="material-icons">group_add</i></md-icon>
-            {{ form.reps.label }}:
-          </label>
-          <md-contact-chips ng-model="object.reps"
-                            md-contacts="filter_users($query)"
-                            md-require-match="true"
-                            md-contact-name="name"
-                            md-contact-image="img"
-                            md-contact-email="email"
-                            placeholder="Select by name or email"
-                            secondary-placeholder="Add another representative">
-          </md-contact-chips>
-          {# TODO: button to clear all pending requests #}
-          <md-list class="available_contacts">
-            <md-subheader>
-              Representative Requests
-            </md-subheader>
-            {% if len(ministry.requests.all()) %}
-              <md-list-item class="md-2-line contact-item" ng-repeat="(index, contact) in object.requests">
-                {% raw %}
-                <img class="md-avatar" ng-src="{{ contact.img }}">
-                <div class="md-list-item-text compact">
-                  <h3>{{ contact.name }}</h3>
-                  <p>{{ contact.email }}</p>
-                </div>
-                {% endraw %}
-              </md-list-item>
-            {% else %}
-              <md-list-item class="md-1-line">
-                <h3>There are no requests to show</h3>
-              </md-list-item>
-            {% endif %}
-          </md-list>
-        </md-content>
         {# }}} #}
+      </div><!-- /#details -->
+      <div id="administration" class="col s12">
 
-      {% endif %}
+        <h4 class="hide-on-med-and-up">Administration</h4>
+        <br>
 
-      {# {{{ Form Buttons #}
-      <div id="form_buttons">
-        <a class="col l3 s12 btn" type="submit">
-          <i class="material-icons">save</i>
-          Save
-        </a>
+        {% if start %}
+          <p>Finish creating your ministry before starting to administer other users.</p>
+        {% elif not start %}
 
-        {% if not start and ministry %}
-          {{ confirm_delete('ministry', ministry.id) }}
+          {# {{{ INPUT representative selection #}
+          <md-content layout="column" class="md-padding autocomplete rep_requests">
+            <input type="hidden" name="{{ form.reps.name }}" value="{% raw %}{{ object.reps }}{% endraw %}">
+            <label>
+              <md-icon><i class="material-icons">group_add</i></md-icon>
+              {{ form.reps.label }}:
+            </label>
+            <md-contact-chips ng-model="object.reps"
+                              md-contacts="filter_users($query)"
+                              md-require-match="true"
+                              md-contact-name="name"
+                              md-contact-image="img"
+                              md-contact-email="email"
+                              placeholder="Select by name or email"
+                              secondary-placeholder="Add another representative">
+            </md-contact-chips>
+            {# TODO: button to clear all pending requests #}
+            <md-list class="available_contacts">
+              <md-subheader>
+                Representative Requests
+              </md-subheader>
+              {% if len(ministry.requests.all()) %}
+                <md-list-item class="md-2-line contact-item" ng-repeat="(index, contact) in object.requests">
+                  {% raw %}
+                  <img class="md-avatar" ng-src="{{ contact.img }}">
+                  <div class="md-list-item-text compact">
+                    <h3>{{ contact.name }}</h3>
+                    <p>{{ contact.email }}</p>
+                  </div>
+                  {% endraw %}
+                </md-list-item>
+              {% else %}
+                <md-list-item class="md-1-line">
+                  <h3>There are no requests to show</h3>
+                </md-list-item>
+              {% endif %}
+            </md-list>
+          </md-content>
+          {# }}} #}
+
         {% endif %}
-      </div><!-- /#form_buttons -->
 
-      {# }}} #}
-    </div>
-    <div id="campaigns" class="col s12">
+        {# {{{ Form Buttons #}
+        <div id="form_buttons">
+          <a class="col l3 s12 btn" type="submit">
+            <i class="material-icons">save</i>
+            Save
+          </a>
 
-      <h4 class="hide-on-med-and-up">Campaigns</h4>
-      <br>
+          {% if not start and ministry %}
+            {{ confirm_delete('ministry', ministry.id) }}
+          {% endif %}
+        </div><!-- /#form_buttons -->
 
-      {% if start %}
-        <p>Finish creating your ministry before starting a campaign.</p>
-      {% elif not start %}
-        {# TODO: differentiate between current and previous fundraisers #}
-        <a class="btn purple lighten-2"
-           href="{{ url_for('campaign:create_campaign', kwargs={'ministry_id': ministry.id}) }}"
-           style="margin-bottom: 12px">
-          <i class="material-icons">add</i>
-          New Campaign
-        </a>
+        {# }}} #}
+      </div><!-- /#administration -->
+      <div id="campaigns" class="col s12">
 
-        <div class="row">
-          {% for campaign in ministry.campaigns.all() %}
-            {{ card.campaign_card(campaign, AUTH=True) }}
-          {% else %}
-            <p>You have no fundraising campaigns at this time.</p>
-          {% endfor %}
-        </div>
+        <h4 class="hide-on-med-and-up">Campaigns</h4>
+        <br>
 
-      {% endif %}
-    </div>
-      <div id="transactions" class="col s12">
+        {% if start %}
+          <p>Finish creating your ministry before starting a campaign.</p>
+        {% elif not start %}
+          {# TODO: differentiate between current and previous fundraisers #}
+          <a class="btn purple lighten-2"
+             href="{{ url_for('campaign:create_campaign', kwargs={'ministry_id': ministry.id}) }}"
+             style="margin-bottom: 12px">
+            <i class="material-icons">add</i>
+            New Campaign
+          </a>
 
-        <h4 class="hide-on-med-and-up">Transactions</h4>
+          <div class="row">
+            {% for campaign in ministry.campaigns.all() %}
+              {{ card.campaign_card(campaign, AUTH=True) }}
+            {% else %}
+              <p>You have no fundraising campaigns at this time.</p>
+            {% endfor %}
+          </div>
+
+        {% endif %}
+      </div><!-- /#campaigns -->
+      <div id="donations" class="col s12">
+
+        <h4 class="hide-on-med-and-up">Donations</h4>
         <br>
 
         {# TODO: total donated #}
@@ -345,42 +346,9 @@
         {# TODO: 3-month total #}
         {# TODO: export as CSV #}
 
-        <table>
-          <tr class="header">
-            <td>#</td>
-            <td>Donor</td>
-            <td>Payment Date</td>
-            <td>Amount</td>
-            <td>Campaign</td>
-          </tr>
-          {% for num, tx in donations.items() %}
-            <tr>
-              <td class="grey-text darken-2">{{ num }}</td>
-              <td>
-                {# TODO: show a custom page for showing total donations from User #}
-                {{ tx.name }}
-              </td>
-              <td>
-                <a href="{{ tx.url }}">{{ tx.payment_date.strftime('%m/%d/%Y') }}</a>
-              </td>
-              <td>{{ tx.amount }}</td>
-              <td>
-                {% if tx.campaign.url == '#' %}
-                  {# 'Administration Donation' #}
-                  {{ tx.campaign.title }}
-                {% else %}
-                  <a href="{{ tx.campaign.url }}">{{ tx.campaign.title }}</a>
-                {% endif %}
-              </td>
-            </tr>
-          {% endfor %}
-        </table>
-        {% if not donations %}
-          <p class="grey-text darken-2" style="margin-left: 4em">This ministry does not have any transactions yet.</p>
+        {{ transaction_table(donations, show_campaign=True) }}
 
-        {% endif %}
-
-      </div>
+      </div><!-- /#donations -->
     </div>
     </form>
 

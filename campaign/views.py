@@ -96,8 +96,20 @@ def edit_campaign(request, campaign_id):
                                    kwargs={'campaign_id': campaign_id})
             else:
                 _form = CampaignEditForm(instance=campaign)
+
+                donations = {}
+                count = 0
+                for donation in campaign.donations.all():
+                    try:
+                        donations[count] = serialize_donation(donation)
+                        count += 1
+                    except ValueError:
+                        # this might happen when Donation object does not have a payment
+                        pass
+
                 context = {"form": _form,
                            "campaign": campaign,
+                           "donations": donations,
                            "start": False}
                 return render(request, "edit_campaign.html", context)
         else:

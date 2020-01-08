@@ -199,7 +199,7 @@ class ccPayment(Payment):
                                     null=True, blank=True,
                                     on_delete=models.CASCADE)
 
-    card_number = models.PositiveSmallIntegerField()
+    card_number = models.PositiveSmallIntegerField()  # last 4-digits of the card number
     name = models.CharField(max_length=32)
     zipcode = models.CharField(max_length=10)  # alphanum to accommodate international transactions
 

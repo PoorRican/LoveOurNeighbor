@@ -8,6 +8,7 @@
 {% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
 {% from "macros/parts/get_obj_json.html" import get_obj_json %}
 {% from "macros/parts/banner_image_dialog.html" import banner_image_dialog %}
+{% from "macros/parts/transaction_table.html" import transaction_table %}
 
 {% import "macros/cards.html" as card %}
 
@@ -50,6 +51,7 @@
         <ul class="tabs">
           <li class="tab col s3"><a href="#details"><i class="material-icons">info</i>&nbsp;Details</a></li>
           <li class="tab col s3"><a href="#news"><i class="material-icons">trending_up</i>&nbsp;News</a></li>
+          <li class="tab col s3"><a href="#donations"><i class="material-icons">poll</i>&nbsp;Donations</a></li>
         </ul>
       </div><!-- /#tab_bar -->
 
@@ -174,7 +176,22 @@
           {% endfor %}
         {% endif %}
       </div>
+      <div id="donations" class="col s12">
 
+        <h4 class="hide-on-med-and-up">Donations</h4>
+        <br>
+
+        {# TODO: total donated #}
+        {# TODO: average per campaign #}
+        {# TODO: average per week #}
+        {# TODO: average per month #}
+        {# TODO: YTD #}
+        {# TODO: 3-month total #}
+        {# TODO: export as CSV #}
+
+        {{ transaction_table(donations, show_campaign=True) }}
+
+      </div><!-- /#donations -->
     </div>
     </form>
 

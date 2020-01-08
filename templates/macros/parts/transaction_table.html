@@ -1,0 +1,36 @@
+{% macro transaction_table(donations, show_campaign=False) %}
+  <table>
+    <tr class="header">
+      <td>#</td>
+      {% if show_campaign %}
+        <td>Campaign</td>{% endif %}
+      <td>Payment Date</td>
+      <td>Amount</td>
+      <td class="hide-on-med-and-down">Donor</td>
+      <td class="hide-on-med-and-down">Confirmation</td>
+    </tr>
+    {% for num, tx in donations.items() %}
+      <tr>
+        <td class="grey-text darken-2">{{ num }}</td>
+        {% if show_campaign %}
+          <td>
+            <a href="{{ tx.campaign.url }}">{{ tx.campaign.title }}</a>
+          </td>
+        {% endif %}
+        <td>
+          <a href="{{ tx.url }}">{{ tx.payment_date.strftime('%m/%d/%Y') }}</a>
+        </td>
+        <td>{{ tx.amount }}</td>
+        <td class="hide-on-med-and-down">
+          {# TODO: show a custom page for showing total donations from User #}
+          {{ tx.name }}
+        </td>
+        <td class="hide-on-med-and-down">{{ tx.confirmation }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% if not donations %}
+    <p class="grey-text darken-2" style="margin-left: 4em">There are no donations to display just yet.</p>
+
+  {% endif %}
+{% endmacro %}

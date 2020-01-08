@@ -1,5 +1,5 @@
 ## Bugs
-- Default value of "None" in 'ministry:edit_ministry'
+- Default value of "None" for address in 'ministry:edit_ministry'
 
 
 ## Internal Fixes
@@ -10,7 +10,7 @@
     * Dynamically show selected/uploaded image
     * Dynamic sizing of grid in image selection dialog
     * Better image uploading
-- Remove 'login_in_as' functionality. Add settings flag to enable/disable this feature
+- Remove 'login_in_as' functionality. Add settings flag to enable/disable this feature.
 - Display of Users Email
 - Display users likes
 - Title header in cards should provide a link to object. Dropdown icon should not be visible if not logged in.
@@ -18,6 +18,11 @@
 - User Widget should provide a link to view ministries
 - Edit ministry/campaign page should provide a link to view object
 - Rename 'Edit' ministry/campaign pages to 'Admin Panel'
+- In campaign admin panel, start and end dates should be validated
+- Clean up utils/ dir. Create a module with utility functions accessible via a CLI or args.
+- Admin Interface:
+    * Fix login functionality
+    * Add donations/payments
 
 
 # Medium Priority 
@@ -35,6 +40,11 @@ Things to do before ministries will be using the site:
 - Add Google Forms as feedback
 - News Tabs in Profile Edit Page
 - Unverified Ministries should not be able to create Campaigns
+- Campaign start and end dates should disable donation button functionality
+- Campaigns should be highlighted on the homepage:
+    * New campaigns
+    * Campaigns almost completed
+    * Campaigns that are close to their goal
 
 
 ## Hard Release Features
@@ -47,9 +57,9 @@ Things to do before Users will be using the site:
     * Random Featured Ministry
 - Implement Ministry Verification:
 - User Attributes:
-    Part of the screening process:
-        * "What Church Do You Attend?":
-        * Testimony
+    * Part of the screening process:
+        - "What Church Do You Attend?":
+        - Testimony
 - Notifications:
     * Email users:
         - Update on the Ministries they like
@@ -72,6 +82,7 @@ Things to do before Users will be using the site:
         - logout should work
         - admin link should be visible for superusers who are logged in
 - Unlike Functionality
+- News posts should be able to handle multiple attachments
     
     
     
@@ -96,6 +107,7 @@ Things to do before Users will be using the site:
     * Dynamically resize tile dimensions
     * 'Cancel' should undo change
     * 'Done' should upload
+    * Banner image trigger should reflect the wide dimensions as it is displayed on view page
 
 ## Implementation Changes
 - Create custom asset handler:

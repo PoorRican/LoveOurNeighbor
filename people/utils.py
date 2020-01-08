@@ -11,7 +11,10 @@ def user_profile_img_dir(instance, filename):
 
 
 def verification_required():
-    return not settings.REQUIRE_USER_VERIFICATION
+    try:
+        return not settings.REQUIRE_USER_VERIFICATION
+    except AttributeError:
+        return False
 
 
 def create_profile_img_dir(instance, prepend=settings.MEDIA_ROOT):
