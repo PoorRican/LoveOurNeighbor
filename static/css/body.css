@@ -266,5 +266,38 @@ div.dialog-trigger img {
   color: white;
 }
 
+
+/* Campaign Goal Gauge styling */
+.campaign-goal {
+  position: relative;
+  align-content: center;
+  width: 300px;
+}
+
+.goal-values {
+  position: absolute;
+  top: 80px;
+  display: inline;
+  align-content: center;
+  width: 100%;
+  font-size: small;
+  font-weight: lighter;
+}
+
+.goal-values span {
+  display: block;
+  left: 0;
+  right: 0;
+  text-align: center;
+  align-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.goal-values span:first-child {
+  max-width: 6em;
+  border-bottom: black solid 1px;
+}
+
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */

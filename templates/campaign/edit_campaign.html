@@ -102,7 +102,7 @@
             <label for="end_date">{{ form.end_date.label }}</label>
           </div>
           {# }}} #}
-            {# }}} #}
+          {# }}} #}
         </div>
 
         {# {{{ INPUT content (WYSIWYG editor) #}
@@ -181,6 +181,41 @@
         <h4 class="hide-on-med-and-up">Donations</h4>
         <br>
 
+        <div id="statistics" class="row">
+          <div class="col s12 l3">
+            <div class="campaign-goal">
+              <div style="width: 100%">
+                Total Goal:
+              </div>
+              <div class="goal-values">
+                <span>
+                  ${{ goals.total.current }}
+                </span>
+                <span>
+                  ${{ goals.total.max }}
+                </span>
+              </div><!-- /.goal-values -->
+              <canvas id="total_goal" width="300" height="150"></canvas>
+            </div>
+          </div><!-- /total_goal -->
+          <div class="col s12 l3">
+            <div class="campaign-goal">
+              <div style="width: 100%;">
+                Monthly Goal
+              </div>
+              <div class="goal-values">
+                <span>
+                  ${{ goals.monthly.current }}
+                </span>
+                <span>
+                  ${{ goals.monthly.max }}
+                </span>
+              </div><!-- /.goal-values -->
+              <canvas id="monthly_goal"></canvas>
+            </div><!-- /.campaign-goal -->
+          </div><!-- /monthly_goal -->
+        </div><!-- /#statistics -->
+
         {# TODO: total donated #}
         {# TODO: average per campaign #}
         {# TODO: average per week #}
@@ -218,6 +253,39 @@
   {% for f in page_assets %}
     <script src="{{ static('app/%s' % f) }}"></script>
   {% endfor %}
+
+  <script src="{{ static('js/gauge.min.js') }}"></script>
+  <script>
+    let opts = {
+      angle: 0.35,
+      lineWidth: 0.1,
+      radiusScale: 0.92,
+      limitMax: false,
+      limitMin: true,
+      highDpiSupport: true,
+      colorStart: '#8B0053',
+      colorStop: '#89d77c',
+      strokeColor: '#EEEEEE',
+      generateGradient: true,
+      fontSize: 20,
+    };
+
+    // total goal
+    let target = document.getElementById('total_goal');
+    let gauge = new Donut(target).setOptions(opts);
+    gauge.maxValue = {{ goals.total.max }};
+    gauge.setMinValue(0);
+    gauge.animationSpeed = 32;
+    gauge.set({{ goals.total.current }});
+
+    // monthly goal
+    target = document.getElementById('monthly_goal');
+    gauge = new Donut(target).setOptions(opts);
+    gauge.maxValue = {{ goals.monthly.max }};
+    gauge.setMinValue(0);
+    gauge.animationSpeed = 32;
+    gauge.set({{ goals.monthly.current }});
+  </script>
 
 {% endblock %}
 

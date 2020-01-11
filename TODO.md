@@ -23,6 +23,7 @@
 - Admin Interface:
     * Fix login functionality
     * Add donations/payments
+- Separate create/edit pages for MinistryProfile/Campaign/NewsPost
 
 
 # Medium Priority 

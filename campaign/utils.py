@@ -1,3 +1,4 @@
+from datetime import date, datetime, timedelta
 from os import path, makedirs
 
 from ministry.utils import serialize_ministry, dedicated_ministry_dir
@@ -121,3 +122,58 @@ def campaign_images(campaign):
                                  'caption': i.title})
         except ValueError:
             pass
+
+
+def campaign_goals(campaign):
+    """
+    Returns a dict of estimated campaign goals.
+
+    This is used to render UI elements in the Campaign admin page.
+
+    TODO
+    ----
+    Implement customizable goals
+
+    Parameters
+    ----------
+    campaign
+        object to use
+
+    Returns
+    -------
+    dict:
+        containing 'monthly' and 'total' keys whose values are a dict containing 'max' and 'current' values.
+
+    """
+    from donation.models import ccPayment  # avoid circular import
+
+    goals = {'total': {'max': int(campaign.goal), 'current': int(campaign.donated)}}
+
+    # monthly goal
+    month_start = date(date.today().year, date.today().month, 1)
+    if month_start < campaign.start_date:
+        # campaign did not start last month
+        month_start = campaign.start_date
+    month_start = datetime(month_start.year, month_start.month, month_start.day)
+
+    month_end = date(date.today().year, date.today().month + 1, 1) - timedelta(days=1)
+    if month_end > campaign.end_date:
+        month_end = campaign.end_date
+    month_end = datetime(month_end.year, month_end.month, month_end.day)
+
+    # ratio of month to campaign duration
+    try:
+        goal = (month_end - month_start) / (campaign.end_date - campaign.start_date)
+    except ZeroDivisionError:
+        goal = 1
+    goal = goal * campaign.goal
+
+    _donations = ccPayment.objects.filter(donation__campaign=campaign)
+    _donations = _donations.filter(payment_date__lte=month_end).filter(payment_date__gte=month_start)
+    donated = 0
+    for donation in _donations:
+        donated += donation.amount
+
+    goals['monthly'] = {'max': int(goal), 'current': int(donated)}
+
+    return goals

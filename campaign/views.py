@@ -25,6 +25,7 @@ from .forms import CampaignEditForm
 from .utils import (
     create_campaign_dir, serialize_campaign, campaign_banner_dir,
     campaign_images,
+    campaign_goals
 )
 
 
@@ -68,10 +69,10 @@ def create_campaign(request, ministry_id):
 
 @login_required
 def edit_campaign(request, campaign_id):
+    _url = ''
     try:
         campaign = Campaign.objects.get(id=campaign_id)
         # TODO: set up permissions
-        _url = ''
         if request.user == campaign.ministry.admin or \
                 request.user in campaign.ministry.reps.all():
             if request.method == 'POST':
@@ -97,6 +98,7 @@ def edit_campaign(request, campaign_id):
             else:
                 _form = CampaignEditForm(instance=campaign)
 
+                # transaction table
                 donations = {}
                 count = 0
                 for donation in campaign.donations.all():
@@ -110,12 +112,10 @@ def edit_campaign(request, campaign_id):
                 context = {"form": _form,
                            "campaign": campaign,
                            "donations": donations,
+                           "goals": campaign_goals(campaign),
                            "start": False}
                 return render(request, "edit_campaign.html", context)
         else:
-            # this creates a recursive redirect...
-            #   i'm not against this being a deterrant
-
             _w = 'You do not have permission to edit this ministry.'
             messages.add_message(request, messages.WARNING, _w)
 

@@ -62,7 +62,7 @@ class Donation(models.Model):
             If optimization is needed, this method should be converted
             to an database column.
     """
-    campaign = models.ForeignKey(Campaign, related_name="donations",
+    campaign = models.ForeignKey('campaign.Campaign', related_name="donations",
                                  null=True, blank=True,
                                  on_delete=models.PROTECT)
     user = models.ForeignKey(User, related_name="donations",
@@ -169,6 +169,7 @@ class Payment(models.Model):
             or whatever bitcoin portal is used.
     """
     payment_date = models.DateTimeField(default=datetime.now, editable=False)
+
     # this stores any confirmation data
     confirmation = models.CharField(max_length=42)
 
