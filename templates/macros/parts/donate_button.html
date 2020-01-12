@@ -1,65 +1,97 @@
 {% macro _donate_button(campaign=None) %}
 
-  <div id="cpe954ae52ee" style="margin: 10px 0" class="rounded-div"
-       onclick="document.getElementById('pay_now_form_732afe767a').submit()">
-    <form action="https://checkout.globalgatewaye4.firstdata.com/pay" id="pay_now_form_732afe767a" method="post">
-      <input type="hidden" name="x_login" value="WSP-LOVE-04knVADHKA"/>
-      <input type="hidden" name="x_show_form" value="PAYMENT_FORM"/>
-      <input type="hidden" name="x_fp_sequence" value="15740451241226638529"/>
-      <input type="hidden" name="x_fp_hash" value="PNB-1.0-02f305602ea3c8235b7fef98a31ee6f490cfc758"/>
-      <input type="hidden" name="x_amount"/>
-      <input type="hidden" name="x_currency_code" value="USD"/>
-      <input type="hidden" name="x_test_request" value="FALSE"/>
-      <input type="hidden" name="x_relay_response" value=""/>
-      <input type="hidden" name="donation_prompt" value="Please enter the amount you wish to donate"/>
-      {% if campaign %}
-        {% set button_code = campaign.name %}
-      {% else %}
-        {% set button_code = "Admin Donation" %}
+  {% if campaign == None or (today() <= campaign.end_date and today() >= campaign.start_date) %}
+    <div id="cpe954ae52ee" style="margin: 10px 0" class="rounded-div"
+         onclick="document.getElementById('pay_now_form_732afe767a').submit()">
+      <form action="https://checkout.globalgatewaye4.firstdata.com/pay" id="pay_now_form_732afe767a" method="post">
+        <input type="hidden" name="x_login" value="WSP-LOVE-04knVADHKA"/>
+        <input type="hidden" name="x_show_form" value="PAYMENT_FORM"/>
+        <input type="hidden" name="x_fp_sequence" value="15740451241226638529"/>
+        <input type="hidden" name="x_fp_hash" value="PNB-1.0-02f305602ea3c8235b7fef98a31ee6f490cfc758"/>
+        <input type="hidden" name="x_amount"/>
+        <input type="hidden" name="x_currency_code" value="USD"/>
+        <input type="hidden" name="x_test_request" value="FALSE"/>
+        <input type="hidden" name="x_relay_response" value=""/>
+        <input type="hidden" name="donation_prompt" value="Please enter the amount you wish to donate"/>
+        {% if campaign %}
+          {% set button_code = campaign.name %}
+        {% else %}
+          {% set button_code = "Admin Donation" %}
+        {% endif %}
+        <input type="hidden" name="button_code" value="{{ button_code }}"/>
+        <input type="hidden" name="x_invoice_num" value="{{ generate_confirmation_id() }}"/>
+        <div class="cpwrap">
+          <button class="btn orange lighten-1 waves-effect waves-light s12" type="button">
+            <i class="material-icons">redeem</i>
+            Donate Now
+          </button>
+        </div>
+      </form>
+    </div>
+
+  {% else %}
+    <span class="gray-text darken-2">
+      {% if today() < campaign.start_date %}
+        This campaign has not started yet!
+      {% elif today() > campaign.end_date %}
+        This campaign has been archived.
       {% endif %}
-      <input type="hidden" name="button_code" value="{{ button_code }}"/>
-      <input type="hidden" name="x_invoice_num" value="{{ generate_confirmation_id() }}"/>
-      <div class="cpwrap">
-        <button class="btn orange lighten-1 waves-effect waves-light s12" type="button">
-          <i class="material-icons">redeem</i>
-          Donate Now
-        </button>
-      </div>
-    </form>
-  </div>
+    </span>
+    <button class="btn disabled">
+      <i class="material-icons">redeem</i>
+      Donate
+    </button>
+
+  {% endif %}
 
 {% endmacro %}
 
 
 {% macro test_donate_button(campaign=None) %}
 
-  <div id="cp27f3441881" style="margin: 10px 0" class="rounded-div"
-       onclick="document.getElementById('pay_now_form_8eaed9ff31').submit()">
-    <form action="https://demo.globalgatewaye4.firstdata.com/pay" id="pay_now_form_8eaed9ff31" method="post">
-      <input type="hidden" name="x_login" value="HCO-LOVE-234"/>
-      <input type="hidden" name="x_show_form" value="PAYMENT_FORM"/>
-      <input type="hidden" name="x_fp_sequence" value="1574052051602732387"/>
-      <input type="hidden" name="x_fp_hash" value="PNB-1.0-bb25d9364759b0ea91da059cb914e18e7363fdfc"/>
-      <input type="hidden" name="x_amount"/>
-      <input type="hidden" name="x_currency_code" value="USD"/>
-      <input type="hidden" name="x_test_request" value="TRUE"/>
-      <input type="hidden" name="x_relay_response" value=""/>
-      <input type="hidden" name="donation_prompt"/>
-      {% if campaign %}
-        {% set button_code = campaign.title %}
-      {% else %}
-        {% set button_code = "Admin Donation" %}
+  {% if campaign == None or (today() <= campaign.end_date and today() >= campaign.start_date) %}
+    <div id="cp27f3441881" style="margin: 10px 0" class="rounded-div"
+         onclick="document.getElementById('pay_now_form_8eaed9ff31').submit()">
+      <form action="https://demo.globalgatewaye4.firstdata.com/pay" id="pay_now_form_8eaed9ff31" method="post">
+        <input type="hidden" name="x_login" value="HCO-LOVE-234"/>
+        <input type="hidden" name="x_show_form" value="PAYMENT_FORM"/>
+        <input type="hidden" name="x_fp_sequence" value="1574052051602732387"/>
+        <input type="hidden" name="x_fp_hash" value="PNB-1.0-bb25d9364759b0ea91da059cb914e18e7363fdfc"/>
+        <input type="hidden" name="x_amount"/>
+        <input type="hidden" name="x_currency_code" value="USD"/>
+        <input type="hidden" name="x_test_request" value="TRUE"/>
+        <input type="hidden" name="x_relay_response" value=""/>
+        <input type="hidden" name="donation_prompt"/>
+        {% if campaign %}
+          {% set button_code = campaign.title %}
+        {% else %}
+          {% set button_code = "Admin Donation" %}
+        {% endif %}
+        <input type="hidden" name="button_code" value="{{ button_code }}"/>
+        <input type="hidden" name="x_invoice_num" value="{{ generate_confirmation_id(campaign) }}"/>
+        <div class="cpwrap">
+          <button class="btn orange lighten-1 waves-effect waves-light s12" type="button">
+            <i class="material-icons">redeem</i>
+            Donate Now
+          </button>
+        </div>
+      </form>
+    </div>
+
+  {% else %}
+    <span class="gray-text darken-2">
+      {% if today() < campaign.start_date %}
+        This campaign has not started yet!
+      {% elif today() > campaign.end_date %}
+        This campaign has been archived.
       {% endif %}
-      <input type="hidden" name="button_code" value="{{ button_code }}"/>
-      <input type="hidden" name="x_invoice_num" value="{{ generate_confirmation_id(campaign) }}"/>
-      <div class="cpwrap">
-        <button class="btn orange lighten-1 waves-effect waves-light s12" type="button">
-          <i class="material-icons">redeem</i>
-          Donate Now
-        </button>
-      </div>
-    </form>
-  </div>
+    </span>
+    <button class="btn disabled">
+      <i class="material-icons">redeem</i>
+      Donate
+    </button>
+
+  {% endif %}
 
 {% endmacro %}
 

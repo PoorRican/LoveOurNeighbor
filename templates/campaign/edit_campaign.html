@@ -97,7 +97,7 @@
           <div class="col l6 s12 input-field">
             <i class="material-icons prefix">today</i>
             <input id="end_date" type="text" name="end_date" class="datepicker"
-                   {% if not start %}value="{{ campaign.start_date.strftime('%m/%d/%Y') }}"{% endif %}
+                   {% if not start %}value="{{ campaign.end_date.strftime('%m/%d/%Y') }}"{% endif %}
                    required>
             <label for="end_date">{{ form.end_date.label }}</label>
           </div>
@@ -224,7 +224,7 @@
         {# TODO: 3-month total #}
         {# TODO: export as CSV #}
 
-        {{ transaction_table(donations, show_campaign=True) }}
+        {{ transaction_table(donations, show_campaign=False) }}
 
       </div><!-- /#donations -->
     </div>

@@ -115,17 +115,33 @@
           <div class="col l4 s12" style="margin: auto 0;">
             <p class="section-info">
               {# TODO: implement localized time format #}
-              <span>Began:</span>&nbsp;
+              <span>
+                {% if today() <= cam.start_date %}
+                  Begins:
+                {% else %}
+                  Began:
+                {% endif %}
+                </span>&nbsp;
               {{ cam.start_date.strftime("%h %d, %Y") }}&nbsp;
               <span>({{ f_time(cam.start_date) }})</span>
               <br>
-              <span>Ends:</span>&nbsp;
+              <span>
+                {% if today() >= cam.end_date %}
+                  Ended:
+                {% else %}
+                  Ends:
+                {% endif %}
+              </span>&nbsp;
               {{ cam.end_date.strftime("%h %d, %Y") }}&nbsp;
               <span>({{ f_time(cam.end_date) }})</span>
               <br>
-              <span>Contributions:</span>&nbsp;
-              {{ len(cam.donations.all()) }} have supported so far
-              <br>
+
+              {% if today() >= cam.start_date %}
+                <span>Contributions:</span>&nbsp;
+                {{ len(cam.donations.all()) }} have supported
+                {% if today() >= cam.end_date %}so far{% endif %}
+                <br>
+              {% endif %}
               <span>Views:</span>&nbsp;
               {{ cam.views }}
             </p>

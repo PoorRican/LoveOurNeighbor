@@ -1,3 +1,4 @@
+from datetime import date
 from django.db.utils import ProgrammingError, OperationalError
 from django.templatetags.static import static
 from django.urls import reverse
@@ -69,6 +70,7 @@ def environment(**options):
         'generate_payeezy_hash': generate_payeezy_hash,
         'PAYEEZY_TEST_BUTTON': PAYEEZY_TEST_BUTTON,
         'COMMENTS': COMMENTS,
+        'today': date.today
     })
     env.add_extension(AssetsExtension)
     env.assets_environment = _assets
