@@ -87,6 +87,11 @@
     <script src="{{ static('app/%s' % f) }}"></script>
   {% endfor %}
 
+  <script>
+    let input = document.getElementsByName('email')[0];
+    input.focus();
+  </script>
+
 {% endblock %}
 
 
