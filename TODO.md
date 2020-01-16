@@ -35,7 +35,6 @@ Things to do before ministries will be using the site:
     * Progress towards Monthly Goal
     * 3-month view
 - Add Google Forms as feedback
-- News Tabs in Profile Edit Page
 - Unverified Ministries should not be able to create Campaigns
 - Campaign start and end dates should disable donation button functionality
 - Campaigns should be highlighted on the homepage:

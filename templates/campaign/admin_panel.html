@@ -119,16 +119,18 @@
 
         <div id="news" class="col s12">
           <br>
-          <a class="btn"
+          <a class="btn blue lighten-2" style="margin-bottom: 12px"
              href="{{ url_for('news:create_news', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}">
             <i class="material-icons">add</i>
             Create News Post
           </a>
-          {% for news in campaign.news.all() %}
-            {{ card.news_card(news, AUTH=True) }}
-          {% else %}
-            <p>There is no news for this campaign at this time.</p>
-          {% endfor %}
+          <div class="row">
+            {% for news in campaign.news.all() %}
+              {{ card.news_card(news, AUTH=True) }}
+            {% else %}
+              <p>There is no news for this campaign at this time.</p>
+            {% endfor %}
+          </div>
         </div><!-- /#news -->
 
         <div id="donations" class="col s12"><!-- /#donations -->

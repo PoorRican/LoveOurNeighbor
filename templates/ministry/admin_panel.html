@@ -40,23 +40,20 @@
               <span class="hide-on-small-only">
           &nbsp;Details
         </span>
+            </a></li><!-- /details -->
+            <li class="tab col s2"><a href="#administration"><i class="material-icons">supervisor_account</i>
+              <span class="hide-on-small-only">&nbsp;Administration</span>
+            </a></li><!-- /administration -->
+            <li class="tab col s2"><a href="#campaigns"><i class="material-icons">public</i>
+              <span class="hide-on-small-only">&nbsp;Campaigns</span>
+            </a></li><!-- /campaigns -->
+            <li class="tab col s2"><a href="#news"><i class="material-icons">dynamic_feed</i>
+              <span class="hide-on-small-only">&nbsp;News</span>
+            </a></li><!-- /news -->
+            <li class="tab col s2"><a href="#donations"><i class="material-icons">poll</i>
+              <span class="hide-on-small-only">&nbsp;Donations</span>
             </a></li>
-            <li class="tab col s3"><a href="#administration"><i class="material-icons">lock</i>
-              <span class="hide-on-small-only">
-          &nbsp;Administration
-        </span>
-            </a></li>
-            <li class="tab col s3"><a href="#campaigns"><i class="material-icons">public</i>
-              <span class="hide-on-small-only">
-          &nbsp;Campaigns
-        </span>
-            </a></li>
-            <li class="tab col s3"><a href="#donations"><i class="material-icons">poll</i>
-              <span class="hide-on-small-only">
-            Donations
-          </span>
-            </a></li>
-          </ul>
+          </ul><!-- donations -->
         </div><!-- /#tab_bar -->
 
         <div id="details" class="col s12">
@@ -260,6 +257,25 @@
             {% endfor %}
           </div>
         </div><!-- /#campaigns -->
+
+        <div id="news" class="col s12">
+
+          <h4 class="hide-on-med-and-up">News</h4>
+          <br>
+
+          <a class="btn blue lighten-2" style="margin-bottom: 12px;"
+             href="{{ url_for('news:create_news', kwargs={'obj_type': 'ministry', 'obj_id': ministry.id}) }}">
+            <i class="material-icons">add</i>
+            Create News Post
+          </a>
+          <div class="row">
+            {% for news in ministry.news.all() %}
+              {{ card.news_card(news, AUTH=True) }}
+            {% else %}
+              <p>There is no news for this campaign at this time.</p>
+            {% endfor %}
+          </div>
+        </div>
 
         <div id="donations" class="col s12">
 
