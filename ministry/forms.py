@@ -11,7 +11,6 @@ class MinistryEditForm(forms.ModelForm):
     """
     tags = forms.CharField(max_length=256, required=False)
     reps = forms.CharField(max_length=1024, required=False)
-    social_media = forms.CharField(max_length=1024, required=False)
 
     def __init__(self, *args, **kwargs):
         super(MinistryEditForm, self).__init__(*args, **kwargs)
@@ -26,7 +25,9 @@ class MinistryEditForm(forms.ModelForm):
         widgets = {'description': forms.Textarea(attrs={'rows': 20,
                                                         'cols': 80}),
                    'address': forms.Textarea(attrs={'rows': 3,
-                                                    'cols': 30}),
+                                                    'cols': 30,
+                                                    'class': 'materialize-textarea'}),
+                   'founded': forms.TextInput(attrs={'class': 'datepicker'}),
                    }
         labels = {'img_path': 'Banner Image',
                   'founded': 'Date Founded',

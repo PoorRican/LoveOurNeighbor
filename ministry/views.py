@@ -91,7 +91,7 @@ def create_ministry(request):
             _url = reverse('ministry:create_ministry')
             return HttpResponseRedirect(_url)
     else:
-        _form = MinistryEditForm(initial={'website': 'https://'})
+        _form = MinistryEditForm(initial={'website': 'https://', 'address': ''})
         context = {"form": _form,
                    "start": True}
         return render(request, "edit_ministry.html", context)

@@ -1,7 +1,3 @@
-## Bugs
-- Default value of "None" for address in 'ministry:edit_ministry'
-
-
 ## Internal Fixes
 - Make TinyMCE script to template pages that need it. TinyMCE should not be fetched in 'layout.html'
 - Implement Fuzzy matching for search function (case-insensitive search)
