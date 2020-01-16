@@ -132,3 +132,9 @@ class MinistryProfile(models.Model):
     def random_ministries(cls):
         results = cls.objects.filter(verified='True')
         return results.order_by('?')[:10]
+
+    def authorized_user(self, user):
+        if user in self.reps.all() or user == self.admin:
+            return True
+        else:
+            return False

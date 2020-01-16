@@ -9,7 +9,7 @@
 - Remove 'login_in_as' functionality. Add settings flag to enable/disable this feature.
 - Display of Users Email
 - Display users likes
-- Title header in cards should provide a link to object. Dropdown icon should not be visible if not logged in.
+- Title header in cards should provide a link to object.
 - Dropdown anchor element item 'Link to ...' should be 'View ...'
 - User Widget should provide a link to view ministries
 - Edit ministry/campaign page should provide a link to view object
@@ -20,6 +20,7 @@
     * Fix login functionality
     * Add donations/payments
 - Separate create/edit pages for MinistryProfile/Campaign/NewsPost
+- Show tags in 'frontpage_ministry_card' widget
 
 
 # Medium Priority 
@@ -48,7 +49,6 @@ Things to do before ministries will be using the site:
 Things to do before Users will be using the site:
 - Show table of liked MinistryProfiles and Campaigns to users
 - Homepage Functionality:
-    * Card Display
     * Have a section for highlighting new or popular tags
     * Dynamic MOTD on top
     * Random Featured Ministry
@@ -90,7 +90,6 @@ Things to do before Users will be using the site:
     * Email Verification
     * Notification/Update Email
 - Show start and end dates on campaign card
-- Date Founded / Staff input-container misalignment in MinistryProfile edit page
 - Clickable area should not be so big in profile/banner image selection dialog triggers
 - 'how_to_reg'/ministry name location in user_widget when 'logged in as'
 - MinistryProfile should display profile images on MinistryProfile page

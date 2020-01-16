@@ -37,7 +37,7 @@
             <p>Check out these ministries who just recently created a profile on Love Our Neighbor!</p>
             <div class="row">
               {% for m in new_ministries %}
-                {{ frontpage_ministry_card(m) }}
+                {{ frontpage_ministry_card(m, request) }}
               {% endfor %}
             </div><!-- /.row -->
           </div><!-- /# new_ministries -->
@@ -46,7 +46,7 @@
             <h4>Ministries You Might Like</h4>
             <div class="row">
               {% for m in random_ministries %}
-                {{ frontpage_ministry_card(m) }}
+                {{ frontpage_ministry_card(m, request) }}
               {% endfor %}
             </div><!-- /.row -->
           </div>
