@@ -72,7 +72,9 @@
 
       {% if campaign.banner_img %}
         <div class="card-image">
-          <img src="{{ campaign.banner_img.url }}">
+          <a href="{{ campaign.url }}">
+            <img src="{{ campaign.banner_img.url }}">
+          </a>
           <a class="card-title dropdown-trigger" data-target="campaign_{{ campaign.id }}">
             <span class="truncate" style="max-width: 85%; display: inline-block">
               {{ campaign.title }}
@@ -108,7 +110,7 @@
         {% endif %}
         <li><a href="{{ campaign.url }}">
           <i class="material-icons">link</i>
-          Link to Campaign
+          View Campaign
         </a></li>
       </ul>
 
