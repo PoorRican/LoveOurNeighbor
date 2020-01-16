@@ -115,7 +115,7 @@ class MinistryProfile(models.Model):
 
     @property
     def edit(self):
-        return reverse('ministry:edit_ministry',
+        return reverse('ministry:admin_panel',
                        kwargs={'ministry_id': self.id})
 
     @property

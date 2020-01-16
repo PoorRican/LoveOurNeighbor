@@ -86,7 +86,7 @@
                             </div>
                             {% if ALIAS %}<i class="material-icons orange-text right">how_to_reg</i>{% endif %}
                           </a>
-                          <a href="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}"
+                          <a href="{{ url_for('ministry:admin_panel', kwargs={'ministry_id': ministry.id}) }}"
                              class="btn-flat waves-effect edit-btn">
                             <i class="material-icons">settings</i>
                           </a>

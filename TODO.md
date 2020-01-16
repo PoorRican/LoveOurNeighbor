@@ -13,7 +13,6 @@
 - Dropdown anchor element item 'Link to ...' should be 'View ...'
 - User Widget should provide a link to view ministries
 - Edit ministry/campaign page should provide a link to view object
-- Rename 'Edit' ministry/campaign pages to 'Admin Panel'
 - In campaign admin panel, start and end dates should be validated
 - Clean up utils/ dir. Create a module with utility functions accessible via a CLI or args.
 - Admin Interface:
@@ -43,6 +42,9 @@ Things to do before ministries will be using the site:
     * New campaigns
     * Campaigns almost completed
     * Campaigns that are close to their goal
+- News Post UI update:
+    * Posts should be able to be created from the profile/campaign page
+    * Maybe create a dialog for creating news posts
 
 
 ## Hard Release Features

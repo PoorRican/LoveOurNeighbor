@@ -51,23 +51,23 @@
               <li class="profile-area">
                 <a href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"
                    class="view_profile {% if ALIAS %} orange-text{% endif %}">
-                  <img class="profile-img" src="{{ ministry.profile_img.url }}">
-                  <div>
+                    <img class="profile-img" src="{{ ministry.profile_img.url }}">
+                    <div>
                     <span class="truncate">
                     {% if ALIAS %}<i class="material-icons" style="display: inline;">how_to_reg</i>{% endif %}
                       {{ ministry }}
                     </span>
-                  </div>
+                    </div>
                   {% if ALIAS %}<i class="material-icons">how_to_reg</i>{% endif %}
                 </a>
-                <a href="{{ url_for('ministry:edit_ministry', kwargs={'ministry_id': ministry.id}) }}"
-                   class="edit-btn btn-flat waves-effect right">
-                  <i class="material-icons">settings</i>
-                </a>
+                  <a href="{{ url_for('ministry:admin_panel', kwargs={'ministry_id': ministry.id}) }}"
+                     class="edit-btn btn-flat waves-effect right">
+                      <i class="material-icons">settings</i>
+                  </a>
               </li>
             {% endfor %}
 
-            <li class="divider"></li>
+              <li class="divider"></li>
 
           {% endif %}
         {% endfor %}

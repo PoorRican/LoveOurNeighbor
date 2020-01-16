@@ -63,13 +63,13 @@ def campaign_admin_urls(campaign):
 def ministry_admin_urls(ministry):
     # TODO: implement user permissions checking to implement deletion
     urls = [
-        {'label': 'Edit',
-         'icon': 'create',
-         'reverse_url': 'ministry:edit_ministry',
+        {'label': 'Admin Panel',
+         'icon': 'build',
+         'reverse_url': 'ministry:admin_panel',
          'kwargs': {'ministry_id': ministry.id},
          },
         {'label': 'Post News',
-         'icon': 'note_add',
+         'icon': 'post_add',
          'reverse_url': 'news:create_news',
          'kwargs': {'obj_type': 'ministry',
                     'obj_id': ministry.id},

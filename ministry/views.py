@@ -51,7 +51,7 @@ def create_ministry(request):
 
     See Also
     --------
-    `ministry:edit_ministry`
+    `ministry:admin_panel`
 
     Note
     ----
@@ -98,7 +98,7 @@ def create_ministry(request):
 
 
 @login_required
-def edit_ministry(request, ministry_id):
+def admin_panel(request, ministry_id):
     """ Renders form for editing `MinistryProfile object.
 
     Redirects To
@@ -108,11 +108,11 @@ def edit_ministry(request, ministry_id):
 
     Template
     --------
-    "ministry/edit_ministry.html"
+    "ministry/admin_panel.html"
 
     See Also
     --------
-    `ministry:edit_ministry`
+    `ministry:admin_panel`
 
     Note
     ----
@@ -492,6 +492,7 @@ def ministry_gallery_json(request, ministry_id):
     ministry = MinistryProfile.objects.get(pk=ministry_id)
 
     return JsonResponse({'gallery': ministry_images(ministry)})
+
 
 # User Interaction
 @login_required
