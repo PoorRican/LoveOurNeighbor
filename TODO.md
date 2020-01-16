@@ -106,6 +106,8 @@ Things to do before Users will be using the site:
     * 'Cancel' should undo change
     * 'Done' should upload
     * Banner image trigger should reflect the wide dimensions as it is displayed on view page
+- Card offsets button in News tab in Campaign admin panel
+- Form buttons in campaign admin panel should match ministry admin panel
 
 ## Implementation Changes
 - Create custom asset handler:

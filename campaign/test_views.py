@@ -47,7 +47,7 @@ class TestCampaignViews(BaseViewTestCase):
         response = self.client.get(_url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,  # assert correct template
-                            "edit_campaign.html")
+                            "admin_panel.html")
 
         # assert proper POST data
         _new = {'title': 'a new campaign',

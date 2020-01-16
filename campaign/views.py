@@ -64,7 +64,7 @@ def create_campaign(request, ministry_id):
         context = {"form": _form,
                    "start": True,
                    "ministry": ministry}
-        return render(request, "edit_campaign.html", context)
+        return render(request, "campaign/new_campaign.html", context)
 
 
 @login_required
@@ -114,7 +114,7 @@ def edit_campaign(request, campaign_id):
                            "donations": donations,
                            "goals": campaign_goals(campaign),
                            "start": False}
-                return render(request, "edit_campaign.html", context)
+                return render(request, "campaign/admin_panel.html", context)
         else:
             _w = 'You do not have permission to edit this ministry.'
             messages.add_message(request, messages.WARNING, _w)

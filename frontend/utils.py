@@ -46,13 +46,13 @@ def friendly_time(dt, past_="ago", future_="from now", default="just now"):
 def campaign_admin_urls(campaign):
     # TODO: implement user permissions checking to implement deletion
     urls = [
-        {'label': 'Edit',
-         'icon': 'create',
+        {'label': 'Admin Panel',
+         'icon': 'build',
          'reverse_url': 'campaign:edit_campaign',
          'kwargs': {'campaign_id': campaign.id},
          },
         {'label': 'Post News',
-         'icon': 'note_add',
+         'icon': 'post_add',
          'reverse_url': 'news:create_news',
          'kwargs': {'obj_type': 'campaign',
                     'obj_id': campaign.id},
