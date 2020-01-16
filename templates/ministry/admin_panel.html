@@ -1,0 +1,312 @@
+{# vim: foldmethod=marker tabstop=2 shiftwidth=2:
+    templates/ministry/admin_panel.html
+#}
+{% extends "layout.html" %}
+
+{% from "macros/parts/confirm_delete.html" import confirm_delete %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor %}
+{% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
+{% from "macros/parts/rep_request_selection.html" import rep_selection, rep_selection_script %}
+{% from "macros/parts/banner_image_dialog.html" import banner_image_dialog %}
+{% from "macros/parts/profile_image_dialog.html" import profile_image_dialog %}
+{% from "macros/parts/transaction_table.html" import transaction_table %}
+
+{% import "macros/cards.html" as card %}
+{# TODO: total donated amount #}
+
+{% block title %}
+  {{ ministry.name }} Admin Panel
+{% endblock %}
+
+{% block body %}
+  <section class="wrapper" ng-app="LON" ng-cloak>
+    <!-- ministry/ministry_admin_panel -->
+
+    {% if not ministry.verified %}
+      <h6>Your Ministry Profile has not been verified yet. This may take 1-3 business days.
+        Your profile will not be visible to the public before then.</h6>
+    {% endif %}
+
+    <form method="POST" name="ministryForm" enctype="multipart/form-data" action="{{ ministry.edit }}">
+      <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
+      <input type="hidden" id="ministry_id" value="{{ ministry.id }}">
+
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+      <div class="row" ng-controller="ministryActionCtrl">
+        <div id="tab_bar" class="col s12">
+          <ul class="tabs">
+            <li class="tab col s3"><a href="#details"><i class="material-icons">info</i>
+              <span class="hide-on-small-only">
+          &nbsp;Details
+        </span>
+            </a></li>
+            <li class="tab col s3"><a href="#administration"><i class="material-icons">lock</i>
+              <span class="hide-on-small-only">
+          &nbsp;Administration
+        </span>
+            </a></li>
+            <li class="tab col s3"><a href="#campaigns"><i class="material-icons">public</i>
+              <span class="hide-on-small-only">
+          &nbsp;Campaigns
+        </span>
+            </a></li>
+            <li class="tab col s3"><a href="#donations"><i class="material-icons">poll</i>
+              <span class="hide-on-small-only">
+            Donations
+          </span>
+            </a></li>
+          </ul>
+        </div><!-- /#tab_bar -->
+
+        <div id="details" class="col s12">
+          <div class="row">
+
+            <h4 class="hide-on-med-and-up">Details</h4>
+            <br>
+
+            <div class="col s12" id="imageDialogs">
+              <div class="row">
+                <div class="col s12 m6 l3">
+                  {{ profile_image_dialog(ministry.profile_img) }}
+                </div>
+                <div class="col s12 m6 l3">
+                  {{ banner_image_dialog(ministry.banner_img) }}
+                </div>
+
+              </div>
+            </div><!-- /#imageDialogs -->
+
+            <div class="col s12 input-field">
+              {# TODO: ensure that all ministry titles are unique #}
+              <i class="material-icons prefix">group</i>
+              {{ form.name }}
+              {{ form.name.label_tag() }}
+            </div><!-- /name -->
+
+            <div class="col s12 input-field">
+              {# TODO: render custom address input #}
+              <i class="material-icons prefix">place</i>
+              {{ form.address }}
+              {{ form.address.label_tag() }}
+            </div><!-- /address -->
+
+            <div class="col l6 s12 input-field">
+              {# TODO: render styled phone number input for international phone numbers #}
+              <i class="material-icons prefix">phone</i>
+              {{ form.phone_number }}
+              {{ form.phone_number.label_tag() }}
+            </div><!-- /phone_number -->
+
+            <div class="col l6 s12 input-field">
+              <i class="material-icons prefix">explore</i>
+              {{ form.website }}
+              {{ form.website.label_tag() }}
+            </div><!-- /website -->
+
+            <div class="col l6 s12 input-field">
+              <i class="material-icons prefix">people</i>
+              {{ form.staff }}
+              {{ form.staff.label_tag() }}
+            </div><!-- /staff_count -->
+
+            <div class="col l6 s12 input-field">
+              <i class="material-icons prefix">cake</i>
+              {{ form.founded }}
+              {{ form.founded.label_tag() }}
+            </div><!-- /date_founded -->
+          </div><!-- /details -->
+
+          <div class="row" id="socialMediaLinks">
+            <h6>Social Media Links:</h6>
+            {# TODO: Add social media Icons #}
+            <div class="col l3 s12 input-field">
+              {{ form.facebook }}
+              {{ form.facebook.label_tag() }}
+            </div>
+            <div class="col l3 s12 input-field">
+              {{ form.instagram }}
+              {{ form.instagram.label_tag() }}
+            </div>
+            <div class="col l3 s12 input-field">
+              {{ form.youtube }}
+              {{ form.youtube.label_tag() }}
+            </div>
+            <div class="col l3 s12 input-field">
+              {{ form.twitter }}
+              {{ form.twitter.label_tag() }}
+            </div>
+          </div><!-- /#social-media-links -->
+          <div id="WYSIWYG">
+            <br>
+            <i class="material-icons">subject</i>
+            {{ form.description.label_tag() }}
+
+            {{ wysiwyg_editor(form.description.name, ministry.description) }}
+          </div><!-- /#WYSIWYG -->
+
+          <br>
+          <md-input-container layout="column">
+            <md-icon><i class="material-icons">class</i></md-icon>
+            {{ form.tags.label_tag() }}
+            <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
+            <md-chips ng-model="object.tags" md-autocomplete-snap
+                      md-transform-chip="tagService.transform_chip($chip)"
+                      md-separator-keys="tagService.separatorKeys">
+              <md-autocomplete
+                  md-search-text="tagText"
+                  md-items="tag in filter_tags(tagText)"
+                  md-item-text="tag"
+                  md-min-length="1">
+                <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
+              </md-autocomplete>
+              <md-chip-template>
+                      <span>
+                        <span>{% raw %}{{ $chip }}{% endraw %}</span>
+                      </span>
+              </md-chip-template>
+            </md-chips>
+            <br><br>
+            <div class="hint">Select from existing tags, or create new ones by entering a comma.</div>
+          </md-input-container><!-- /tag-selection -->
+
+          <div id="form_buttons" class="row">
+            <div class="col l3 s12">
+              <button class="btn orange" type="submit">
+                <i class="material-icons">save</i>
+                Save
+              </button>
+            </div>
+
+            <div class="col l3 s12">
+              {{ confirm_delete('ministry', ministry.id) }}
+            </div>
+          </div><!-- /#form_buttons -->
+
+        </div><!-- /#details -->
+
+        <div id="administration" class="col s12">
+
+          <h4 class="hide-on-med-and-up">Administration</h4>
+          <br>
+
+          <md-content layout="column" class="md-padding autocomplete rep_requests">
+            <input type="hidden" name="{{ form.reps.name }}" value="{% raw %}{{ object.reps }}{% endraw %}">
+            <label>
+              <md-icon><i class="material-icons">group_add</i></md-icon>
+              {{ form.reps.label }}:
+            </label>
+            <md-contact-chips ng-model="object.reps"
+                              md-contacts="filter_users($query)"
+                              md-require-match="true"
+                              md-contact-name="name"
+                              md-contact-image="img"
+                              md-contact-email="email"
+                              placeholder="Select by name or email"
+                              secondary-placeholder="Add another representative">
+            </md-contact-chips>
+            {# TODO: button to clear all pending requests #}
+            <md-list class="available_contacts">
+              <md-subheader>
+                Representative Requests
+              </md-subheader>
+              {% if len(ministry.requests.all()) %}
+                <md-list-item class="md-2-line contact-item" ng-repeat="(index, contact) in object.requests">
+                  {% raw %}
+                  <img class="md-avatar" ng-src="{{ contact.img }}">
+                  <div class="md-list-item-text compact">
+                    <h3>{{ contact.name }}</h3>
+                    <p>{{ contact.email }}</p>
+                  </div>
+                  {% endraw %}
+                </md-list-item>
+              {% else %}
+                <md-list-item class="md-1-line">
+                  <h3>There are no requests to show</h3>
+                </md-list-item>
+              {% endif %}
+            </md-list>
+          </md-content>
+
+          <div id="form_buttons">
+            <a class="col l3 s12 btn" type="submit">
+              <i class="material-icons">save</i>
+              Save
+            </a>
+
+            {{ confirm_delete('ministry', ministry.id) }}
+          </div><!-- /#form_buttons -->
+
+        </div><!-- /#administration -->
+
+        <div id="campaigns" class="col s12">
+
+          <h4 class="hide-on-med-and-up">Campaigns</h4>
+          <br>
+
+          {# TODO: differentiate between current and previous fundraisers #}
+          <a class="btn purple lighten-2"
+             href="{{ url_for('campaign:create_campaign', kwargs={'ministry_id': ministry.id}) }}"
+             style="margin-bottom: 12px">
+            <i class="material-icons">add</i>
+            New Campaign
+          </a>
+
+          <div class="row">
+            {% for campaign in ministry.campaigns.all() %}
+              {{ card.campaign_card(campaign, AUTH=True) }}
+            {% else %}
+              <p>You have no fundraising campaigns at this time.</p>
+            {% endfor %}
+          </div>
+        </div><!-- /#campaigns -->
+
+        <div id="donations" class="col s12">
+
+          <h4 class="hide-on-med-and-up">Donations</h4>
+          <br>
+
+          {# TODO: total donated #}
+          {# TODO: average per campaign #}
+          {# TODO: average per week #}
+          {# TODO: average per month #}
+          {# TODO: YTD #}
+          {# TODO: 3-month total #}
+          {# TODO: export as CSV #}
+
+          {{ transaction_table(donations, show_campaign=True) }}
+
+        </div><!-- /#donations -->
+      </div>
+    </form>
+
+  </section>
+{% endblock %}
+
+
+{% block scripts %}
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
+
+  {% set page_assets = (
+  'app.module.js',
+  'app.config.js',
+  'services/tag.service.js',
+  'services/object.service.js',
+  'services/select_image_dialog.service.js',
+  'people/user_filter.service.js',
+  'ministry/ministry_action.controller.js',
+  ) %}
+  {% for f in page_assets %}
+    <script src="{{ static('app/%s' % f) }}"></script>
+  {% endfor %}
+
+{% endblock %}
+
+
+{% block css %}
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
+{% endblock %}

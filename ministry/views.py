@@ -47,7 +47,7 @@ def create_ministry(request):
 
     Template
     --------
-    "ministry/edit_ministry.html"
+    "ministry/ministry_application.html"
 
     See Also
     --------
@@ -94,7 +94,7 @@ def create_ministry(request):
         _form = MinistryEditForm(initial={'website': 'https://', 'address': ''})
         context = {"form": _form,
                    "start": True}
-        return render(request, "edit_ministry.html", context)
+        return render(request, "ministry/ministry_application.html", context)
 
 
 @login_required
@@ -211,7 +211,7 @@ def admin_panel(request, ministry_id):
                            "ministry": ministry,
                            "donations": donations,
                            "start": False}
-                return render(request, "edit_ministry.html", context)
+                return render(request, "ministry/admin_panel.html", context)
         else:
             # this creates a recursive redirect as a deterrent
 
