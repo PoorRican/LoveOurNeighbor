@@ -1,31 +1,39 @@
 {% from "macros/parts/gallery.html" import gallery %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 
-{# {{{ NewsPost Card #}
+{# NewsPost Card #}
 {% macro news_card(post, AUTH=False) %}
   <div class="col s12 l6">
     <div class="card">
 
       {% if post.attachment %}
-        <div class="card-image">
+        <div class="card-image materialboxed">
           <img src="{{ post.attachment.url }}">
-          <a class="card-title dropdown-trigger" data-target="news_card_{{ post.id }}">
-            <span class="truncate" style="max-width: 85%; display: inline-block">
-              {{ post.title }}
-            </span>
-            <i class="material-icons">arrow_drop_down</i>
-          </a>
+          {% if AUTH %}
+            <a class="card-title dropdown-trigger" data-target="news_card_{{ post.id }}">
+              <span class="truncate" style="max-width: 85%; display: inline-block">
+                {{ post.title }}
+              </span>
+              <i class="material-icons">arrow_drop_down</i>
+            </a>
+          {% elif %}
+            <a class="card-title" href="post.url">{{ post.url }}</a>
+          {% endif %}
         </div><!-- /.card-image -->
       {% endif %}
 
       <div class="card-content">
         {% if not post.attachment %}
-          <a href="#" class="dropdown-trigger" data-target="news_card_{{ post.id }}">
-            <span class="truncate" style="max-width: 85%; display: inline-block;">
-              {{ post.title }}
-            </span>
-            <i class="material-icons">arrow_drop_down</i>
-          </a>
+          {% if AUTH %}
+            <a href="#" class="dropdown-trigger" data-target="news_card_{{ post.id }}">
+              <span class="truncate" style="max-width: 85%; display: inline-block;">
+                {{ post.title }}
+              </span>
+              <i class="material-icons">arrow_drop_down</i>
+            </a>
+          {% elif %}
+            <a href="{{ post.url }}">{{ post.title }}</a>
+          {% endif %}
         {% endif %}
         <p>
           <span>Posted: </span>
@@ -36,19 +44,21 @@
         </div>
       </div><!-- /.card-content -->
 
-      <ul id="news_card_{{ post.id }}" class="dropdown-content" style="min-width: 13em;">
-        {% if AUTH %}
-          <li><a href="{{ post.edit }}">
-            <i class="material-icons">create</i>
-            Edit News Post
+      {% if AUTH %}
+        <ul id="news_card_{{ post.id }}" class="dropdown-content" style="min-width: 13em;">
+          {% if AUTH %}
+            <li><a href="{{ post.edit }}">
+              <i class="material-icons">create</i>
+              Edit News Post
+            </a></li>
+            <li>{{ confirm_delete('news post', post.id, text='Delete Post', anchor=True, part=0) }}</li>
+          {% endif %}
+          <li><a href="{{ post.url }}">
+            <i class="material-icons">link</i>
+            View News Post
           </a></li>
-          <li>{{ confirm_delete('news post', post.id, text='Delete Post', anchor=True, part=0) }}</li>
-        {% endif %}
-        <li><a href="{{ post.url }}">
-          <i class="material-icons">link</i>
-          Link to News
-        </a></li>
-      </ul>
+        </ul>
+      {% endif %}
 
       {{ confirm_delete('news post', post.id, text='Delete Post', anchor=True, part=1) }}
 
@@ -62,10 +72,9 @@
     </div><!-- /.card -->
   </div><!-- /.col -->
 {% endmacro %}
-{# }}} #}
 
 
-{# {{{ Campaign Card #}
+{# Campaign Card #}
 {% macro campaign_card(campaign, AUTH=False) %}
   <div class="col s12 l6">
     <div class="card">
@@ -75,31 +84,39 @@
           <a href="{{ campaign.url }}">
             <img src="{{ campaign.banner_img.url }}">
           </a>
-          <a class="card-title dropdown-trigger" data-target="campaign_{{ campaign.id }}">
-            <span class="truncate" style="max-width: 85%; display: inline-block">
-              {{ campaign.title }}
-            </span>
-            <i class="material-icons">arrow_drop_down</i>
-          </a>
+          {% if AUTH %}
+            <a class="card-title dropdown-trigger" data-target="campaign_{{ campaign.id }}">
+              <span class="truncate" style="max-width: 85%; display: inline-block">
+                {{ campaign.title }}
+              </span>
+              <i class="material-icons">arrow_drop_down</i>
+            </a>
+          {% elif %}
+            <a class="card-title" href="{{ campaign.url }}">{{ campaign.title }}</a>
+          {% endif %}
         </div><!-- /.card-image -->
       {% endif %}
 
       <div class="card-content">
         {% if not campaign.banner_img %}
-          <a href="#" class="dropdown-trigger" data-target="campaign_{{ campaign.id }}">
-            <span class="truncate" style="max-width: 85%; display: inline-block;">
-              {{ campaign.title }}
-            </span>
-            <i class="material-icons">arrow_drop_down</i>
-          </a>
+          {% if AUTH %}
+            <a href="#" class="card-title dropdown-trigger" data-target="campaign_{{ campaign.id }}">
+              <span class="truncate" style="max-width: 85%; display: inline-block;">
+                {{ campaign.title }}
+              </span>
+              <i class="material-icons">arrow_drop_down</i>
+            </a>
+          {% elif %}
+            <a href="{{ campaign.url }}">{{ campaign.title }}</a>
+          {% endif %}
         {% endif %}
         <div style="min-height: 50px;">
           <p class="truncate">{{ campaign.content|safe }}</p>
         </div>
       </div><!-- /.card-content -->
 
-      <ul id="campaign_{{ campaign.id }}" class="dropdown-content" style="min-width: 13em;">
-        {% if AUTH %}
+      {% if AUTH %}
+        <ul id="campaign_{{ campaign.id }}" class="dropdown-content" style="min-width: 13em;">
           {% for opt in campaign_admin_urls(campaign) %}
             <li><a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
               <i class="material-icons">{{ opt['icon'] }}</i>
@@ -107,12 +124,12 @@
             </a></li>
           {% endfor %}
           <li>{{ confirm_delete('campaign', campaign.id, text='Delete Campaign', anchor=True, part=0) }}</li>
-        {% endif %}
-        <li><a href="{{ campaign.url }}">
-          <i class="material-icons">link</i>
-          View Campaign
-        </a></li>
-      </ul>
+          <li><a href="{{ campaign.url }}">
+            <i class="material-icons">link</i>
+            View Campaign
+          </a></li>
+        </ul>
+      {% endif %}
 
       {{ confirm_delete('campaign', campaign.id, text='Delete Campaign', anchor=True, part=1) }}
 
@@ -126,7 +143,6 @@
     </div><!-- /.card -->
   </div><!-- /.col -->
 {% endmacro %}
-{# }}} #}
 
 
 {% macro ministry_card(ministry, AUTH=False) %}
@@ -139,31 +155,39 @@
           <a href="{{ ministry.url }}">
             <img src="{{ ministry.banner_img.url }}">
           </a>
-          <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
-            <span class="truncate" style="max-width: 85%; display: inline-block">
-              {{ ministry.name }}
-            </span>
-            <i class="material-icons">arrow_drop_down</i>
-          </a>
+          {% if AUTH %}
+            <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
+              <span class="truncate" style="max-width: 85%; display: inline-block">
+                {{ ministry.name }}
+              </span>
+              <i class="material-icons">arrow_drop_down</i>
+            </a>
+          {% elif %}
+            <a class="card-title" href="{{ ministry.url }}">{{ ministry.name }}</a>
+          {% endif %}
         </div><!-- /.card-image -->
       {% endif %}
 
       <div class="card-content">
         {% if not ministry.banner_img %}
-          <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
-            <span class="truncate" style="max-width: 85%; display: inline-block">
-              {{ ministry.name }}
-            </span>
-            <i class="material-icons">arrow_drop_down</i>
-          </a>
+          {% if AUTH %}
+            <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
+              <span class="truncate" style="max-width: 85%; display: inline-block">
+                {{ ministry.name }}
+              </span>
+              <i class="material-icons">arrow_drop_down</i>
+            </a>
+          {% elif %}
+            <a href="{{ ministry.url }}">{{ ministry.name }}</a>
+          {% endif %}
         {% endif %}
         <div style="min-height: 50px">
           <p class="truncate">{{ ministry.description|safe }}</p>
         </div>
       </div><!-- /.card-content -->
 
-      <ul id="ministry_{{ ministry.id }}">
-        {% if AUTH %}
+      {% if AUTH %}
+        <ul id="ministry_{{ ministry.id }}">
           {% for opt in ministry_admin_urls(ministry) %}
             <li><a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
               <i class="material-icons">{{ opt['icon'] }}</i>
@@ -171,12 +195,12 @@
             </a></li>
           {% endfor %}
           <li>{{ confirm_delete('ministry', ministry.id, text='Delete Ministry', anchor=True, part=0) }}</li>
-        {% endif %}
-        <li><a href="{{ ministry.url }}">
-          <i class="material-icons">link</i>
-          Link to Ministry
-        </a></li>
-      </ul>
+          <li><a href="{{ ministry.url }}">
+            <i class="material-icons">link</i>
+            View Ministry
+          </a></li>
+        </ul>
+      {% endif %}
 
       {{ confirm_delete('ministry', ministry.id, text='Delete Ministry', anchor=True, part=1) }}
 
@@ -204,11 +228,11 @@
   <div class="row">
     <div class="col s12">
       <ul class="tabs">
-        <li class="tab col s3"><a href="#news">News</a></li>
+        <li class="tab col s4"><a href="#news">News</a></li>
         {% if campaigns[0] %}
-          <li class="tab col s3"><a href="#campaigns">Campaigns</a></li>
+          <li class="tab col s4"><a href="#campaigns">Campaigns</a></li>
         {% endif %}
-        <li class="tab col s3"><a href="#gallery">Gallery</a></li>
+        <li class="tab col s4"><a href="#gallery">Gallery</a></li>
       </ul>
     </div>
   </div>
@@ -266,7 +290,7 @@
               <i class="material-icons">arrow_drop_down</i>
             </a>
           {% else %}
-            <span class="truncate" style="max-width: 85%; display: inline-block">
+            <span class="card-title truncate" style="max-width: 85%; display: inline-block">
               {{ ministry.name }}
             </span>
           {% endif %}

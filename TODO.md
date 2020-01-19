@@ -20,7 +20,6 @@
     * Add donations/payments
 - Separate create/edit pages for NewsPost
 - Show tags in 'frontpage_ministry_card' widget
-- Campaign Card title header should be a link if not AUTH'd
 
 
 # Medium Priority 
