@@ -59,9 +59,11 @@
               </li>
             {% endfor %}
           {% elif not AUTH %}
-            <a href="{{ url_for('ministry:request_to_be_rep', kwargs={'ministry_id': ministry.id}) }}">
-              Request to be a representative
-            </a>
+            <li>
+              <a href="{{ url_for('ministry:request_to_be_rep', kwargs={'ministry_id': ministry.id}) }}">
+                Request to be a representative
+              </a>
+            </li>
           {% endif %}
         </ul>
         {# }}} #}

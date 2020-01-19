@@ -1,6 +1,5 @@
 # Bugs
 - Description in search should filte out non-visible elements
-- Huge text in Ministry Profile header dropdown
 
 
 ## Internal Fixes
