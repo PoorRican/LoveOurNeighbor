@@ -1,3 +1,9 @@
+# Bugs
+- Description in search should filte out non-visible elements
+- Huge text in Ministry Profile header dropdown
+- In Campaign page, 'tag' header element should not be shown if there are no tags
+
+
 ## Internal Fixes
 - Make TinyMCE script to template pages that need it. TinyMCE should not be fetched in 'layout.html'
 - Implement Fuzzy matching for search function (case-insensitive search)
@@ -18,8 +24,9 @@
 - Admin Interface:
     * Fix login functionality
     * Add donations/payments
-- Separate create/edit pages for MinistryProfile/Campaign/NewsPost
+- Separate create/edit pages for NewsPost
 - Show tags in 'frontpage_ministry_card' widget
+- Campaign Card title header should be a link if not AUTH'd
 
 
 # Medium Priority 
@@ -42,7 +49,7 @@ Things to do before ministries will be using the site:
     * Campaigns almost completed
     * Campaigns that are close to their goal
 - News Post UI update:
-    * Posts should be able to be created from the profile/campaign page
+    * Posts should be able to be created from the profile/campaign page (like FB)
     * Maybe create a dialog for creating news posts
 
 
