@@ -1,8 +1,10 @@
+from django.conf import settings
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 
+from bs4 import BeautifulSoup
 import json
 
 from campaign.models import Campaign
@@ -31,6 +33,9 @@ def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
         _ministry['type'] = 'ministry'
         _ministry['url'] = reverse('ministry:ministry_profile',
                                    kwargs={'ministry_id': i.id})
+        # filter out any non-text elements
+        _text = BeautifulSoup(i.content, 'html.parser').get_text()
+        _ministry['content'] = _text[:_text.find(' ', 500)] + " ..."
         if request:
             _dist = calc_distance(request, i.location)
             _ministry['distance'] = _dist
@@ -52,6 +57,9 @@ def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
         _campaign['type'] = 'campaign'
         _campaign['url'] = reverse('campaign:campaign_detail',
                                    kwargs={'campaign_id': i.id})
+        # filter out any non-text elements
+        _text = BeautifulSoup(i.content, 'html.parser').get_text()
+        _campaign['content'] = _text[:_text.find(' ', 500)] + " ..."
         if request:
             _dist = calc_distance(request, i.ministry.location)
             _campaign['distance'] = _dist
@@ -74,6 +82,10 @@ def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
         _post['type'] = 'post'
         _post['url'] = reverse('news:news_detail',
                                kwargs={'post_id': i.id})
+        # filter out any non-text elements
+        _text = BeautifulSoup(i.content, 'html.parser').get_text()
+        _post['content'] = _text[:_text.find(' ', 500)] + " ..."
+
         if request:
             _addr = ''
             if i.ministry:
@@ -117,11 +129,17 @@ def search(request):
 
 
 def search_json(request, query):
+    if 'postgresql' in settings.DATABASES['default']['ENGINE']:
+        ministry_query = Q(name__icontains=query) | Q(description__icontains=query) | Q(address__icontains=query)
+        campaign_query = Q(title__icontains=query) | Q(content__icontains=query)
+        news_query = Q(title__icontains=query) | Q(content__icontains=query)
+    else:
+        ministry_query = Q(name__contains=query) | Q(description__contains=query) | Q(address__contains=query)
+        campaign_query = Q(title__contains=query) | Q(content__contains=query)
+        news_query = Q(title__contains=query) | Q(content__contains=query)
+
     ministries = []
-    # TODO: for other db types switch to '__icontains' for fuzzy matching
-    for i in MinistryProfile.objects.filter(Q(name__contains=query) |
-                                            Q(description__contains=query) |
-                                            Q(address__contains=query)):
+    for i in MinistryProfile.objects.filter(ministry_query):
         try:
             for m in i:
                 ministries.append(m)
@@ -130,8 +148,7 @@ def search_json(request, query):
             ministries.append(i)
 
     campaigns = []
-    for i in Campaign.objects.filter(Q(title__contains=query) |
-                                     Q(content__contains=query)):
+    for i in Campaign.objects.filter(campaign_query):
         try:
             for c in i:
                 campaigns.append(c)
@@ -139,8 +156,7 @@ def search_json(request, query):
             campaigns.append(i)
 
     posts = []
-    for i in NewsPost.objects.filter(Q(title__contains=query) |
-                                     Q(content__contains=query)):
+    for i in NewsPost.objects.filter(news_query):
         try:
             for np in i:
                 posts.append(np)

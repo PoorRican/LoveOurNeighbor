@@ -1,7 +1,3 @@
-# Bugs
-- Description in search should filte out non-visible elements
-
-
 ## Internal Fixes
 - Make TinyMCE script to template pages that need it. TinyMCE should not be fetched in 'layout.html'
 - Implement Fuzzy matching for search function (case-insensitive search)

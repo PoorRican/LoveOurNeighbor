@@ -12,3 +12,4 @@ cssmin
 psycopg2-binary
 gunicorn
 pytz
+bs4
