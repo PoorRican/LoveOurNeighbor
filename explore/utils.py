@@ -24,9 +24,9 @@ def calc_distance(request, ministry_location, units='miles') -> int:
         Can either be 'miles' or 'km' and defines the units to return
     """
     location = None
-    if request.user.location:
+    try:
         location = request.user.location.location
-    else:
+    except AttributeError:
         client_ip, is_routable = get_client_ip(request)
         if client_ip is not None and is_routable:
             _, location = gc.geocode(get_location_from_ip(client_ip)['zip_code'])
