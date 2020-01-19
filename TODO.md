@@ -1,7 +1,6 @@
 # Bugs
 - Description in search should filte out non-visible elements
 - Huge text in Ministry Profile header dropdown
-- In Campaign page, 'tag' header element should not be shown if there are no tags
 
 
 ## Internal Fixes

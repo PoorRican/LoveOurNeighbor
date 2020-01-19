@@ -149,10 +149,12 @@
 
         </div>
 
-        <div class="tags">
-          <h5>Tags:</h5>
-          {{ tag_chips(cam) }}
-        </div>
+        {% if cam.has_tags %}
+          <div id="tags">
+            <h5>Tags:</h5>
+            {{ tag_chips(cam) }}
+          </div>
+        {% endif %}
 
         <p class="flow-text">{{ cam.content|safe }}</p>
 

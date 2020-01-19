@@ -138,3 +138,10 @@ class MinistryProfile(models.Model):
             return True
         else:
             return False
+
+    @property
+    def has_tags(self):
+        if self.tags.all():
+            return True
+        else:
+            return False

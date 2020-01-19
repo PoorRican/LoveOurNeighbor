@@ -92,7 +92,12 @@
           <p class="flow-text">{{ ministry.description|safe }}</p>
         {% endif %}
 
-        {{ tag_chips(ministry) }}
+        {% if ministry.has_tags %}
+          <div id="tags">
+            <h5>Tags:</h5>
+            {{ tag_chips(ministry) }}
+          </div>
+        {% endif %}
 
         <div>
           <h3>Ministry Information:</h3>

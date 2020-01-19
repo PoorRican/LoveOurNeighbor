@@ -64,3 +64,9 @@ class Campaign(models.Model):
         return reverse('campaign:campaign_json',
                        kwargs={'campaign_id': self.id})
 
+    @property
+    def has_tags(self):
+        if self.tags.all():
+            return True
+        else:
+            return False
