@@ -37,7 +37,7 @@ REQUIRE_USER_VERIFICATION = False
 COMMENTS = False
 
 ALLOWED_HOSTS = ["localhost", "dev.loveourneighbor.org", "loveourneighbor.org", "demo.loveourneighbor.org",
-                 "repo.loveourneighbor.org"]
+                 "repo.loveourneighbor.org", "www.loveourneighbor.org"]
 
 
 # Application definition
