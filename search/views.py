@@ -34,7 +34,7 @@ def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
         _ministry['url'] = reverse('ministry:ministry_profile',
                                    kwargs={'ministry_id': i.id})
         # filter out any non-text elements
-        _text = BeautifulSoup(i.content, 'html.parser').get_text()
+        _text = BeautifulSoup(i.description, 'html.parser').get_text()
         _ministry['content'] = _text[:_text.find(' ', 500)] + " ..."
         if request:
             _dist = calc_distance(request, i.location)

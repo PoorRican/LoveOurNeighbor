@@ -14,7 +14,7 @@ def serialize_campaign(cam):
 
     return {'id': cam.id,
             'title': cam.title,
-            'donated': cam.donated,
+            'donated': float(cam.donated),
             'start_date': cam.start_date.strftime(F_TIME),
             'end_date': cam.end_date.strftime(F_TIME),
             'pub_date': cam.pub_date.strftime(F_TIME),
