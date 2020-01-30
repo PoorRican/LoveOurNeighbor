@@ -16,7 +16,7 @@
               </span>
               <i class="material-icons">arrow_drop_down</i>
             </a>
-          {% elif %}
+          {% else %}
             <a class="card-title" href="post.url">{{ post.url }}</a>
           {% endif %}
         </div><!-- /.card-image -->
@@ -31,7 +31,7 @@
               </span>
               <i class="material-icons">arrow_drop_down</i>
             </a>
-          {% elif %}
+          {% else %}
             <a href="{{ post.url }}">{{ post.title }}</a>
           {% endif %}
         {% endif %}
@@ -91,7 +91,7 @@
               </span>
               <i class="material-icons">arrow_drop_down</i>
             </a>
-          {% elif %}
+          {% else %}
             <a class="card-title" href="{{ campaign.url }}">{{ campaign.title }}</a>
           {% endif %}
         </div><!-- /.card-image -->
@@ -106,7 +106,7 @@
               </span>
               <i class="material-icons">arrow_drop_down</i>
             </a>
-          {% elif %}
+          {% else %}
             <a href="{{ campaign.url }}">{{ campaign.title }}</a>
           {% endif %}
         {% endif %}
@@ -162,7 +162,7 @@
               </span>
               <i class="material-icons">arrow_drop_down</i>
             </a>
-          {% elif %}
+          {% else %}
             <a class="card-title" href="{{ ministry.url }}">{{ ministry.name }}</a>
           {% endif %}
         </div><!-- /.card-image -->
@@ -177,7 +177,7 @@
               </span>
               <i class="material-icons">arrow_drop_down</i>
             </a>
-          {% elif %}
+          {% else %}
             <a href="{{ ministry.url }}">{{ ministry.name }}</a>
           {% endif %}
         {% endif %}
