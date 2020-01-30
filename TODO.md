@@ -1,6 +1,14 @@
+# Immediate Things to Implement
+- Static pages:
+    * Core values
+    * Statement of Faith
+    * About Us Blurbs
+- Help Blurbs for ministries:
+    * Explaining start/stop dates (when creating a Campaign)
+    * Explaining details in Ministry Profile Page
+
 ## Internal Fixes
 - Make TinyMCE script to template pages that need it. TinyMCE should not be fetched in 'layout.html'
-- Implement Fuzzy matching for search function (case-insensitive search)
 - Profile Image Functionality:
     * Unify naming within angular functions. eg: remove 'banner' naming
     * Dynamically show selected/uploaded image
@@ -13,7 +21,6 @@
 - Dropdown anchor element item 'Link to ...' should be 'View ...'
 - User Widget should provide a link to view ministries
 - Edit ministry/campaign page should provide a link to view object
-- In campaign admin panel, start and end dates should be validated
 - Clean up utils/ dir. Create a module with utility functions accessible via a CLI or args.
 - Admin Interface:
     * Fix login functionality
@@ -36,24 +43,26 @@ Things to do before ministries will be using the site:
     * 3-month view
 - Add Google Forms as feedback
 - Unverified Ministries should not be able to create Campaigns
-- Campaign start and end dates should disable donation button functionality
 - Campaigns should be highlighted on the homepage:
-    * New campaigns
+    - (maybe Campaigns should have their own dedicated page)
     * Campaigns almost completed
     * Campaigns that are close to their goal
 - News Post UI update:
     * Posts should be able to be created from the profile/campaign page (like FB)
     * Maybe create a dialog for creating news posts
-
-
-## Hard Release Features
-Things to do before Users will be using the site:
+- Gallery:
+    * Ministries should be able to simply upload images for gallery
+    * News posts should be able to handle multiple attachments
 - Show table of liked MinistryProfiles and Campaigns to users
 - Homepage Functionality:
     * Have a section for highlighting new or popular tags
     * Dynamic MOTD on top
     * Random Featured Ministry
-- Implement Ministry Verification:
+    * Posts/Campaigns from Liked Ministries
+
+
+## Hard Release Features
+Things to do before Users will be using the site:
 - User Attributes:
     * Part of the screening process:
         - "What Church Do You Attend?":
@@ -80,7 +89,9 @@ Things to do before Users will be using the site:
         - logout should work
         - admin link should be visible for superusers who are logged in
 - Unlike Functionality
-- News posts should be able to handle multiple attachments
+- Cards:
+    * Add start/end date to campaign cards
+    * Add tags to campaign/ministry cards
     
     
     
@@ -118,6 +129,8 @@ Things to do before Users will be using the site:
     * Edit Campaign/Create Campaign
     * Edit News/Create News
     * Edit User/Create User
+- Fix Admin functionality
+- Help text should be in a dedicated app so that it is editable
 
 ## Features
 - Commenting

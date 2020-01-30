@@ -125,11 +125,17 @@ class MinistryProfile(models.Model):
 
     @classmethod
     def new_ministries(cls):
+        if cls.objects.count() == 0:
+            return False
+
         results = cls.objects.filter(verified='True')
         return results.order_by('pub_date')[:10]
 
     @classmethod
     def random_ministries(cls):
+        if cls.objects.count() <= 10:
+            return False
+
         results = cls.objects.filter(verified='True')
         return results.order_by('?')[:10]
 

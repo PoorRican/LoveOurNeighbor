@@ -2,10 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from public.models import AboutSection, FaqSection
+from campaign.models import Campaign
 from ministry.models import MinistryProfile
 from news.models import NewsPost
-from comment.forms import CommentForm
+from public.models import AboutSection, FaqSection
 
 seo_keywords = ['new jersey', 'non profit']
 
@@ -45,8 +45,10 @@ def home(request):
         But this is not implemented in any way.
     """
 
-    context = {'new_ministries': list(MinistryProfile.new_ministries()),
-               'random_ministries': list(MinistryProfile.random_ministries())
+    context = {'new_ministries': MinistryProfile.new_ministries(),
+               'random_ministries': MinistryProfile.random_ministries(),
+               'new_campaigns': Campaign.new_campaigns(),
+               'random_campaigns': Campaign.random_campaigns(),
                }
 
     return render(request, "home.html", context)

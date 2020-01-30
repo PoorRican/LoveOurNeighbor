@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% from "macros/parts/donate_button.html" import donate_button %}
-{% from "macros/cards.html" import frontpage_ministry_card %}
+{% from "macros/cards.html" import frontpage_ministry_card, frontpage_campaign_card %}
 
 {% block title %}Home{% endblock %}
 
@@ -28,10 +28,21 @@
       </div><!-- /#top -->
 
 
-      {% if len(new_ministries) and len(random_ministries) %}
-        {# don't show content if there are no MinistryProfile objects #}
-        <div id="main">
+      <div id="main">
 
+        {% if new_campaigns %}
+          <div id="new_campaigns">
+            <h4>New Campaigns:</h4>
+            <p>Check out these campaigns that have started!</p>
+            <div class="row">
+              {% for c in new_campaigns %}
+                {{ frontpage_campaign_card(c, request) }}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if new_ministries %}
           <div id="new_ministries">
             <h4>New Ministry Profiles:</h4>
             <p>Check out these ministries who just recently created a profile on Love Our Neighbor!</p>
@@ -41,7 +52,21 @@
               {% endfor %}
             </div><!-- /.row -->
           </div><!-- /# new_ministries -->
+        {% endif %}
 
+        {% if random_campaigns %}
+          <div id="random_campaigns">
+            <h4>Ongoing Campaigns:</h4>
+            <p>Check out these campaigns that have you might be interested in!</p>
+            <div class="row">
+              {% for c in random_campaigns %}
+                {{ frontpage_campaign_card(c, request) }}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if random_ministries %}
           <div id="random_ministries">
             <h4>Ministries You Might Like</h4>
             <div class="row">
@@ -50,9 +75,9 @@
               {% endfor %}
             </div><!-- /.row -->
           </div>
+        {% endif %}
 
-        </div><!-- /#main -->
-      {% endif %}
+      </div><!-- /#main -->
     </div><!-- /.wrapper -->
   </div><!-- /.section -->
 {% endblock %}

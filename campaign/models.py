@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 
 from ministry.models import MinistryProfile
@@ -70,3 +71,27 @@ class Campaign(models.Model):
             return True
         else:
             return False
+
+    @classmethod
+    def new_campaigns(cls):
+        if cls.objects.count() == 0:
+            return False
+
+        today = date.today()
+        q = Q(end_date__lte=today) | Q(start_date__gte=today) | Q(ministry__verified='True')
+        results = cls.objects.filter(q)
+        return results.order_by('pub_date')[:10]
+
+    @classmethod
+    def random_campaigns(cls):
+        if cls.objects.count() <= 10:
+            return False
+
+        today = date.today()
+        q = Q(end_date__lte=today) | Q(start_date__gte=today) | Q(ministry__verified='True')
+        results = cls.objects.filter(q)
+        return results.order_by('?')[:10]
+
+    @property
+    def authorized_user(self):
+        return self.ministry.authorized_user
