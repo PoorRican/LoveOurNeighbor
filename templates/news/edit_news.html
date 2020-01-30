@@ -2,7 +2,7 @@
     templates/news/view_news.html
 #}
 {% extends "layout.html" %}
-{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 
 
@@ -84,5 +84,26 @@
     </form>
 
   </section>
+
+{% endblock %}
+
+
+{% block scripts %}
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
+
+  {% set page_assets = (
+  'app.module.js',
+  'app.config.js',
+  'news/news.controller.js',
+  ) %}
+  {% for f in page_assets %}
+    <script src="{{ static('app/%s' % f) }}"></script>
+  {% endfor %}
+
+  {{ wysiwyg_script() }}
 
 {% endblock %}

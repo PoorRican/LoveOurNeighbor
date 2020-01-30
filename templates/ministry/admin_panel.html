@@ -4,7 +4,7 @@
 {% extends "layout.html" %}
 
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
-{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
 {% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
 {% from "macros/parts/rep_request_selection.html" import rep_selection, rep_selection_script %}
 {% from "macros/parts/banner_image_dialog.html" import banner_image_dialog %}
@@ -319,6 +319,8 @@
   {% for f in page_assets %}
     <script src="{{ static('app/%s' % f) }}"></script>
   {% endfor %}
+
+  {{ wysiwyg_script() }}
 
 {% endblock %}
 

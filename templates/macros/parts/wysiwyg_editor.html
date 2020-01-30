@@ -8,3 +8,26 @@
   </textarea>
 
 {% endmacro %}
+
+
+{% macro wysiwyg_script() %}
+
+  <!-- WYSIWYG Editor -->
+  <script src="https://cdn.tiny.cloud/1/ropl0dvkzt3bbjqb9e8dk06ff578n2fkfvgun5yxa1zgb234/tinymce/5/tinymce.min.js"
+          referrerpolicy="origin"></script>
+
+  <script>
+    tinymce.init({
+      selector: '#tinyEditor',
+      height: 500,
+      max_height: 750,
+      width: '100%',
+      resize: true,
+      mobile: {
+        theme: 'mobile',
+        toolbar: ['undo', 'bold', 'italic', 'styleselect']
+      }
+    })
+  </script>
+
+{% endmacro %}

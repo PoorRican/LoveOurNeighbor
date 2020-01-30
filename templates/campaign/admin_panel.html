@@ -3,7 +3,7 @@
 #}
 {% extends "layout.html" %}
 
-{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 {% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
 {% from "macros/parts/get_obj_json.html" import get_obj_json %}
@@ -211,6 +211,7 @@
     <script src="{{ static('app/%s' % f) }}"></script>
   {% endfor %}
 
+  <!-- Goal Elements -->
   <script src="{{ static('js/gauge.min.js') }}"></script>
   <script>
     let opts = {
@@ -242,7 +243,9 @@
     gauge.setMinValue(0);
     gauge.animationSpeed = 32;
     gauge.set({{ goals.monthly.current }});
-  </script>
+  </script><!-- /Gauge Configuration -->
+
+  {{ wysiwyg_script() }}
 
 {% endblock %}
 
