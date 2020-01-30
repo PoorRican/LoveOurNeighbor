@@ -13,37 +13,38 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
+from .admin import admin_site
 from . import views, settings
 
 favicon_view = RedirectView.as_view(url='/static/img/favicon.svg', permanent=True)
 
 app_name = 'frontend'
 urlpatterns = [
-    # Basic URLs
-    path('admin/', admin.site.urls),
-    path('', views.root),
-    path('favicon.ico', favicon_view),
-    path('error', views.error),
+                  # Basic URLs
+                  path('admin/', admin_site.urls),
+                  path('tinymce/', include('tinymce.urls')),
+                  path('', views.root),
+                  path('favicon.ico', favicon_view),
+                  path('error', views.error),
 
-    # Main Pages
-    path('home', views.home, name="home"),
-    path('about', views.about, name="about"),
-    path('faq', views.faq, name="faq"),
+                  # Main Pages
+                  path('home', views.home, name="home"),
+                  path('about', views.about, name="about"),
+                  path('faq', views.faq, name="faq"),
 
-    # Main functionality
-    path('ministry/', include('ministry.urls')),
-    path('campaign/', include('campaign.urls')),
-    path('donation/', include('donation.urls')),
-    path('news/', include('news.urls')),
-    path('tag/', include('tag.urls')),
-    path('comment/', include('comment.urls')),
-    path('search/', include('search.urls')),
-    path('people/', include('people.urls')),
+                  # Main functionality
+                  path('ministry/', include('ministry.urls')),
+                  path('campaign/', include('campaign.urls')),
+                  path('donation/', include('donation.urls')),
+                  path('news/', include('news.urls')),
+                  path('tag/', include('tag.urls')),
+                  path('comment/', include('comment.urls')),
+                  path('search/', include('search.urls')),
+                  path('people/', include('people.urls')),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
               + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,10 @@
-from django.contrib import admin
+from django.contrib.admin import ModelAdmin
+from django.db import models
 
-from .models import Campaign
+from tinymce.widgets import AdminTinyMCE
 
-# Register your models here.
-admin.site.register(Campaign)
+
+class CampaignAdmin(ModelAdmin):
+    formfield_overrides = {
+        models.TextField: {'widget': AdminTinyMCE()}
+    }

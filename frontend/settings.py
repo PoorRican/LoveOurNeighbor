@@ -56,14 +56,14 @@ INSTALLED_APPS = [
     'explore.apps.ExploreConfig',
 
     'django_assets',
+    'tinymce',
 
-    'django.contrib.admin',
+    'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites'
 ]
 
 MIDDLEWARE = [
@@ -259,3 +259,21 @@ LOGGING = {
 }
 
 DEFAULT_PROFILE_IMG = 'img/blank_profile.jpg'
+
+# TINYMCE Config
+TINYMCE_JS_URL = "https://cdn.tiny.cloud/1/ropl0dvkzt3bbjqb9e8dk06ff578n2fkfvgun5yxa1zgb234/tinymce/5/tinymce.min.js"
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "lists,advlist,image,link,media,visualchars,fullscreen,checklists,"
+               "charmap,help,quickbars",
+    'toolbar': 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | '
+               'alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor | '
+               'pagebreak | charmap | fullscreen preview | insertfile image media template link anchor codesample',
+    'height': 500,
+    'max_height': 750,
+    'width': '100%',
+    'resize': True,
+    'mobile': {
+        'theme': 'mobile',
+        'toolbar': ['undo', 'bold', 'italic', 'styleselect', 'numlist', 'bullist']
+    }
+}

@@ -1,10 +1,19 @@
-from django.contrib import admin
+from django.contrib.admin import ModelAdmin
+from django.db import models
 
-from .models import MinistryProfile
-from news.models import NewsPost
+from tinymce.widgets import AdminTinyMCE
 
-admin.site.register(MinistryProfile)
 
-# Frontend Functionality
-admin.site.register(NewsPost)
-# somehow make these read-only for production. (for statistics only)
+class MinistryProfileAdmin(ModelAdmin):
+    formfield_overrides = {
+        models.TextField: {'widget': AdminTinyMCE()}
+    }
+    list_display = ('name', 'pub_date', 'verified', 'admin')
+    search_fields = ('name', 'admin', 'tags__name')
+    readonly_fields = ('pub_date', 'likes', 'views')
+    fieldsets = (('Metadata', {'fields': ('pub_date', 'likes', 'views')}),
+                 ('Profile Data',
+                  {'fields': (('name', 'verified'), 'description', 'tags', 'profile_img', 'banner_img')}),
+                 ('Administration', {'fields': ('admin', 'reps')}),
+                 ('Details', {'fields': ('address', 'phone_number', 'website', 'founded', 'staff')}),
+                 ('Social Media Links', {'fields': ('facebook', 'instagram', 'youtube', 'twitter')}))

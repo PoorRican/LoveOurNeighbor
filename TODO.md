@@ -131,6 +131,7 @@ Things to do before Users will be using the site:
     * Edit User/Create User
 - Fix Admin functionality
 - Help text should be in a dedicated app so that it is editable
+- Implement generic relations for NewsPost [using contenttypes](https://docs.djangoproject.com/en/3.0/ref/contrib/contenttypes/)
 
 ## Features
 - Commenting

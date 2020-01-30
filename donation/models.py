@@ -93,7 +93,8 @@ class Donation(models.Model):
         for p in _:
             if hasattr(self, p):
                 return getattr(self, p)
-        raise ValueError("Donation object does not have a payment")
+        return getattr(self, "cc_payment")
+        # raise ValueError("Donation object does not have a payment")
 
     @property
     def url(self):
@@ -198,7 +199,7 @@ class ccPayment(Payment):
     """
     donation = models.OneToOneField(Donation, related_name="cc_payment",
                                     null=True, blank=True,
-                                    on_delete=models.CASCADE)
+                                    on_delete=models.PROTECT)
 
     card_number = models.PositiveSmallIntegerField()  # last 4-digits of the card number
     name = models.CharField(max_length=32)

@@ -42,9 +42,8 @@ class MinistryProfile(models.Model):
     phone_number = models.CharField(max_length=20, unique=True)
     website = models.URLField(unique=True)
     founded = models.DateField(blank=True, null=True)
-    pub_date = models.DateField(auto_now_add=True)
+    pub_date = models.DateField('Date Created', auto_now_add=True)
     staff = models.SmallIntegerField(default=1)
-    _social_media = models.BinaryField(max_length=1024, default=b'', null=True)
 
     # Ministry Content
     description = models.TextField(blank=True, null=True)
@@ -52,6 +51,7 @@ class MinistryProfile(models.Model):
                                   blank=True, )
     profile_img = models.ImageField('Profile Image',
                                     default=DEFAULT_PROFILE_IMG,
+                                    null=True, blank=True,
                                     upload_to=ministry_profile_image_dir)
     banner_img = models.ImageField('Banner Image', blank=True, null=True,
                                    upload_to=ministry_banner_dir)
