@@ -50,15 +50,42 @@
           {# TODO: validate that dates have been entered #}
           <div class="col l6 s12 input-field">
             <i class="material-icons prefix">today</i>
-            <input id="start_date" type="text" name="start_date" class="datepicker" required>
-            <label for="start_date">{{ form.start_date.label }}</label>
-          </div>
+            <input id="start_date" type="text" name="start_date" class="datepicker"
+                   style="width: calc(100% - 7rem);" required>
+            <label for="start_date" style="width: calc(100% - 7rem);">{{ form.start_date.label }}</label>
+            <a class="btn-flat modal-trigger grey-text darken-2" href="#start_end_help_modal">
+              <i class="material-icons">help_outline</i>
+            </a><!-- Start/End Date Modal Trigger -->
+          </div><!-- /Start Date Input -->
 
           <div class="col l6 s12 input-field">
             <i class="material-icons prefix">today</i>
-            <input id="end_date" type="text" name="end_date" class="datepicker" required>
-            <label for="end_date">{{ form.end_date.label }}</label>
-          </div>
+            <input id="end_date" type="text" name="end_date" class="datepicker"
+                   style="width: calc(100% - 7rem)" required>
+            <label for="end_date" style="width: calc(100% - 7rem);">{{ form.end_date.label }}</label>
+            <a class="btn-flat modal-trigger grey-text darken-2" href="#start_end_help_modal">
+              <i class="material-icons">help_outline</i>
+            </a><!-- Start/End Date Modal Trigger -->
+          </div><!-- /End Date Input -->
+
+          <div id="start_end_help_modal" class="modal modal-fixed-footer">
+            <div class="modal-content">
+              <h4>
+                Start/End Date Help
+              </h4>
+              <h5>What are the Start and End Dates?</h5>
+              <p>The start and end dates of the campaign are the dates which donors will be able to donate
+                to your campaign. Setting a longer duration between these two dates might be necessary if
+                your campaign goal is high, and gives you time to share and promote your page via social or
+                physical media.</p>
+
+              <p>We encourage ministries to not set the start date on the same day you create the campaign
+                and campaigns should not be less than 1 month, so that your campaign is easily promotable. </p>
+            </div><!-- /.modal-content -->
+            <div class="modal-footer">
+              <a href="#!" class="modal-close waves-effect waves-green btn-flat">Okay</a>
+            </div>
+          </div><!-- Start/End Date Help Modal -->
 
         </div><!-- /details -->
 
