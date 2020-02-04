@@ -82,14 +82,19 @@
     {% endblock %}
   </main>
 
-  {{ footer(links) }}
+  {% set _links =
+    [
+      (url_for('home'), 'Home'),
+      (url_for('faq'), 'FAQ'),
+    ] + get_flatpages() %}
+  {{ footer(_links) }}
 
   {{ sidenav(request, links) }}
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       let options = {};
       // Initialize Sidebar Component
       let el = document.querySelectorAll('.sidenav');

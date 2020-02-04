@@ -1,4 +1,10 @@
 from django.contrib.admin import AdminSite
+from django.db import models
+
+from django.contrib.flatpages.admin import FlatPageAdmin
+from django.contrib.flatpages.models import FlatPage
+
+from tinymce.widgets import AdminTinyMCE
 
 from campaign.admin import CampaignAdmin
 from campaign.models import Campaign
@@ -23,7 +29,25 @@ class LONAdminSite(AdminSite):
     site_header = 'LON Administration'
 
 
+class NewFlatPageAdmin(FlatPageAdmin):
+    formfield_overrides = {
+        models.TextField: {'widget': AdminTinyMCE()}
+    }
+    fieldsets = (
+        (None, {'fields': ('url', 'title', 'content', 'sites')}),
+        ('Advanced options', {
+            'classes': ('collapse',),
+            'fields': (
+                'registration_required',
+                'template_name',
+            ),
+        }),
+    )
+
+
 admin_site = LONAdminSite()
+
+admin_site.register(FlatPage, NewFlatPageAdmin)
 
 admin_site.register(Campaign, CampaignAdmin)
 admin_site.register(MinistryProfile, MinistryProfileAdmin)

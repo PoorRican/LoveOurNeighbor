@@ -1,7 +1,5 @@
 # Immediate Things to Implement
 - Static pages:
-    * Core values
-    * Statement of Faith
     * About Us Blurbs
 - Help Blurbs for ministries:
     * Explaining start/stop dates (when creating a Campaign)
@@ -59,6 +57,7 @@ Things to do before ministries will be using the site:
     * Dynamic MOTD on top
     * Random Featured Ministry
     * Posts/Campaigns from Liked Ministries
+- About tab in navigation elements (navbar/sidenav) should be a dropdown showing flatpages.
 
 
 ## Hard Release Features

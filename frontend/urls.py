@@ -13,10 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
+from django.contrib.flatpages import views as fp
 from django.urls import include, path
 from django.views.generic import RedirectView
-from django.conf import settings
-from django.conf.urls.static import static
 
 from .admin import admin_site
 from . import views, settings
@@ -34,8 +34,11 @@ urlpatterns = [
 
                   # Main Pages
                   path('home', views.home, name="home"),
-                  path('about', views.about, name="about"),
                   path('faq', views.faq, name="faq"),
+                  # Flatpages
+                  path('about', fp.flatpage, {'url': 'about'}, name="about"),
+                  path('core', fp.flatpage, {'url': 'core'}, name="core"),
+                  path('faith', fp.flatpage, {'url': 'faith'}, name="faith"),
 
                   # Main functionality
                   path('ministry/', include('ministry.urls')),

@@ -22,7 +22,8 @@ from .utils import (
     friendly_time,
     ministry_admin_urls,
     campaign_admin_urls,
-    )
+    get_flatpages,
+)
 
 # Manually register Bundles for webassets (for some reason django_assets is not working)
 _url = STATIC_URL
@@ -58,6 +59,7 @@ def environment(**options):
         'len': len,
         'round': round,
         'get_messages': messages.get_messages,
+        'get_flatpages': get_flatpages,
         'hasattr': hasattr,
         'getattr': getattr,
         'str': str,

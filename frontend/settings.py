@@ -64,6 +64,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django.contrib.flatpages',
 ]
 
 MIDDLEWARE = [
@@ -74,7 +76,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'frontend.utils.TimezoneMiddleware'
+    # 'frontend.utils.TimezoneMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
 
 ROOT_URLCONF = 'frontend.urls'
@@ -277,3 +280,5 @@ TINYMCE_DEFAULT_CONFIG = {
         'toolbar': ['undo', 'bold', 'italic', 'styleselect', 'numlist', 'bullist']
     }
 }
+
+SITE_ID = 1

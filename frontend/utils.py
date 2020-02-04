@@ -1,3 +1,5 @@
+from django.contrib.flatpages.models import FlatPage
+
 from datetime import datetime
 from ipware import get_client_ip
 from pytz import timezone
@@ -75,6 +77,17 @@ def ministry_admin_urls(ministry):
                     'obj_id': ministry.id},
          }]
     return urls
+
+
+def get_flatpages():
+    """
+    Emulates identical `django.contrib.flatpages` function.
+
+    Returns
+    =======
+    Nested tuple containing 'url' and 'title' values respectively for each FlatPage object.
+    """
+    return [(i.url, i.title) for i in FlatPage.objects.all()]
 
 
 class TimezoneMiddleware:
