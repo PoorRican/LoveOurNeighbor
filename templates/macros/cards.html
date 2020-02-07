@@ -294,9 +294,11 @@
               <i class="material-icons">arrow_drop_down</i>
             </a>
           {% else %}
-            <span class="card-title truncate" style="max-width: 85%; display: inline-block">
-              {{ ministry.name }}
-            </span>
+            <a href="{{ ministry.url }}">
+              <span class="card-title truncate" style="max-width: 85%; display: inline-block">
+                {{ ministry.name }}
+              </span>
+            </a>
           {% endif %}
         </div><!-- /.card-image -->
       {% endif %}
@@ -313,9 +315,11 @@
               </a>
             </div>
           {% else %}
-            <span class="card-title truncate" style="max-width: 85%; display: inline-block">
-              {{ ministry.name }}
-            </span>
+            <a href="{{ ministry.url }}">
+              <span class="card-title truncate" style="max-width: 85%; display: inline-block">
+                {{ ministry.name }}
+              </span>
+            </a>
           {% endif %}
         {% endif %}
         <div style="min-height: 50px">
@@ -402,7 +406,7 @@
       </div><!-- /.card-content -->
 
       {% if AUTH %}
-        <ul id="ministry_{{ campaign.id }}" class="dropdown-content">
+        <ul id="campaign_{{ campaign.id }}" class="dropdown-content">
           {% for opt in campaign_admin_urls(campaign) %}
             <li>
               <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">

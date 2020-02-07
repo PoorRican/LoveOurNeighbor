@@ -305,5 +305,12 @@ div.dialog-trigger img {
   text-align: center;
 }
 
+
+/* Homepage Styling */
+.card-image .card-title {
+  background-color: rgba(0, 0, 0, .25);
+  border-top-right-radius: 15px;
+}
+
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */
