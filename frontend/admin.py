@@ -21,8 +21,8 @@ from news.models import NewsPost
 from people.admin import UserAdmin
 from people.models import User
 
-from public.admin import FAQAdmin
-from public.models import FaqSection
+from public.admin import AboutAdmin, FAQAdmin
+from public.models import AboutSection, FaqSection
 
 from tag.admin import TagAdmin
 from tag.models import Tag
@@ -52,6 +52,7 @@ admin_site = LONAdminSite()
 
 admin_site.register(FlatPage, NewFlatPageAdmin)
 
+admin_site.register(AboutSection, AboutAdmin)
 admin_site.register(Campaign, CampaignAdmin)
 admin_site.register(Donation, DonationAdmin)
 admin_site.register(FaqSection, FAQAdmin)
