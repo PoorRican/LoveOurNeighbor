@@ -225,14 +225,19 @@
 #}
 {% macro card_area(news, campaigns=(False, []), AUTH=None, images=[]) %}
 
+  {% if campaigns[0] %}
+    {% set width="s4" %}
+  {% else %}
+    {% set width="s6" %}
+  {% endif %}
   <div class="row">
     <div class="col s12">
       <ul class="tabs">
-        <li class="tab col s4"><a href="#news">News</a></li>
+        <li class="tab col {{ width }}"><a href="#news">News</a></li>
         {% if campaigns[0] %}
-          <li class="tab col s4"><a href="#campaigns">Campaigns</a></li>
+          <li class="tab col {{ width }}"><a href="#campaigns">Campaigns</a></li>
         {% endif %}
-        <li class="tab col s4"><a href="#gallery">Gallery</a></li>
+        <li class="tab col {{ width }}"><a href="#gallery">Gallery</a></li>
       </ul>
     </div>
   </div>
