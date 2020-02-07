@@ -21,8 +21,8 @@ from news.models import NewsPost
 from people.admin import UserAdmin
 from people.models import User
 
-from public.admin import AboutAdmin, FAQAdmin
-from public.models import AboutSection, FaqSection
+from public.admin import FAQAdmin
+from public.models import FaqSection
 
 
 class LONAdminSite(AdminSite):
@@ -53,6 +53,5 @@ admin_site.register(Campaign, CampaignAdmin)
 admin_site.register(MinistryProfile, MinistryProfileAdmin)
 admin_site.register(NewsPost, NewsPostAdmin)
 admin_site.register(User, UserAdmin)
-admin_site.register(AboutSection, AboutAdmin)
 admin_site.register(FaqSection, FAQAdmin)
 admin_site.register(Donation, DonationAdmin)
