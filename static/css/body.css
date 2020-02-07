@@ -299,5 +299,11 @@ div.dialog-trigger img {
   border-bottom: black solid 1px;
 }
 
+
+/* Ministry Page styling */
+.sm-links {
+  text-align: center;
+}
+
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */

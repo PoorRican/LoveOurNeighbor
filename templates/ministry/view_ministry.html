@@ -103,18 +103,44 @@
 
         <div>
           <h3>Ministry Information:</h3>
-          <p class="section-info">
+
+          <div class="row sm-links">
+            <div class="col s3 m2 l1">
+              {% if ministry.facebook %}
+                <a href="{{ ministry.facebook }}" class="btn blue white-text">
+                  <i class="fa fa-facebook"></i>
+                </a>&nbsp;
+              {% endif %}
+            </div><!-- facebook -->
+            <div class="col s3 m2 l1">
+              {% if ministry.instagram %}
+                <a href="{{ ministry.instagram }}" class="btn blue darken-4 white-text">
+                  <i class="fa fa-instagram"></i>
+                </a>
+              {% endif %}
+            </div><!-- instagram -->
+            <div class="col s3 m2 l1">
+              {% if ministry.twitter %}
+                <a href="{{ ministry.twitter }}" class="btn light-blue white-text">
+                  <i class="fa fa-twitter"></i>
+                </a>
+              {% endif %}
+            </div><!-- twitter -->
+            <div class="col s3 m2 l1">
+              {% if ministry.youtube %}
+                <a href="{{ ministry.youtube }}" class="btn red white-text">
+                  <i class="fa fa-youtube"></i>
+                </a>
+              {% endif %}
+            </div><!-- youtube -->
+          </div><!-- social media links -->
+
+          <div class="section-info">
             <span>Website:</span>&nbsp;
             {% if ministry.website %}
               <a href="{{ ministry.website }}">{{ ministry.website.split("://")[1] }}</a><br>
             {% endif %}
-            {% if ministry.social_media %}
-              <span>Social Media:&nbsp;</span>
-              {% for site, url in ministry.social_media.items() %}
-                <a href="{{ url }}">{{ site }}</a>&nbsp;
-              {% endfor %}
-              <br>
-            {% endif %}
+
             {% set info = {
                 'phone_number': 'Phone',
                 'address': 'Address',
@@ -133,7 +159,8 @@
                 <br>
               {% endif %}
             {% endfor %}
-          </p><!-- /.section-info -->
+          </div><!-- /.section-info -->
+
         </div><!-- /row -->
 
         {{ comments_section(ministry, 'ministry', request, form=form, csrf_token=csrf_token) }}
