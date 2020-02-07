@@ -1,3 +1,6 @@
-from django.contrib import admin
+from django.contrib.admin import ModelAdmin
 
-# Register your models here.
+
+class TagAdmin(ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name', 'description', 'ministries__name', 'campaigns__title')

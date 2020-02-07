@@ -24,6 +24,9 @@ from people.models import User
 from public.admin import FAQAdmin
 from public.models import FaqSection
 
+from tag.admin import TagAdmin
+from tag.models import Tag
+
 
 class LONAdminSite(AdminSite):
     site_header = 'LON Administration'
@@ -50,8 +53,9 @@ admin_site = LONAdminSite()
 admin_site.register(FlatPage, NewFlatPageAdmin)
 
 admin_site.register(Campaign, CampaignAdmin)
+admin_site.register(Donation, DonationAdmin)
+admin_site.register(FaqSection, FAQAdmin)
 admin_site.register(MinistryProfile, MinistryProfileAdmin)
 admin_site.register(NewsPost, NewsPostAdmin)
 admin_site.register(User, UserAdmin)
-admin_site.register(FaqSection, FAQAdmin)
-admin_site.register(Donation, DonationAdmin)
+admin_site.register(Tag, TagAdmin)
