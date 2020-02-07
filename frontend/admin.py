@@ -21,8 +21,8 @@ from news.models import NewsPost
 from people.admin import UserAdmin
 from people.models import User
 
-from public.admin import AboutAdmin, FAQAdmin
-from public.models import AboutSection, FaqSection
+from public.admin import AboutAdmin, FAQAdmin, SocialMediaLinkAdmin
+from public.models import AboutSection, FaqSection, SocialMediaLink
 
 from tag.admin import TagAdmin
 from tag.models import Tag
@@ -58,5 +58,6 @@ admin_site.register(Donation, DonationAdmin)
 admin_site.register(FaqSection, FAQAdmin)
 admin_site.register(MinistryProfile, MinistryProfileAdmin)
 admin_site.register(NewsPost, NewsPostAdmin)
-admin_site.register(User, UserAdmin)
+admin_site.register(SocialMediaLink, SocialMediaLinkAdmin)
 admin_site.register(Tag, TagAdmin)
+admin_site.register(User, UserAdmin)

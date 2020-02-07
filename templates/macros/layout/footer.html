@@ -24,13 +24,11 @@
 
           {# {{{ Social Media Links #}
           <div id="sm-links">
-            <a class="waves-effect waves-teal btn-flat">
-              <img src="{{ static('img/igram-icon.png') }}">
-            </a>
-            <a class="waves-effect waves-teal btn-flat">
-              <img src="{{ static('img/fbook-icon.png') }}">
-            </a>
-            {# TODO: import YouTube and other SM links #}
+            {% for link in social_media_links() %}
+              <a href="{{ link.url }}" class="waves-effect waves-light btn-flat">
+                <i class="{{ link.class_attr }}"></i>
+              </a>
+            {% endfor %}
           </div><!-- /#social-media-links -->
         </div><!-- /.col .l6 -->
 

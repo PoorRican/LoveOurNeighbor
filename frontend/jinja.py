@@ -15,7 +15,7 @@ from frontend.settings import (
     COMMENTS,
 )
 from frontend.assets import js, css, app
-from public.models import AboutSection
+from public.models import AboutSection, SocialMediaLink
 from donation.utils import generate_confirmation_id, generate_payeezy_hash
 
 from .utils import (
@@ -51,6 +51,24 @@ def mission_statement():
     return _mission_statement
 
 
+def social_media_links():
+    """
+    Helper function to dynamically display social media links in footer macro.
+
+    Yields
+    ------
+    `SocialMediaLink` object
+
+    See Also
+    --------
+    `SocialMediaLink`
+    templates/macros/layout/footer.html
+
+    """
+    for i in SocialMediaLink.objects.all():
+        yield i
+
+
 def environment(**options):
     env = Environment(**options)
     env.globals.update({
@@ -72,7 +90,8 @@ def environment(**options):
         'generate_payeezy_hash': generate_payeezy_hash,
         'PAYEEZY_TEST_BUTTON': PAYEEZY_TEST_BUTTON,
         'COMMENTS': COMMENTS,
-        'today': date.today
+        'today': date.today,
+        'social_media_links': social_media_links
     })
     env.add_extension(AssetsExtension)
     env.assets_environment = _assets
