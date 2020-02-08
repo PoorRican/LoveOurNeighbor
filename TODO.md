@@ -4,9 +4,12 @@
 - Help Blurbs for ministries:
     * Explaining start/stop dates (when creating a Campaign)
     * Explaining details in Ministry Profile Page
+- Add Cookie Consent Banner from Termly
+- Ministry/Campaign Card should show abbreviated description/content
+- Title in frontpage Ministry/Campaign card should link to object. There should be a darkened overlay as to prevent obscured text.
+- Unverified ministries/campaigns should not be on homepage
 
 ## Internal Fixes
-- Make TinyMCE script to template pages that need it. TinyMCE should not be fetched in 'layout.html'
 - Profile Image Functionality:
     * Unify naming within angular functions. eg: remove 'banner' naming
     * Dynamically show selected/uploaded image
@@ -15,16 +18,12 @@
 - Remove 'login_in_as' functionality. Add settings flag to enable/disable this feature.
 - Display of Users Email
 - Display users likes
-- Title header in cards should provide a link to object.
-- Dropdown anchor element item 'Link to ...' should be 'View ...'
 - User Widget should provide a link to view ministries
 - Edit ministry/campaign page should provide a link to view object
 - Clean up utils/ dir. Create a module with utility functions accessible via a CLI or args.
-- Admin Interface:
-    * Fix login functionality
-    * Add donations/payments
 - Separate create/edit pages for NewsPost
 - Show tags in 'frontpage_ministry_card' widget
+- Why does `python manage.py collectstatic` not collect static files for tinymce app in docker config?
 
 
 # Medium Priority 
@@ -54,10 +53,11 @@ Things to do before ministries will be using the site:
 - Show table of liked MinistryProfiles and Campaigns to users
 - Homepage Functionality:
     * Have a section for highlighting new or popular tags
-    * Dynamic MOTD on top
     * Random Featured Ministry
     * Posts/Campaigns from Liked Ministries
 - About tab in navigation elements (navbar/sidenav) should be a dropdown showing flatpages.
+- Show banner image in ograph metadata for media sharing
+- Snippet for campaign/ministry profile (to view in cards)
 
 
 ## Hard Release Features
@@ -82,11 +82,7 @@ Things to do before Users will be using the site:
     * Statement of Faith:
         - "What makes LON a Christian Ministry"
 - Django-Admin
-    * Homepage MOTD should be editable via django
-    * WYSIWYG editor in django-admin page
-    * Admin functions should be better:
-        - logout should work
-        - admin link should be visible for superusers who are logged in
+    * admin link should be visible for superusers who are logged in
 - Unlike Functionality
 - Cards:
     * Add start/end date to campaign cards

@@ -5,7 +5,7 @@ from django.urls import reverse
 from campaign.models import Campaign
 from ministry.models import MinistryProfile
 from news.models import NewsPost
-from public.models import AboutSection, FaqSection
+from public.models import AboutSection, FaqSection, MessageOfTheDay
 
 seo_keywords = ['new jersey', 'non profit']
 
@@ -49,6 +49,7 @@ def home(request):
                'random_ministries': MinistryProfile.random_ministries(),
                'new_campaigns': Campaign.new_campaigns(),
                'random_campaigns': Campaign.random_campaigns(),
+               'motd': MessageOfTheDay.get_message()
                }
 
     return render(request, "home.html", context)

@@ -8,24 +8,15 @@
 {% block body %}
   <div class="section">
     <div class="wrapper">
-      <div id="top">
-        {# This should be dynamic (eg: editable via django) #}
-        <h1>Welcome</h1>
+      {% if motd %}
+        <div id="top">
 
-        <p>We are glad you here! Read more <a href="{{ url_for('about') }}">About Us</a> and
-          read through our <a href="{{ url_for('faq') }}">FAQ</a>.
-          We want to hear back from you! Please send feedback and all questions to <a
-              href="mailto:website@loveourneighor.org">website@loveourneighbor.org</a>.
-        </p>
+          <h1>{{ motd.title }}</h1>
 
-        <p>We are now accepting applications for new Ministry Profiles! Please <a
-            href="{{ url_for('people:create_user') }}">make an account</a> to begin this process.</p>
+          {{ motd.message|safe }}
 
-        <p>If you already love what we are planning to accomplish,
-          you may donate to our administrative cost using the button below:
-          {{ donate_button() }}
-        </p>
-      </div><!-- /#top -->
+        </div><!-- /#top -->
+      {% endif %}
 
 
       <div id="main">
