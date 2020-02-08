@@ -36,7 +36,6 @@ def serialize_ministry(ministry):
             'reps': _reps,
             'url': ministry.url,
             'tags': [i.name for i in ministry.tags.all()],
-            'social_media': ministry.social_media
             }
 
 
