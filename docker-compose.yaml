@@ -38,6 +38,18 @@ services:
     depends_on:
       - django
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    ports:
+      - "8001:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: swe.fig@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: aoeuaoeuaoeu
+    restart: unless-stopped
 
 
 volumes:
