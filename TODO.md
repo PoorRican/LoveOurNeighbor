@@ -9,8 +9,6 @@
     * Explaining start/stop dates (when creating a Campaign)
     * Explaining details in Ministry Profile Page
 - Add Cookie Consent Banner from Termly
-- Ministry/Campaign Card should show abbreviated description/content
-- Title in frontpage Ministry/Campaign card should link to object. There should be a darkened overlay as to prevent obscured text.
 - Unverified ministries/campaigns should not be on homepage
 
 ## Internal Fixes
@@ -61,7 +59,7 @@ Things to do before ministries will be using the site:
     * Posts/Campaigns from Liked Ministries
 - About tab in navigation elements (navbar/sidenav) should be a dropdown showing flatpages.
 - Show banner image in ograph metadata for media sharing
-- Snippet for campaign/ministry profile (to view in cards)
+- Show feedback for denied transaction in `confirm_donation`
 
 
 ## Hard Release Features

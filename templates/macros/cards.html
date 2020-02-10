@@ -279,7 +279,7 @@
   {% set AUTH = ministry.authorized_user(request.user) %}
 
   <div class="col s12 l6">
-    <div class="card">
+    <div class="card large hoverable">
 
       {% if ministry.banner_img %}
         <div class="card-image">
@@ -288,17 +288,17 @@
           </a>
           {% if AUTH %}
             <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
-              <span class="truncate" style="max-width: 85%; display: inline-block">
+              <span class="truncate">
                 {{ ministry.name }}
               </span>
               <i class="material-icons">arrow_drop_down</i>
             </a><!-- /.card-title -->
           {% else %}
             <a class="card-title" href="{{ ministry.url }}">
-              <span class="truncate" style="max-width: 85%; display: inline-block">
+              <span class="truncate">
                 {{ ministry.name }}
               </span>
-            </a>
+            </a><!-- /.card-title -->
           {% endif %}
         </div><!-- /.card-image -->
       {% endif %}
@@ -306,24 +306,22 @@
       <div class="card-content">
         {% if not ministry.banner_img %}
           {% if AUTH %}
-            <div class="card-title">
-              <a class="dropdown-trigger" data-target="ministry_{{ ministry.id }}">
-                <span class="truncate" style="max-width: 85%; display: inline-block">
-                  {{ ministry.name }}
-                </span>
-                <i class="material-icons">arrow_drop_down</i>
-              </a><!-- /.card-title -->
-            </div>
-          {% else %}
-            <a href="{{ ministry.url }}">
-              <span class="card-title truncate" style="max-width: 85%; display: inline-block">
+            <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
+              <span class="truncate">
                 {{ ministry.name }}
               </span>
-            </a>
+              <i class="material-icons">arrow_drop_down</i>
+            </a><!-- /.card-title -->
+          {% else %}
+            <a class="card-title" href="{{ ministry.url }}">
+              <span class="truncate">
+                {{ ministry.name }}
+              </span>
+            </a><!-- /.card-title -->
           {% endif %}
         {% endif %}
-        <div style="min-height: 50px">
-          <p class="truncate">{{ ministry.description|safe }}</p>
+        <div class="content">
+          <a href="{{ ministry.url }}">{{ ministry.description|safe }}</a>
         </div>
       </div><!-- /.card-content -->
 
@@ -344,7 +342,11 @@
         {% if COMMENTS %}
           <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
         {% endif %}
-        <a href="{{ ministry.url }}" class="btn-flat text-orange"><i class="material-icons">open_in_new</i></a>
+        <a href="{{ ministry.url }}"
+           class="btn-flat text-orange tooltipped"
+           data-tooltip="View Ministry">
+          <i class="material-icons">open_in_new</i>
+        </a>
         {# TODO: show tags #}
       </div><!-- /.card-action -->
 
@@ -357,7 +359,7 @@
   {% set AUTH = campaign.ministry.authorized_user(request.user) %}
 
   <div class="col s12 l6">
-    <div class="card">
+    <div class="card large hoverable">
 
       {% if campaign.banner_img %}
         <div class="card-image">
@@ -373,7 +375,7 @@
             </a><!-- /.card-title -->
           {% else %}
             <a class="card-title" href="{{ campaign.url }}">
-              <span class="truncate" style="max-width: 85%; display: inline-block">
+              <span class="truncate">
                 {{ campaign.title }}
               </span>
             </a><!-- /.card-title -->
@@ -384,24 +386,22 @@
       <div class="card-content">
         {% if not campaign.banner_img %}
           {% if AUTH %}
-            <div class="card-title">
-              <a class="dropdown-trigger" data-target="campaign_{{ campaign.id }}">
-                <span class="truncate" style="max-width: 85%; display: inline-block">
-                  {{ campaign.title }}
-                </span>
-                <i class="material-icons">arrow_drop_down</i>
-              </a>
-            </div>
+            <a class="card-title dropdown-trigger" data-target="campaign_{{ campaign.id }}">
+              <span class="truncate">
+                {{ campaign.title }}
+              </span>
+              <i class="material-icons">arrow_drop_down</i>
+            </a><!-- card-title -->
           {% else %}
-            <a href="{{ campaign.url }}">
-              <span class="card-title truncate" style="max-width: 85%; display: inline-block">
+            <a class="card-title" href="{{ campaign.url }}">
+              <span class="truncate">
                 {{ campaign.title }}
               </span>
             </a>
           {% endif %}
         {% endif %}
-        <div style="min-height: 50px">
-          <p class="truncate">{{ campaign.content|safe }}</p>
+        <div class="content">
+          <a href="{{ campaign.url }}">{{ campaign.content|safe }}</a>
         </div>
       </div><!-- /.card-content -->
 
@@ -422,7 +422,11 @@
         {% if COMMENTS %}
           <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
         {% endif %}
-        <a href="{{ campaign.url }}" class="btn-flat text-orange"><i class="material-icons">open_in_new</i></a>
+        <a href="{{ campaign.url }}"
+           class="btn-flat text-orange tooltipped"
+           data-tooltip="View Campaign">
+          <i class="material-icons">open_in_new</i>
+        </a>
         {# TODO: show tags #}
       </div><!-- /.card-action -->
 
