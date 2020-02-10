@@ -211,7 +211,7 @@ def confirm_donation(request):
                 'card_number': data['Card_Number'][-4:],
                 'name': extract_exact_ctr(data['exact_ctr']),
                 'zipcode': data['x_zip'],
-                'auth_num': data['x_auth_code'],
+                'auth_num': str(data['x_auth_code']),  # str to preserve leading zeros
                 'tx_id': data['x_trans_id'],
             }
             ccPayment.objects.create(**kwargs)

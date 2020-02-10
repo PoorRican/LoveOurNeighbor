@@ -19,7 +19,7 @@
           {% set button_code = "Admin Donation" %}
         {% endif %}
         <input type="hidden" name="button_code" value="{{ button_code }}"/>
-        <input type="hidden" name="x_invoice_num" value="{{ generate_confirmation_id() }}"/>
+        <input type="hidden" name="x_invoice_num" value="{{ generate_confirmation_id(campaign) }}"/>
         <div class="cpwrap">
           <button class="btn orange lighten-1 waves-effect waves-light s12" type="button">
             <i class="material-icons">redeem</i>

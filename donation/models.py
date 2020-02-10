@@ -69,7 +69,10 @@ class Donation(models.Model):
                              on_delete=models.PROTECT)
 
     def __str__(self):
-        return "$%d for %s" % (self.amount, self.campaign)
+        try:
+            return "$%d for %s" % (self.amount, self.campaign)
+        except ccPayment.DoesNotExist:
+            return "Stub donation for %s" % self.campaign
 
     @property
     def payment(self):
@@ -177,12 +180,6 @@ class Payment(models.Model):
     # Transaction Details
     amount = models.DecimalField(max_digits=7, decimal_places=2)
 
-    def confirm(self):
-        """ Used to generate a 'receipt' confirmation number.
-        """
-        self.confirmation = generate_confirmation_id()
-        self.save()
-
     class Meta:
         abstract = True
 
@@ -201,12 +198,12 @@ class ccPayment(Payment):
                                     null=True, blank=True,
                                     on_delete=models.PROTECT)
 
-    card_number = models.PositiveSmallIntegerField()  # last 4-digits of the card number
+    card_number = models.CharField(max_length=4)  # last 4-digits of the card number
     name = models.CharField(max_length=32)
     zipcode = models.CharField(max_length=10)  # alphanum to accommodate international transactions
 
     auth_num = models.CharField(max_length=10)
-    tx_id = models.PositiveIntegerField()
+    tx_id = models.CharField(max_length=16)
 
 
 class btcPayment(Payment):

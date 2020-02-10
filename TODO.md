@@ -1,3 +1,7 @@
+# Bugs
+- Fix account creation functionality so that donors who do not have an account may use the same email
+- Prevent duplicate donation objects from being created upon repeating GET /donation/confirm
+
 # Immediate Things to Implement
 - Static pages:
     * About Us Blurbs
