@@ -292,10 +292,10 @@
                 {{ ministry.name }}
               </span>
               <i class="material-icons">arrow_drop_down</i>
-            </a>
+            </a><!-- /.card-title -->
           {% else %}
-            <a href="{{ ministry.url }}">
-              <span class="card-title truncate" style="max-width: 85%; display: inline-block">
+            <a class="card-title" href="{{ ministry.url }}">
+              <span class="truncate" style="max-width: 85%; display: inline-block">
                 {{ ministry.name }}
               </span>
             </a>
@@ -308,11 +308,11 @@
           {% if AUTH %}
             <div class="card-title">
               <a class="dropdown-trigger" data-target="ministry_{{ ministry.id }}">
-              <span class="truncate" style="max-width: 85%; display: inline-block">
-                {{ ministry.name }}
-              </span>
+                <span class="truncate" style="max-width: 85%; display: inline-block">
+                  {{ ministry.name }}
+                </span>
                 <i class="material-icons">arrow_drop_down</i>
-              </a>
+              </a><!-- /.card-title -->
             </div>
           {% else %}
             <a href="{{ ministry.url }}">
@@ -370,13 +370,13 @@
                 {{ campaign.title }}
               </span>
               <i class="material-icons">arrow_drop_down</i>
-            </a>
+            </a><!-- /.card-title -->
           {% else %}
-            <a href="{{ campaign.url }}">
-              <span class="card-title truncate" style="max-width: 85%; display: inline-block">
+            <a class="card-title" href="{{ campaign.url }}">
+              <span class="truncate" style="max-width: 85%; display: inline-block">
                 {{ campaign.title }}
               </span>
-            </a>
+            </a><!-- /.card-title -->
           {% endif %}
         </div><!-- /.card-image -->
       {% endif %}
