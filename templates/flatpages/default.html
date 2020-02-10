@@ -82,12 +82,7 @@
   </div>
 </main>
 
-{% set _links =
-    [
-      (url_for('home'), 'Home'),
-      (url_for('faq'), 'FAQ'),
-    ] + get_flatpages() %}
-{{ footer(_links) }}
+{{ footer(links+get_flatpages()) }}
 
 {{ sidenav(request, links) }}
 
