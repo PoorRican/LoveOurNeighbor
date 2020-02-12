@@ -1,4 +1,3 @@
-from jinja2 import Template
 import os
 from uuid import uuid4
 
@@ -19,52 +18,60 @@ from donation.utils import serialize_donation
 
 from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
-from .utils import clear_previous_ministry_login, user_profile_img_dir, create_profile_img_dir
+from .utils import (
+    clear_previous_ministry_login, user_profile_img_dir, create_profile_img_dir,
+    send_verification_email
+)
 
 
 def create_user(request):
+    """
+    Creates a User.
+
+    Allows an email associated w/ an anonymous donation to be created.
+
+    The django `messages` system conveys form errors.
+    """
     if request.method == 'POST':
-        form = NewUserForm(request.POST)
-        if request.POST['password'] == request.POST['password2']:
-            if form.is_valid():
-                user = form.save(commit=False)
-                user.password = make_password(user.password)
-
-                if settings.REQUIRE_USER_VERIFICATION:
-                    email = user.email
-                    _template = os.path.join(settings.BASE_DIR, 'templates/people/email_confirm.html')
-                    with open(_template) as f:
-                        t = f.read()
-                    t = Template(t)
-                    url = reverse('people:verify_user', kwargs={'email': email,
-                                                                'confirmation': user.confirmation.hex})
-                    url = request.build_absolute_uri(url)
-                    html = t.render({'url': url})
-                    user.email_user('Verify Account', html, 'accounts@loveourneighbor.org',
-                                    ['account_verification', 'internal'], 'Love Our Neighbor')
-                    user.save()
-
-                    _w = 'Your account has been created!'
-                    messages.add_message(request, messages.SUCCESS, _w)
-
-                    return render(request, 'verification_email_sent.html', {'email': email})
-                else:
-                    user.save()
-                    login(request, user)
-
-                    _w = 'Your account has been created!'
-                    messages.add_message(request, messages.SUCCESS, _w)
-
-                    return HttpResponseRedirect(reverse('people:user_profile'))
-
-            else:
-                for _, error in form.errors.items():
-                    for msg in error:
-                        print(msg)
-                        messages.add_message(request, messages.ERROR, msg)
+        # Catch emails that have been used for donations
+        try:
+            user = User.objects.get(email=request.POST['email'])
+            if user.is_verified:
+                _w = 'This email (%s) has already been used!' % request.POST['email']
+                messages.add_message(request, messages.SUCCESS, _w)
 
                 _url = reverse('people:create_user')
                 return HttpResponseRedirect(_url)
+            else:
+                form = NewUserForm(request.POST, instance=user)
+        except User.DoesNotExist:
+            form = NewUserForm(request.POST)
+
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.password = make_password(user.password)
+
+            _w = 'Your account has been created!'
+            messages.add_message(request, messages.SUCCESS, _w)
+
+            if settings.REQUIRE_USER_VERIFICATION:
+                send_verification_email(request, user)
+
+                return render(request, 'verification_email_sent.html', {'email': user.email})
+            else:
+                user.save()
+                login(request, user)
+
+                return HttpResponseRedirect(reverse('people:user_profile'))
+
+        else:
+            for _, error in form.errors.items():
+                for msg in error:
+                    print(msg)
+                    messages.add_message(request, messages.ERROR, msg)
+
+            _url = reverse('people:create_user')
+            return HttpResponseRedirect(_url)
 
     elif request.method == 'GET':
         form = NewUserForm()

@@ -8,6 +8,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import UserManager
 from django.db import models
 from django.templatetags.static import static
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
@@ -208,6 +209,24 @@ class User(AbstractBaseUser, PermissionsMixin):
             return user
         else:
             return False
+
+    def build_confirmation_url(self, request):
+        """
+        Builds a URL to `verify_user`. This is to be used in email templates for User email verification.
+
+        Parameters
+        ----------
+        request:
+            Request object used to build an absolute URL. (Since this will be embedded in an email)
+
+        Returns
+        -------
+        URL as str
+
+        """
+        url = reverse('people:verify_user', kwargs={'email': self.email,
+                                                    'confirmation': self.confirmation.hex})
+        return request.build_absolute_uri(url)
 
 
 def set_initial_user_names(request, user, sociallogin=None, **kwargs):

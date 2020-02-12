@@ -1,6 +1,8 @@
+from jinja2 import Template
 from os import path, makedirs
 
 from django.conf import settings
+from django.urls import reverse
 
 
 # Model Utility Functions
@@ -35,6 +37,17 @@ def create_profile_img_dir(instance, prepend=settings.MEDIA_ROOT):
     """
     _path = path.join(prepend, user_profile_img_dir(instance, filename=''))
     makedirs(_path, exist_ok=True)
+
+
+def send_verification_email(request, user):
+    _template = path.join(settings.BASE_DIR, 'templates/people/email_confirm.html')
+    with open(_template) as f:
+        t = f.read()
+    t = Template(t)
+    html = t.render({'url': user.build_confirmation_url(request)})
+    user.email_user('Verify Account', html, 'accounts@loveourneighbor.org',
+                    ['account_verification', 'internal'], 'Love Our Neighbor')
+    user.save()
 
 
 # View Utility Functions

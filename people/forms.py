@@ -4,10 +4,15 @@ from .models import User
 
 
 class NewUserForm(forms.ModelForm):
-    password2 = forms.PasswordInput()
-
     def __init__(self, *args, **kwargs):
         super(NewUserForm, self).__init__(*args, **kwargs)
+        self.fields['password2'] = forms.PasswordInput(attrs={'placeholder':
+                                                                  'Password (again)'})
+
+    def is_valid(self):
+        if self.cleaned_data['password'] != self.data['password2']:
+            self.add_error(None, "Passwords do not match!")
+        return super(NewUserForm, self).is_valid()
 
     class Meta:
         model = User

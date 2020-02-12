@@ -1,5 +1,4 @@
 # Bugs
-- Fix account creation functionality so that donors who do not have an account may use the same email
 - Prevent duplicate donation objects from being created upon repeating GET /donation/confirm
 
 # Immediate Things to Implement
@@ -60,6 +59,8 @@ Things to do before ministries will be using the site:
 - About tab in navigation elements (navbar/sidenav) should be a dropdown showing flatpages.
 - Show banner image in ograph metadata for media sharing
 - Show feedback for denied transaction in `confirm_donation`
+- Implement first/last name inputs in create user template
+- Get rid of `display name`
 
 
 ## Hard Release Features
