@@ -40,7 +40,7 @@ class UserEditForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'display_name',
+        fields = ('first_name', 'last_name',
                   '_location', 'profile_img')
         labels = {'_location': 'Location',
                   'profile_img': 'Profile Image'}
@@ -49,7 +49,7 @@ class UserEditForm(forms.ModelForm):
 class UserAdminForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name', 'display_name',
+        fields = ('email', 'first_name', 'last_name',
                   'is_staff', 'is_active', 'date_joined')
 
     def is_valid(self):

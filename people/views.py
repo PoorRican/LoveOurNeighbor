@@ -140,8 +140,8 @@ def be_me_again(request):
     """
     clear_previous_ministry_login(request, request.user)
 
-    if request.user.display_name != '':
-        _w = request.user.display_name
+    if str(request.user) != '':
+        _w = str(request.user)
     else:
         _w = request.user.email
     messages.add_message(request, messages.INFO, "Logged in as %s" % _w)

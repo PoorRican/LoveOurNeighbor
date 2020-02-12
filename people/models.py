@@ -58,12 +58,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     """
 
     email = models.EmailField(_('email address'), blank=False, unique=True)
-    first_name = models.CharField(_('first name'), max_length=40, blank=True,
-                                  null=True, unique=False)
-    last_name = models.CharField(_('last name'), max_length=40, blank=True,
-                                 null=True, unique=False)
-    display_name = models.CharField(_('display name'), max_length=14,
-                                    blank=True, null=True, unique=False)
+    first_name = models.CharField(_('first name'), max_length=40, unique=False)
+    last_name = models.CharField(_('last name'), max_length=40, unique=False)
     is_staff = models.BooleanField(_('staff status'), default=False,
                                    help_text=_('Designates whether the user can log into this admin site.'))
     is_active = models.BooleanField(_('active'), default=True,
@@ -101,11 +97,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def name(self):
-        if self.first_name:
-            return self.first_name
-        elif self.display_name:
-            return self.display_name
-        return 'You'
+        return '%c%s %c.' % (self.first_name[0].upper(), self.first_name[1:], self.last_name[0].upper())
 
     def get_full_name(self):
         """
@@ -116,19 +108,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.first_name
-
-    def guess_display_name(self):
-        """Set a display name, if one isn't already set."""
-        if self.display_name:
-            return
-
-        if self.first_name and self.last_name:
-            dn = "%s %s" % (self.first_name, self.last_name[0])  # like "Andrew E"
-        elif self.first_name:
-            dn = self.first_name
-        else:
-            dn = 'You'
-        self.display_name = dn.strip()
 
     def email_user(self, subject: str, html: str, from_email: str, tags=None, name=''):
         """
