@@ -59,7 +59,6 @@ Things to do before ministries will be using the site:
 - About tab in navigation elements (navbar/sidenav) should be a dropdown showing flatpages.
 - Show banner image in ograph metadata for media sharing
 - Show feedback for denied transaction in `confirm_donation`
-- Implement first/last name inputs in create user template
 - Get rid of `display name`
 
 
