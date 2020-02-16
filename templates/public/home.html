@@ -6,69 +6,67 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
-  <div class="section">
+  <div class="content-wrapper-before gradient-45deg-purple-deep-orange"></div>
+
+  <div class="container section">
     <div class="wrapper">
       {% if motd %}
-        <div id="top">
+        <div class="card" id="motd">
 
-          <h1>{{ motd.title }}</h1>
+          <div class="card-content">
+            <span class="card-title">{{ motd.title }}</span>
+            {{ motd.message|safe }}
+          </div>
 
-          {{ motd.message|safe }}
-
-        </div><!-- /#top -->
+        </div><!-- /#motd -->
       {% endif %}
 
-
-      <div id="main">
-
-        {% if new_campaigns %}
-          <div id="new_campaigns">
-            <h4>New Campaigns:</h4>
-            <p>Check out these campaigns that have started!</p>
-            <div class="row">
-              {% for c in new_campaigns %}
-                {{ frontpage_campaign_card(c, request) }}
-              {% endfor %}
-            </div>
+      {% if new_campaigns %}
+        <div id="new_campaigns">
+          <h4>New Campaigns:</h4>
+          <p>Check out these campaigns that have started!</p>
+          <div class="row">
+            {% for c in new_campaigns %}
+              {{ frontpage_campaign_card(c, request) }}
+            {% endfor %}
           </div>
-        {% endif %}
+        </div>
+      {% endif %}
 
-        {% if new_ministries %}
-          <div id="new_ministries">
-            <h4>New Ministry Profiles:</h4>
-            <p>Check out these ministries who just recently created a profile on Love Our Neighbor!</p>
-            <div class="row">
-              {% for m in new_ministries %}
-                {{ frontpage_ministry_card(m, request) }}
-              {% endfor %}
-            </div><!-- /.row -->
-          </div><!-- /# new_ministries -->
-        {% endif %}
+      {% if new_ministries %}
+        <div id="new_ministries">
+          <h4>New Ministry Profiles:</h4>
+          <p>Check out these ministries who just recently created a profile on Love Our Neighbor!</p>
+          <div class="row">
+            {% for m in new_ministries %}
+              {{ frontpage_ministry_card(m, request) }}
+            {% endfor %}
+          </div><!-- /.row -->
+        </div><!-- /# new_ministries -->
+      {% endif %}
 
-        {% if random_campaigns %}
-          <div id="random_campaigns">
-            <h4>Ongoing Campaigns:</h4>
-            <p>Check out these campaigns that have you might be interested in!</p>
-            <div class="row">
-              {% for c in random_campaigns %}
-                {{ frontpage_campaign_card(c, request) }}
-              {% endfor %}
-            </div>
+      {% if random_campaigns %}
+        <div id="random_campaigns">
+          <h4>Ongoing Campaigns:</h4>
+          <p>Check out these campaigns that have you might be interested in!</p>
+          <div class="row">
+            {% for c in random_campaigns %}
+              {{ frontpage_campaign_card(c, request) }}
+            {% endfor %}
           </div>
-        {% endif %}
+        </div>
+      {% endif %}
 
-        {% if random_ministries %}
-          <div id="random_ministries">
-            <h4>Ministries You Might Like</h4>
-            <div class="row">
-              {% for m in random_ministries %}
-                {{ frontpage_ministry_card(m, request) }}
-              {% endfor %}
-            </div><!-- /.row -->
-          </div>
-        {% endif %}
-
-      </div><!-- /#main -->
+      {% if random_ministries %}
+        <div id="random_ministries">
+          <h4>Ministries You Might Like</h4>
+          <div class="row">
+            {% for m in random_ministries %}
+              {{ frontpage_ministry_card(m, request) }}
+            {% endfor %}
+          </div><!-- /.row -->
+        </div>
+      {% endif %}
     </div><!-- /.wrapper -->
   </div><!-- /.section -->
 {% endblock %}

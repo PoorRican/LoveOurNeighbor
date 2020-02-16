@@ -1,38 +1,119 @@
 {% from "macros/layout/user_widget.html" import user_widget %}
 {% from "macros/layout/searchbar.html" import searchbar %}
 
-{% macro navbar_links(request, links, active) %}
+{% macro navbar_links(request) %}
 
-  <nav class="orange">
+  <nav
+      class="navbar-main navbar-color navbar-dark nav-collapsible sideNav-lock gradient-45deg-purple-deep-orange gradient-shadow">
     <div class="nav-wrapper">
 
-      <a class="brand-logo center" href="{{ url_for('home') }}">
-        <img id="logo" src="{{ static('img/brand/LON_logo.svg') }}">
-        <img id="brand-text" src="{{ static('img/brand/LON_straight.png') }}">
-        {# TODO: Hide logo text when searchbar is clicked #}
+      <a class="sidenav-trigger btn-sidenav-toggle btn-flat btn-medium hide-on-med-and-up" data-target="slide-out">
+        <i class="material-icons">menu</i>
       </a>
 
-      <div class="navbar-content right">
-        <ul id="nav-mobile" class="right hide-on-small-only">
+      <div class="header-search-wrapper hide-on-med-and-down">
+        {{ searchbar(small_screen=False) }}
+      </div><!-- /.header-search-wrapper -->
+
+      <a class="brand-logo center hide-on-med-and-up" href="{{ url_for('home') }}">
+        <img id="logo" src="{{ static('img/brand/LON_logo.svg') }}">
+        <img class="hide-on-small-only" id="brand-text" src="{{ static('img/brand/LON_straight.png') }}">
+      </a><!-- /.brand-logo -->
+
+      <ul class="navbar-list right">
+        <li class="hide-on-large-only search-input-wrapper">
+          <a class="search-button" href="javascript:void(0);">
+            <i class="material-icons">search</i>
+          </a>
+        </li><!-- /.search-button -->
+        <li class="hide-on-med-and-down">
+          <a class="toggle-fullscreen" href="javascript:void(0);">
+            <i class="material-icons">settings_overscan</i>
+          </a>
+        </li>
+
+        <li>
+          {% if request.user.is_authenticated %}
+            <a class="profile-button" href="javascript:void(0);" data-target="profile-dropdown">
+              <span class="avatar-status avatar-online">
+                {% if request.user.logged_in_as %}
+                  <img src="{{ request.user.logged_in_as.profile_img.url }}" alt="avatar">
+                {% else %}
+                  <img src="{{ request.user.profile_img.url }}" alt="avata">
+                {% endif %}
+                <i></i>
+              </span><!-- /.avatar-status -->
+            </a><!-- /.profile-button -->
+          {% else %}
+            <a href="{{ url_for('people:login') }}">
+              <i class="material-icons">person</i>
+            </a>
+          {% endif %}
+        </li><!-- /.profile-avatar -->
+
+      </ul><!-- /.navbar-list -->
+
+      {% if request.user.is_authenticated %}
+        <ul id="profile-dropdown" class="dropdown-content" style="min-width: 20em;">
+
           <li>
-            {{ searchbar() }}
-          </li>
-          {%- for _link in links -%}
-            <li>
-              <a href="{{ _link[0] }}" title="{{ _link[1] }}">
-                {{ _link[1] }}
+            {% if request.user.logged_in_as %}
+              <a class="grey-text text-darken-2" title="User Profile" href="{{ url_for('people:be_me_again') }}">
+                Your Profile
               </a>
-            </li>
-          {%- endfor -%}
-          <li class="user-widget">
-            {{ user_widget(request) }}
+            {% else %}
+              <a class="grey-text text-darken-2" title="User Profile" href="{{ url_for('people:user_profile') }}">
+                Your Profile
+              </a>
+            {% endif %}
           </li>
-        </ul>
-        <a class="btn-flat hide-on-med-and-up sidenav-trigger" data-target="sidenav">
-          <i class="material-icons">menu</i>
-        </a>
+
+          <li class="divider"></li>
+
+          {% set aliases = [{'label': 'Ministries You Administer',
+                              'profiles': request.user.administers.all()},
+                             {'label': 'Ministries You Represent',
+                              'profiles': request.user.represents.all()}] %}
+
+          {% for i in aliases %}
+            {% if len(i['profiles']) %}
+
+              <li class="disabled grey-text text-lighten-1" style="height: 1em;">{{ i['label'] }}:</li>
+
+              {% for ministry in i['profiles'] %}
+                {% set ALIAS = (request.user.logged_in_as == ministry) %}
+                <li class="profile-area">
+                  <a href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"
+                     class="view_profile {% if ALIAS %} orange-text {% else %} grey-text text-darken-2{% endif %}">
+                    <img class="profile-img" src="{{ ministry.profile_img.url }}">
+                    <div>
+                      <span class="truncate">
+                        {{ ministry }}
+                      </span>
+                    </div>
+                    {% if ALIAS %}<i class="material-icons">how_to_reg</i>{% endif %}
+                  </a>
+                  <a href="{{ url_for('ministry:admin_panel', kwargs={'ministry_id': ministry.id}) }}"
+                     class="edit-btn btn-flat waves-effect right grey-text darken-3">
+                    <i class="material-icons">settings</i>
+                  </a>
+                </li>
+              {% endfor %}
+
+              <li class="divider"></li>
+
+            {% endif %}
+          {% endfor %}
+
+          <li><a class="grey-text text-darken-2" href="{{ url_for('people:logout') }}">Logout</a></li>
+        </ul><!-- /.profile-dropdown -->
+      {% endif %}
+    </div><!-- /.nav-wrapper -->
+    <nav class="display-none search-sm">
+      <div class="nav-wrapper">
+        {{ searchbar(small_screen=True) }}
       </div>
-    </div>
+    </nav>
   </nav>
 
 {% endmacro %}

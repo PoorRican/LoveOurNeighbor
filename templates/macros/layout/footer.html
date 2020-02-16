@@ -2,12 +2,24 @@
 
 {% macro footer(links) %}
 
-  <footer class="page-footer">
+  <footer class="page-footer footer footer-dark gradient-45deg-purple-deep-orange gradient-shadow navbar-border navbar-shadow">
     <div id="footer-content" class="container">
       <div class="row">
 
+        <div class="col s12 m4">
+          <div id="mission-statement">
+            <h5 class="grey-text text-lighten-2">Mission Statement</h5>
+            {{ mission_statement()|safe }}
+          </div>
+          <div id="footer-donate-button">
+            {{ donate_button() }}
+            <p>Love Our Neighbor does not take any money from the ministries you donate to.
+              Help support our mission by donating to Love Our Neighbor.</p>
+          </div><!-- /#donate-footer-button -->
+        </div>
+
         {# {{{ Sitemap #}
-        <div class="col l6 s12">
+        <div class="col s12 m2 offset-m4">
           <h5 class="grey-text text-lighten-2">Links</h5>
           <div id="sitemap">
             <ul>
@@ -31,18 +43,6 @@
             {% endfor %}
           </div><!-- /#social-media-links -->
         </div><!-- /.col .l6 -->
-
-        <div class="col l6 s12">
-          <div id="mission-statement">
-            <h5 class="grey-text text-lighten-2">Mission Statement</h5>
-            {{ mission_statement()|safe }}
-          </div>
-          <div id="footer-donate-button">
-            {{ donate_button() }}
-            <p>Love Our Neighbor does not take any money from the ministries you donate to.
-               Help support our mission by donating to Love Our Neighbor.</p>
-          </div>
-        </div><!-- /#donate-footer-button -->
 
       </div><!-- /#row -->
 

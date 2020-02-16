@@ -1,9 +1,24 @@
-{% macro searchbar(sidenav=False) %}
-  <form method="GET" action="{{ url_for('search:search') }}"
-        class="search-bar {% if not sidenav %} hide-on-med-and-down{% endif %}">
-    <div class="input-field">
-      <input id="search" type="search" name="query" required>
-      <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+{% macro searchbar(small_screen=False) %}
+  {#
+
+  Searchbar styled as per Material Admin
+
+  Arguments
+  ---------
+    small_screen:
+      Boolean that modulates HTML for being displayed above or beneath the navbar
+  #}
+  <form method="GET" action="{{ url_for('search:search') }}" id="navbarForm">
+    {% if small_screen %}
+    <div class="input-field search-input-sm">
+      <input name="query" class="search-box-sm mb-0" type="search" id="search" placeholder="Search Love Our Neighbor" data-search="template-list">
+      <label class="label-icon" for="search"><i class="material-icons search-sm-icon">search</i></label><i class="material-icons search-sm-close">close</i>
+      <ul class="search-list collection search-list-sm display-none"></ul>
     </div>
+    {% else %}
+    <i class="material-icons">search</i>
+    <input name="query" class="header-search-input z-depth-2" type="search" placeholder="Search Love Our Neighbor" data-search="template-list">
+    <ul class="search-list collection display-none"></ul>
+    {% endif %}
   </form>
 {% endmacro %}

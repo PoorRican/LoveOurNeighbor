@@ -1,9 +1,8 @@
-nav .navbar-content,
-.navbar-content > ul {
-  height: 100%;
+/** Header Styling **/
+.brand-logo {
+  display: inline-block;
 }
 
-/** Header Styling **/
 .brand-logo.center {
   left: auto !important;
   margin-top: auto;
@@ -18,9 +17,16 @@ nav .navbar-content,
 
   transform: none !important;
 }
-
 .brand-logo #logo {
-  height: 100%;
+  height: 60%;
+}
+
+@media screen and (max-width: 600px) {
+  .brand-logo #logo {
+    height: 80%;
+    vertical-align: middle;
+    margin-bottom: .7em;
+  }
 }
 .brand-logo #brand-text {
   height: 1em;
@@ -131,23 +137,6 @@ li.profile-area {
 }
 .profile-area .edit-btn i {
   margin: 0;
-}
-
-form.search-bar div.input-field {
-  margin-right: 12px;
-}
-
-form.search-bar div.input-field input {
-  display: inline;
-  height: 24px !important;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  border-radius: 5px;
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-form.search-bar div.input-field input:focus {
-  height: 100%;
 }
 
 

@@ -307,6 +307,10 @@ div.dialog-trigger img {
 
 
 /* Homepage Styling */
+.card .card-title {
+  font-size: 24px !important;
+}
+
 .card-image .card-title {
   background-color: rgba(0, 0, 0, .25);
   border-top-right-radius: 15px;

@@ -1,18 +1,14 @@
-#sidenav {
+.sidenav {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
 }
-#sidenav .edit-btn {
+.sidenav .edit-btn {
   margin: 0;
 }
 
-#sidenav .spacer {
+.sidenav .spacer {
   flex-grow: 1;
-}
-
-#sidenav .profile-area {
-  min-height: 4.5em;
 }
 
 #sidebar-donate-button {

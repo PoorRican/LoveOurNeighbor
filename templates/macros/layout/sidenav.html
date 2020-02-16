@@ -5,135 +5,38 @@
 
 {% macro sidenav(request, links) %}
 
-  <ul class="sidenav" id="sidenav">
+  <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-light sidenav-active-rounded" id="sidenav">
 
-
-    {# Current User and Profile Selection Header  #}
-
-    <li>
-      <div class="user-view orange lighten-1">
-        {% if request.user.is_authenticated %}
-          {% if request.user.logged_in_as %}
-
-            <a href="{{ request.user.logged_in_as.url }}" title="View {{ request.user.logged_in_as.name }}">
-              <img class="circle" src="{{ request.user.logged_in_as.profile_img.url }}" alt="Ministry Profile Img">
-            </a>
-
-          {% else %}
-
-            <a href="{{ url_for('people:user_profile') }}" title="Your Profile">
-              <img class="circle" src="{{ request.user.profile_img.url }}" alt="Profile Img">
-            </a>
-
-          {% endif %}
-
-          <ul class="collapsible collapsible-accordian sidenav-accordian">
-            <li>
-              <a class="collapsible-header">
-                <i class="material-icons rotate">arrow_drop_down</i>
-                {%- if request.user.logged_in_as -%}
-
-                  {{- request.user.logged_in_as.name -}}
-
-                {%- else -%}
-
-                  {{- request.user.name -}}
-
-                {%- endif -%}
-              </a>
-
-              <div class="collapsible-body">
-                <ul>
-                  <li class="user-profile">
-                    {% if request.user.logged_in_as %}
-
-                      <a title="User Profile" href="{{ url_for('people:be_me_again') }}">
-                        <span>Your Profile</span>
-                      </a>
-
-                    {% else %}
-
-                      <a href="{{ url_for('people:user_profile') }}" title="Your Profile">
-                        <span>{{- request.user.name -}}</span>
-                      </a>
-
-                    {% endif %}
-                  </li>
-
-                  <li>
-                    <a href="{{ url_for('people:logout') }}">Logout</a>
-                  </li>
-
-                  {% set aliases = [{'label': 'Ministries You Administer',
-                                'profiles': request.user.administers.all()},
-                               {'label': 'Ministries You Represent',
-                                'profiles': request.user.represents.all()}] %}
-                  {% for i in aliases %}
-                    {% if len(i['profiles']) %}
-
-                      <li><a class="subheader">{{ i['label'] }}:</a></li>
-
-                      {% for ministry in i['profiles'] %}
-                        {% set ALIAS = (request.user.logged_in_as == ministry) %}
-                        <li class="profile-area">
-                          <a href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"
-                             class="view_profile">
-                            <img class="profile-img" src="{{ ministry.profile_img.url }}">
-                            <div>
-                        <span class="{% if ALIAS %}orange-text{% endif %}">
-                          {{ ministry }}
-                        </span>
-                            </div>
-                            {% if ALIAS %}<i class="material-icons orange-text right">how_to_reg</i>{% endif %}
-                          </a>
-                          <a href="{{ url_for('ministry:admin_panel', kwargs={'ministry_id': ministry.id}) }}"
-                             class="btn-flat waves-effect edit-btn">
-                            <i class="material-icons">settings</i>
-                          </a>
-                        </li>
-                      {% endfor %}
-
-                      <li class="divider"></li>
-
-                    {% endif %}
-                  {% endfor %}
-
-                </ul>
-              </div>
-            </li>
-          </ul>
-
-        {% else %}
-
-          <a class="white-text" href="{{ url_for('people:login') }}">Login</a>
-
-        {% endif %}
-      </div>
-    </li>
-
+    <div class="brand-sidebar hide-on-med-and-down" style="background: #a53394">
+      <a class="logo-wrapper brand-logo center valign-wrapper" href="{{ url_for('home') }}">
+        <img id="logo" src="{{ static('img/brand/LON_logo.svg') }}">
+        <img id="brand-text" src="{{ static('img/brand/LON_straight.png') }}">
+      </a>
+    </div>
 
     {# Navigation Links  #}
 
-    <li><a class="subheader">Navigation</a></li>
-    {%- for _link in links -%}
-      <li>
-        <a href="{{ _link[0] }}" title="{{ _link[1] }}"
-           class="waves-effect">
-          {{ _link[1] }}
-        </a>
+    <ul class="sidenav sidenav-collapsible leftside-navigation nav-collapsible sidenav-fixed menu-shadow" id="slide-out" data-menu="menu-navigation" data-collapsible="menu-accordion">
+      <li><a class="subheader">Navigation</a></li>
+      {%- for _link in links -%}
+        <li>
+          <a href="{{ _link[0] }}" title="{{ _link[1] }}"
+             class="waves-effect">
+            {{ _link[1] }}
+          </a>
+        </li>
+      {%- endfor -%}
+
+      <li class="spacer"></li>
+
+      <li class="hide-on-med-and-up" id="sidebar-donate-button" layout="column">
+        {{ donate_button() }}
+
+        <p>Love Our Neighbor does not take any money from the ministries you donate to.
+           Help support our mission by donating to Love Our Neighbor.</p>
       </li>
-    {%- endfor -%}
+    </ul><!-- /.sidenav -->
 
-    <li class="spacer"></li>
-
-    <li id="sidebar-donate-button"
-         layout="column">
-      {{ donate_button() }}
-
-      <p>Love Our Neighbor does not take any money from the ministries you donate to.
-         Help support our mission by donating to Love Our Neighbor.</p>
-    </li>
-
-  </ul>
+  </aside>
 
 {% endmacro %}

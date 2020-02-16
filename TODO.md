@@ -1,3 +1,18 @@
+# Template Port Errors:
+- Parallax Banner has blank space on top
+- Tab bar in card_area has blank space on sides
+- Copy layout.html over to flatpages
+- Enlarge font for `.card-title`
+- Allow links cards (at least in MOTD cards) to be visible
+- Fix overflow overlay
+- Fix logo in sidenav
+- Mysterious background-color change beneath screen width on ministry pages
+- Modify search.js to add `search-bar-input-focused` class to darken search icon in header
+- Convert card dropdown in title to be a FAB
+- Fix profile dropdown disabled padding
+- Fix sidenav rounded options
+
+
 # Bugs
 - Prevent duplicate donation objects from being created upon repeating GET /donation/confirm
 

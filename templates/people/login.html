@@ -6,39 +6,40 @@
 {% block title %}Login{% endblock %}
 
 {% block body %}
-<section class="wrapper">
+<section class="wrapper row" style="display: flex; -moz-box-pack: center; -webkit-box-pack: center; justify-content: center">
   <!-- people/login -->
 
-  <h1>Sign In</h1>
+    <div class="card-panel z-depth-4 col s12 m6 l4" style="top: 100vh; margin-left: 0; padding: 50px;">
+      <h1>Sign In</h1>
 
-  <p>If you have not created an account yet, then please
-  <a href="{{ url_for('people:create_user') }}">sign up</a> first.</p>
+      <form name="loginForm" class="login" method="POST" action="{{ url_for('people:login') }}">
 
-  <form name="loginForm" class="login" method="POST" action="{{ url_for('people:login') }}">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        <div class="row">
+          <div class="input-field col s12">
+            <input name="email" type="email" id="email"
+                   class="validate"
+                   minlength="9" maxlength="64"
+                   required/>
+            <label for="email">Email</label>
+          </div>
+          <div class="input-field col s12">
+            <input type="password" name="password" id="password" class="validate"
+                   minlength="9" maxlength="64"
+                   required/>
+            <label for="password">Password</label>
+          </div>
+        </div>
 
-    <div class="row">
-      <div class="input-field col s12">
-        <input name="email" type="email" id="email"
-               class="validate"
-               minlength="9" maxlength="64" 
-               required/>
-        <label for="email">Email</label>
-      </div>
-      <div class="input-field col s12">
-        <input type="password" name="password" id="password" class="validate"
-               minlength="9" maxlength="64"
-               required/>
-        <label for="password">Password</label>
-      </div>
-    </div>
+        <button class="btn btn-waves orange" type="submit">Sign In</button>
 
-    <button class="btn btn-waves orange" type="submit">Sign In</button>
+        <a class="button secondaryAction" href="{{ url_for('people:forgot_password') }}">Forgot Password?</a>
 
-  </form>
+      </form>
 
-  <a class="button secondaryAction" href="{{ url_for('people:forgot_password') }}">Forgot Password?</a>
+    </div><!-- /.card -->
+
 
 </section>
 {% endblock %}

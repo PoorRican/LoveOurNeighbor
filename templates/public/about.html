@@ -2,16 +2,16 @@
 {% from "macros/layout/misc_layout.html" import section_start, section_close %}
 
 {% block body %}
-    <div>
-      {% for i in about %}
+  <div class="container section">
+    {% for i in about %}
 
-        {{ section_start(i.title) }}
+      {{ section_start(i.title) }}
 
-        <h1>{{ i.title }}</h1>
-        <p>{{ i.content|safe }}</p>
+      <h1>{{ i.title }}</h1>
+      <p>{{ i.content|safe }}</p>
 
-        {{ section_close() }}
+      {{ section_close() }}
 
-      {% endfor %}
-    </div>
+    {% endfor %}
+  </div>
 {% endblock %}
