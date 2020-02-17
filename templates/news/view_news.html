@@ -1,36 +1,38 @@
 {# vim: foldmethod=marker tabstop=2 shiftwidth=2:
     templates/news/edit_news.html
 #}
-  <!-- ministry/news_post -->
+<!-- ministry/news_post -->
 {% extends "layout.html" %}
+
+{% from "macros/parts/comments_section.html" import comments_section %}
 
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block body %}
 
-{# TODO: group by month and randomly (or scroll) through images per section #}
-<div class="section">
-  <article class="wrapper">
+  {# TODO: group by month and randomly (or scroll) through images per section #}
+  <div class="section">
+    <article class="wrapper">
 
-    <p id="section-info">
-      <span>Published:</span>&nbsp;{{ post.pub_date.strftime("%h %d, %Y") }}
-    </p>
+      <p id="section-info">
+        <span>Published:</span>&nbsp;{{ post.pub_date.strftime("%h %d, %Y") }}
+      </p>
 
-    <h1>
-      <a class="dropdown-trigger" href="#" data-target="actionMenu">
-        {{ post.title.upper() }}
-        <i class="material-icons">arrow_drop_down</i>
-      </a>
-    </h1>
+      <h1>
+        <a class="dropdown-trigger" href="#" data-target="actionMenu">
+          {{ post.title.upper() }}
+          <i class="material-icons">arrow_drop_down</i>
+        </a>
+      </h1>
 
-    <ul id="actionMenu" class="dropdown-content">
-      {% if AUTH %}
-        <li><a href="{{ post.edit }}">
-          <i class="material-icons">create</i>
-          Edit News Post
-        </a></li>
+      <ul id="actionMenu" class="dropdown-content">
+        {% if AUTH %}
+          <li><a href="{{ post.edit }}">
+            <i class="material-icons">create</i>
+            Edit News Post
+          </a></li>
 
-        <li><a href="{{ url_for('news:delete_news', kwargs={'post_id': post.id}) }}">
+          <li><a href="{{ url_for('news:delete_news', kwargs={'post_id': post.id}) }}">
           <i class="material-icons">delete</i>
           Delete News Post
         </a></li>
