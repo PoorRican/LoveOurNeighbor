@@ -7,7 +7,6 @@
 - Fix overflow overlay
 - Fix logo in sidenav
 - Mysterious background-color change beneath screen width on ministry pages
-- Modify search.js to add `search-bar-input-focused` class to darken search icon in header
 - Convert card dropdown in title to be a FAB
 - Fix profile dropdown disabled padding
 - Fix sidenav rounded options
