@@ -2,10 +2,7 @@
 - Tab bar in card_area has blank space on sides
 - Copy layout.html over to flatpages
 - Allow links cards (at least in MOTD cards) to be visible
-- Fix overflow overlay
 - Mysterious background-color change beneath screen width on ministry pages
-- Convert card dropdown in title to be a FAB
-- Fix profile dropdown disabled padding
 - Fix sidenav rounded options
 
 
@@ -32,12 +29,11 @@
 - Remove 'login_in_as' functionality. Add settings flag to enable/disable this feature.
 - Display of Users Email
 - Display users likes
-- User Widget should provide a link to view ministries
 - Edit ministry/campaign page should provide a link to view object
 - Clean up utils/ dir. Create a module with utility functions accessible via a CLI or args.
 - Separate create/edit pages for NewsPost
-- Show tags in 'frontpage_ministry_card' widget
 - Why does `python manage.py collectstatic` not collect static files for tinymce app in docker config?
+- Tag should have a method to for search URL
 
 
 # Medium Priority 

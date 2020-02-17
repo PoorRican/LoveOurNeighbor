@@ -151,3 +151,7 @@ class MinistryProfile(models.Model):
             return True
         else:
             return False
+
+    @property
+    def like_count(self):
+        return self.likes.count()

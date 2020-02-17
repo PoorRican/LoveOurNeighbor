@@ -311,33 +311,5 @@ div.dialog-trigger img {
   font-size: 24px !important;
 }
 
-.card-image .card-title {
-  background-color: rgba(0, 0, 0, .25);
-  border-top-right-radius: 15px;
-}
-
-.dropdown-trigger.card-title span.truncate {
-  display: inline-block;
-}
-
-.card-content a {
-  color: rgba(0, 0, 0, 0.87);
-}
-
-.card-action:before {
-  content: '';
-  text-align: right;
-  position: absolute;
-  top: -5.1em;
-  right: 0;
-  width: 100%;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
-  height: 5em;
-}
-
-.card.large .card-image + .card-content {
-  max-height: 50%;
-}
-
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */

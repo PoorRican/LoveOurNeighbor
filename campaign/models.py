@@ -95,3 +95,19 @@ class Campaign(models.Model):
     @property
     def authorized_user(self):
         return self.ministry.authorized_user
+
+    @property
+    def like_count(self):
+        return self.likes.count()
+
+    @property
+    def percent_complete(self):
+        """
+        Calculates percentage of campaign completion.
+
+        Returns
+        =======
+        int:
+            Representing percentage of how close campaign is to its goal
+        """
+        return int((self.donated / self.goal) * 100)

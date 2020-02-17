@@ -279,51 +279,52 @@
   {% set AUTH = ministry.authorized_user(request.user) %}
 
   <div class="col s12 l6">
-    <div class="card large hoverable">
+    <div class="card-panel border-radius-8 mt-10 card-animation-1">
 
       {% if ministry.banner_img %}
-        <div class="card-image">
-          <a href="{{ ministry.url }}">
-            <img src="{{ ministry.banner_img.url }}">
-          </a>
-          {% if AUTH %}
-            <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
-              <span class="truncate">
-                {{ ministry.name }}
-              </span>
-              <i class="material-icons">arrow_drop_down</i>
-            </a><!-- /.card-title -->
-          {% else %}
-            <a class="card-title" href="{{ ministry.url }}">
-              <span class="truncate">
-                {{ ministry.name }}
-              </span>
-            </a><!-- /.card-title -->
-          {% endif %}
-        </div><!-- /.card-image -->
+        <a href="{{ ministry.url }}">
+          <img class="responsive-img border-radius-8 z-depth-4 image-n-margin" src="{{ ministry.banner_img.url }}">
+        </a><!-- /.banner-img -->
       {% endif %}
-
-      <div class="card-content">
-        {% if not ministry.banner_img %}
-          {% if AUTH %}
-            <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
-              <span class="truncate">
-                {{ ministry.name }}
-              </span>
-              <i class="material-icons">arrow_drop_down</i>
-            </a><!-- /.card-title -->
-          {% else %}
-            <a class="card-title" href="{{ ministry.url }}">
-              <span class="truncate">
-                {{ ministry.name }}
-              </span>
-            </a><!-- /.card-title -->
-          {% endif %}
+      <h5 class="deep-orange-text{% if ministry.banner_img %} mt-5{% else %} mt-1{% endif %}">
+        {% if AUTH %}
+          <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
+            {{ ministry.name }}
+            <i class="material-icons">arrow_drop_down</i>
+          </a><!-- /.card-title -->
+        {% else %}
+          <a class="card-title" href="{{ ministry.url }}">
+            {{ ministry.name }}
+          </a><!-- /.card-title -->
         {% endif %}
-        <div class="content">
-          <a href="{{ ministry.url }}">{{ ministry.description|safe }}</a>
+      </h5><!-- /title -->
+
+      <div class="display-flex justify-content-between flex-wrap mt-4">
+        <div class="display-flex mt-2 right-align" style="min-width: 35%">
+          <a href="#">
+            <i class="material-icons">favorite_border</i>
+          </a>
+          <span class="ml-3 vertical-align-top">{{ ministry.like_count }}</span>
+
+          <i class="material-icons ml-10">visibility</i>
+          <span class="ml-3 vertical-align-top">{{ ministry.views }}</span>
+
+          <i class="material-icons ml-10">card_giftcard</i>
+          <span class="ml-3 mr-4 vertical-align-top">{{ ministry.campaigns.count() }}</span>
+
         </div>
-      </div><!-- /.card-content -->
+      </div><!-- /.display-flex -->
+
+      <div class="row">
+        {% if ministry.has_tags %}
+          <div class="tag-area col s12 mt-2">
+            {% for tag in ministry.tags.all() %}
+              {# TODO: tag URL #}
+              <div class="chip cyan white-text">{{ tag }}</div>
+            {% endfor %}
+          </div><!-- /.tag-area -->
+        {% endif %}
+      </div><!-- /.row -->
 
       {% if AUTH %}
         <ul id="ministry_{{ ministry.id }}" class="dropdown-content">
@@ -338,18 +339,6 @@
         </ul><!-- /.dropdown-content -->
       {% endif %}
 
-      <div class="card-action">
-        {% if COMMENTS %}
-          <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
-        {% endif %}
-        <a href="{{ ministry.url }}"
-           class="btn-flat text-orange tooltipped"
-           data-tooltip="View Ministry">
-          <i class="material-icons">open_in_new</i>
-        </a>
-        {# TODO: show tags #}
-      </div><!-- /.card-action -->
-
     </div><!-- /.card -->
   </div><!-- /.col -->
 {% endmacro %}
@@ -358,55 +347,72 @@
 {% macro frontpage_campaign_card(campaign, request) %}
   {% set AUTH = campaign.ministry.authorized_user(request.user) %}
 
-  <div class="col s12 l6">
-    <div class="card large hoverable">
+  <div class="col s12 xl6">
+    <div class="card-panel border-radius-8 mt-10 card-animation-1">
 
       {% if campaign.banner_img %}
-        <div class="card-image">
-          <a href="{{ campaign.url }}">
-            <img src="{{ campaign.banner_img.url }}">
-          </a>
-          {% if AUTH %}
-            <a class="card-title dropdown-trigger" data-target="campaign_{{ campaign.id }}">
-              <span class="truncate" style="max-width: 85%; display: inline-block">
-                {{ campaign.title }}
-              </span>
-              <i class="material-icons">arrow_drop_down</i>
-            </a><!-- /.card-title -->
-          {% else %}
-            <a class="card-title" href="{{ campaign.url }}">
-              <span class="truncate">
-                {{ campaign.title }}
-              </span>
-            </a><!-- /.card-title -->
-          {% endif %}
-        </div><!-- /.card-image -->
+        <a href="{{ campaign.url }}">
+          <img class="responsive-img border-radius-8 z-depth-4 image-n-margin" src="{{ campaign.banner_img.url }}"
+               alt="banner_img">
+        </a><!-- /.banner-img -->
       {% endif %}
-
-      <div class="card-content">
-        {% if not campaign.banner_img %}
-          {% if AUTH %}
-            <a class="card-title dropdown-trigger" data-target="campaign_{{ campaign.id }}">
-              <span class="truncate">
-                {{ campaign.title }}
-              </span>
-              <i class="material-icons">arrow_drop_down</i>
-            </a><!-- card-title -->
-          {% else %}
-            <a class="card-title" href="{{ campaign.url }}">
-              <span class="truncate">
-                {{ campaign.title }}
-              </span>
-            </a>
-          {% endif %}
+      <h5 class="deep-orange-text{% if campaign.banner_img %} mt-5{% else %} mt-1{% endif %}">
+        {% if AUTH %}
+          <a class="card-title dropdown-trigger" data-target="campaign_{{ campaign.id }}_card_dropdown">
+            {{ campaign.title }}
+            <i class="material-icons">arrow_drop_down</i>
+          </a><!-- /.card-title -->
+        {% else %}
+          <a class="card-title" href="{{ campaign.url }}">
+            {{ campaign.title }}
+          </a><!-- /.card-title -->
         {% endif %}
-        <div class="content">
-          <a href="{{ campaign.url }}">{{ campaign.content|safe }}</a>
+      </h5><!-- /title -->
+
+      <div class="display-flex justify-content-between flex-wrap mt-4">
+        <a href="{{ campaign.ministry.url }}"
+           class="display-flex align-items-center mt-2"
+           style="min-width: 35%;">
+          <img class="circle responsive-img mr-6 vertical-text-middle" src="{{ campaign.ministry.profile_img.url }}"
+               alt="ministry profile img" width="30">
+          <span class="pt-2">{{ campaign.ministry }}</span>
+        </a>
+
+        <div class="display-flex mt-2 right-align" style="min-width: 35%">
+
+          <a href="#">
+            <i class="material-icons">favorite_border</i>
+          </a>
+          <span class="ml-3 vertical-align-top">{{ campaign.like_count }}</span>
+
+          <i class="material-icons ml-10">visibility</i>
+          <span class="ml-3 vertical-align-top">{{ campaign.views }}</span>
+
+          <i class="material-icons ml-10">card_giftcard</i>
+          <span class="ml-3 mr-4 vertical-align-top">{{ campaign.donations.count() }}</span>
+
         </div>
-      </div><!-- /.card-content -->
+
+      </div><!-- /.display-flex -->
+
+      <div class="row">
+        {% if campaign.has_tags %}
+          <div class="tag-area col s12 m6 mt-2">
+            {% for tag in campaign.tags.all() %}
+              {# TODO: tag URL #}
+              <div class="chip cyan white-text">{{ tag }}</div>
+            {% endfor %}
+          </div><!-- /.tag-area -->
+        {% endif %}
+        <div class="stats col s12 m6 mt-2 right">
+          {# TODO: style colors based on urgency #}
+          <span class="btn-small mt-1 right blue darken-2">Ends:&nbsp;{{ f_time(campaign.end_date) }}</span>
+          <span class="btn-small mt-1 right green">{{ campaign.percent_complete }}% to goal</span>
+        </div>
+      </div><!-- /.row -->
 
       {% if AUTH %}
-        <ul id="campaign_{{ campaign.id }}" class="dropdown-content">
+        <ul id="campaign_{{ campaign.id }}_card_dropdown" class="dropdown-content">
           {% for opt in campaign_admin_urls(campaign) %}
             <li>
               <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
@@ -417,18 +423,6 @@
           {% endfor %}
         </ul><!-- /.dropdown-content -->
       {% endif %}
-
-      <div class="card-action">
-        {% if COMMENTS %}
-          <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
-        {% endif %}
-        <a href="{{ campaign.url }}"
-           class="btn-flat text-orange tooltipped"
-           data-tooltip="View Campaign">
-          <i class="material-icons">open_in_new</i>
-        </a>
-        {# TODO: show tags #}
-      </div><!-- /.card-action -->
 
     </div><!-- /.card -->
   </div><!-- /.col -->
