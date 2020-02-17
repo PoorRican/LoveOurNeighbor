@@ -10,6 +10,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+
 @media screen and (max-width: 600px) {
   body {
     font-size: 16px;
@@ -24,6 +25,7 @@ main {
   padding-left: 10%;
   padding-right: 10%;
 }
+
 @media screen and (max-width: 1080px) {
   .wrapper {
     padding-left: 5%;
@@ -32,15 +34,16 @@ main {
 }
 
 .page-container {
-  color:  rgba(0,0,0,0.60) !important;
+  color: rgba(0, 0, 0, 0.60) !important;
 }
 
 
-    /** Section **/
+/** Section **/
 .section, section {
   padding-top: 20px;
   padding-bottom: 40px;
 }
+
 #News:last-child {
   border-bottom: solid 1px #FF7100;
 }
@@ -54,10 +57,12 @@ main {
   color: black;
   text-decoration: none;
 }
+
 .section h4, section h4, .overlay h4,
 .section h3, section h3, .overlay h3 {
   font-weight: 400;
 }
+
 .section .flow-text, section .flow-text {
   padding-top: 30px;
   margin-bottom: 30px;
@@ -73,6 +78,7 @@ main {
   font-weight: 300;
   border-left: solid 5px #FF7100;
 }
+
 .section-info span {
   font-weight: 500;
 }
@@ -83,6 +89,7 @@ main {
   background-color: #FBFBFB;
   border: solid 2px #777;
 }
+
 .progress .current {
   background-color: #1F1;
   padding-left: 10px;
@@ -94,6 +101,7 @@ main {
   text-align: center;
   color: #090;
 }
+
 .progress .remaining {
   display: inline-block;
   line-height: 50px;
@@ -116,6 +124,7 @@ main {
   border-radius: 5px;
   box-sizing: content-box !important;
 }
+
 .like-button span {
   margin: 0 auto;
   font-size: 2em;
@@ -135,14 +144,17 @@ main {
 .comment.md-list-item-text * {
   color: #EEE !important;
 }
+
 .comment.md-list-item-text p {
   font-size: 18px !important;
   font-weight: 300 !important;
 }
+
 .comment.md-list-item-text small {
   font-size: 12px;
   padding-left: 5px;
 }
+
 .comment.md-list-item-text bold {
   font-size: 14px;
   font-weight: 500;
@@ -161,42 +173,51 @@ div.tags ~ p.hint {
   padding-top: 8px;
   padding-bottom: 8px;
 }
+
 .contact-item {
   box-sizing: border-box;
 }
+
 .contact-item .md-list-item-text {
   padding: 14px 0;
   max-width: 190px;
 }
+
 .contact-item .md-list-item-text h3 {
   margin: 0 !important;
   padding: 0;
   line-height: 1.2em !important;
 }
+
 .contact-item .md-list-item-text h3,
 .contact-item .md-list-item-text p {
   text-overflow: ellipsis;
   white-space: nowrap;
-/**  overflow: hidden;*/
+  /**  overflow: hidden;*/
 }
 
 #content {
   min-height: 90%;
 }
+
 md-content.rep_requests {
   min-width: 400px;
 }
+
 md-content.rep_requests input {
   min-width: 400px;
 }
+
 md-list.available_contacts {
   height: 250px;
   overflow: hidden;
 }
+
 @media (min-width: 960px) {
   .contact-item {
     float: left;
-    width: 33%; }
+    width: 33%;
+  }
 }
 
 
@@ -226,23 +247,23 @@ input, textarea {
 
 /* Profile Image Dialog Trigger */
 div.dialog-trigger div {
-    position: absolute;
-    height: 120px;
-    width: 120px;
-    transition: background-color 120ms ease-in;
-    border: 1px solid rgba(200, 200, 200, 0.8);
-    border-top-right-radius: 7px;
-    border-bottom-left-radius: 7px;
+  position: absolute;
+  height: 120px;
+  width: 120px;
+  transition: background-color 120ms ease-in;
+  border: 1px solid rgba(200, 200, 200, 0.8);
+  border-top-right-radius: 7px;
+  border-bottom-left-radius: 7px;
 }
 
 div.dialog-trigger div:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 div.dialog-trigger div i {
-    background-color: rgba(200, 200, 200, 0.2);
-    border-bottom-right-radius: 5px;
-    padding: 4px;
+  background-color: rgba(200, 200, 200, 0.2);
+  border-bottom-right-radius: 5px;
+  padding: 4px;
   color: rgba(200, 200, 200, 0.8);
 }
 
@@ -310,6 +331,132 @@ div.dialog-trigger img {
 .card .card-title {
   font-size: 24px !important;
 }
+
+
+/* Profile Page Styling */
+/* This was used from the material admin theme "account_settings.css" */
+.tabs-vertical {
+  /* tabs*/
+  /* hide default indicator*/
+  /*input file hide */
+}
+
+.tabs-vertical .media-body {
+  padding: 0 25px;
+  /*media body in general tab*/
+
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+}
+
+.tabs-vertical .tabs {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-direction: column;
+
+  height: auto;
+
+  border-radius: 4px;
+  background-color: transparent;
+
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+}
+
+.tabs-vertical .tabs .tab {
+  /* tab inside tabs*/
+  width: 100%;
+
+  text-align: start;
+}
+
+.tabs-vertical .tabs .tab a {
+  -webkit-transition: none !important;
+  transition: none !important;
+
+  color: #6b6f82;
+}
+
+.tabs-vertical .tabs .tab a:hover {
+  color: #6b6f82 !important;
+}
+
+.tabs-vertical .tabs .tab a.active {
+  color: #e91e63 !important;
+  border-radius: 4px;
+  background-color: #fce4ec !important;
+}
+
+.tabs-vertical .tabs .tab a.active:hover {
+  color: #ff4081 !important;
+}
+
+.tabs-vertical .tabs .tab a i {
+  /* icons */
+  position: relative;
+  top: 7px;
+
+  margin-right: .2rem;
+}
+
+.tabs-vertical .tabs .tab:hover {
+  background-color: #eee;
+}
+
+.tabs-vertical .indicator {
+  display: none;
+}
+
+.tabs-vertical .upfilewrapper {
+  overflow: hidden;
+
+  width: 0;
+  height: 0;
+}
+
+@media (max-width: 600px) {
+  /* all submit and cancel button alignmet change*/
+  .media-body .general-action-btn {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    flex-direction: column;
+
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+  }
+
+  .media-body .general-action-btn .btn {
+    margin-bottom: 1rem;
+  }
+
+  .form-action {
+    flex-direction: column;
+
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+  }
+
+  .form-action .btn {
+    margin-bottom: 1rem;
+  }
+}
+
 
 /* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
  */

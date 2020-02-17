@@ -15,189 +15,177 @@
 {# TODO: messages #}
 
 {% block body %}
-  <section class="wrapper" ng-app="LON">
-<!-- people/profile -->
-  <div class="row">
+
+  <!-- people/profile -->
+  <div class="row" ng-app="LON">
     <div class="col s12">
-      <ul class="tabs">
-        <li class="tab col s3"><a href="#profile">
-          <i class="material-icons">account_circle</i>
-          <span class="hide-on-small-only">
-            &nbsp;My Profile
-          </span>
-        </a></li>
-        <li class="tab col s3"><a href="#ministries">
-          <i class="material-icons">public</i>
-          <span class="hide-on-small-only">
-            &nbsp;Ministries
-          </span>
-        </a></li>
-        <li class="tab col s3"><a href="#likes">
-          <i class="material-icons">loyalty</i>
-          <span class="hide-on-small-only">
-            &nbsp;Likes
-          </span>
-        </a></li>
-        <li class="tab col s3"><a href="#receipts">
-          <i class="material-icons">receipt</i>
-          <span class="hide-on-small-only">
-            &nbsp;Receipt
-          </span>
-        </a></li>
-      </ul><!-- /.tabs -->
-    </div><!-- /tabs -->
-
-    <div id="profile" class="col s12">
-
-      <h4 class="hide-on-med-and-up">My Profile</h4>
-      <br>
-
-      <form method="POST" enctype="multipart/form-data" action="{{ url_for('people:user_profile') }}">
-        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <div class="row" ng-controller="userProfileCtrl">
-
-          <div layout="col s12">
-            {{ profile_image_dialog(request.user.profile_img) }}
-          </div><!-- /profile_img -->
-
-          {#
-          <div layout="col s12 l6">
-          </div><!-- /_profile_img -->
-          #}
-
-          <div class="col s12 l6 input-field">
-            {{ form.first_name.label_tag() }}
-            {{ form.first_name }}
-          </div><!-- /first_name -->
-          <div class="col s12 l6 input-field">
-            {{ form.last_name.label_tag() }}
-            {{ form.last_name }}
-          </div><!-- /last_name -->
-
-          <div class="col s12 input-field">
-            <i class="material-icons prefix">face</i>
-            {{ form.display_name }}
-            {{ form.display_name.label_tag() }}
-            <div class="hint">Tell us what we should call you!</div>
-          </div><!-- /display_name -->
-
-          <div class="col s12 input-field">
-            <i class="material-icons prefix">place</i>
-            {{ form._location }}
-            {{ form._location.label_tag() }}
-            <div class="hint">Where are you?</div>
-            {# TODO: show hint that this can be country, state, or city #}
-            {# TODO: show dialog on what this is used for #}
-          </div><!-- /_location -->
-
-        </div><!-- /.row -->
-
-        <div id="form_buttons">
-          <button class="btn orange" type="submit">
-            <i class="material-icons">save</i>&nbsp;
-            Save
-          </button>
-        </div>
-      </form>
-    </div><!-- /#profile -->
-
-    <div id="ministries" class="col s12">
-
-      <h4 class="hide-on-med-and-up">Ministries</h4>
-      <br>
-
-      <a class="btn purple lighten-2" href="{{ url_for('ministry:create_ministry') }}">
-        <i class="material-icons">add</i>&nbsp;New Ministry
-      </a>
-
-      {% set ministries = {'Minsitries You Administer': request.user.administers.all(),
-                     'Ministries You Represent': request.user.represents.all()} %}
-      {# make each section half-size on large screen if there are both categories to represent #}
-      {% set full = len(ministries.values()[0]) and len(ministries.values()[1]) %}
-
-      <div class="row">
-        {% for text, iter in ministries.items() %}
-          {% if len(iter) %}
-            <div class="col {% if full %}l6{% endif %} s12">
-              <h5 class="text-grey darken-2">{{ text }}</h5>
-              <ul class="collection">
-                {% for ministry in iter %}
-                  <li class="collection-item avatar">
-                    <img src="{{ ministry.profile_img.url }}" class="circle">
-                    <a href="{{ ministry.url }}" class="title">
-                      {{ ministry.name }}
-                    </a>
-                    <a href="{{ ministry.edit }}" class="secondary-content">
-                      <i class="material-icons">settings</i>
+      <div class="container">
+        <section class="tabs-vertical mt-1 section">
+          <div class="row">
+            <div class="col l4 s12">
+              <div class="card-panel">
+                <ul class="tabs">
+                  <li class="tab">
+                    <a href="#profile">
+                      <i class="material-icons">account_circle</i>&nbsp;My Profile
                     </a>
                   </li>
-                {% endfor %}
-              </ul><!-- /.collection -->
-            </div><!-- /.col -->
-          {% endif %}
-        {% endfor %}
-      </div><!-- /.row -->
-    </div><!-- /#ministries -->
+                  <li class="tab">
+                    <a href="#ministries">
+                      <i class="material-icons">public</i>&nbsp;Ministries
+                    </a>
+                  </li>
+                  <li class="tab">
+                    <a href="#likes">
+                      <i class="material-icons">loyalty</i>&nbsp;Likes
+                    </a>
+                  </li>
+                  <li class="tab">
+                    <a href="#receipts">
+                      <i class="material-icons">receipt</i>&nbsp;Receipts
+                    </a>
+                  </li>
+                </ul><!-- /.tabs -->
+              </div><!-- /.card-panel -->
+            </div><!-- /tabs -->
+            <div class="col l8 s12">
+              <div id="profile">
+                <div class="card-panel">
+                  <form method="POST" enctype="multipart/form-data" action="{{ url_for('people:user_profile') }}">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <div class="row" ng-controller="userProfileCtrl">
 
-    <div id="likes" class="col s12">
+                      <div class="col s12 mb-2">
+                        {{ profile_image_dialog(request.user.profile_img) }}
+                      </div><!-- /profile_img -->
 
-      <h4 class="hide-on-med-and-up">Likes</h4>
+                      <div class="col s12 l6 input-field">
+                        {{ form.first_name.label_tag() }}
+                        {{ form.first_name }}
+                      </div><!-- /first_name -->
+                      <div class="col s12 l6 input-field">
+                        {{ form.last_name.label_tag() }}
+                        {{ form.last_name }}
+                      </div><!-- /last_name -->
 
-      {# TODO: show liked ministries here #}
-      <p>This part of the website is under construction.</p>
-    </div><!-- /#likes -->
+                      <div class="col s12 input-field">
+                        <i class="material-icons prefix">place</i>
+                        {{ form._location }}
+                        {{ form._location.label_tag() }}
+                        <div class="hint">Where are you?</div>
+                        {# TODO: show hint that this can be country, state, or city #}
+                        {# TODO: show dialog on what this is used for #}
+                      </div><!-- /_location -->
 
-    <div id="receipts" class="col s12">
+                    </div><!-- /.row -->
 
-      <h4 class="hide-on-med-and-up">Donations</h4>
+                    <div id="form_buttons">
+                      <button class="btn orange" type="submit">
+                        <i class="material-icons">save</i>&nbsp;
+                        Save
+                      </button>
+                    </div><!-- /#form_buttons -->
+                  </form>
+                </div><!-- /.card-panel -->
+              </div><!-- /#profile -->
 
-      {# TODO: cards describing donation statistics #}
-      <table>
-        <tr class="header">
-          <td>#</td>
-          <td>Payment Date</td>
-          <td class="hide-on-med-and-down">TX ID</td>
-          <td>Amount</td>
-          <td class="hide-on-med-and-down">Confirmation</td>
-          <td>Campaign</td>
-          <td class="hide-on-med-and-down">Ministry</td>
-        </tr>
-        {# TODO: implement sorting #}
-        {% for num, tx in donations.items() %}
-          <tr>
-            <td class="grey-text darken-2">{{ num }}</td>
-            <td>
-              <a href="{{ tx.url }}">{{ tx.payment_date.strftime('%m/%d/%Y') }}</a>
-            </td>
-            <td class="hide-on-med-and-down">
-              <a href="{{ tx.url }}">{{ tx.id }}</a>
-            </td>
-            <td>{{ tx.amount }}</td>
-            <td class="hide-on-med-and-down">{{ tx.confirmation }}</td>
-            <td>
-              {% if tx.campaign.url == '#' %}
-                {# 'Administration Donation' #}
-                {{ tx.campaign.title }}
-              {% else %}
-                <a href="{{ tx.campaign.url }}">{{ tx.campaign.title }}</a>
-              {% endif %}
-            </td>
-            <td class="hide-on-med-and-down">
-              {% if tx.ministry.url == '#' %}
-                {# 'Love Our Neighbor' #}
-                {{ tx.ministry.title }}
-              {% else %}
-                <a href="{{ tx.ministry.url }}">{{ tx.ministry.title }}</a>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
-    </div><!-- /#receipts -->
+              <div id="ministries">
+                <div class="card-panel">
+                  <a class="btn purple lighten-2" href="{{ url_for('ministry:create_ministry') }}">
+                    <i class="material-icons">add</i>&nbsp;New Ministry
+                  </a>
+
+                  {% set ministries = {'Minsitries You Administer': request.user.administers.all(),
+                     'Ministries You Represent': request.user.represents.all()} %}
+                  {# make each section half-size on large screen if there are both categories to represent #}
+                  {% set full = len(ministries.values()[0]) and len(ministries.values()[1]) %}
+
+                  <div class="row">
+                    {% for text, iter in ministries.items() %}
+                      {% if len(iter) %}
+                        <div class="col {% if full %}l6{% endif %} s12">
+                          <h5 class="text-grey darken-2">{{ text }}</h5>
+                          <ul class="collection">
+                            {% for ministry in iter %}
+                              <li class="collection-item avatar">
+                                <img src="{{ ministry.profile_img.url }}" class="circle" alt="profile-image">
+                                <a href="{{ ministry.url }}" class="title">
+                                  {{ ministry.name }}
+                                </a>
+                                <a href="{{ ministry.edit }}" class="secondary-content">
+                                  <i class="material-icons">settings</i>
+                                </a>
+                              </li>
+                            {% endfor %}
+                          </ul><!-- /.collection -->
+                        </div><!-- /.col -->
+                      {% endif %}
+                    {% endfor %}
+                  </div><!-- /.row -->
+                </div><!-- /.card-panel -->
+              </div><!-- /#ministries -->
+
+              <div id="likes" class="col s12">
+                <div class="card-panel">
+                  {# TODO: show liked ministries here #}
+                  <p>This part of the website is under construction.</p>
+                </div><!-- /.card-panel -->
+              </div><!-- /#likes -->
+
+              <div id="receipts" class="col s12">
+                <div class="card-panel">
+                  {# TODO: cards describing donation statistics #}
+                  <table>
+                    <tr class="header">
+                      <td>#</td>
+                      <td>Payment Date</td>
+                      <td class="hide-on-med-and-down">TX ID</td>
+                      <td>Amount</td>
+                      <td class="hide-on-med-and-down">Confirmation</td>
+                      <td>Campaign</td>
+                      <td class="hide-on-med-and-down">Ministry</td>
+                    </tr>
+                    {# TODO: implement sorting #}
+                    {% for num, tx in donations.items() %}
+                      <tr>
+                        <td class="grey-text darken-2">{{ num }}</td>
+                        <td>
+                          <a href="{{ tx.url }}">{{ tx.payment_date.strftime('%m/%d/%Y') }}</a>
+                        </td>
+                        <td class="hide-on-med-and-down">
+                          <a href="{{ tx.url }}">{{ tx.id }}</a>
+                        </td>
+                        <td>{{ tx.amount }}</td>
+                        <td class="hide-on-med-and-down">{{ tx.confirmation }}</td>
+                        <td>
+                          {% if tx.campaign.url == '#' %}
+                            {# 'Administration Donation' #}
+                            {{ tx.campaign.title }}
+                          {% else %}
+                            <a href="{{ tx.campaign.url }}">{{ tx.campaign.title }}</a>
+                          {% endif %}
+                        </td>
+                        <td class="hide-on-med-and-down">
+                          {% if tx.ministry.url == '#' %}
+                            {# 'Love Our Neighbor' #}
+                            {{ tx.ministry.title }}
+                          {% else %}
+                            <a href="{{ tx.ministry.url }}">{{ tx.ministry.title }}</a>
+                          {% endif %}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </table>
+                </div><!-- /.card-panel -->
+              </div><!-- /#receipts -->
+
+            </div><!-- /tab-content -->
+          </div>
+        </section>
+      </div>
+    </div>
   </div>
 
-
-</section>
 {% endblock %}
 
 

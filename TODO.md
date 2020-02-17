@@ -4,6 +4,7 @@
 - Allow links cards (at least in MOTD cards) to be visible
 - Mysterious background-color change beneath screen width on ministry pages
 - Fix sidenav rounded options
+- Pass active page for sidenav
 
 
 # Bugs
