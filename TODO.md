@@ -5,6 +5,7 @@
 - Mysterious background-color change beneath screen width on ministry pages
 - Fix sidenav rounded options
 - Pass active page for sidenav
+- MinistryProfile admin panel should have separate form for details and admin/rep management
 
 
 # Bugs
