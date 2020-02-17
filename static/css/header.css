@@ -1,4 +1,8 @@
 /** Header Styling **/
+.nav-wrapper {
+  width: 100%;
+}
+
 .brand-logo {
   display: inline-block;
 }
@@ -8,7 +12,7 @@
   margin-top: -15px;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 992px) {
   .brand-logo #logo {
     height: 1.5em;
     vertical-align: middle;

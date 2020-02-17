@@ -2,11 +2,12 @@
 
 {% macro footer(links) %}
 
-  <footer class="page-footer footer footer-dark gradient-45deg-purple-deep-orange gradient-shadow navbar-border navbar-shadow">
+  <footer
+      class="page-footer footer footer-dark gradient-45deg-purple-deep-orange gradient-shadow navbar-border navbar-shadow">
     <div id="footer-content" class="container">
       <div class="row">
 
-        <div class="col s12 m4">
+        <div class="col s12 m6 xl4">
           <div id="mission-statement">
             <h5 class="grey-text text-lighten-2">Mission Statement</h5>
             {{ mission_statement()|safe }}
@@ -19,7 +20,7 @@
         </div>
 
         {# {{{ Sitemap #}
-        <div class="col s12 m2 offset-m4">
+        <div class="col s12 m3 offset-m3 xl2 offset-xl4">
           <h5 class="grey-text text-lighten-2">Links</h5>
           <div id="sitemap">
             <ul>
