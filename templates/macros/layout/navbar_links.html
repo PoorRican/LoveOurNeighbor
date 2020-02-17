@@ -1,4 +1,3 @@
-{% from "macros/layout/user_widget.html" import user_widget %}
 {% from "macros/layout/searchbar.html" import searchbar %}
 
 {% macro navbar_links(request) %}
@@ -7,18 +6,9 @@
       class="navbar-main navbar-color navbar-dark nav-collapsible sideNav-lock gradient-45deg-purple-deep-orange gradient-shadow">
     <div class="nav-wrapper">
 
-      <a class="sidenav-trigger btn-sidenav-toggle btn-flat btn-medium hide-on-med-and-up" data-target="slide-out">
-        <i class="material-icons">menu</i>
-      </a>
-
       <div class="header-search-wrapper hide-on-med-and-down">
         {{ searchbar(small_screen=False) }}
       </div><!-- /.header-search-wrapper -->
-
-      <a class="brand-logo center hide-on-med-and-up" href="{{ url_for('home') }}">
-        <img id="logo" src="{{ static('img/brand/LON_logo.svg') }}">
-        <img class="hide-on-small-only" id="brand-text" src="{{ static('img/brand/LON_straight.png') }}">
-      </a><!-- /.brand-logo -->
 
       <ul class="navbar-list right">
         <li class="hide-on-large-only search-input-wrapper">
@@ -39,7 +29,7 @@
                 {% if request.user.logged_in_as %}
                   <img src="{{ request.user.logged_in_as.profile_img.url }}" alt="avatar">
                 {% else %}
-                  <img src="{{ request.user.profile_img.url }}" alt="avata">
+                  <img src="{{ request.user.profile_img.url }}" alt="avatar">
                 {% endif %}
                 <i></i>
               </span><!-- /.avatar-status -->
@@ -78,24 +68,17 @@
           {% for i in aliases %}
             {% if len(i['profiles']) %}
 
-              <li class="disabled grey-text text-lighten-1" style="height: 1em;">{{ i['label'] }}:</li>
+              <li class="disabled grey-text" style="height: 1em;">{{ i['label'] }}:</li>
 
               {% for ministry in i['profiles'] %}
                 {% set ALIAS = (request.user.logged_in_as == ministry) %}
                 <li class="profile-area">
-                  <a href="{{ url_for('ministry:login_as_ministry', kwargs={'ministry_id': ministry.id}) }}"
-                     class="view_profile {% if ALIAS %} orange-text {% else %} grey-text text-darken-2{% endif %}">
-                    <img class="profile-img" src="{{ ministry.profile_img.url }}">
-                    <div>
-                      <span class="truncate">
-                        {{ ministry }}
-                      </span>
-                    </div>
-                    {% if ALIAS %}<i class="material-icons">how_to_reg</i>{% endif %}
-                  </a>
-                  <a href="{{ url_for('ministry:admin_panel', kwargs={'ministry_id': ministry.id}) }}"
-                     class="edit-btn btn-flat waves-effect right grey-text darken-3">
-                    <i class="material-icons">settings</i>
+                  <a href="{{ url_for('ministry:ministry_profile', kwargs={'ministry_id': ministry.id}) }}"
+                     class="view_profile">
+                    <img class="circle left" src="{{ ministry.profile_img.url }}">
+                    <span>
+                      {{ ministry }}
+                    </span>
                   </a>
                 </li>
               {% endfor %}

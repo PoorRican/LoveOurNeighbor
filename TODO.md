@@ -1,11 +1,8 @@
 # Template Port Errors:
-- Parallax Banner has blank space on top
 - Tab bar in card_area has blank space on sides
 - Copy layout.html over to flatpages
-- Enlarge font for `.card-title`
 - Allow links cards (at least in MOTD cards) to be visible
 - Fix overflow overlay
-- Fix logo in sidenav
 - Mysterious background-color change beneath screen width on ministry pages
 - Convert card dropdown in title to be a FAB
 - Fix profile dropdown disabled padding
@@ -14,8 +11,10 @@
 
 # Bugs
 - Prevent duplicate donation objects from being created upon repeating GET /donation/confirm
+- MinistryProfile like button does not work
 
 # Immediate Things to Implement
+- Turn MotD into modal and fire every first visit
 - Static pages:
     * About Us Blurbs
 - Help Blurbs for ministries:
@@ -129,6 +128,7 @@ Things to do before Users will be using the site:
     * Banner image trigger should reflect the wide dimensions as it is displayed on view page
 - Card offsets button in News tab in Campaign admin panel
 - Form buttons in campaign admin panel should match ministry admin panel
+- Change 'background-color' for materialize tab bars
 
 ## Implementation Changes
 - Create custom asset handler:
@@ -145,17 +145,23 @@ Things to do before Users will be using the site:
 - Implement generic relations for NewsPost [using contenttypes](https://docs.djangoproject.com/en/3.0/ref/contrib/contenttypes/)
 
 ## Features
+### Priority
+- User to User messaging
+- Church profiles
+- Mailing List functionality
+
+### Low Priority
 - Commenting
 - Enable tooltips
 - Help page
-- Implement authors for NewsPost objects
 - Enable multiple admins and permissions
 - Display help on first login
-- Logging for Django
-- Mailing List functionality
-- Milestones for MinistryProfiles
+- Milestones for MinistryProfiles (email/notification)
 - Map displaying ministry location (via 'explore' tab)
-- User to User messaging
+
+### Unimportant
+- Implement authors for NewsPost objects
+- Logging for Django
 - Social Media logging
 - Search functionality should have tags as a search filter
 
