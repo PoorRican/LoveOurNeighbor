@@ -54,7 +54,7 @@
     <link rel="stylesheet" href="{{ static('theme/materialize.min.css') }}">
     <link rel="stylesheet" href="{{ static('theme/style.min.css') }}">
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     {% block css %}{% endblock %}
 
@@ -72,12 +72,16 @@
       class="vertical-layout vertical-menu-collapsible page-header-dark vertical-modern-menu 2-columns menu-expanded fixed-navbar"
       data-open="click" data-menu="vertical-modern-menu" data-color="" data-col="2-columns">
 
+  {% if not active %}
+    {% set active = None %}
+  {% endif %}
+
   <header class="page-topbar" id="header">
     {% set links =
     [
-      (url_for('home'), 'Home'),
-      (url_for('faq'), 'FAQ'),
-      (url_for('about'), 'About Us')
+      (url_for('home'), 'Home', 'fa fa-home'),
+      (url_for('faq'), 'FAQ', 'fa fa-question-circle-o'),
+      (url_for('about'), 'About Us', 'fa fa-compass')
     ] %}
     <div class="navbar navbar-fixed">
       {{ navbar_links(request) }}
@@ -89,7 +93,7 @@
     {% endblock %}
   </main>
 
-  {{ sidenav(request, links) }}
+  {{ sidenav(request, links, active) }}
 
   {{ footer(links+get_flatpages()) }}
 

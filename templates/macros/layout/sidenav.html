@@ -1,7 +1,7 @@
 {% from "macros/layout/searchbar.html" import searchbar %}
 {% from "macros/parts/donate_button.html" import donate_button %}
 
-{% macro sidenav(request, links) %}
+{% macro sidenav(request, links, active=None) %}
 
   <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-light sidenav-active-rounded" id="sidenav">
 
@@ -21,7 +21,10 @@
       {%- for _link in links -%}
         <li>
           <a href="{{ _link[0] }}" title="{{ _link[1] }}"
-             class="waves-effect">
+             class="waves-effect{% if _link[0] == active %} active{% endif %}">
+            {% if len(_link) > 2 %}
+              <i class="{{ _link[2] }}"></i>
+            {% endif %}
             {{ _link[1] }}
           </a>
         </li>

@@ -49,7 +49,8 @@ def home(request):
                'random_ministries': MinistryProfile.random_ministries(),
                'new_campaigns': Campaign.new_campaigns(),
                'random_campaigns': Campaign.random_campaigns(),
-               'motd': MessageOfTheDay.get_message()
+               'motd': MessageOfTheDay.get_message(),
+               'active': reverse('home'),
                }
 
     return render(request, "home.html", context)
@@ -68,7 +69,10 @@ def about(request):
         from the django admin console.
     """
     _about = AboutSection.objects.all()
-    context = {'about': _about}
+    context = {'about': _about,
+               'active': reverse('about'),
+               }
+
     return render(request, "about.html", context)
 
 
@@ -85,7 +89,9 @@ def faq(request):
         from the django admin console.
     """
     faqs = FaqSection.objects.all()
-    context = {'faqs': faqs}
+    context = {'faqs': faqs,
+               'active': reverse('faq'),
+               }
     return render(request, "faq.html", context)
 
 
