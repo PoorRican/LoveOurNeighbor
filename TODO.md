@@ -12,6 +12,7 @@
 - MinistryProfile like button does not work
 
 # Immediate Things to Implement
+- Turn link tree/sitemap into a global in Python accessible from jinja2 environment
 - Turn MotD into modal and fire every first visit
 - Static pages:
     * About Us Blurbs
@@ -20,6 +21,7 @@
     * Explaining details in Ministry Profile Page
 - Add Cookie Consent Banner from Termly
 - Unverified ministries/campaigns should not be on homepage
+- If a home page card does not have a banner_img, it should not have a large value for margin-top
 
 ## Internal Fixes
 - Profile Image Functionality:

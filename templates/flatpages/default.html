@@ -46,13 +46,17 @@
   <title>{{ flatpage.title }} - Love Our Neighbor</title>
 
   {# favicon #}
-
-  <link rel="icon" href="{{ static('img/favicon.svg') }}" type="image/svg">
+  <link rel="shortcut icon" href="{{ static('img/favicon.svg') }}">
+  <link rel="apple-touch-icon" href="{{ static('img/favicon.svg') }}">
 
   {# {{{ CSS Imports #}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="{{ static('theme/vendors.min.css') }}">
+  <link rel="stylesheet" href="{{ static('theme/materialize.min.css') }}">
+  <link rel="stylesheet" href="{{ static('theme/style.min.css') }}">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  {% block css %}{% endblock %}
 
   {# Local Scripts #}
   {# TODO: fetch these from CDN while on production #}
@@ -64,29 +68,49 @@
 
 </head>
 
-<body>
+<body
+    class="vertical-layout vertical-menu-collapsible page-header-dark vertical-modern-menu 2-columns menu-expanded fixed-navbar"
+    data-open="click" data-menu="vertical-modern-menu" data-color="" data-col="2-columns">
 
-<header style="z-index: 750">
+{% if not active %}
+  {% set active = flatpage.url %}
+{% endif %}
+
+<header class="page-topbar" id="header">
   {% set links =
     [
-      (url_for('home'), 'Home'),
-      (url_for('faq'), 'FAQ'),
-      (url_for('about'), 'About Us')
+      (url_for('home'), 'Home', 'fa fa-home'),
+      (url_for('faq'), 'FAQ', 'fa fa-question-circle-o'),
     ] %}
-  {{ navbar_links(request, links) }}
+  <div class="navbar navbar-fixed">
+    {{ navbar_links(request) }}
+  </div>
 </header>
 
-<main>
+<main id="main">
   <div class="wrapper">
     {{ flatpage.content }}
   </div>
 </main>
 
-{{ footer(links+get_flatpages()) }}
+{% set _links = links %}
+{{ _links.append({'title': 'About Us', 'fa-icon': 'fa fa-compass',
+                             'links': get_flatpages()}) }}
+{{ sidenav(request, _links, active) }}
 
-{{ sidenav(request, links) }}
+{{ footer(links) }}
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+{# paths must be relative to static directory #}
+{% set layout_assets = (
+    'js/ui-feedback.animations.js',
+    'js/vendors.min.js',
+    'js/materialize.js',
+    'js/plugins.js',
+    'js/search.js',
+  ) %}
+{% for f in layout_assets %}
+  <script src="{{ static('%s' % f) }}"></script>
+{% endfor %}
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -128,17 +152,15 @@
     el = document.querySelectorAll('.materialboxed');
     M.Materialbox.init(el);
 
+    el = document.querySelectorAll('.tooltipped');
+    M.Tooltip.init(el)
+
   });
 
 </script>
 
-{# paths must be relative to static directory #}
-{% set layout_assets = (
-    'js/ui-feedback.animations.js',
-  ) %}
-{% for f in layout_assets %}
-  <script src="{{ static('%s' % f) }}"></script>
-{% endfor %}
+{% block scripts %}{% endblock %}
+
 
 {# }}} #}
 

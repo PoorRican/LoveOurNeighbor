@@ -19,15 +19,47 @@
         data-menu="menu-navigation" data-collapsible="menu-accordion">
       <li><a class="subheader">Navigation</a></li>
       {%- for _link in links -%}
-        <li>
-          <a href="{{ _link[0] }}" title="{{ _link[1] }}"
-             class="waves-effect{% if _link[0] == active %} active{% endif %}">
-            {% if len(_link) > 2 %}
-              <i class="{{ _link[2] }}"></i>
+        {% if hasattr(_link, 'items') %}
+          {% set OPEN = False %}
+          {% for l in _link['links'] %}
+            {% if active == l[0] %}
+              {% set OPEN = True %}
             {% endif %}
-            {{ _link[1] }}
-          </a>
-        </li>
+          {% endfor %}
+          <li class="no-padding open active">
+            <ul class="collapsible collapsible-accordian">
+              <li>
+                <a class="collapsible-header" href="JavaScript:void(0)">
+                  <i class="{{ _link['fa-icon'] }}"></i>
+                  {{ _link['title'] }}
+                </a>
+                <div class="collapsible-body" style="width: calc(100% - 5px)">
+                  <ul class="collapsible collapsible-sub">
+                    {% for l in _link['links'] %}
+                      <li>
+                        <a href="{{ l[0] }}" title="{{ l[1] }}" style="width: calc(100% - 5px)"
+                           class="waves-effect{% if l[0] == active %} active{% endif %}">
+                          <i class="material-icons">radio_button_unchecked</i>
+                          {{ l[1] }}
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div><!-- /.collapsible-body -->
+              </li>
+            </ul><!-- /.collapsible -->
+          </li><!-- /.no-padding -->
+        {% else %}
+          <li>
+            <a href="{{ _link[0] }}" title="{{ _link[1] }}"
+               class="waves-effect{% if _link[0] == active %} active{% endif %}">
+              {% if len(_link) > 2 %}
+                <i class="{{ _link[2] }}"></i>
+              {% endif %}
+              <span class="menu-title">{{ _link[1] }}</span>
+            </a>
+          </li>
+        {% endif %}
       {%- endfor -%}
 
       <li class="spacer"></li>

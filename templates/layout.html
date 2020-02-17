@@ -81,7 +81,6 @@
     [
       (url_for('home'), 'Home', 'fa fa-home'),
       (url_for('faq'), 'FAQ', 'fa fa-question-circle-o'),
-      (url_for('about'), 'About Us', 'fa fa-compass')
     ] %}
     <div class="navbar navbar-fixed">
       {{ navbar_links(request) }}
@@ -93,7 +92,10 @@
     {% endblock %}
   </main>
 
-  {{ sidenav(request, links, active) }}
+  {% set _links = links.copy() %}
+  {{ _links.append({'title': 'About Us', 'fa-icon': 'fa fa-compass',
+                             'links': get_flatpages()}) }}
+  {{ sidenav(request, _links, active) }}
 
   {{ footer(links+get_flatpages()) }}
 
