@@ -20,20 +20,15 @@
       <li><a class="subheader">Navigation</a></li>
       {%- for _link in links -%}
         {% if hasattr(_link, 'items') %}
-          {% set OPEN = False %}
-          {% for l in _link['links'] %}
-            {% if active == l[0] %}
-              {% set OPEN = True %}
-            {% endif %}
-          {% endfor %}
-          <li class="no-padding open active">
+          <li class="no-padding">
             <ul class="collapsible collapsible-accordian">
               <li>
                 <a class="collapsible-header" href="JavaScript:void(0)">
                   <i class="{{ _link['fa-icon'] }}"></i>
                   {{ _link['title'] }}
                 </a>
-                <div class="collapsible-body" style="width: calc(100% - 5px)">
+                <div class="collapsible-body"
+                     style="width: calc(100% - 5px); {% if active_sidenav_submenu(active, _link['links']) %}display: block;{% endif %}">
                   <ul class="collapsible collapsible-sub">
                     {% for l in _link['links'] %}
                       <li>

@@ -23,6 +23,7 @@ from .utils import (
     ministry_admin_urls,
     campaign_admin_urls,
     get_flatpages,
+    active_sidenav_submenu,
 )
 
 # Manually register Bundles for webassets (for some reason django_assets is not working)
@@ -72,6 +73,7 @@ def social_media_links():
 def environment(**options):
     env = Environment(**options)
     env.globals.update({
+        'active_sidenav_submenu': active_sidenav_submenu,
         'static': static,
         'url_for': reverse,
         'len': len,

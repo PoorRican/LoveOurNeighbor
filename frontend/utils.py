@@ -90,6 +90,29 @@ def get_flatpages():
     return [(i.url, i.title) for i in FlatPage.objects.all()]
 
 
+def active_sidenav_submenu(active, links):
+    """
+    Helper function to call in Jinja2 templates that determines nested links in a submenu.
+
+    This is difficult to implement within a template itself, so it is easier to pass this to the environment.
+
+    Parameters
+    ----------
+    active:
+        URL of the current link
+    links:
+        list of tuples of (URL, Title, icon)
+
+    Returns
+    -------
+    bool
+    """
+    for link in links:
+        if active == link[0]:
+            return True
+    return False
+
+
 class TimezoneMiddleware:
     """ Stores the timezone of the request IP address using GeoIP services within the request session.
     This is not implemented anywhere in the codebase at the moment,

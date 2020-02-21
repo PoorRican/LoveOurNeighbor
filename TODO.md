@@ -3,7 +3,6 @@
 - Copy layout.html over to flatpages
 - Allow links cards (at least in MOTD cards) to be visible
 - Fix sidenav rounded options
-- Pass active page for sidenav
 - MinistryProfile admin panel should have separate form for details and admin/rep management
 
 
