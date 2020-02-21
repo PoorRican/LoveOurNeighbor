@@ -2,7 +2,6 @@
 - Tab bar in card_area has blank space on sides
 - Copy layout.html over to flatpages
 - Allow links cards (at least in MOTD cards) to be visible
-- Mysterious background-color change beneath screen width on ministry pages
 - Fix sidenav rounded options
 - Pass active page for sidenav
 - MinistryProfile admin panel should have separate form for details and admin/rep management
@@ -23,6 +22,7 @@
 - Add Cookie Consent Banner from Termly
 - Unverified ministries/campaigns should not be on homepage
 - If a home page card does not have a banner_img, it should not have a large value for margin-top
+- Create a breadcrumb utility function to determine reverse pathway (w/ URLs) given an object (this should go in `frontend`)
 
 ## Internal Fixes
 - Profile Image Functionality:
