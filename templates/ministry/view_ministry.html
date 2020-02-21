@@ -26,157 +26,250 @@
     {# {{{ Top Section Overlay #}
     {% if ministry.banner_img %}
       <div class="parallax-container" style='height: 250px;'>
-        <div class="parallax" style="z-index: 500;">
+        <div class="parallax">
           <img src="{{ ministry.banner_img.url }}" alt="">
         </div>
-      </div>
+      </div><!-- /.parallax-container -->
     {% endif %}
     {# }}} #}
 
-    <div id="{{ id }}" class="section">
-      <div class="wrapper" ng-controller="ministryCtrl">
+    <div id="ministryProfile" class="section">
+      <div class="row" ng-controller="ministryCtrl">
 
-        <h1 class="action-header truncate">
-          {% if request.user.is_authenticated %}
-            <a class="dropdown-trigger" href="#" data-target="actionMenu">
-              {{ ministry.name.upper() }}
-              <i class="material-icons">arrow_drop_down</i>
-            </a>
-          {% else %}
-            {{ ministry.name.upper() }}
-          {% endif %}
-        </h1>
-
-        {# {{{ Action Menu #}
-        <ul id="actionMenu" class="dropdown-content">
-          {% if AUTH %}
-            {% for opt in ministry_admin_urls(ministry) %}
-              <li>
-                <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
-                  <i class="material-icons">{{ opt['icon'] }}</i>
-                  {{ opt['label'] }}
-                </a>
-              </li>
-            {% endfor %}
-          {% elif not AUTH %}
-            <li>
-              <a href="{{ url_for('ministry:request_to_be_rep', kwargs={'ministry_id': ministry.id}) }}">
-                Request to be a representative
-              </a>
-            </li>
-          {% endif %}
-        </ul>
-        {# }}} #}
-
-        <div class="row">
-
-          <div class="col l3 s12">
-            {{ like_button(ministry, request) }}
-          </div>
-
-          <div class="col l4 s12" style="margin: auto 0">
-            <p class="section-info">
-              <span># of Projects:</span>&nbsp;
-              {{ len(ministry.campaigns.all()) }}
+        <div id="ministryInfo" class="col s12 m4 l3"
+             style="position: relative; {% if ministry.banner_img %}margin-top: -115px;{% endif %}">
+          <div class="row">
+            <div class="col s12 center-align">
+              <img class="circle z-depth-5" src="{{ ministry.profile_img.url }}" alt="Profile Image"
+                   width="120" height="120">
               <br>
-              <span>Total Donations:</span>&nbsp;
-              {{ ministry.donated }}
-              <br>
-              <span>Views:</span>&nbsp;
-              {{ ministry.views }}
-            </p>
-          </div>
+              {{ like_button(ministry, request) }}
+            </div>
+          </div><!-- profile image area -->
 
-        </div><!-- /layout -->
+          <div class="row mt-5">
+            <div class="col s6">
+              <h6>Views</h6>
+              <h5>{{ ministry.views }}</h5>
+            </div>
+            <div class="col s6">
+              <h6>Likes</h6>
+              <h5>{{ ministry.likes.count() }}</h5>
+            </div>
+          </div><!-- /views & likes -->
 
-        {% if ministry.description %}
-          <h3>Description:</h3>
-          <p class="flow-text">{{ ministry.description|safe }}</p>
-        {% endif %}
+          <hr class="grey-text text-lighten-2">
 
-        {% if ministry.has_tags %}
-          <div id="tags">
-            <h5>Tags:</h5>
-            {{ tag_chips(ministry) }}
-          </div>
-        {% endif %}
+          <div class="row">
+            <div class="col s12">
+              <h6>Number of Projects</h6>
+              <h5>{{ ministry.campaigns.count() }}</h5>
+            </div>
+          </div><!-- /project count -->
 
-        <div>
-          <h3>Ministry Information:</h3>
+          <hr class="grey-text text-lighten-2">
 
-          <div class="row sm-links">
-            <div class="col s3 m2 l1">
-              {% if ministry.facebook %}
-                <a href="{{ ministry.facebook }}" class="btn blue white-text">
-                  <i class="fa fa-facebook"></i>
-                </a>&nbsp;
-              {% endif %}
-            </div><!-- facebook -->
-            <div class="col s3 m2 l1">
-              {% if ministry.instagram %}
-                <a href="{{ ministry.instagram }}" class="btn blue darken-4 white-text">
-                  <i class="fa fa-instagram"></i>
-                </a>
-              {% endif %}
-            </div><!-- instagram -->
-            <div class="col s3 m2 l1">
-              {% if ministry.twitter %}
-                <a href="{{ ministry.twitter }}" class="btn light-blue white-text">
-                  <i class="fa fa-twitter"></i>
-                </a>
-              {% endif %}
-            </div><!-- twitter -->
-            <div class="col s3 m2 l1">
-              {% if ministry.youtube %}
-                <a href="{{ ministry.youtube }}" class="btn red white-text">
-                  <i class="fa fa-youtube"></i>
-                </a>
-              {% endif %}
-            </div><!-- youtube -->
-          </div><!-- social media links -->
+          {% if ministry.has_tags %}
+            <div class="row">
+              <div class="col s12">
+                <h6>Tags</h6>
+                {{ tag_chips(ministry) }}
+              </div>
+            </div>
+            <hr class="grey-text text-lighten-2">
+          {% endif %}
 
-          <div class="section-info">
-            <span>Website:</span>&nbsp;
-            {% if ministry.website %}
+          {% if ministry.facebook or ministry.instagram or ministry.twitter or ministry.youtube %}
+            <div class="row sm-links">
+              <h6>Social Media</h6>
+              <div class="col s3">
+                {% if ministry.facebook %}
+                  <a href="{{ ministry.facebook }}" class="btn blue white-text">
+                    <i class="fa fa-facebook"></i>
+                  </a>&nbsp;
+                {% endif %}
+              </div><!-- facebook -->
+              <div class="col s3">
+                {% if ministry.instagram %}
+                  <a href="{{ ministry.instagram }}" class="btn blue darken-4 white-text">
+                    <i class="fa fa-instagram"></i>
+                  </a>
+                {% endif %}
+              </div><!-- instagram -->
+              <div class="col s3">
+                {% if ministry.twitter %}
+                  <a href="{{ ministry.twitter }}" class="btn light-blue white-text">
+                    <i class="fa fa-twitter"></i>
+                  </a>
+                {% endif %}
+              </div><!-- twitter -->
+              <div class="col s3">
+                {% if ministry.youtube %}
+                  <a href="{{ ministry.youtube }}" class="btn red white-text">
+                    <i class="fa fa-youtube"></i>
+                  </a>
+                {% endif %}
+              </div><!-- youtube -->
+            </div><!-- /social media links -->
+            <hr class="grey-text text-lighten-2">
+          {% endif %}
+
+          <div class="row">
+            <div class="col s12">
+              <h6>Website</h6>
               <a href="{{ ministry.website }}">{{ ministry.website.split("://")[1] }}</a><br>
-            {% endif %}
+            </div>
+          </div><!-- /website -->
 
-            {% set info = {
+          <hr class="grey-text text-lighten-2">
+
+          <div class="row">
+            <div class="col s12">
+              <h6>Details</h6>
+              {% set info = {
                 'phone_number': 'Phone',
                 'address': 'Address',
                 'founded': 'Date Founded',
                 'staff': 'Number of Staff Members',
                 'pub_date': 'Profile Created'
             } %}
-            {% for attr, str in info.items() %}
-              {% if ministry.__dict__[attr] %}
-                <span>{{ str }}:</span>&nbsp;
-                {% if attr == 'pub_date' %}
-                  {{ f_time(ministry.__dict__[attr]) }}
-                {% else %}
-                  {{ ministry.__dict__[attr] }}
-                {% endif %}
-                <br>
-              {% endif %}
+              <blockquote>
+                {% for attr, str in info.items() %}
+                  {% if ministry.__dict__[attr] %}
+                    <span>{{ str }}:</span>&nbsp;
+                    {% if attr == 'pub_date' %}
+                      {{ f_time(ministry.__dict__[attr]) }}
+                    {% else %}
+                      {{ ministry.__dict__[attr] }}
+                    {% endif %}
+                    <br>
+                  {% endif %}
+                {% endfor %}
+              </blockquote>
+            </div>
+          </div><!-- /details -->
+
+          <hr class="grey-text text-lighten-2">
+
+          <div>
+            <div class="row">
+              <div class="col s12">
+                <h6>Staff</h6>
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col s2 mt-2 pr-2 circle pb-2"><img class="responsive-img circle"
+                                                             src="{{ ministry.admin.profile_img.url }}"
+                                                             alt="Admin Profile Image"></div>
+              <div class="col s10 m-0">{{ ministry.admin.name }}</div>
+            </div><!-- /admin -->
+
+            {% for staff in ministry.reps.all() %}
+              <div class="row mt-2">
+                <div class="col s2 mt-2 pr-2 circle pb-2"><img class="responsive-img circle"
+                                                               src="{{ staff.profile_img.url }}"
+                                                               alt="Admin Profile Image"></div>
+                <div class="col s10 m-0">{{ staff.name }}</div>
+              </div>
             {% endfor %}
-          </div><!-- /.section-info -->
 
-        </div><!-- /row -->
+          </div><!-- /staff members -->
 
-        {{ comments_section(ministry, 'ministry', request, form=form, csrf_token=csrf_token) }}
+        </div><!-- /#ministryInfo -->
 
-      </div>
-    </div>
+        <div id="ministryFeed" class="col s12 m8 l6">
+          <div class="card z-depth-0" style="{% if ministry.banner_img %}margin-top: -1em;{% endif %}">
+            <div class="card-content">
 
-    {# TODO: move comments section to tabs #}
+              <div class="row">
+                <div class="col s12">
+                  <h5 style="font-size: xx-large">{{ ministry.name }}</h5>
+                  <p style="font-weight: lighter">Member Since: {{ ministry.pub_date.strftime("%b '%y") }}</p>
+                </div>
+              </div><!-- /ministry name -->
 
-    <section class="wrapper">
-      <!-- ministry/ministry_details -->
+              <div class="row">
+                <div class="col s12">
+                  <ul class="tabs mt-4">
+                    {# TODO: create single feed (agreggating Campaigns and News Posts #}
+                    <li class="tab col s3 p-0">
+                      <a href="#description">
+                        <i class="material-icons">description</i>
+                        <span class="hide-on-med-and-down">&nbsp;Description</span>
+                      </a>
+                    </li>
+                    <li class="tab col s3 p-0">
+                      <a href="#campaigns">
+                        <i class="material-icons">flag</i>
+                        <span class="hide-on-med-and-down">&nbsp;Campaigns</span>
+                      </a>
+                    </li>
+                    <li class="tab col s3 p-0">
+                      <a href="#news">
+                        <i class="material-icons">list_alt</i>
+                        <span class="hide-on-med-and-down">&nbsp;News</span>
+                      </a>
+                    </li>
+                    <li class="tab col s3 p-0">
+                      <a href="#gallery">
+                        <i class="material-icons">photo_album</i>
+                        <span class="hide-on-med-and-down">&nbsp;Gallery</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div><!-- /tabs -->
 
-      {{ card.card_area(all_news, campaigns=(True, campaigns), AUTH=AUTH, images=images) }}
+              <div id="description" class="row">
+                <div class="col s12">
+                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Info</h5>
+                  <div class="padding-4">
+                    {{ ministry.description|safe }}
+                  </div>
+                </div>
+              </div><!-- /#description -->
 
-    </section>
-  </div>
+              <div id="campaigns" class="row">
+                <div class="col s12">
+                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Campaigns</h5>
+                  {% for c in campaigns %}
+                    {{ card.frontpage_campaign_card(c, request, wide=True) }}
+                  {% else %}
+                    <p>There are no campaigns to show at this time.</p>
+                  {% endfor %}
+                </div>
+              </div><!-- #campaigns -->
+
+              <div id="news" class="row">
+                <div class="col s12">
+                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">News</h5>
+                  {% for n in all_news %}
+                    {{ card.news_card(n, AUTH, wide=True) }}
+                  {% else %}
+                    <p>There are no news posts to show at this time.</p>
+                  {% endfor %}
+                </div>
+              </div><!-- /#news -->
+
+              <div id="gallery" class="row">
+                <div class="col s12">
+                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Gallery</h5>
+                  {{ gallery(images) }}
+                </div>
+              </div><!-- /#gallery -->
+
+            </div><!-- /.card-content -->
+          </div><!-- /.card -->
+        </div><!-- /#ministryFeed -->
+
+        <div id="ministryExtra" class="col s12 m12 l3 hide-on-med-and-down">
+
+        </div>
+
+      </div><!-- /.row -->
+    </div><!-- /#ministryProfile -->
+  </div><!-- /ng-app -->
 {% endblock %}
 
 

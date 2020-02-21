@@ -1,9 +1,9 @@
 # Template Port Errors:
 - Tab bar in card_area has blank space on sides
-- Copy layout.html over to flatpages
 - Allow links cards (at least in MOTD cards) to be visible
-- Fix sidenav rounded options
 - MinistryProfile admin panel should have separate form for details and admin/rep management
+- Implement news_card using new materialize elements
+- Implement [masonry with lightbox plugin](https://dimsemenov.com/plugins/magnific-popup/) for gallery
 
 
 # Bugs
@@ -71,8 +71,8 @@ Things to do before ministries will be using the site:
 - About tab in navigation elements (navbar/sidenav) should be a dropdown showing flatpages.
 - Show banner image in ograph metadata for media sharing
 - Show feedback for denied transaction in `confirm_donation`
-- Get rid of `display name`
-
+- Implement similar ministries/campaigns via Tags to display on Ministry Profile page
+- Generator function to create news feed for Ministry Profile (aggregating Campaigns/News Posts, sorted by `pub_date`)
 
 ## Hard Release Features
 Things to do before Users will be using the site:

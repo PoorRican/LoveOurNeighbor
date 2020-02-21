@@ -2,8 +2,14 @@
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 
 {# NewsPost Card #}
-{% macro news_card(post, AUTH=False) %}
-  <div class="col s12 l6">
+{% macro news_card(post, AUTH=False, wide=False) %}
+  {#
+  Arguments
+  =========
+  wide: (bool)
+    Controls whether the card will be given the `l6` attribute, thereby forcing it to takeup the max-width
+  #}
+  <div class="col s12 {% if not wide %}l6{% endif %}">
     <div class="card">
 
       {% if post.attachment %}
@@ -17,7 +23,7 @@
               <i class="material-icons">arrow_drop_down</i>
             </a>
           {% else %}
-            <a class="card-title" href="post.url">{{ post.url }}</a>
+            <a class="card-title" href="{{ post.url }}">{{ post.title }}</a>
           {% endif %}
         </div><!-- /.card-image -->
       {% endif %}
@@ -275,10 +281,16 @@
 {# }}} #}
 
 
-{% macro frontpage_ministry_card(ministry, request) %}
+{% macro frontpage_ministry_card(ministry, request, wide=False) %}
+  {#
+  Arguments
+  =========
+  wide: (bool)
+    Controls whether the card will be given the `l6` attribute, thereby forcing it to takeup the max-width
+  #}
   {% set AUTH = ministry.authorized_user(request.user) %}
 
-  <div class="col s12 l6">
+  <div class="col s12 {% if not wide %}l6{% endif %}">
     <div class="card-panel border-radius-8 mt-10 card-animation-1">
 
       {% if ministry.banner_img %}
@@ -344,10 +356,16 @@
 {% endmacro %}
 
 
-{% macro frontpage_campaign_card(campaign, request) %}
+{% macro frontpage_campaign_card(campaign, request, wide=False) %}
+  {#
+  Arguments
+  =========
+  wide: (bool)
+    Controls whether the card will be given the `l6` attribute, thereby forcing it to takeup the max-width
+  #}
   {% set AUTH = campaign.ministry.authorized_user(request.user) %}
 
-  <div class="col s12 xl6">
+  <div class="col s12 {% if not wide %}l6{% endif %}">
     <div class="card-panel border-radius-8 mt-10 card-animation-1">
 
       {% if campaign.banner_img %}
