@@ -497,8 +497,26 @@ def ministry_gallery_json(request, ministry_id):
 # User Interaction
 @login_required
 def like_ministry(request, ministry_id):
-    # TODO: implement "unlike"
+    """
+    Encapsulates both 'like' and 'unlike' functionality relating `User` to `MinistryProfile`
+    Parameters
+    ----------
+    request
+    ministry_id:
+        id of MinistryProfile to select
+
+    Returns
+    -------
+    JsonResponse key-value containing 'liked' with a boolean value reflecting
+        whether the User 'likes' the ministry.
+
+    """
     ministry = MinistryProfile.objects.get(id=ministry_id)
-    ministry.likes.add(request.user)
-    ministry.save()
-    return HttpResponse(True)
+    if not bool(ministry in request.user.likes_m.all()):
+        ministry.likes.add(request.user)
+        ministry.save()
+        return JsonResponse({'liked': True})
+    else:
+        ministry.likes.remove(request.user)
+        ministry.save()
+        return JsonResponse({'liked': False})

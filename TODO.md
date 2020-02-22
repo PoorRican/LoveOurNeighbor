@@ -68,7 +68,6 @@ Things to do before ministries will be using the site:
     * Have a section for highlighting new or popular tags
     * Random Featured Ministry
     * Posts/Campaigns from Liked Ministries
-- About tab in navigation elements (navbar/sidenav) should be a dropdown showing flatpages.
 - Show banner image in ograph metadata for media sharing
 - Show feedback for denied transaction in `confirm_donation`
 - Implement similar ministries/campaigns via Tags to display on Ministry Profile page
@@ -97,10 +96,6 @@ Things to do before Users will be using the site:
         - "What makes LON a Christian Ministry"
 - Django-Admin
     * admin link should be visible for superusers who are logged in
-- Unlike Functionality
-- Cards:
-    * Add start/end date to campaign cards
-    * Add tags to campaign/ministry cards
     
     
     
@@ -110,15 +105,11 @@ Things to do before Users will be using the site:
     * Password Reset
     * Email Verification
     * Notification/Update Email
-- Show start and end dates on campaign card
-- Clickable area should not be so big in profile/banner image selection dialog triggers
-- 'how_to_reg'/ministry name location in user_widget when 'logged in as'
-- MinistryProfile should display profile images on MinistryProfile page
-- Progress Bar
+- Progress Bar:
+    * Dynamically Loaded
+    * Gradient. Color change in completion amount.
+    * Pulse/heartbeat animation
 - Unify header styling between materialize and angular material
-- Better page loading:
-    * Navbar User Widget Moves/Resizes
-    * In small displays, menu "burger" says 'Menu'
 - Profile/Banner Image:
     * Dynamically resize trigger image dimensions
     * Dynamically resize tile dimensions
@@ -127,7 +118,9 @@ Things to do before Users will be using the site:
     * Banner image trigger should reflect the wide dimensions as it is displayed on view page
 - Card offsets button in News tab in Campaign admin panel
 - Form buttons in campaign admin panel should match ministry admin panel
-- Change 'background-color' for materialize tab bars
+- Like button:
+    * Add animation to like_button (eg: ripple)
+    * Show "unlike" upon hover when liked
 
 ## Implementation Changes
 - Create custom asset handler:

@@ -247,11 +247,29 @@ def campaign_gallery_json(request, campaign_id):
 
 @login_required
 def like_campaign(request, campaign_id):
-    # TODO: implement "unlike"
+    """
+    Encapsulates both 'like' and 'unlike' functionality relating `User` to `Campaign`
+    Parameters
+    ----------
+    request
+    campaign_id:
+        id of MinistryProfile to select
+
+    Returns
+    -------
+    JsonResponse key-value containing 'liked' with a boolean value reflecting
+        whether the User 'likes' the ministry.
+
+    """
     cam = Campaign.objects.get(id=campaign_id)
-    cam.likes.add(request.user)
-    cam.save()
-    return HttpResponse(json.dumps(True))
+    if not bool(cam in request.user.likes_c.all()):
+        cam.likes.add(request.user)
+        cam.save()
+        return JsonResponse({'liked': True})
+    else:
+        cam.likes.remove(request.user)
+        cam.save()
+        return JsonResponse({'liked': False})
 
 
 @login_required

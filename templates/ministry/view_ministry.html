@@ -1,12 +1,7 @@
-{# vim: foldmethod=marker tabstop=2 shiftwidth=2:
-    templates/ministry/view_ministry.html
-#}
 {% extends "layout.html" %}
 
-{% from "macros/layout/misc_layout.html" import section_start, section_close %}
 {% from "macros/parts/comments_section.html" import comments_section %}
 {% from "macros/parts/gallery.html" import gallery %}
-{% from "macros/parts/like_button.html" import like_button %}
 {% from "macros/parts/tag_chips.html" import tag_chips %}
 
 {% import "cards.html" as card %}
@@ -16,7 +11,7 @@
 {% block title %}{{ ministry.name }}{% endblock %}
 
 {% block body %}
-  <div ng-app="LON">
+  <div>
     <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
     <input type="hidden" id="ministry_id" value="{{ ministry.id }}">
     {% if AUTH == None %}
@@ -34,7 +29,7 @@
     {# }}} #}
 
     <div id="ministryProfile" class="section">
-      <div class="row" ng-controller="ministryCtrl">
+      <div class="row">
 
         <div id="ministryInfo" class="col s12 m4 l3"
              style="position: relative; {% if ministry.banner_img %}margin-top: -115px;{% endif %}">
@@ -42,8 +37,29 @@
             <div class="col s12 center-align">
               <img class="circle z-depth-5" src="{{ ministry.profile_img.url }}" alt="Profile Image"
                    width="120" height="120">
+
               <br>
-              {{ like_button(ministry, request) }}
+
+              {% if request.user.is_authenticated %}
+                <button id="likeButton" class="btn btn-large grey mt-5"
+                        data-bind="class: btnStyle, click: like;">
+                  <span data-bind="visible: liked">
+                    <i class="material-icons left">favorite</i>
+                    Liked
+                  </span>
+                  <span data-bind="hidden: liked">
+                    <i class="material-icons left">favorite_border</i>
+                    Like
+                  </span>
+                </button>
+              {% else %}
+                <a class="btn btn-flat grey lighten-3 mt-5" href="{{ url_for('people:login') }}">
+                  <i class="material-icons left">favorite_border</i>
+                  Like
+                </a>
+              {% endif %}
+
+
             </div>
           </div><!-- profile image area -->
 
@@ -269,32 +285,33 @@
 
       </div><!-- /.row -->
     </div><!-- /#ministryProfile -->
-  </div><!-- /ng-app -->
+  </div>
 {% endblock %}
 
 
 {% block scripts %}
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
 
-  {% set page_assets = (
-  'app.module.js',
-  'app.config.js',
-  'services/object.service.js',
-  'services/like__button.service.js',
-  'services/gallery.service.js',
-  'ministry/ministry.controller.js',
-  ) %}
-  {% for f in page_assets %}
-    <script src="{{ static('app/%s' % f) }}"></script>
-  {% endfor %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+
+  <script src="{{ static('js/like_button.js' % f) }}"></script>
+
+  <script type="text/javascript">
+    const jsonURL = "{{ url_for('ministry:ministry_json', kwargs={'ministry_id': ministry.id}) }}";
+    const likeURL = "{{ url_for('ministry:like_ministry', kwargs={'ministry_id': ministry.id}) }}";
+    let ministry = {};
+
+    $.getJSON(jsonURL, function (data) {
+      ministry = data;
+      likeButton.liked(data['liked']);
+    });
+
+    let likeButton = new likeButtonViewModel(likeURL);
+    ko.applyBindings(likeButton, document.getElementById('likeButton'));
+
+  </script>
 
 {% endblock %}
 
 
 {% block css %}
-  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
 {% endblock %}
