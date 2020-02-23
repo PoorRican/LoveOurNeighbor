@@ -22,177 +22,205 @@
 
 {% block body %}
   <!-- view_campaign.html -->
-  <div ng-app="LON">
-    <input type="hidden" id="current_object_json" value="{{ cam.json }}">
-    <input type="hidden" id="campaign_id" value="{{ cam.id }}">
-    {% if AUTH == None %}
-      {% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
-    {% endif %}
+  <input type="hidden" id="current_object_json" value="{{ cam.json }}">
+  <input type="hidden" id="campaign_id" value="{{ cam.id }}">
+  {% if AUTH == None %}
+    {% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
+  {% endif %}
 
-    {# {{{ Top Section Overlay #}
-    {% if cam.banner_img %}
-      <div class="parallax-container" style='height: 250px;'>
-        <div class="parallax" style="z-index: 500;">
-          <img src="{{ cam.banner_img.url }}" alt="">
-        </div>
-      </div>
-    {% endif %}
-    {# }}} #}
-
-    <div id="{{ id }}" class="section">
-      <div class="wrapper" ng-controller="campaignCtrl">
-
-        <h1>
-          {# {{{ Action Menu #}
-          {% if AUTH %}
-
-            <a class="dropdown-trigger" href="#" data-target="actionMenu">
-        <span class="truncate" style="max-width: 85%; display: inline-block;">
-          {{ cam.title.upper() }}
-        </span>
-              <i class="material-icons">arrow_drop_down</i>
-            </a>
-
-            <ul id="actionMenu" class="dropdown-content">
-              {% for opt in campaign_admin_urls(cam) %}
-                <li>
-                  <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
-                    <i class="material-icons">{{ opt['icon'] }}</i>
-                    {{ opt['label'] }}
-                  </a>
-                </li>
-              {% endfor %}
-              <li>{{ confirm_delete('campaign', cam.id, text='Delete Campaign', anchor=True, part=0) }}</li>
-            </ul>
-
-          {% else %}
-
-            {{ cam.title.upper() }}
-
-          {% endif %}
-          {# }}} #}
-        </h1>
-
-        {{ confirm_delete('campaign', cam.id, text='Delete Campaign', anchor=True, part=1) }}
-
-        <h6 class="grey-text">By:
-          <a href="{{ url_for("ministry:ministry_profile", kwargs={'ministry_id': cam.ministry.id}) }}">
-            {{ cam.ministry }}
-          </a>
-        </h6>
-
-        <h5>Progress:</h5>
-        <div class="progress">
-          {% if cam.donated %}
-            <div class="current" style="width: {{ round((cam.donated / cam.goal) * 100) }}%">
-                  <span>
-                    ${{ cam.donated }}
-                  </span>
-            </div>
-          {% endif %}
-          <div class="remaining" style="width: {{ round(((cam.goal - cam.donated) / cam.goal) * 90) }}%">
-            <span>
-              ${{ cam.goal - cam.donated }}
-            </span>
-          </div>
-        </div>
-
-        <br>
-
-        <div class="donate">
-          {{ donate_button(cam) }}
-        </div>
-        {# TODO: show countdown as 'days left' #}
-
-        <br>
-
-        <div class="row">
-
-          <div class="col l3 s12">
-            {{ like_button(cam, request) }}
-          </div>
-
-          <div class="col l4 s12" style="margin: auto 0;">
-            <p class="section-info">
-              {# TODO: implement localized time format #}
-              <span>
-                {% if today() <= cam.start_date %}
-                  Begins:
-                {% else %}
-                  Began:
-                {% endif %}
-                </span>&nbsp;
-              {{ cam.start_date.strftime("%h %d, %Y") }}&nbsp;
-              <span>({{ f_time(cam.start_date) }})</span>
-              <br>
-              <span>
-                {% if today() >= cam.end_date %}
-                  Ended:
-                {% else %}
-                  Ends:
-                {% endif %}
-              </span>&nbsp;
-              {{ cam.end_date.strftime("%h %d, %Y") }}&nbsp;
-              <span>({{ f_time(cam.end_date) }})</span>
-              <br>
-
-              {% if today() >= cam.start_date %}
-                <span>Contributions:</span>&nbsp;
-                {{ len(cam.donations.all()) }} have supported
-                {% if today() >= cam.end_date %}so far{% endif %}
-                <br>
-              {% endif %}
-              <span>Views:</span>&nbsp;
-              {{ cam.views }}
-            </p>
-          </div>
-
-        </div>
-
-        {% if cam.has_tags %}
-          <div id="tags">
-            <h5>Tags:</h5>
-            {{ tag_chips(cam) }}
-          </div>
-        {% endif %}
-
-        <p class="flow-text">{{ cam.content|safe }}</p>
-
-        {{ comments_section(cam, 'campaign', request, form=form, csrf_token=csrf_token) }}
-
+  {# {{{ Top Section Overlay #}
+  {% if cam.banner_img %}
+    <div class="parallax-container" style='height: 250px;'>
+      <div class="parallax" style="z-index: 500;">
+        <img src="{{ cam.banner_img.url }}" alt="">
       </div>
     </div>
+  {% endif %}
+  {# }}} #}
 
-    {# TODO: move comments section to tabs #}
+  <div id="campaignView" class="section">
+    <div class="row">
 
-    <section class="wrapper">
-      <!-- ministry/campaign_details -->
+      <div id="campaignInfo" class="col s12 m4 l3"
+           style="position: relative;">
+        <div class="row">
+          <div class="col s12 center-align">
 
-      {{ card.card_area(all_news, AUTH=AUTH, images=images) }}
+            {{ like_button("likeButton", request) }}
 
-    </section>
-  </div>
+            <br>
+
+            {{ donate_button(cam) }}
+
+          </div>
+        </div><!-- profile image area -->
+
+        <div class="row mt-5">
+          <div class="col s6">
+            <h6>Views</h6>
+            <h5>{{ cam.views }}</h5>
+          </div>
+          <div class="col s6">
+            <h6>Likes</h6>
+            <h5>{{ cam.likes.count() }}</h5>
+          </div>
+        </div><!-- /views & likes -->
+
+        <hr class="grey-text text-lighten-2">
+
+        <div class="row mt-5">
+          <div class="col s6">
+            <h6>
+              {% if today() <= cam.start_date %}
+                Begins:
+              {% else %}
+                Began:
+              {% endif %}
+            </h6>
+            <h5>
+              {{ cam.start_date.strftime("%h %d, %Y") }}&nbsp;
+            </h5>
+          </div>
+          <div class="col s6">
+            <h6>
+              {% if today() >= cam.end_date %}
+                Ended:
+              {% else %}
+                Ends:
+              {% endif %}
+            </h6>
+            <h5>
+              {{ cam.end_date.strftime("%h %d, %Y") }}&nbsp;
+            </h5>
+          </div>
+        </div><!-- /start stop dates -->
+
+        <hr class="grey-text text-lighten-2">
+
+        {% if today() >= cam.start_date %}
+          <div class="row">
+            <div class="col s12">
+              <h6>Number of Donors</h6>
+              <h5>{{ cam.donated }}</h5>
+            </div>
+          </div><!-- /donation count -->
+
+          <hr class="grey-text text-lighten-2">
+        {% endif %}
+
+        {% if cam.has_tags %}
+          <div class="row">
+            <div class="col s12">
+              <h6>Tags</h6>
+              {{ tag_chips(cam) }}
+            </div>
+          </div>
+          <hr class="grey-text text-lighten-2">
+        {% endif %}
+
+
+        <div class="row">
+          <div class="col s12">
+            <h6>Parent Ministry</h6>
+            <a href="{{ cam.ministry.url }}">{{ cam.ministry.name }}</a><br>
+          </div>
+        </div><!-- /website -->
+
+      </div><!-- /#campaignInfo -->
+
+      <div id="campaignFeed" class="col s12 m8 l6">
+        <div class="card z-depth-0" style="{% if cam.banner_img %}margin-top: -1em;{% endif %}">
+          <div class="card-content">
+
+            <div class="row">
+              <div class="col s12">
+                <h5 style="font-size: xx-large">{{ cam.title }}</h5>
+              </div>
+            </div><!-- /campaign name -->
+
+            <div class="row">
+              <div class="col s12">
+                <ul class="tabs mt-4">
+                  <li class="tab col s4 p-0">
+                    <a href="#content">
+                      <i class="material-icons">description</i>
+                      <span class="hide-on-med-and-down">&nbsp;Description</span>
+                    </a>
+                  </li>
+                  <li class="tab col s4 p-0">
+                    <a href="#news">
+                      <i class="material-icons">list_alt</i>
+                      <span class="hide-on-med-and-down">&nbsp;News</span>
+                    </a>
+                  </li>
+                  <li class="tab col s4 p-0">
+                    <a href="#gallery">
+                      <i class="material-icons">photo_album</i>
+                      <span class="hide-on-med-and-down">&nbsp;Gallery</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div><!-- /tabs -->
+
+            <div id="content" class="row">
+              <div class="col s12">
+                <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Info</h5>
+                <div class="padding-4">
+                  {{ cam.content|safe }}
+                </div>
+              </div>
+            </div><!-- /#content -->
+
+            <div id="news" class="row">
+              <div class="col s12">
+                <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">News</h5>
+                {% for n in all_news %}
+                  {{ card.news_card(n, AUTH, wide=True) }}
+                {% else %}
+                  <p>There are no news posts to show at this time.</p>
+                {% endfor %}
+              </div>
+            </div><!-- /#news -->
+
+            <div id="gallery" class="row">
+              <div class="col s12">
+                <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Gallery</h5>
+                {{ gallery(images) }}
+              </div>
+            </div><!-- /#gallery -->
+
+          </div><!-- /.card-content -->
+        </div><!-- /.card -->
+      </div><!-- /#campaignFeed -->
+
+      <div id="campaignExtra" class="col s12 m12 l3 hide-on-med-and-down">
+
+      </div>
+
+    </div><!-- /.row -->
+  </div><!-- /#campaignView -->
 {% endblock %}
 
 
 {% block scripts %}
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
 
-  {% set page_assets = (
-  'app.module.js',
-  'app.config.js',
-  'services/object.service.js',
-  'services/like__button.service.js',
-  'services/gallery.service.js',
-  'campaign/campaign.controller.js',
-  ) %}
-  {% for f in page_assets %}
-    <script src="{{ static('app/%s' % f) }}"></script>
-  {% endfor %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+
+  <script src="{{ static('js/like_button.js' % f) }}"></script>
+
+  <script type="text/javascript">
+    const jsonURL = "{{ url_for('campaign:campaign_json', kwargs={'campaign_id': cam.id}) }}";
+    const likeURL = "{{ url_for('campaign:like_campaign', kwargs={'campaign_id': cam.id}) }}";
+    let ministry = {};
+
+    $.getJSON(jsonURL, function (data) {
+      likeButton.liked(data['liked']);
+    });
+
+    let likeButton = new likeButtonViewModel(likeURL);
+    ko.applyBindings(likeButton, document.getElementById('likeButton'));
+  </script>
 
 {% endblock %}
 

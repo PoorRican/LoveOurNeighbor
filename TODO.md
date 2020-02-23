@@ -4,6 +4,8 @@
 - MinistryProfile admin panel should have separate form for details and admin/rep management
 - Implement news_card using new materialize elements
 - Implement [masonry with lightbox plugin](https://dimsemenov.com/plugins/magnific-popup/) for gallery
+- Fix footer links with embedded flatpages in default flatpage template
+- Re-implement donation progress bar (see below in Low Priority > Styling Changes)
 
 
 # Bugs
@@ -63,7 +65,6 @@ Things to do before ministries will be using the site:
 - Gallery:
     * Ministries should be able to simply upload images for gallery
     * News posts should be able to handle multiple attachments
-- Show table of liked MinistryProfiles and Campaigns to users
 - Homepage Functionality:
     * Have a section for highlighting new or popular tags
     * Random Featured Ministry
