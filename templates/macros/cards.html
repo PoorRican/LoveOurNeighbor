@@ -10,48 +10,34 @@
     Controls whether the card will be given the `l6` attribute, thereby forcing it to takeup the max-width
   #}
   <div class="col s12 {% if not wide %}l6{% endif %}">
-    <div class="card">
+    <div class="card-panel border-radius-8 {% if post.attachment %}mt-10 card-animation-1{% endif %}">
 
       {% if post.attachment %}
-        <div class="card-image materialboxed">
-          <img src="{{ post.attachment.url }}">
-          {% if AUTH %}
-            <a class="card-title dropdown-trigger" data-target="news_card_{{ post.id }}">
-              <span class="truncate" style="max-width: 85%; display: inline-block">
-                {{ post.title }}
-              </span>
-              <i class="material-icons">arrow_drop_down</i>
-            </a>
-          {% else %}
-            <a class="card-title" href="{{ post.url }}">{{ post.title }}</a>
-          {% endif %}
-        </div><!-- /.card-image -->
+        <a href="{{ post.url }}">
+          <img class="responsive-img border-radius-8 z-depth-4 image-n-margin" src="{{ post.attachment.url }}">
+        </a><!-- /.banner-img -->
       {% endif %}
 
-      <div class="card-content">
-        {% if not post.attachment %}
-          {% if AUTH %}
-            <a href="#" class="dropdown-trigger" data-target="news_card_{{ post.id }}">
-              <span class="truncate" style="max-width: 85%; display: inline-block;">
-                {{ post.title }}
-              </span>
-              <i class="material-icons">arrow_drop_down</i>
-            </a>
-          {% else %}
-            <a href="{{ post.url }}">{{ post.title }}</a>
-          {% endif %}
+      <h5 class="{% if post.attachment %} mt-5{% else %} mt-1{% endif %}">
+        <a class="deep-orange-text card-title" href="{{ post.url }}">
+          {{ post.title }}
+        </a><!-- /.card-title -->
+        {% if AUTH %}
+          <a class="btn-flat dropdown-trigger grey-text p-0 ml-1" data-target="news_{{ post.id }}_card_dropdown">
+            <i class="material-icons">more_horiz</i>
+          </a><!-- /.dropdown-trigger -->
         {% endif %}
-        <p>
-          <span>Posted: </span>
-          <span>{{ f_time(post.pub_date) }}</span>
-        </p>
-        <div style="min-height: 50px;">
-          <p class="truncate">{{ post.content|safe }}</p>
+      </h5><!-- /title -->
+
+      <div class="display-flex justify-content-between flex-wrap mt-4">
+        <div class="display-flex mt-2 right-align" style="min-width: 55%; overflow: hidden;">
+          <i class="material-icons ml-10">visibility</i>
+          <span class="ml-3 vertical-align-top">{{ post.views }}</span>
         </div>
-      </div><!-- /.card-content -->
+      </div><!-- /.display-flex -->
 
       {% if AUTH %}
-        <ul id="news_card_{{ post.id }}" class="dropdown-content" style="min-width: 13em;">
+        <ul id="news_{{ post.id }}_card_dropdown" class="dropdown-content" style="min-width: 13em;">
           {% if AUTH %}
             <li><a href="{{ post.edit }}">
               <i class="material-icons">create</i>
@@ -59,23 +45,12 @@
             </a></li>
             <li>{{ confirm_delete('news post', post.id, text='Delete Post', anchor=True, part=0) }}</li>
           {% endif %}
-          <li><a href="{{ post.url }}">
-            <i class="material-icons">link</i>
-            View News Post
-          </a></li>
         </ul>
       {% endif %}
 
       {{ confirm_delete('news post', post.id, text='Delete Post', anchor=True, part=1) }}
 
-      <div class="card-action">
-        {% if COMMENTS %}
-          <a href="#" class="btn-flat text-orange"><i class="material-icons">comment</i></a>
-        {% endif %}
-        <a href="{{ post.url }}" class="btn-flat text-orange"><i class="material-icons">open_in_new</i></a>
-      </div><!-- /.card-action -->
-
-    </div><!-- /.card -->
+    </div><!-- /.card-panel -->
   </div><!-- /.col -->
 {% endmacro %}
 
@@ -298,12 +273,13 @@
           <img class="responsive-img border-radius-8 z-depth-4 image-n-margin" src="{{ ministry.banner_img.url }}">
         </a><!-- /.banner-img -->
       {% endif %}
-      <h5 class="deep-orange-text{% if ministry.banner_img %} mt-5{% else %} mt-1{% endif %}">
-        <a class="card-title" href="{{ ministry.url }}">
+      <h5 class="{% if ministry.banner_img %} mt-5{% else %} mt-1{% endif %}">
+        <a class="deep-orange-text card-title" href="{{ ministry.url }}">
           {{ ministry.name }}
         </a><!-- /.card-title -->
         {% if AUTH %}
-          <a class="btn-flat dropdown-trigger grey-text" data-target="ministry_{{ ministry.id }}_card_dropdown">
+          <a class="btn-flat dropdown-trigger grey-text p-0 ml-1"
+             data-target="ministry_{{ ministry.id }}_card_dropdown">
             <i class="material-icons">more_horiz</i>
           </a><!-- /.dropdown-trigger -->
         {% endif %}
@@ -379,7 +355,8 @@
         </a><!-- /.card-title -->
 
         {% if AUTH %}
-          <a class="btn-flat dropdown-trigger" data-target="campaign_{{ campaign.id }}_card_dropdown">
+          <a class="btn-flat dropdown-trigger grey-text p-0 ml-1"
+             data-target="campaign_{{ campaign.id }}_card_dropdown">
             <i class="material-icons">more_vert</i>
           </a><!-- /.dropdown-trigger -->
         {% endif %}
@@ -394,7 +371,7 @@
           <span class="pt-2">{{ campaign.ministry }}</span>
         </a>
 
-        <div class="display-flex mt-2 right-align" style="min-width: 35%">
+        <div class="display-flex mt-2 right-align" style="min-width: 45%">
 
           <a href="#">
             <i class="material-icons">favorite_border</i>

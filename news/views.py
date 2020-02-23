@@ -145,6 +145,8 @@ def delete_news(request, post_id):
 
 def news_detail(request, post_id):
     post = NewsPost.objects.get(id=post_id)
+    post.views += 1
+    post.save()
 
     if post.campaign:
         _admin = post.campaign.ministry.admin

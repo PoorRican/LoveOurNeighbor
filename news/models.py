@@ -18,8 +18,11 @@ class NewsPost(models.Model):
     title = models.CharField(max_length=100)
     pub_date = models.DateTimeField('date published', auto_now_add=True)
     content = models.TextField()
+    description = models.CharField(max_length=1024, help_text='A short description of the news post.',
+                                   null=True, blank=True)
     attachment = models.ImageField('Media Image', blank=True, null=True,
                                    upload_to=news_post_media_dir)
+    views = models.PositiveSmallIntegerField(default=0, editable=False)
 
     def __str__(self):
         return self.title
