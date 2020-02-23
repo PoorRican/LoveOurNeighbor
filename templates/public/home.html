@@ -3,7 +3,18 @@
 {% from "macros/parts/donate_button.html" import donate_button %}
 {% from "macros/cards.html" import frontpage_ministry_card, frontpage_campaign_card %}
 
+
 {% block title %}Home{% endblock %}
+
+
+{% block metadata %}
+  <meta property="og:type" content="article"/>
+  <meta property="og:image" content="https://loveourneighbor.org{{ static('img/brand/LON_letterhead.png') }}">
+  <meta property="og:url" content="https://loveourneighbor.org/home">
+  <meta property="og:title" content="Love Our Neighbor Homepage">
+  <meta property="og:description" content="What is Love Our Neighbor?">
+{% endblock %}
+
 
 {% block body %}
   <div class="content-wrapper-before gradient-45deg-purple-deep-orange"></div>

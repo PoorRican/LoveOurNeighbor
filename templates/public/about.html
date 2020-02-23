@@ -1,6 +1,19 @@
 {% extends "layout.html" %}
 {% from "macros/layout/misc_layout.html" import section_start, section_close %}
 
+
+{% block title %}About{% endblock %}
+
+
+{% block metadata %}
+  <meta property="og:type" content="article"/>
+  <meta property="og:image" content="https://loveourneighbor.org{{ static('img/brand/LON_letterhead.png') }}">
+  <meta property="og:url" content="https://loveourneighbor.org/faq">
+  <meta property="og:title" content="Frequently Asked Questions about Love Our Neighbor">
+  <meta property="og:description" content="What is so special about Love Our Neighbor?">
+{% endblock %}
+
+
 {% block body %}
   <div class="container section">
     {% for i in about %}

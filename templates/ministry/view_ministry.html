@@ -11,6 +11,16 @@
 
 {% block title %}{{ ministry.name }}{% endblock %}
 
+
+{% block metadata %}
+  <meta property="og:type" content="website"/>
+  {% if ministry.banner_img %}
+    <meta property="og:image" content="https://loveourneighbor.org{{ ministry.banner_img.url }}">{% endif %}
+  <meta property="og:url" content="https://loveourneighbor.org/{{ ministry.url }}">
+  <meta property="og:title" content="{{ ministry.name }} on Love Our Neighbor">
+{% endblock %}
+
+
 {% block body %}
   <div>
     <input type="hidden" id="current_object_json" value="{{ ministry.json }}">

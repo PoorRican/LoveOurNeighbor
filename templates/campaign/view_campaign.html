@@ -20,6 +20,23 @@
 {% block title %}{{ cam.title }} by {{ cam.ministry.name }}{% endblock %}
 
 
+{% block metadata %}
+  <meta property="og:type" content="article"/>
+  {% if cam.banner_img %}
+    <meta property="og:image" content="https://loveourneighbor.org{{ cam.banner_img.url }}">{% endif %}
+  <meta property="og:url" content="https://loveourneighbor.org/{{ cam.url }}">
+  <meta property="og:title" content="{{ cam.title }} on Love Our Neighbor">
+  <meta property="og:article:published_time" content="{{ cam.pub_date.strftime('%Y-%m-%d') }}">
+  <meta property="og:article:modified_time" content="{{ cam.start_date.strftime('%Y-%m-%d') }}">
+  <meta property="og:article:expiration_time" content="{{ cam.end_date.strftime('%Y-%m-%d') }}">
+  <meta property="og:article:section" content="Fundraiser">
+  {% for tag in cam.tags.all() %}
+    <meta property="og:article:tag" content="{{ tag }}">
+  {% endfor %}
+  {# TODO: figure out how to implement author/profile #}
+{% endblock %}
+
+
 {% block body %}
   <!-- view_campaign.html -->
   <input type="hidden" id="current_object_json" value="{{ cam.json }}">

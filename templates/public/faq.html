@@ -1,27 +1,38 @@
 {% extends "layout.html" %}
 {% from "macros/layout/misc_layout.html" import section_start, section_close %}
 
+
 {% block title %}FAQ{% endblock %}
 
+
+{% block metadata %}
+    <meta property="og:type" content="article"/>
+    <meta property="og:image" content="https://loveourneighbor.org{{ static('img/brand/LON_letterhead.png') }}">
+    <meta property="og:url" content="https://loveourneighbor.org/faq">
+    <meta property="og:title" content="About Love Our Neighbor">
+    <meta property="og:description" content="Who is Love Our Neighbor?">
+{% endblock %}
+
+
 {% block body %}
-  <div class="content-wrapper-before gradient-45deg-purple-deep-orange"></div>
+    <div class="content-wrapper-before gradient-45deg-purple-deep-orange"></div>
 
-  <div class="wrapper section">
-    <h3 style="margin-bottom: 24px;" class="white-text">Frequently Asked Questions</h3>
+    <div class="wrapper section">
+        <h3 style="margin-bottom: 24px;" class="white-text">Frequently Asked Questions</h3>
 
-    <ul class="collapsible popout">
-      {% for i in faqs %}
-        <li>
-          <div class="collapsible-header">
-            {{ i.title }}
-          </div>
+        <ul class="collapsible popout">
+          {% for i in faqs %}
+              <li>
+                  <div class="collapsible-header">
+                    {{ i.title }}
+                  </div>
 
-          <div class="collapsible-body">
-            {{ i.content|safe }}
-          </div>
-        </li>
+                  <div class="collapsible-body">
+                    {{ i.content|safe }}
+                  </div>
+              </li>
 
-      {% endfor %}
+          {% endfor %}
     </ul>
   </div>
 
