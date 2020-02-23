@@ -111,3 +111,19 @@ class Campaign(models.Model):
             Representing percentage of how close campaign is to its goal
         """
         return int((self.donated / self.goal) * 100)
+
+    def similar_campaigns(self):
+        """
+        Traverses along tags to fetch related `Campaign` objects.
+
+        Returns
+        -------
+        List of `Campaign`
+
+        """
+        similar = []
+        for t in self.tags.all():
+            for c in t.campaigns.all():
+                if c not in similar and not (c == self):
+                    similar.append(c)
+        return similar

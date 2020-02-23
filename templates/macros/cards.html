@@ -312,7 +312,7 @@
       </h5><!-- /title -->
 
       <div class="display-flex justify-content-between flex-wrap mt-4">
-        <div class="display-flex mt-2 right-align" style="min-width: 35%">
+        <div class="display-flex mt-2 right-align" style="min-width: 55%; overflow: hidden;">
           <a href="#">
             <i class="material-icons">favorite_border</i>
           </a>
@@ -413,16 +413,16 @@
 
       </div><!-- /.display-flex -->
 
-      <div class="row">
+      <div class="row mt-3">
         {% if campaign.has_tags %}
-          <div class="tag-area col s12 m6 mt-2">
+          <div class="tag-area col s12 {% if not wide %}m6{% else %}m4{% endif %} mt-2">
             {% for tag in campaign.tags.all() %}
               {# TODO: tag URL #}
               <div class="chip cyan white-text">{{ tag }}</div>
             {% endfor %}
           </div><!-- /.tag-area -->
         {% endif %}
-        <div class="stats col s12 m6 mt-2 right">
+        <div class="stats col s12 {% if not wide %}m6{% else %}m8{% endif %} mt-2 right">
           {# TODO: style colors based on urgency #}
           <span class="btn-small mt-1 right blue darken-2">Ends:&nbsp;{{ f_time(campaign.end_date) }}</span>
           <span class="btn-small mt-1 right green">{{ campaign.percent_complete }}% to goal</span>

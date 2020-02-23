@@ -120,6 +120,7 @@ Things to do before Users will be using the site:
 - Like button:
     * Add animation to like_button (eg: ripple)
     * Show "unlike" upon hover when liked
+- Implement [particle.js](https://github.com/VincentGarreau/particles.js/) as background for 'register' and 'login' pages.    
 
 ## Implementation Changes
 - Create custom asset handler:

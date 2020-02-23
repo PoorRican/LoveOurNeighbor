@@ -155,3 +155,19 @@ class MinistryProfile(models.Model):
     @property
     def like_count(self):
         return self.likes.count()
+
+    def similar_ministries(self):
+        """
+        Traverses along tags to fetch related `MinistryProfile` objects.
+
+        Returns
+        -------
+        List of `MinistryProfile`
+
+        """
+        similar = []
+        for t in self.tags.all():
+            for m in t.ministries.all():
+                if m not in similar and not (m == self):
+                    similar.append(m)
+        return similar

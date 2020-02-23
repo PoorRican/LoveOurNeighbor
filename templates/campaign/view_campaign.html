@@ -211,8 +211,19 @@
         </div><!-- /.card -->
       </div><!-- /#campaignFeed -->
 
-      <div id="campaignExtra" class="col s12 m12 l3 hide-on-med-and-down">
-
+      <div id="campaignExtra" class="col s12 m12 l3">
+        <div class="row mt-5">
+          {% if similar %}
+            <div class="col">
+              <h6 class="mb-7">Similar Campaigns</h6>
+              <div class="row mt-2">
+                {% for c in similar %}
+                  {{ card.frontpage_campaign_card(c, request, wide=True) }}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        </div><!-- /.row -->
       </div>
 
     </div><!-- /.row -->

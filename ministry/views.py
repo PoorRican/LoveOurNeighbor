@@ -335,11 +335,14 @@ def ministry_profile(request, ministry_id):
 
     images = ministry_images(ministry)
 
+    similar = ministry.similar_ministries()
+
     context = {'ministry': ministry,
                'all_news': all_news,
                'campaigns': _c,
                'form': comments,
                'images': images,
+               'similar': similar,
                }
     return render(request, "view_ministry.html", context)
 

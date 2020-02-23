@@ -180,9 +180,12 @@ def campaign_detail(request, campaign_id):
         campaign=cam).order_by("-pub_date")
     comments = CommentForm()
 
+    similar = cam.similar_campaigns()
+
     context = {'cam': cam,
                'all_news': all_news,
                'form': comments,
+               'similar': similar,
                }
     return render(request, "view_campaign.html", context)
 
