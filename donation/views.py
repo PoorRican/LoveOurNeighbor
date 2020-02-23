@@ -219,12 +219,15 @@ def confirm_donation(request):
             return HttpResponseRedirect(reverse('donation:view_donation',
                                                 kwargs={'donation_id': donation.id}))
 
+        # TODO: should cc_payment still be stored if there was an error?
         elif data['x_response_code'] == '2':
             # tx was declined
-            pass
+            context = {'reason': 'declined'}
+            return render(request, "payment_error.html", context=context)
         elif data['x_response_code'] == '3':
             # an error occurred
-            pass
+            context = {'reason': 'unknown'}
+            return render(request, "payment_error.html", context=context)
         else:
             # unknown error occurred
             pass

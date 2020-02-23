@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+  <div class="container">
+    <div class="section p-0 m-0 payment_done">
+      <div class="row">
+        <div class="col s12 center-align white">
+          <img src="{{ static('img/ui/payment_error.png') }}" class="responsive-img" width="35%">
+
+          {% if reason == 'declined' %}
+            <h4>Your payment has been declined by your credit card</h4>
+            <h6>We're sorry for any inconvenience.</h6>
+          {% else %}
+            <h4>An unknown error occurred</h4>
+            <h6>We're sorry for any inconvenience.</h6>
+            <h6>Please reach out to us at <a href="mailto:website@loveourneighbor.org">website@loveourneighbor.org</a>.
+            </h6>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

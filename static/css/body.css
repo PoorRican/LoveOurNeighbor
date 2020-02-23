@@ -112,26 +112,6 @@ main {
 }
 
 
-.like-button {
-  height: 60px !important;
-  min-height: 80px !important;
-  background-color: #EEE;
-  color: #111;
-  max-width: 150px;
-  text-align: center;
-  padding: 10px 5px;
-  margin: 10px 40px;
-  cursor: pointer;
-  border-radius: 5px;
-  box-sizing: content-box !important;
-}
-
-.like-button span {
-  margin: 0 auto;
-  font-size: 2em;
-  font-weight: 300;
-}
-
 .comments_section {
   padding-left: 0;
 }
@@ -456,6 +436,26 @@ div.dialog-trigger img {
   .form-action .btn {
     margin-bottom: 1rem;
   }
+}
+
+
+/* Payment Error Styling */
+.payment_done {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  overflow: hidden;
+  height: 100vh;
+  background: #fff;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 
 

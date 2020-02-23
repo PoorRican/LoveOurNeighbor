@@ -1,30 +1,33 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<section class="wrapper">
   <!-- donation/payment_complete -->
+  <div class="container">
+    <div class="section p-0 m-0 payment_done">
+      <div class="row">
+        <div class="col s12 center-align white">
+          <img src="{{ static('img/ui/payment_approved.png') }}" class="responsive-img" width="35%">
 
-  <h1>Your Receipt</h1>
+          {% if campaign %}
+            <h4>Thank you for donating to <a href="#{{ campaign.url }}">{{ campaign }}</a></h4>
+          {% else %}
+            <h4>Thank you for donating to Love Our Neighbor.</h4>
+          {% endif %}
 
-  {% if campaign %}
-    <h3>Thank you for donating to <a href="#{{ campaign.url }}">{{ campaign }}</a></h3>
-  {% else %}
-    <h3>Thank you for donating to Love Our Neighbor.</h3>
-  {% endif %}
+          <h6>Your confirmation number is {{ payment.confirmation }}.</h6>
+          {% if request and request.is_authenticated %}
+            <h6>
+              You can access your receipts through the <code>Receipts</code> panel in your
+              <a href="#{{ url_for('people:user_profile') }}">User Profile</a>
+            </h6>
+          {% else %}
+            <h6>A receipt has been emailed to you.</h6>
+            <h6>When you create an account and login, you will be able to view this receipt.</h6>
+          {% endif %}
 
-  <p>Your confirmation number is {{ payment.confirmation }}.
-    {% if request and request.is_authenticated %}
-      You can access this through the <code>Receipts</code> panel in your
-      <a href="#{{ url_for('people:user_profile') }}">User Profile</a>
-    {% else %}
-      A receipt has been emailed to you.
-      When you create an account and login, you will be able to view this receipt.
-    {% endif %}
-  </p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-</section>
-{% endbloc %}
-
-
-<!-- Google Analytics Virtual Pageview -->
-<script>ga('send', 'pageview', 'select payment')</script>
+{% endblock %}
