@@ -93,12 +93,12 @@
   </div>
 </main>
 
-{% set _links = links %}
-{{ _links.append({'title': 'About Us', 'fa-icon': 'fa fa-compass',
-                             'links': get_flatpages()}) }}
+{% set _links = links.copy() %}
+<!-- {{ _links.append({'title': 'About Us', 'fa-icon': 'fa fa-compass',
+                             'links': get_flatpages()}) }} -->
 {{ sidenav(request, _links, active) }}
 
-{{ footer(links) }}
+{{ footer(links+get_flatpages()) }}
 
 {# paths must be relative to static directory #}
 {% set layout_assets = (
