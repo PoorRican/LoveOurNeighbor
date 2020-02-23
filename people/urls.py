@@ -18,7 +18,8 @@ urlpatterns = [
     path('forgot', views.forgot_password, name='forgot_password'),
     path('reset/<str:email>/<str:confirmation>', views.reset_password, name='reset_password'),
 
-    path('profile_img/json', views.profile_img_json),
-    path('messages/json', views.messages_json),
     path('donations/json', views.donation_json),
+    path('likes/json', views.likes_json),
+    path('messages/json', views.messages_json),
+    path('profile_img/json', views.profile_img_json),
 ]

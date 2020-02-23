@@ -5,6 +5,7 @@
 {% extends "layout.html" %}
 
 {% from "macros/parts/profile_image_dialog.html" import profile_image_dialog %}
+{% import "macros/cards.html" as card %}
 
 {# TODO: liked ministries/campaigns #}
 {# TODO: total donated amount #}
@@ -127,8 +128,17 @@
 
               <div id="likes" class="col s12">
                 <div class="card-panel">
-                  {# TODO: show liked ministries here #}
-                  <p>This part of the website is under construction.</p>
+                  <div class="row">
+                    {% for obj in likes %}
+                      {% if hasattr(obj, 'admin') %}{# Minitry Profile #}
+                        {{ card.frontpage_ministry_card(obj, request) }}
+                        {% else %}{# Campaign #}
+                        {{ card.frontpage_campaign_card(obj, request) }}
+                      {% endif %}
+                    {% else %}
+                      <h6>You haven't liked anything yet.</h6>
+                    {% endfor %}
+                  </div><!-- /.row -->
                 </div><!-- /.card-panel -->
               </div><!-- /#likes -->
 
@@ -206,6 +216,8 @@
   {% for f in page_assets %}
     <script src="{{ static('app/%s' % f) }}"></script>
   {% endfor %}
+
+  {# TODO: implement knockout.js for viewing likes #}
 
 {% endblock %}
 

@@ -13,8 +13,10 @@ from django.urls import reverse
 
 import json
 
-from frontend.settings import MEDIA_ROOT, MEDIA_URL
+from campaign.utils import serialize_campaign
 from donation.utils import serialize_donation
+from frontend.settings import MEDIA_ROOT, MEDIA_URL
+from ministry.utils import serialize_ministry
 
 from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
@@ -121,10 +123,18 @@ def user_profile(request):
                 # this might happen when Donation object does not have a payment
                 pass
 
+        _likes = []
+        for c in user.likes_c.all():
+            _likes.append(c)
+        for m in user.likes_m.all():
+            _likes.append(m)
+        _likes.sort(key=lambda obj: obj.pub_date, reverse=True)
+
         form = UserEditForm(instance=user)
         context = {'form': form,
                    'request': request,
-                   'donations': _donations
+                   'donations': _donations,
+                   'likes': _likes
                    }
         return render(request, "profile.html", context)
 
@@ -265,6 +275,21 @@ def donation_json(request):
     for donation in user.donations.all():
         _json[count] = serialize_donation(donation)
         count += 1
+    return JsonResponse(_json)
+
+
+@login_required
+def likes_json(request):
+    _json = {'likes': []}
+    user = request.user
+    for c in user.likes_c.all():
+        _c = serialize_campaign(c)
+        _c['type'] = 'campaign'
+        _json['likes'].append(_c)
+    for m in user.likes_m.all():
+        _m = serialize_ministry(m)
+        _m['type'] = 'ministry'
+        _json['likes'].append(_m)
     return JsonResponse(_json)
 
 
