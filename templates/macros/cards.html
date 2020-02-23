@@ -299,15 +299,13 @@
         </a><!-- /.banner-img -->
       {% endif %}
       <h5 class="deep-orange-text{% if ministry.banner_img %} mt-5{% else %} mt-1{% endif %}">
+        <a class="card-title" href="{{ ministry.url }}">
+          {{ ministry.name }}
+        </a><!-- /.card-title -->
         {% if AUTH %}
-          <a class="card-title dropdown-trigger" data-target="ministry_{{ ministry.id }}">
-            {{ ministry.name }}
-            <i class="material-icons">arrow_drop_down</i>
-          </a><!-- /.card-title -->
-        {% else %}
-          <a class="card-title" href="{{ ministry.url }}">
-            {{ ministry.name }}
-          </a><!-- /.card-title -->
+          <a class="btn-flat dropdown-trigger grey-text" data-target="ministry_{{ ministry.id }}_card_dropdown">
+            <i class="material-icons">more_horiz</i>
+          </a><!-- /.dropdown-trigger -->
         {% endif %}
       </h5><!-- /title -->
 
@@ -339,7 +337,7 @@
       </div><!-- /.row -->
 
       {% if AUTH %}
-        <ul id="ministry_{{ ministry.id }}" class="dropdown-content">
+        <ul id="ministry_{{ ministry.id }}_card_dropdown" class="dropdown-content" style="min-width: 8em;">
           {% for opt in ministry_admin_urls(ministry) %}
             <li>
               <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
@@ -374,16 +372,16 @@
                alt="banner_img">
         </a><!-- /.banner-img -->
       {% endif %}
-      <h5 class="deep-orange-text{% if campaign.banner_img %} mt-5{% else %} mt-1{% endif %}">
+      <h5 class="deep-orange-text{% if campaign.banner_img %} mt-5{% else %} mt-1{% endif %}"
+          style="justify-content: right">
+        <a class="card-title" href="{{ campaign.url }}">
+          {{ campaign.title }}
+        </a><!-- /.card-title -->
+
         {% if AUTH %}
-          <a class="card-title dropdown-trigger" data-target="campaign_{{ campaign.id }}_card_dropdown">
-            {{ campaign.title }}
-            <i class="material-icons">arrow_drop_down</i>
-          </a><!-- /.card-title -->
-        {% else %}
-          <a class="card-title" href="{{ campaign.url }}">
-            {{ campaign.title }}
-          </a><!-- /.card-title -->
+          <a class="btn-flat dropdown-trigger" data-target="campaign_{{ campaign.id }}_card_dropdown">
+            <i class="material-icons">more_vert</i>
+          </a><!-- /.dropdown-trigger -->
         {% endif %}
       </h5><!-- /title -->
 
@@ -430,7 +428,7 @@
       </div><!-- /.row -->
 
       {% if AUTH %}
-        <ul id="campaign_{{ campaign.id }}_card_dropdown" class="dropdown-content">
+        <ul id="campaign_{{ campaign.id }}_card_dropdown" class="dropdown-content" style="min-width: 8em;">
           {% for opt in campaign_admin_urls(campaign) %}
             <li>
               <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">

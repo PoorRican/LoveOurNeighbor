@@ -193,10 +193,31 @@
 
               <div class="row">
                 <div class="col s12">
-                  <h5 style="font-size: xx-large">{{ ministry.name }}</h5>
+                  <h5 style="font-size: xx-large">
+                    {{ ministry.name }}
+                    {% if AUTH %}
+                      <a class="btn-flat dropdown-trigger grey-text" data-target="ministry_{{ ministry.id }}">
+                        <i class="material-icons">more_horiz</i>
+                      </a><!-- /.dropdown-trigger -->
+                    {% endif %}
+                  </h5>
                   <p style="font-weight: lighter">Member Since: {{ ministry.pub_date.strftime("%b '%y") }}</p>
                 </div>
               </div><!-- /ministry name -->
+
+              {# Admin Dropdown Menu #}
+              {% if AUTH %}
+                <ul id="ministry_{{ ministry.id }}" class="dropdown-content" style="min-width: 8em;">
+                  {% for opt in ministry_admin_urls(ministry) %}
+                    <li>
+                      <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                        <i class="material-icons">{{ opt['icon'] }}</i>
+                        {{ opt['label'] }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul><!-- /.dropdown-content -->
+              {% endif %}
 
               <div class="row">
                 <div class="col s12">
@@ -262,42 +283,42 @@
               </div><!-- /#news -->
 
               <div id="gallery" class="row">
-                  <div class="col s12">
-                      <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Gallery</h5>
-                    {{ gallery(images) }}
-                  </div>
+                <div class="col s12">
+                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Gallery</h5>
+                  {{ gallery(images) }}
+                </div>
               </div><!-- /#gallery -->
 
             </div><!-- /.card-content -->
           </div><!-- /.card -->
         </div><!-- /#ministryFeed -->
 
-          <div id="ministryExtra" class="col s12 m12 l3">
-              <div class="row mt-5">
-                {% if similar %}
-                    <div class="col">
-                        <h6>Similar Ministries</h6>
-                      {% for m in similar %}
-                          <div class="row mt-2">
-                              <div class="col s2 mt-2 pr-0">
-                                  <a href="{{ m.url }}">
-                                      <img src="{{ m.profile_img.url }}" class="circle responsive-img"
-                                           alt="profile img">
-                                  </a>
-                              </div><!-- /.col .s2 -->
-                              <div class="col s9">
-                                  <a href="{{ m.url }}">
-                                      <p>{{ m.name }}</p>
-                                  </a>
-                                  <p style="font-weight: lighter">Member
-                                      Since: {{ ministry.pub_date.strftime("%b '%y") }}</p>
-                              </div>
-                          </div>
-                      {% endfor %}
+        <div id="ministryExtra" class="col s12 m12 l3">
+          <div class="row mt-5">
+            {% if similar %}
+              <div class="col">
+                <h6>Similar Ministries</h6>
+                {% for m in similar %}
+                  <div class="row mt-2">
+                    <div class="col s2 mt-2 pr-0">
+                      <a href="{{ m.url }}">
+                        <img src="{{ m.profile_img.url }}" class="circle responsive-img"
+                             alt="profile img">
+                      </a>
+                    </div><!-- /.col .s2 -->
+                    <div class="col s9">
+                      <a href="{{ m.url }}">
+                        <p>{{ m.name }}</p>
+                      </a>
+                      <p style="font-weight: lighter">Member
+                        Since: {{ ministry.pub_date.strftime("%b '%y") }}</p>
                     </div>
-                {% endif %}
-              </div><!-- /.row -->
-          </div><!-- /#ministryExtra -->
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div><!-- /.row -->
+        </div><!-- /#ministryExtra -->
 
       </div><!-- /.row -->
     </div><!-- /#ministryProfile -->
@@ -307,7 +328,7 @@
 
 {% block scripts %}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
 
   <script src="{{ static('js/like_button.js' % f) }}"></script>
 

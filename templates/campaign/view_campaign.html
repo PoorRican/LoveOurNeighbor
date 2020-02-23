@@ -151,9 +151,30 @@
 
             <div class="row">
               <div class="col s12">
-                <h5 style="font-size: xx-large">{{ cam.title }}</h5>
+                <h5 style="font-size: xx-large">
+                  {{ cam.title }}
+                  {% if AUTH %}
+                    <a class="btn-flat dropdown-trigger" data-target="campaign_{{ cam.id }}_card_dropdown">
+                      <i class="material-icons">more_horiz</i>
+                    </a><!-- /.dropdown-trigger -->
+                  {% endif %}
+                </h5>
               </div>
             </div><!-- /campaign name -->
+
+            {# Admin Dropdown Menu #}
+            {% if AUTH %}
+              <ul id="campaign_{{ cam.id }}_card_dropdown" class="dropdown-content" style="min-width: 6em;">
+                {% for opt in campaign_admin_urls(cam) %}
+                  <li>
+                    <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                      <i class="material-icons">{{ opt['icon'] }}</i>
+                      {{ opt['label'] }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul><!-- /.dropdown-content -->
+            {% endif %}
 
             <div class="row">
               <div class="col s12">
