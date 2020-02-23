@@ -176,15 +176,6 @@ def admin_panel(request, ministry_id):
                     _min.save()
 
                     Tag.process_tags(ministry, _form['tags'].value())
-                    if _form['reps'].value():
-                        try:
-                            for r in json.loads(_form['reps'].value()):
-                                # TODO: notify user
-                                u = User.objects.get(email=r['email'])
-                                ministry.reps.add(u)
-                                ministry.requests.remove(u)
-                        except json.JSONDecodeError:
-                            pass
 
                     # handle response and generate UI feedback
                     _w = 'Changes saved to %s!' % ministry.name
@@ -218,7 +209,7 @@ def admin_panel(request, ministry_id):
             _w = 'You do not have permission to edit this ministry.'
             messages.add_message(request, messages.WARNING, _w)
 
-            _url = reverse('ministry:edit_ministry',
+            _url = reverse('ministry:admin_panel',
                            kwargs={'ministry_id': ministry_id})
 
     except MinistryProfile.DoesNotExist:
@@ -391,6 +382,7 @@ def login_as_ministry(request, ministry_id):
         return HttpResponseRedirect(reverse('ministry:login_as_ministry', kwargs={'ministry_id': ministry_id}))
 
 
+# Admin Management
 @login_required
 def request_to_be_rep(request, ministry_id):
     """ Enables newly created users request to be a ministry representative.
@@ -414,6 +406,43 @@ def request_to_be_rep(request, ministry_id):
 
     return HttpResponseRedirect(reverse('ministry:ministry_profile',
                                         kwargs={'ministry_id': ministry_id}))
+
+
+def rep_management(request, ministry_id):
+    """
+    Dedicated view function to manage `MinistryProfile.requests` and `MinistryProfile.reps`
+
+    Parameters
+    ----------
+    request
+    ministry_id
+    """
+    try:
+        ministry = MinistryProfile.objects.get(pk=ministry_id)
+        if request.user == ministry.admin or \
+                request.user in ministry.reps.all():
+            if request.method == 'POST' and request.POST['reps'].value():
+                try:
+                    for r in json.loads(request.POST['reps'].value()):
+                        # TODO: notify user
+                        u = User.objects.get(email=r['email'])
+                        ministry.reps.add(u)
+                        ministry.requests.remove(u)
+
+                        # handle response and generate UI feedback
+                        _w = 'Changes saved to %s!' % ministry.name
+                        messages.add_message(request, messages.SUCCESS, _w)
+                except json.JSONDecodeError:
+                    pass
+        _url = reverse('ministry:admin_panel',
+                       kwargs={'ministry_id': ministry_id})
+    except MinistryProfile.DoesNotExist:
+        # TODO: log this
+        _w = 'Invalid URL'
+        messages.add_message(request, messages.ERROR, _w)
+        _url = ''
+
+    return HttpResponseRedirect(_url)
 
 
 def ministry_json(request, ministry_id):

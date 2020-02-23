@@ -10,7 +10,6 @@ class MinistryEditForm(forms.ModelForm):
     http://pydanny.com/core-concepts-django-modelforms.html
     """
     tags = forms.CharField(max_length=256, required=False)
-    reps = forms.CharField(max_length=1024, required=False)
 
     def __init__(self, *args, **kwargs):
         super(MinistryEditForm, self).__init__(*args, **kwargs)
@@ -31,6 +30,5 @@ class MinistryEditForm(forms.ModelForm):
                    }
         labels = {'img_path': 'Banner Image',
                   'founded': 'Date Founded',
-                  'reps': 'Representatives',
                   'phone_number': 'Phone',
                   }

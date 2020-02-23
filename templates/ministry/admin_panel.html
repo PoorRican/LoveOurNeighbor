@@ -66,14 +66,13 @@
             </div><!-- /.col /tabs -->
 
             <div class="col s12 l8" ng-controller="ministryActionCtrl">
-              <form method="POST" name="ministryForm" enctype="multipart/form-data" action="{{ ministry.edit }}">
-                <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
-                <input type="hidden" id="ministry_id" value="{{ ministry.id }}">
+              <div id="details">
+                <div class="card-panel">
+                  <form method="POST" name="ministryForm" enctype="multipart/form-data" action="{{ ministry.edit }}">
+                    <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
+                    <input type="hidden" id="ministry_id" value="{{ ministry.id }}">
 
-                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-
-                <div id="details">
-                  <div class="card-panel">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
                     <div class="row">
 
@@ -152,6 +151,7 @@
                         {{ form.twitter.label_tag() }}
                       </div>
                     </div><!-- /#social-media-links -->
+
                     <div id="WYSIWYG">
                       <br>
                       <i class="material-icons">subject</i>
@@ -177,9 +177,9 @@
                           <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
                         </md-autocomplete>
                         <md-chip-template>
-                      <span>
-                        <span>{% raw %}{{ $chip }}{% endraw %}</span>
-                      </span>
+                        <span>
+                          <span>{% raw %}{{ $chip }}{% endraw %}</span>
+                        </span>
                         </md-chip-template>
                       </md-chips>
                       <br><br>
@@ -199,17 +199,22 @@
                       </div>
                     </div><!-- /#form_buttons -->
 
-                  </div><!-- /.card-panel -->
-                </div><!-- /#details -->
+                  </form>
 
-                <div id="administration">
-                  <div class="card-panel">
+                </div><!-- /.card-panel -->
+              </div><!-- /#details -->
 
-                    <md-content layout="column" class="md-padding autocomplete rep_requests">
-                      <input type="hidden" name="{{ form.reps.name }}" value="{% raw %}{{ object.reps }}{% endraw %}">
+              <div id="administration">
+                <div class="card-panel">
+                  <form method="POST" name="repForm"
+                        action="{{ url_for('ministry:rep_management', kwargs={'ministry_id': ministry.id}) }}">
+
+                    <md-content layout="column" class="md-padding autocomplete rep_requests"
+                                style="background-color: transparent">
+                      <input type="hidden" name="reps" value="{% raw %}{{ object.reps }}{% endraw %}">
                       <label>
                         <md-icon><i class="material-icons">group_add</i></md-icon>
-                        {{ form.reps.label }}:
+                        Representatives:
                       </label>
                       <md-contact-chips ng-model="object.reps"
                                         md-contacts="filter_users($query)"
@@ -237,38 +242,37 @@
                           </md-list-item>
                         {% else %}
                           <md-list-item class="md-1-line">
-                            <h3>There are no requests to show</h3>
+                            <h5>There are no requests to show</h5>
                           </md-list-item>
                         {% endif %}
                       </md-list>
                     </md-content>
 
                     <div id="form_buttons">
-                      <a class="col l3 s12 btn" type="submit">
+                      <a class="btn right" type="submit">
                         <i class="material-icons">save</i>
-                        Save
+                        Update
                       </a>
-
-                      {{ confirm_delete('ministry', ministry.id) }}
                     </div><!-- /#form_buttons -->
 
-                  </div><!-- /.card-panel -->
-                </div><!-- /#administration -->
+                  </form>
+                </div><!-- /.card-panel -->
+              </div><!-- /#administration -->
 
-                <div id="campaigns" class="col s12">
-                  <div class="card-panel">
+              <div id="campaigns" class="col s12">
+                <div class="card-panel">
 
-                    {# TODO: differentiate between current and previous fundraisers #}
-                    <a class="btn purple lighten-2"
-                       href="{{ url_for('campaign:create_campaign', kwargs={'ministry_id': ministry.id}) }}"
-                       style="margin-bottom: 12px">
-                      <i class="left material-icons">add</i>
-                      New Campaign
-                    </a>
+                  {# TODO: differentiate between current and previous fundraisers #}
+                  <a class="btn purple lighten-2"
+                     href="{{ url_for('campaign:create_campaign', kwargs={'ministry_id': ministry.id}) }}"
+                     style="margin-bottom: 12px">
+                    <i class="left material-icons">add</i>
+                    New Campaign
+                  </a>
 
-                    <div class="row">
-                      {% for campaign in ministry.campaigns.all() %}
-                        {{ card.frontpage_campaign_card(campaign, request) }}
+                  <div class="row">
+                    {% for campaign in ministry.campaigns.all() %}
+                      {{ card.frontpage_campaign_card(campaign, request) }}
                       {% else %}
                         <p>You have no fundraising campaigns at this time.</p>
                       {% endfor %}
@@ -309,7 +313,6 @@
                   </div><!-- /.card-panel -->
                 </div><!-- /#donations -->
 
-              </form>
             </div><!-- /.col /ng-controller -->
           </div>
         </section>
