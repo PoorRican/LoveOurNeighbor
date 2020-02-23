@@ -1,28 +1,22 @@
-{% macro like_button(_obj, request=None) %}
+{% macro like_button(id="likeButton", request=None) %}
 
-  {# TODO: implement "unlike" in django view #}
-  {% if request and not request.user.is_authenticated %}
-    <a href="{{ url_for('people:login') }}" style="text-decoration: none;">
+  {% if request.user.is_authenticated %}
+    <button id="{{ id }}" class="btn btn-flat btn-large grey lighten-3 mt-5"
+            data-bind="class: btnStyle, click: like;">
+                <span data-bind="visible: liked">
+                  <i class="material-icons left">favorite</i>
+                  Liked
+                </span>
+      <span data-bind="hidden: liked">
+                  <i class="material-icons left">favorite_border</i>
+                  Like
+                </span>
+    </button>
+  {% else %}
+    <a class="btn grey lighten-2 mt-5 grey-text text-darken-3" href="{{ url_for('people:login') }}">
+      <i class="material-icons left">favorite_border</i>
+      Like
+    </a>
   {% endif %}
-<div class="like-button" flex
-    {# TODO: do better object detection here #}
-    {% if hasattr(_obj, 'admin') %}
-     ng-click="likeButton.like('{{ url_for('ministry:like_ministry', kwargs={"ministry_id": _obj.id}) }}')"
-    {% else %}
-     ng-click="likeButton.like('{{ url_for('campaign:like_campaign', kwargs={"campaign_id": _obj.id}) }}')"
-    {% endif %}
-     ng-style="likeButton.style()"
-     style="" ng-cloak>
-  <div style="margin-bottom: -15px;">
-    <span ng-if="object().liked"><i class="material-icons" style="font-size: 1.7em;">favorite</i></span>
-    <span ng-if="!object().liked"><i class="material-icons" style="font-size: 1.7em;">favorite_border</i></span>
-    <br>
-  </div>
-  {# TODO: implement a filter to sum up large numbers #}
-  <small>{% raw %}{{ object().likes }}{% endraw %} like this</small>
-</div>
-{% if request and not request.user.is_authenticated %}
-  </a>
-{% endif %}
 
 {% endmacro %}

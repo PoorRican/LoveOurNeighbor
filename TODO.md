@@ -10,7 +10,6 @@
 
 # Bugs
 - Prevent duplicate donation objects from being created upon repeating GET /donation/confirm
-- MinistryProfile like button does not work
 
 # Immediate Things to Implement
 - Turn link tree/sitemap into a global in Python accessible from jinja2 environment
@@ -22,7 +21,6 @@
     * Explaining details in Ministry Profile Page
 - Add Cookie Consent Banner from Termly
 - Unverified ministries/campaigns should not be on homepage
-- If a home page card does not have a banner_img, it should not have a large value for margin-top
 - Create a breadcrumb utility function to determine reverse pathway (w/ URLs) given an object (this should go in `frontend`)
 
 ## Internal Fixes

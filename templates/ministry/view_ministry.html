@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 
+{% from "macros/parts/like_button.html" import like_button %}
 {% from "macros/parts/comments_section.html" import comments_section %}
 {% from "macros/parts/gallery.html" import gallery %}
 {% from "macros/parts/tag_chips.html" import tag_chips %}
@@ -40,25 +41,7 @@
 
               <br>
 
-              {% if request.user.is_authenticated %}
-                <button id="likeButton" class="btn btn-large grey mt-5"
-                        data-bind="class: btnStyle, click: like;">
-                  <span data-bind="visible: liked">
-                    <i class="material-icons left">favorite</i>
-                    Liked
-                  </span>
-                  <span data-bind="hidden: liked">
-                    <i class="material-icons left">favorite_border</i>
-                    Like
-                  </span>
-                </button>
-              {% else %}
-                <a class="btn btn-flat grey lighten-3 mt-5" href="{{ url_for('people:login') }}">
-                  <i class="material-icons left">favorite_border</i>
-                  Like
-                </a>
-              {% endif %}
-
+              {{ like_button("likeButton", request) }}
 
             </div>
           </div><!-- profile image area -->
@@ -307,7 +290,6 @@
 
     let likeButton = new likeButtonViewModel(likeURL);
     ko.applyBindings(likeButton, document.getElementById('likeButton'));
-
   </script>
 
 {% endblock %}
