@@ -526,6 +526,19 @@ def ministry_gallery_json(request, ministry_id):
     return JsonResponse({'gallery': ministry_images(ministry)})
 
 
+@login_required
+def donations_json(request, ministry_id):
+    ministry = MinistryProfile.objects.get(pk=ministry_id)
+    user = request.user
+    if ministry.authorized_user(user):
+        donations = []
+        for c in ministry.campaigns.all():
+            for d in c.donations.all():
+                donations.append(d)
+        donations.sort(key=lambda obj: obj.date)  # sort based on date
+        return JsonResponse({'donations': [serialize_donation(d) for d in donations]})
+
+
 # User Interaction
 @login_required
 def like_ministry(request, ministry_id):

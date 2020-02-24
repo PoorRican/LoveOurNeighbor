@@ -249,6 +249,18 @@ def campaign_gallery_json(request, campaign_id):
 
 
 @login_required
+def donations_json(request, campaign_id):
+    campaign = Campaign.objects.get(pk=campaign_id)
+    user = request.user
+    if campaign.authorized_user(user):
+        donations = []
+        for d in campaign.donations.all():
+            donations.append(d)
+        donations.sort(key=lambda obj: obj.date)  # sort based on date
+        return JsonResponse({'donations': [serialize_donation(d) for d in donations]})
+
+
+@login_required
 def like_campaign(request, campaign_id):
     """
     Encapsulates both 'like' and 'unlike' functionality relating `User` to `Campaign`
@@ -273,22 +285,3 @@ def like_campaign(request, campaign_id):
         cam.likes.remove(request.user)
         cam.save()
         return JsonResponse({'liked': False})
-
-
-@login_required
-def donation_statistics(request, campaign_id):
-    cam = Campaign.objects.get(id=campaign_id)
-
-    donations = {}
-    count = 0
-
-    for i in cam.donations.all():
-        d = serialize_donation(i)
-        # prune unnecessary data
-        del d['campaign']
-        del d['ministry']
-        del d['url']
-        donations[count] = d
-        count += 1
-
-    return JsonResponse(donations)

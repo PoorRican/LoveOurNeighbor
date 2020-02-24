@@ -1,16 +1,12 @@
 from random import randint
-from datetime import date
+from datetime import date, datetime
 import django
 from django.db.utils import IntegrityError
 from django.conf import settings
 import frontend.settings as app_settings
 
-settings.configure(INSTALLED_APPS=app_settings.INSTALLED_APPS,
-                   DATABASES=app_settings.DATABASES)
-django.setup()
 
-
-if __name__ == "__main__":
+def setup_dev():
     from people.models import User
     from ministry.models import MinistryProfile
     from campaign.models import Campaign
@@ -40,8 +36,8 @@ if __name__ == "__main__":
     cam_title = 'test campaign'
     try:
         campaign = Campaign.objects.create(title=cam_title,
-                                           start_date=date(1001, 1, 1),
-                                           end_date=date(1001, 1, 2),
+                                           start_date=date(2020, 1, 1),
+                                           end_date=date(2020, 3, 1),
                                            ministry=ministry,
                                            goal=12345)
     except IntegrityError:
@@ -57,7 +53,7 @@ if __name__ == "__main__":
                                      name='First Last',
                                      tx_id=7531902648,
                                      amount=_)
-        c.confirm()
+        c.payment_date = datetime(2020, int(_ / 30) + 1, (_ % 30) + 1, 13, 33, 37)
         donation.save()
         if _ % 10 and _ != 0:
             print("Created %d payments so far..." % _)

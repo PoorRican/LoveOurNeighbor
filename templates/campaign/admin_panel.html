@@ -139,6 +139,7 @@
           <br>
 
           <div id="statistics" class="row">
+            <canvas id="donation-graph"></canvas>
             <div class="col s12 l3">
               <div class="campaign-goal">
                 <div style="width: 100%">
@@ -247,9 +248,23 @@
 
   {{ wysiwyg_script() }}
 
+  <!-- Graphing UI -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+  <script src="{{ static('js/donation_statistics.js') }}"></script>
+
+  <script>
+    const donationJsonURL = "{{ request.build_absolute_uri( url_for('campaign:donations_json', kwargs={'campaign_id': campaign.id})) }}";
+    const objJsonURL = '{{ request.build_absolute_uri(campaign.json) }}';
+
+    drawGraph(objJsonURL, donationJsonURL);
+  </script>
+
 {% endblock %}
 
 
 {% block css %}
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.css">
 {% endblock %}
