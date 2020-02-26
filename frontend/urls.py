@@ -29,7 +29,7 @@ urlpatterns = [
     path('tinymce/', include('tinymce.urls')),
     path('', views.root),
     path('favicon.ico', favicon_view),
-    path('error', views.error),
+    path('error', views.error, name='error'),
 
     # Main Pages
     path('home', views.home, name="home"),
