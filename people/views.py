@@ -186,7 +186,10 @@ def login_user(request):
                 _w = 'You have logged in as %s!' % email
                 messages.add_message(request, messages.INFO, _w)
 
-                _url = reverse('people:user_profile')
+                if 'next' in request.GET.keys():
+                    _url = request.GET['next']
+                else:
+                    _url = reverse('people:user_profile')
                 return HttpResponseRedirect(_url)
             else:
                 return render(request, 'inactive_user.html', {'email': email})
