@@ -5,52 +5,72 @@
 {% endblock %}
 
 {% block body %}
-<div class="section">
-  <div class="wrapper">
-    <div class="row">
-      <h2>Donation Details</h2>
+  <div class="section">
+    <div class="wrapper">
+      <div class="row">
+        {% if not request.user.is_verified %}
+          <div class="card s12">
+            <div class="card-panel orange lighten-5">
+              <p>You can access this easily information if you <a href="{{ url_for('people:register') }}">create an
+                account</a>.
+                Just use the same email used for payment. We've obscured some information to protect your privacy.</p>
+            </div><!-- /.card-panel -->
+          </div>
+        {% endif %}
+        <h2>Donation Details</h2>
 
-      {% if donation.campaign %}
-      <p>Donated to <a href="{{ donation.campaign.url }}">{{ donation.campaign.title }}</a>
-        by <a href="{{ donation.campaign.ministry.url }}">{{ donation.campaign.ministry.name }}</a>
-      </p>
-      {% else %}
-        <p>Donated to Love Our Neighbor Administration Costs</p>
-        <p>Thank you for Donating!</p>
-      {% endif %}
+        {% if donation.campaign %}
+          <p>Donated to <a href="{{ donation.campaign.url }}">{{ donation.campaign.title }}</a>
+            by <a href="{{ donation.campaign.ministry.url }}">{{ donation.campaign.ministry.name }}</a>
+          </p>
+        {% else %}
+          <p>Donated to Love Our Neighbor Administration Costs</p>
+          <p>Thank you for Donating!</p>
+        {% endif %}
 
-      {% if hasattr(donation.payment, 'card_number') %}
-        <h5>Payment Card Info:</h5>
+        {% if hasattr(donation.payment, 'card_number') %}
+          <h5>Payment Card Info:</h5>
+          <div class="col s12 input-field">
+            {% if not request.user.is_verified %}
+              <input type="text" id="payment" value="{{ donation.payment.name[0:1] }}****" disabled>
+            {% else %}
+              <input type="text" id="payment" value="{{ donation.payment.name }}" disabled>
+            {% endif %}
+            <label for="payment">Cardholder Name</label>
+          </div>
+          <div class="col s12 input-field">
+            {% if not request.user.is_verified %}
+              <input type="text" id="cc" value="****-****-****-{{ donation.payment.card_number[-2:] }}" disabled>
+            {% else %}
+              <input type="text" id="cc" value="****-****-****-{{ donation.payment.card_number }}" disabled>
+            {% endif %}
+            <label for="cc">Credit Card #</label>
+          </div>
+        {% endif %}
+
+        <h5>Other Details:</h5>
         <div class="col s12 input-field">
-          <input type="text" id="payment" value="{{ donation.payment.name }}"
-                 disabled>
-          <label for="payment">Cardholder Name</label>
+          {% if not request.user.is_verified %}
+            <input type="text" id="tx_id" class="{{ donation.tx_id[0] }}****{{ donation.tx_id[-1] }}" disabled>
+          {% else %}
+            <input type="text" id="tx_id" value="{{ donation.tx_id }}" disabled>
+          {% endif %}
+          <label for="tx_id">Transaction ID</label>
         </div>
         <div class="col s12 input-field">
-          <input type="text" id="cc" value="****-****-****-{{ str(donation.payment.card_number) }}" disabled>
-          <label for="cc">Credit Card #</label>
+          <input type="text" id="amount" value="{{ donation.amount }}" disabled>
+          <label for="amount">Donation Amount</label>
         </div>
-      {% endif %}
+        <div class="col s12 input-field">
+          <input type="text" id="confirmation" value="{{ donation.payment.confirmation }}" disabled>
+          <label for="confirmation">Confirmation ID</label>
+        </div>
+        <div class="col s12 input-field">
+          <input type="text" id="date" value="{{ donation.payment.payment_date.strftime('%m/%d/%Y') }}" disabled>
+          <label for="date">Payment Date</label>
+        </div>
 
-      <h5>Other Details:</h5>
-      <div class="col s12 input-field">
-        <input type="text" id="tx_id" value="{{ donation.id }}" disabled>
-        <label for="tx_id">Transaction ID</label>
-      </div>
-      <div class="col s12 input-field">
-        <input type="text" id="amount" value="{{ donation.amount }}" disabled>
-        <label for="amount">Donation Amount</label>
-      </div>
-      <div class="col s12 input-field">
-        <input type="text" id="confirmation" value="{{ donation.payment.confirmation }}" disabled>
-        <label for="confirmation">Confirmation ID</label>
-      </div>
-      <div class="col s12 input-field">
-        <input type="text" id="date" value="{{ donation.payment.payment_date.strftime('%m/%d/%Y') }}" disabled>
-        <label for="date">Payment Date</label>
-      </div>
-
-    </div><!-- /.row -->
-  </div><!-- /.wrapper -->
-</div><!-- /.section -->
+      </div><!-- /.row -->
+    </div><!-- /.wrapper -->
+  </div><!-- /.section -->
 {% endblock %}
