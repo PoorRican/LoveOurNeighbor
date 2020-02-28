@@ -31,6 +31,6 @@ class GeoLocation(models.Model):
                 _, L = gc.geocode(location)
                 self._location = dumps(L)
             except TypeError:
-                raise ValueError("%s is not a valid location" % location)
+                self._location = dumps(None)
         else:
             raise TypeError("location argument is not of type str")

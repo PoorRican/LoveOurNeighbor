@@ -1,14 +1,17 @@
 from jinja2 import Template
-from os import path, makedirs
+from os import path, makedirs, listdir
 
 from django.conf import settings
 from django.urls import reverse
 
 
 # Model Utility Functions
+def user_profile_dedicated_dir(instance):
+    return path.join('people', instance.email)
+
 
 def user_profile_img_dir(instance, filename):
-    return path.join('people', instance.email,
+    return path.join(user_profile_dedicated_dir(instance),
                      'profile_images', filename)
 
 
@@ -37,6 +40,35 @@ def create_profile_img_dir(instance, prepend=settings.MEDIA_ROOT):
     """
     _path = path.join(prepend, user_profile_img_dir(instance, filename=''))
     makedirs(_path, exist_ok=True)
+
+
+def previous_profile_images(instance):
+    """
+    Utility function that returns all previous uploaded profile images.
+
+    Parameters
+    ----------
+    instance
+        `people.models.User`
+
+    Returns
+    -------
+    dict containing filenames as keys, and their absolute URL paths as values
+
+    """
+    _dir = user_profile_img_dir(instance, '')
+    _dir = path.join(settings.MEDIA_ROOT, _dir)
+
+    img = []
+    try:
+        img = listdir(_dir)
+    except FileNotFoundError:
+        create_profile_img_dir(instance)
+
+    _return = {}
+    for i in img:
+        _return[i] = path.join(settings.MEDIA_URL, user_profile_img_dir(instance, i))
+    return _return
 
 
 def send_verification_email(request, user):

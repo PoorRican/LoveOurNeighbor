@@ -22,7 +22,7 @@ from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
 from .utils import (
     clear_previous_ministry_login, user_profile_img_dir, create_profile_img_dir,
-    send_verification_email
+    send_verification_email, previous_profile_images
 )
 
 
@@ -83,32 +83,22 @@ def create_user(request):
 @login_required
 def user_profile(request):
     if request.method == 'POST':
-        form = UserEditForm(request.POST, request.FILES,
+        form = UserEditForm(request.POST, files=request.FILES,
                             instance=request.user)
-        if form.is_valid():
-            user = form.save(commit=False)
-            if user._location:
-                user.location = user._location
-            user.save()
+        _url = reverse('people:user_profile')
 
-            _img = request.POST.get('selected_profile_img', False)
-            if _img:
-                prev_banner = request.POST['selected_profile_img']
-                user.profile_img = user_profile_img_dir(user, prev_banner)
-            user.save()
+        if form.is_valid():
+            form.save()
 
             messages.add_message(request, messages.SUCCESS,
                                  'User profile updated')
-
-            _url = reverse('people:user_profile')
-            return HttpResponseRedirect(_url)
         else:
-            # TODO: show error feedback via messages and reload page
-            err = 'There was an error. Please try again'
-            messages.add_message(request, messages.ERROR, err)
+            for _, error in form.errors.items():
+                for msg in error:
+                    print(msg)
+                    messages.add_message(request, messages.ERROR, msg)
 
-            _url = reverse('people:user_profile')
-            return HttpResponseRedirect(_url)
+        return HttpResponseRedirect(_url)
 
     elif request.method == 'GET':
         user = request.user
@@ -252,15 +242,7 @@ def profile_img_json(request):
     _dir = user_profile_img_dir(user, '')
     _dir = os.path.join(MEDIA_ROOT, _dir)
 
-    _json = {'available': {}}
-
-    imgs = []
-    try:
-        imgs = os.listdir(_dir)
-    except FileNotFoundError:
-        create_profile_img_dir(user)
-    for i in imgs:
-        _json['available'][i] = os.path.join(MEDIA_URL, user_profile_img_dir(user, i))
+    _json = {'available': previous_profile_images(user)}
 
     try:
         _current = user.profile_img.path
