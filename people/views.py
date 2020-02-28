@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 from uuid import uuid4
 
@@ -118,7 +119,14 @@ def user_profile(request):
             _likes.append(c)
         for m in user.likes_m.all():
             _likes.append(m)
-        _likes.sort(key=lambda obj: obj.pub_date, reverse=True)
+
+        def cmp_dt(dt):
+            """ Hack to compare `date` objects to `datetime` """
+            if not hasattr(dt, 'hour'):
+                return datetime(dt.year, dt.month, dt.day, 0, 0, 0)
+            return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
+
+        _likes.sort(key=lambda obj: cmp_dt(obj.pub_date), reverse=True)
 
         form = UserEditForm(instance=user)
         context = {'form': form,
