@@ -1,19 +1,17 @@
 from hashlib import md5
 from uuid import uuid4
-from requests import post
 
-from django.conf import settings
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import UserManager
 from django.db import models
-from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 
 from frontend.settings import DEFAULT_PROFILE_IMG
+from frontend.utils import send_email
 from explore.models import GeoLocation
 
 from .utils import user_profile_img_dir, verification_required
@@ -141,14 +139,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
         if tags is None:
             tags = []
-        return post(
-            "https://api.mailgun.net/v3/%s/messages" % settings.MG_DOMAIN,
-            auth=('api', settings.MG_API_KEY),
-            data={'from': "%s <%s>" % (name, from_email),
-                  'to': self.email,
-                  'subject': subject,
-                  'html': html,
-                  'o:tag': tags})
+        return send_email(self.email, subject, html, from_email, tags, name)
 
     def __str__(self):
         return self.email

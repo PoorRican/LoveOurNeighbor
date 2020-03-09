@@ -239,6 +239,8 @@ PAYEEZY_TEST_BUTTON = DEBUG  # determines if jinja template uses test network or
 MG_DOMAIN = 'mg.loveourneighbor.org'
 MG_API_KEY = 'f64271df50355a0fc10236b82e439ad1-af6c0cec-56113993'
 
+ADMIN_EMAIL = 'ministries@loveourneighbor.org'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

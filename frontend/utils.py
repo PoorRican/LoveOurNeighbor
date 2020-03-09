@@ -1,8 +1,12 @@
+from django.conf import settings
 from django.contrib.flatpages.models import FlatPage
 
 from datetime import datetime
 from ipware import get_client_ip
+from jinja2 import Template
+from os import path
 from pytz import timezone
+from requests import post
 
 from explore.utils import get_location_from_ip
 
@@ -111,6 +115,69 @@ def active_sidenav_submenu(active, links):
         if active == link[0]:
             return True
     return False
+
+
+def send_email(to: str, subject: str, html: str, from_email: str, tags=None, name=''):
+    """ Facilitates emailing via mailgun API.
+
+    `MG_API_KEY` and `MG_DOMAIN` must first be set in `frontend.settings`.
+
+    Arguments
+    =========
+    to: (str)
+        Email address to send this message to
+
+    subject: (str)
+        Subject text for email messages
+
+    html: (str)
+        HTML text for email message
+
+    from_email: (str)
+        Email for user to see as sent from
+
+    tags: (list of str)
+        Tags for use in Mailgun dashboard
+
+    name: (str)
+        Human Readable name to use alongside `from_email` attribute
+
+    Returns
+    =======
+    response:
+        Returns requests.Response object
+    """
+    return post(
+        "https://api.mailgun.net/v3/%s/messages" % settings.MG_DOMAIN,
+        auth=('api', settings.MG_API_KEY),
+        data={'from': "%s <%s>" % (name, from_email),
+              'to': to,
+              'subject': subject,
+              'html': html,
+              'o:tag': tags})
+
+
+def render_jinja_template(template_path, context):
+    """
+    Renders Jinja2 templates
+
+    Parameters
+    ----------
+    template_path: (str)
+        Relative path to template file
+    context: (dict)
+        Context-dict to pass to template
+
+    Returns
+    -------
+    str: (utf-8)
+        HTML as Unicode
+    """
+    # TODO: maybe ensure that path is relative
+    _template = path.join(settings.BASE_DIR, template_path)
+    with open(_template) as f:
+        t = f.read()
+    return Template(t).render(context)
 
 
 class TimezoneMiddleware:

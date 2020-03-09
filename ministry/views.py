@@ -34,6 +34,7 @@ from .utils import (
     ministry_profile_image_dir,
     create_ministry_dir,
     ministry_images,
+    send_new_ministry_notification_email
 )
 
 
@@ -63,14 +64,14 @@ def create_ministry(request):
 
         if min_form.is_valid():
             # handle custom form attributes
-            ministry = min_form.save(commit=False)      # `ministry` is type MinistryProfile
+            ministry = min_form.save(commit=False)  # `ministry` is type MinistryProfile
             ministry.admin = request.user  # set the admin as the user responsible for creating the page
             ministry.save()                             # object must exist before relationships with other objects
 
             # handle relationships with other objects
             if ministry.address:
                 ministry.location = ministry.address
-            ministry.save()                             # this might be a redundant call to `save`
+            ministry.save()  # this might be a redundant call to `save`
 
             Tag.process_tags(ministry, min_form['tags'].value())
 
@@ -80,6 +81,8 @@ def create_ministry(request):
             # handle response and generate UI feedback
             _w = 'Ministry Profile Created!'
             messages.add_message(request, messages.SUCCESS, _w)
+
+            send_new_ministry_notification_email(request, ministry)
 
             _url = reverse('ministry:ministry_profile',
                            kwargs={'ministry_id': ministry.id})
@@ -144,10 +147,8 @@ def admin_panel(request, ministry_id):
                             # update paths in object memory
                             if ministry.banner_img:
                                 _img = os.path.basename(ministry.banner_img.path)
-                                ministry.banner_img = ministry_banner_dir(ministry,
-                                                                          _img)
-                            if ministry.profile_img and \
-                                    ministry.profile_img.path != DEFAULT_PROFILE_IMG:
+                                ministry.banner_img.path = ministry_banner_dir(ministry, _img)
+                            if ministry.profile_img and ministry.profile_img.path != DEFAULT_PROFILE_IMG:
                                 _img = os.path.basename(ministry.profile_img.path)
                                 _img = ministry_profile_image_dir(ministry, _img)
                                 ministry.profile_img = _img

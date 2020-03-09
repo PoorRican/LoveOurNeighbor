@@ -1,0 +1,33 @@
+{# This is a template that is emailed to the user for the resetting of their password. #}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New Ministry Profile Application</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+<body>
+
+<h2>A New Ministry Application is awaiting verification!</h2>
+
+<p>
+  {{ ministry.admin.name }} has created a submitted an application for "{{ ministry.name }}".
+</p>
+
+<p>
+  Log in to the <a href="{{ admin_url }}">LON Admin panel</a> to verify this profile, or contact them using the
+  information below:
+</p>
+
+<ul>
+  <li><a href="mailto:{{ ministry.admin.email }}">{{ ministry.admin.email }}</a></li>
+  <li><a href="tel:{{ ministry.phone_number }}">{{ ministry.phone_number }}</a></li>
+  <li><a href="{{ ministry.website }}">{{ ministry.website }}</a></li>
+</ul>
+
+<p>This is an automated email. Any reply to this email will not be read.</p>
+
+</body>
+</html>

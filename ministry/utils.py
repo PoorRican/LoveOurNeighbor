@@ -2,8 +2,10 @@ from os import path, makedirs
 
 from django.conf import settings
 
-P_TIME = '%Y-%m-%d'             # when reading/parsing date objects
-F_TIME = '%Y-%m-%dT23:59:59'    # when writing date objects (for JSON)
+from frontend.utils import send_email, render_jinja_template
+
+P_TIME = '%Y-%m-%d'  # when reading/parsing date objects
+F_TIME = '%Y-%m-%dT23:59:59'  # when writing date objects (for JSON)
 
 
 # View Utility Functions
@@ -189,3 +191,32 @@ def ministry_images(ministry):
             pass
 
     return _gallery
+
+
+def send_new_ministry_notification_email(request, ministry):
+    """
+    Sends a notification email to LON admins about a new MinistryProfile application.
+
+    This uses `frontend.settings.ADMIN_EMAIL`, and "templates/ministry/profile_notification_template.html".
+
+    Parameters
+    ----------
+    request:
+        Request to use for building URLs (admin page)
+
+    ministry:
+        MinistryProfile to notify for
+
+    Returns
+    -------
+    response:
+        Returns requests.Response object passed from send_mail (which is passed from `requests.post`
+    """
+    url = request.build_absolute_uri("/admin")
+
+    context = {'ministry': ministry, 'admin_url': url}
+    html = render_jinja_template('templates/ministry/profile_notification_template.html', context)
+
+    return send_email(to=settings.ADMIN_EMAIL, subject='New MinistryProfile: "%s"' % ministry.name,
+                      html=html, from_email='website-notification@loveourneighbor.org',
+                      tags=['notification', 'internal', 'new_user'], name='LON Website')
