@@ -49,64 +49,24 @@ main {
   border-bottom: solid 1px #FF7100;
 }
 
-.section h1, section h1, .overlay h1 {
-  font-weight: 300;
-  border-bottom: solid 1px #FF7100;
-}
-
-.section h1 a.dropdown-trigger {
-  color: black;
-  text-decoration: none;
-}
-
-.section h4, section h4, .overlay h4,
-.section h3, section h3, .overlay h3 {
-  font-weight: 400;
-}
-
-.section .flow-text, section .flow-text {
-  padding-top: 30px;
-  margin-bottom: 30px;
-}
-
-.section-info {
-  padding-top: 15px;
-  padding-left: 20px;
-  padding-bottom: 15px;
-  margin-left: 15px;
-
-  font-size: 14px;
-  font-weight: 300;
-  border-left: solid 5px #FF7100;
-}
-
-.section-info span {
-  font-weight: 500;
-}
-
-.progress {
+.donation-progress {
   height: 50px;
-  border-radius: 50px;
+  border-radius: 5px;
   background-color: #FBFBFB;
-  border: solid 2px #777;
+  border: solid 1px #777;
 }
 
-.progress .current {
-  background-color: #1F1;
-  padding-left: 10px;
-  padding-right: 10px;
+.donation-progress .current {
+  content: "";
   line-height: 50px;
-  border-top-left-radius: 50px;
-  border-bottom-left-radius: 50px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
   display: inline-block;
-  text-align: center;
-  color: #090;
 }
 
-.progress .remaining {
+.donation-progress .remaining {
   display: inline-block;
   line-height: 50px;
-  color: #0C0;
   text-align: center;
   max-width: 96%;
 }

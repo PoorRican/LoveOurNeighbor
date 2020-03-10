@@ -1,0 +1,11 @@
+{% macro donation_progress_bar(campaign) %}
+  <div class="donation-progress">
+    {% if campaign.donated %}
+      <div class="current left gradient-45deg-cyan-light-green"
+           style="width: {{ round((campaign.donated / campaign.goal) * 100) }}%">
+        <span>&nbsp;</span>
+      </div>
+    {% endif %}
+    <div class="remaining" style="width: {{ round(((campaign.goal - campaign.donated) / campaign.goal) * 90) }}%"></div>
+  </div>
+{% endmacro %}

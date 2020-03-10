@@ -11,6 +11,7 @@
 {% from "macros/parts/tag_chips.html" import tag_chips %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 {% from "macros/parts/donate_button.html" import donate_button %}
+{% from "macros/parts/donation_progress_bar.html" import donation_progress_bar %}
 
 {% import "cards.html" as card %}
 
@@ -72,6 +73,34 @@
           </div>
         </div><!-- profile image area -->
 
+        {% if today() >= cam.start_date %}
+
+          <div class="row mt-5">
+
+            <div class="col s12">
+              <h5 style="display: inline">${{ cam.donated }}</h5>
+              <h6 style="display: inline">out of ${{ cam.goal - cam.donated }} raised</h6>
+            </div>
+
+            <div class="col s12 center-align mt-2">
+              {{ donation_progress_bar(cam) }}
+            </div>
+
+            <div class="col s6">
+              <h6>Number of Donors</h6>
+              <h5>{{ cam.donations.count() }}</h5>
+            </div>
+
+            <div class="col s6">
+              <h6>Percentage Complete</h6>
+              <h5>{{ "{:.0%}".format((cam.donated / cam.goal)) }}</h5>
+            </div>
+
+          </div><!-- /donation count -->
+
+          <hr class="grey-text text-lighten-2">
+        {% endif %}
+
         <div class="row mt-5">
           <div class="col s6">
             <h6>Views</h6>
@@ -113,17 +142,6 @@
         </div><!-- /start stop dates -->
 
         <hr class="grey-text text-lighten-2">
-
-        {% if today() >= cam.start_date %}
-          <div class="row">
-            <div class="col s12">
-              <h6>Number of Donors</h6>
-              <h5>{{ cam.donations.count() }}</h5>
-            </div>
-          </div><!-- /donation count -->
-
-          <hr class="grey-text text-lighten-2">
-        {% endif %}
 
         {% if cam.has_tags %}
           <div class="row">
