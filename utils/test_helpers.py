@@ -1,3 +1,4 @@
+from datetime import date
 from os import path
 
 from django.conf import settings
@@ -6,6 +7,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TransactionTestCase, Client
 from django.urls import reverse
 
+from ministry.models import MinistryProfile
 from people.models import User
 
 # just some dummy default values
@@ -36,6 +38,35 @@ def default_ministry_data(admin: User = None, **kwargs) -> dict:
             'staff': 1}
     if admin:
         data['admin'] = admin
+    for key, val in kwargs.items():
+        data[key] = val
+    return data
+
+
+def default_campaign_data(ministry: MinistryProfile = None, **kwargs) -> dict:
+    """ A helper function that creates default Campaign data.
+
+    Parameters
+    ----------
+    ministry: MinistryProfile, optional
+       Included in the return dict as the value for 'admin'.
+       Defaults to None.
+
+    kwargs: dict, optional
+        Values to override or supplement in the returned dict
+
+    Returns
+    -------
+    dict
+        Minimal values to create a Campaign object
+    """
+    data = {'title': 'Test Campaign',
+            'start_date': date(2020, 1, 1),
+            'end_date': date(2025, 1, 1),
+            'content': 'This is some content',
+            'goal': 7531}
+    if ministry:
+        data['ministry'] = ministry
     for key, val in kwargs.items():
         data[key] = val
     return data

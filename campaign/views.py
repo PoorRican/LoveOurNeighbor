@@ -36,17 +36,9 @@ def create_campaign(request, ministry_id):
     """
     ministry = MinistryProfile.objects.get(id=ministry_id)
     if request.method == 'POST':
-        cam_form = CampaignEditForm(request.POST, request.FILES)
+        cam_form = CampaignEditForm(request.POST, request.FILES, initial={'ministry': ministry})
         if cam_form.is_valid():
-            # create object and directory
-            cam = cam_form.save(commit=False)
-            cam.ministry = ministry
-            cam.save()
-
-            create_campaign_dir(cam)
-
-            # handle relationships with other objects
-            Tag.process_tags(cam, cam_form['tags'].value())
+            cam = cam_form.save()
 
             # handle response and generate UI feedback
             _w = 'Ministry Profile Created!'
@@ -80,15 +72,6 @@ def edit_campaign(request, campaign_id):
                                          instance=campaign)
                 if _form.is_valid():
                     cam = _form.save()
-
-                    Tag.process_tags(cam, _form['tags'].value())
-
-                    banner_img = request.POST.get('selected_banner_img', False)
-                    if banner_img:
-                        prev_banner = request.POST['selected_banner_img']
-                        campaign.banner_img = campaign_banner_dir(campaign,
-                                                                  prev_banner)
-                    campaign.save()
 
                     _w = 'Edit successful!'
                     messages.add_message(request, messages.SUCCESS, _w)

@@ -97,6 +97,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     def name(self):
         if self.first_name and self.last_name:
             return '%c%s %c.' % (self.first_name[0].upper(), self.first_name[1:], self.last_name[0].upper())
+        if self.first_name:
+            return '%c%s' % (self.first_name[0].upper(), self.first_name[1:])
         else:
             return 'You'
 

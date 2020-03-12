@@ -1,11 +1,22 @@
 from datetime import date
+from os.path import isfile, isdir
+from shutil import rmtree
 
+from django.conf import settings
+from django.test import TestCase
 from django.urls import reverse
 
-from .models import Campaign
-
 from ministry.models import MinistryProfile
-from utils.test_helpers import BaseViewTestCase
+from ministry.utils import dedicated_ministry_dir
+from people.models import User
+from utils.test_helpers import (
+    default_ministry_data, default_campaign_data,
+    simulate_uploaded_file, BaseViewTestCase,
+)
+
+from .forms import CampaignEditForm
+from .models import Campaign
+from .utils import campaign_banner_dir
 
 email, password = "new@test-users.com", "randombasicpassword1234"
 
@@ -78,7 +89,7 @@ class TestCampaignViews(BaseViewTestCase):
         self.login()
         response = self.client.get(_url)
         self.assertContains(response,
-                            "ministry/campaign_content")
+                            "campaign/admin_panel")
 
         # assert redirect when incorrect permissions
         new_user = self.assert_not_authorized_redirect(_url)
@@ -91,7 +102,7 @@ class TestCampaignViews(BaseViewTestCase):
         response = self.client.get(_url)
         # TODO: assert messages
         self.assertContains(response,
-                            "ministry/campaign_content")
+                            "campaign/admin_panel")
 
         # assert proper POST data
         _edit = {'title': 'a new campaign',
@@ -158,9 +169,57 @@ class TestCampaignViews(BaseViewTestCase):
         _attrs = (
             'title', 'id', 'start_date', 'end_date', 'pub_date',
             'views', 'likes', 'liked', 'donated', 'goal', 'tags'
-            )
+        )
         response = self.client.get(_url)
         data = response.json().keys()
         for a in _attrs:
             self.assertTrue(a in data)
         # TODO: test data content
+
+
+class TestMinistryEditForm(TestCase):
+    """ These critical test cases, ensure that the CampaignEditform is working. """
+
+    def setUp(self):
+        admin = User.objects.create(email="test@testing.com")
+        self.ministry = MinistryProfile.objects.create(**default_ministry_data(admin=admin))
+
+        post = default_campaign_data(self.ministry)
+
+        form = CampaignEditForm(post)
+        self.campaign = form.save()
+
+    def tearDown(self):
+        rmtree(dedicated_ministry_dir(self.ministry, prepend=settings.MEDIA_ROOT))
+
+    def testDirCreated(self):
+        """ Tests that new MinistryProfiles have a dedicated directory. """
+        self.assertTrue(isdir(campaign_banner_dir(self.campaign, '', prepend=settings.MEDIA_ROOT)))
+
+    def testPreviousSelectedBannerImg(self):
+        """ Tests that banner image selection functionality correctly sets associated ImageFields """
+        fn1, fn2 = "file1.jpg", "file2.jpg"
+
+        # Upload two banners. Ensure that model attribute changes and that files exist.
+        for fn in (fn1, fn2):
+            file = simulate_uploaded_file(fn)
+
+            form = CampaignEditForm(default_campaign_data(), files={'banner_img': file}, instance=self.campaign)
+            form.save()
+
+            self.assertEqual(campaign_banner_dir(self.campaign, fn), self.campaign.banner_img.name)
+            self.assertTrue(isfile(campaign_banner_dir(self.campaign, fn, prepend=settings.MEDIA_ROOT)))
+
+        # Test `selected_banner_img` functionality
+        form = CampaignEditForm(default_campaign_data(**{'selected_banner_img': fn1}),
+                                instance=self.campaign)
+        self.assertTrue(form.is_valid())  # for some reason... test will not pass without this being called...
+        form.save()
+
+        self.assertEqual(campaign_banner_dir(self.campaign, fn1), self.campaign.banner_img.name)
+
+    def testTagsProcessed(self):
+        """ Tests the processing of Tag objects """
+        # create tags
+        # jsonify
+        self.fail()

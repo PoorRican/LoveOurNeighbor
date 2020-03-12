@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 from os import path, makedirs
 
-from ministry.utils import serialize_ministry, dedicated_ministry_dir
+from ministry.utils import serialize_ministry, create_ministry_dir, dedicated_ministry_dir
 
 from django.conf import settings
 
@@ -77,10 +77,9 @@ def create_campaign_dir(instance, prepend=settings.MEDIA_ROOT):
         _path = path.split(_(instance, filename="", prepend=prepend))[0]
         try:
             makedirs(_path, exist_ok=True)
-        except FileExistsError:
-            pass
         except FileNotFoundError:
-            dedicated_ministry_dir(instance.ministry, prepend=prepend)
+            create_ministry_dir(instance.ministry, prepend=prepend)
+            makedirs(_path, exist_ok=True)
 
 
 def campaign_images(campaign):
