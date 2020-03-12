@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.flatpages.models import FlatPage
 
+from bs4 import BeautifulSoup, Comment
 from datetime import datetime
 from ipware import get_client_ip
 from jinja2 import Template
@@ -155,6 +156,37 @@ def send_email(to: str, subject: str, html: str, from_email: str, tags=None, nam
               'subject': subject,
               'html': html,
               'o:tag': tags})
+
+
+def sanitize_wysiwyg_input(data: str) -> str:
+    """ Helper that sanitizes/cleans user input in WYSIWYG boxes.
+
+    This prevents lack of unified styling from copying-and-pasting content into the WYSIWYG editor.
+
+    This hereby nullifies any explicit styling set by the WYSIWYG editor.
+    The input element is only to input HTML tags.
+
+    Parameters
+    ----------
+    data:
+        HTML from WYSIWYG input textarea element
+
+    Returns
+    -------
+    Cleaned HTML as str
+
+    """
+    data = BeautifulSoup(data, 'html.parser')
+
+    # find all elements and remove 'class' and 'style' tags
+    for tag in data.find_all(True):
+        del tag['class']
+        del tag['style']
+    # remove comments (to limit overhead)
+    for tag in data.find_all(string=lambda text: isinstance(text, Comment)):
+        tag.extract()
+
+    return str(data)
 
 
 def render_jinja_template(template_path, context):

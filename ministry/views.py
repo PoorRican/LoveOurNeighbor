@@ -16,7 +16,6 @@ from donation.utils import serialize_donation
 from frontend.settings import MEDIA_ROOT, MEDIA_URL
 from people.models import User
 from news.models import NewsPost
-from tag.models import Tag
 
 from .forms import (
     MinistryEditForm,
@@ -53,6 +52,7 @@ def create_ministry(request):
     See Also
     --------
     `ministry:admin_panel`
+    `MinistryEditForm.save` for custom save method
 
     Note
     ----
@@ -60,23 +60,9 @@ def create_ministry(request):
         new objects by being passed a boolean variable `start`
     """
     if request.method == 'POST':
-        min_form = MinistryEditForm(request.POST, request.FILES,)
-
+        min_form = MinistryEditForm(request.POST, request.FILES, initial={'admin': request.user})
         if min_form.is_valid():
-            # handle custom form attributes
-            ministry = min_form.save(commit=False)  # `ministry` is type MinistryProfile
-            ministry.admin = request.user  # set the admin as the user responsible for creating the page
-            ministry.save()                             # object must exist before relationships with other objects
-
-            # handle relationships with other objects
-            if ministry.address:
-                ministry.location = ministry.address
-            ministry.save()  # this might be a redundant call to `save`
-
-            Tag.process_tags(ministry, min_form['tags'].value())
-
-            # create dedicated media folder
-            create_ministry_dir(ministry)
+            ministry = min_form.save()
 
             # handle response and generate UI feedback
             _w = 'Ministry Profile Created!'
@@ -116,6 +102,7 @@ def admin_panel(request, ministry_id):
     See Also
     --------
     `ministry:admin_panel`
+    `MinistryEditForm.save` for custom save method
 
     Note
     ----
@@ -130,53 +117,10 @@ def admin_panel(request, ministry_id):
         if request.user == ministry.admin or \
            request.user in ministry.reps.all():
             if request.method == 'POST':
-                _old_dir = dedicated_ministry_dir(ministry)
                 _form = MinistryEditForm(request.POST, request.FILES,
                                          instance=ministry)
                 if _form.is_valid():
                     ministry.save()
-
-                    # move to new directory if name change
-                    _new_dir = dedicated_ministry_dir(ministry)
-                    if _old_dir != _new_dir:
-                        _old_dir = os.path.join(MEDIA_ROOT, _old_dir)
-                        _new_dir = os.path.join(MEDIA_ROOT, _new_dir)
-
-                        try:
-                            os.rename(_old_dir, _new_dir)
-                            # update paths in object memory
-                            if ministry.banner_img:
-                                _img = os.path.basename(ministry.banner_img.path)
-                                ministry.banner_img.path = ministry_banner_dir(ministry, _img)
-                            if ministry.profile_img and ministry.profile_img.path != DEFAULT_PROFILE_IMG:
-                                _img = os.path.basename(ministry.profile_img.path)
-                                _img = ministry_profile_image_dir(ministry, _img)
-                                ministry.profile_img = _img
-                        except FileNotFoundError:
-                            # assume there is no dedicated content
-                            create_ministry_dir(ministry)
-
-                    # handle selection of previously uploaded media
-                    _img = request.POST.get('selected_banner_img', False)
-                    if _img:
-                        prev_banner = request.POST['selected_banner_img']
-                        ministry.banner_img = ministry_banner_dir(ministry,
-                                                                  prev_banner)
-
-                    _img = request.POST.get('selected_profile_img', False)
-                    if _img:
-                        prev_banner = request.POST['selected_profile_img']
-                        ministry.profile_img = ministry_profile_image_dir(ministry,
-                                                                          prev_banner)
-                    ministry.save()
-
-                    # handle relationships with other objects
-                    _min = _form.save(commit=False)
-                    if _min.address:
-                        _min.location = _min.address
-                    _min.save()
-
-                    Tag.process_tags(ministry, _form['tags'].value())
 
                     # handle response and generate UI feedback
                     _w = 'Changes saved to %s!' % ministry.name
@@ -185,7 +129,7 @@ def admin_panel(request, ministry_id):
                     _url = reverse('ministry:ministry_profile',
                                    kwargs={'ministry_id': ministry_id})
                 else:
-                    print("error")
+                    print(_form.errors)
             else:
                 _form = MinistryEditForm(instance=ministry)
 
