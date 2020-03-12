@@ -2,9 +2,10 @@ from os import path
 from shutil import rmtree
 
 from django.conf import settings
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError, transaction
 from django.test import TestCase
+
+from utils.test_helpers import simulate_uploaded_file
 
 from .models import User
 from .forms import NewUserForm, UserEditForm
@@ -131,7 +132,3 @@ class UserEditFormTestCase(TestCase):
 
         rmtree(path.join(settings.MEDIA_ROOT, user_profile_dedicated_dir(self.user)))
 
-
-def simulate_uploaded_file(fn):
-    with open(path.join(settings.MEDIA_ROOT, 'img/blank_profile.jpg'), 'rb') as f:
-        return SimpleUploadedFile(fn, f.read(), content_type='image/jpg')

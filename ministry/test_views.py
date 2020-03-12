@@ -1,26 +1,22 @@
 from django.urls import reverse
 from django.test.client import RedirectCycleError
 
-from utils.test_helpers import BaseViewTestCase
+from utils.test_helpers import (
+    BaseViewTestCase, EMAIL, PASSWORD,
+    default_ministry_data,
+)
 
 from .models import MinistryProfile
-
-email, password = "new@test-users.com", "randombasicpassword1234"
 
 
 class BaseMinistryProfileTestCase(BaseViewTestCase):
     def setUp(self):
         super().setUp()
 
-        self.user = self.create_user(self.user_email, self.user_password,
-                                     display_name="Mister Test User")
+        self.user = self.create_user(self.user_email, self.user_password)
 
         self.obj_name = "Test Ministry"
-        self.obj = MinistryProfile.objects.create(name=self.obj_name,
-                                                  admin=self.user,
-                                                  website="justawebsite.com",
-                                                  phone_number="(753)753-7777",
-                                                  address="Sao Paolo")
+        self.obj = MinistryProfile.objects.create(**default_ministry_data(self.user))
 
 
 class BasicMinistryViews(BaseMinistryProfileTestCase):
@@ -36,28 +32,25 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
         self.login()
         response = self.client.get(_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,       # assert correct template
-                            "ministry/ministry_content")
+        self.assertContains(response,  # assert correct template
+                            "ministry/ministry_application")
 
         # assert proper POST data
-        _new = {'name': 'a new ministry',
-                'website': "https://ministrywebsite.com",
-                'address': 'Philadelphia, PA',
-                'phone_number': '(753)123-7770'}
+        _new = default_ministry_data()
         response = self.client.post(_url, data=_new)
         _min = MinistryProfile.objects.get(name=_new['name'])
         self.volatile.append(_min)
         self.assertTrue(bool(_min))
-        self.assertRedirects(response, reverse('ministry:ministry_profile'))
+        self.assertRedirects(response, reverse('ministry:ministry_profile',
+                                               kwargs={'ministry_id': _min.id}))
 
         # TODO: test malformed POST and redirect on error
         # TODO: test MinistryProfile.banner_img
         # TODO: test MinistryProfile.profile_img
-        # TODO: test that feedback on success
-        # TODO: test that feedback on success
+        # TODO: test feedback on success
 
-    def testEdit_ministry(self):
-        _url = reverse('ministry:edit_ministry', kwargs={'ministry_id': self.obj.id})
+    def testAdminPanel(self):
+        _url = reverse('ministry:admin_panel', kwargs={'ministry_id': self.obj.id})
 
         # assert that User must be logged in
         response = self.client.get(_url)
@@ -69,16 +62,10 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
         self.login()
         response = self.client.get(_url)
         self.assertContains(response,
-                            "ministry/ministry_content")
+                            "ministry/admin_panel")
 
-        # assert redirect when incorrect permissions
-        new_user = self.create_user(email, password)
-        self.volatile.append(new_user)
-        self.login(email, password)
-
-        response = self.client.get(_url)
-        self.assertEqual(response.status_code, 302)
-        # TODO: test messages
+        new_user = self.assert_not_authorized_redirect(_url)
+        # TODO: test messages for incorrect permissions
 
         # assert rep permissions
         self.obj.reps.add(new_user)
@@ -86,29 +73,30 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
 
         response = self.client.get(_url)
         # TODO: assert messages
-        self.assertContains(response,
-                            "ministry/ministry_content")
+        self.assertContains(response, "ministry/admin_panel")
 
         # assert proper POST data
         _edit = {'name': "a new name",
                  'website': "https://ministrywebsite.com",
                  'address': "USA",
                  'phone_number': "(123)753-2468"}
+        # TODO: add other attributes
+        # TODO: test tags string
+        # TODO: test reps string
         for key, val in _edit.items():
-            data = {attr: getattr(self.obj, attr) for attr in _edit.keys()}
+            data = default_ministry_data()
             data[key] = val
             response = self.client.post(_url, data=data)
 
             # for some reason, self.obj does not reflect changes
             _min = MinistryProfile.objects.get(id=self.obj.id)
             self.assertEqual(getattr(_min, key), val)
-            self.assertRedirects(response, "/#/ministry/%s" % self.obj.id)
+            self.assertRedirects(response, "/ministry/%s" % self.obj.id)
 
         # TODO: test malformed POST and redirect on error
         # TODO: test MinistryProfile.banner_img
         # TODO: test MinistryProfile.profile_img
-        # TODO: test that feedback on success
-        # TODO: test that feedback on success
+        # TODO: test feedback on success
 
     def testDelete_ministry(self):
         obj = MinistryProfile.objects.create(name="another one",
@@ -127,16 +115,8 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
                              + "%s/delete" % self.obj.id)
 
         # assert denial for reps
-        new_user = self.create_user(email, password)
-        self.volatile.append(new_user)
-        self.login(email, password)
-
-        self.obj.reps.add(new_user)
-        self.obj.save()
-
-        response = self.client.get(_url)
-        self.assertEqual(response.status_code, 302)
-        # TODO: test messages
+        new_user = self.assert_not_authorized_redirect(_url)
+        # TODO: test messages on permission error
 
         # assert admin permissions
         self.login()
@@ -144,10 +124,9 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
         self.assertEqual(response.status_code, 302)
         response = self.client.get(_url, follow=True)
         # TODO: test messages
-        self.assertContains(response,   # test redirect and template
-                            "people/profile")
+        self.assertContains(response, "people/profile")
 
-        # TODO: test that object is not deleted with existing data
+        # TODO: test that existing data prevents object deletion
         # TODO: test feedback on success
         # TODO: test feedback on error
 
@@ -155,8 +134,7 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
         _url = reverse('ministry:ministry_profile', kwargs={'ministry_id': self.obj.id})
 
         response = self.client.get(_url)
-        self.assertContains(response,
-                            "ministry/ministry_details")
+        self.assertContains(response, "ministry/view_ministry")
 
 
 class MinistryJsonViews(BaseMinistryProfileTestCase):
@@ -197,12 +175,7 @@ class MinistryInteractionViews(BaseMinistryProfileTestCase):
                              + "%s/login" % self.obj.id)
 
         # assert denial for non-associated users
-        new_user = self.create_user(email, password)
-        self.volatile.append(new_user)
-        self.login(email, password)
-
-        response = self.client.get(_url)
-        self.assertEqual(response.status_code, 302)
+        new_user = self.assert_not_authorized_redirect(_url)
 
         with self.assertRaises(RedirectCycleError):
             self.client.get(_url, follow=True)
@@ -238,21 +211,19 @@ class MinistryInteractionViews(BaseMinistryProfileTestCase):
 
         # assert that User must be logged in
         response = self.client.get(_url)
-        self.assertRedirects(response,
-                             "/people/login?next=%2Fministry%2F"
-                             + "%s/request" % self.obj.id)
+        self.assertRedirects(response, "/people/login?next=%2Fministry%2F"
+                             + "%s/reps/request" % self.obj.id)
 
         # test denial to admin and reps
         self.login(self.user_email, self.user_password)
         response = self.client.get(_url)
-        self.assertRedirects(response,
-                             "/ministry/%s" % self.obj.id)
+        self.assertRedirects(response, "/ministry/%s" % self.obj.id)
         # TODO: test denial message
 
         # assert denial for reps
-        new_user = self.create_user(email, password)
+        new_user = self.create_user(EMAIL, PASSWORD)
         self.volatile.append(new_user)
-        self.login(email, password)
+        self.login(EMAIL, PASSWORD)
 
         self.obj.reps.add(new_user)
         self.obj.save()
@@ -263,9 +234,9 @@ class MinistryInteractionViews(BaseMinistryProfileTestCase):
         # TODO: test denial message
 
         # assert non-associated User
-        new_user = self.create_user(email, password)
+        new_user = self.create_user(EMAIL, PASSWORD)
         self.volatile.append(new_user)
-        self.login(email, password)
+        self.login(EMAIL, PASSWORD)
 
         response = self.client.get(_url)
         self.assertRedirects(response,

@@ -19,8 +19,7 @@ CC_DEFAULT = {"amount": 7531.00,
 
 class BaseTestCase(TestCase):
     def setUp(self):
-        self.user = User.objects.create(email="test@testing.com",
-                                        display_name="test user")
+        self.user = User.objects.create(email="test@testing.com", )
         self.min = MinistryProfile.objects.create(name='Test Ministry',
                                                   admin=self.user,
                                                   website="website.com",

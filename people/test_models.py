@@ -5,7 +5,7 @@ from os import path
 import tempfile
 from datetime import datetime
 
-from .models import User, BLANK_AVATAR
+from .models import User, DEFAULT_PROFILE_IMG
 
 
 class UserTestCase(TestCase):
@@ -21,7 +21,7 @@ class UserTestCase(TestCase):
     # Attribute Tests #
     ###################
 
-    def testAtttributeDefaults(self):
+    def testAttributeDefaults(self):
         """ Test default values of `User` model.
         """
         self.assertEqual(self.user.email, self.email)
@@ -31,12 +31,11 @@ class UserTestCase(TestCase):
         self.assertFalse(self.user.is_staff)
 
         self.assertEqual(type(self.user.date_joined), datetime)
-        self.assertEqual(self.user.profile_img_url, BLANK_AVATAR)
 
-        _null = ('first_name', 'last_name', 'display_name',
-                 'logged_in_as', '_location', '_profile_img')
+        _null = ('first_name', 'last_name',
+                 'logged_in_as', '_location',)
         for attr in _null:
-            self.assertFalse(getattr(self.user, attr))      # passes if None
+            self.assertFalse(getattr(self.user, attr))  # passes if None
 
     def testUniqueEmail(self):
         """ Asserts that two users are unable to share the same email.
@@ -60,21 +59,21 @@ class UserTestCase(TestCase):
         This should test that `User.display_name` is dynamically generated.
         """
         # test defaults when User has no name
-        for attr in ('first_name', 'last_name', 'display_name'):
-            self.assertEqual(getattr(self.user, attr), None)
+        for attr in ('first_name', 'last_name'):
+            self.assertEqual(getattr(self.user, attr), '')
 
         self.assertEqual(self.user.name, 'You')
 
         # test property when User has name data
         f_name = 'first'
-        d_name = 'display name'
-
-        self.user.display_name = d_name
-        self.assertEqual(self.user.name, d_name)
+        l_name = 'last'
 
         self.user.first_name = f_name
-        self.assertEqual(self.user.name, f_name)
-        self.assertTrue(self.user.display_name)     # passes if not None
+        self.assertAlmostEqual(self.user.name.lower(), f_name)
+
+        self.user.last_name = l_name
+        self.assertIn(f_name, self.user.name.lower())
+        self.assertIn(l_name[0].lower(), self.user.name.lower())
 
     def testProfileImgFunctionality(self):
         """ Test that a user is able to use a url or a file.
@@ -82,18 +81,16 @@ class UserTestCase(TestCase):
         This does not test storage location or UI.
         """
         # the assumption is that an avatar url is provided by default
-        self.assertEqual(self.user.profile_img, BLANK_AVATAR)
-        self.assertEqual(self.user.profile_img_url, BLANK_AVATAR)
+        self.assertEqual(self.user.profile_img.path, DEFAULT_PROFILE_IMG)
 
+        # assert URL of uploaded file
         with tempfile.TemporaryDirectory(dir="./static/media") as d:
             with tempfile.NamedTemporaryFile(dir=d) as f:
                 t_fp = f.name[f.name.index(path.split(d)[1]):]
-            self.user._profile_img = t_fp
+            self.user.profile_img = t_fp
             self.user.save()
-            self.assertEqual(self.user.profile_img,
+            self.assertEqual(self.user.profile_img.url,
                              '/static/media/%s' % t_fp)
-
-        self.assertEqual(self.user.profile_img_url, BLANK_AVATAR)
 
     def testLocationFunctionality(self):
         """ Test lazy relationship methods of `User` and `GeoLocation`.

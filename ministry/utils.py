@@ -1,6 +1,7 @@
 from os import path, makedirs
 
 from django.conf import settings
+from django.db.models import Model
 
 from frontend.utils import send_email, render_jinja_template
 
@@ -42,29 +43,33 @@ def serialize_ministry(ministry):
 
 
 # MinistryProfile Utility Functions
-def dedicated_ministry_dir(instance, prepend=''):
-    """ Helper function that returns dedicated directory for all ministry media.
+def dedicated_ministry_dir(instance: Model or str, prepend='') -> str:
+    """ Returns path of dedicated directory for all ministry media.
 
     This organizes and partitions user uploaded content per ministry.
 
     Arguments
     =========
-    instance: (MinistryProfile)
-        Must be a campaign object. Must at least have `name` attribute.
+    instance: MinistryProfile or str
+        Must be a campaign object, or the name of. Must at least have `name` attribute.
+        `Model` is specified as one of the parameter types instead of `MinistryProfile`
+        prevent a circular dependency.
 
-    prepend: (str)
+    prepend: str, optional
         Desired str to prepend to path. This is passed to `dedicated_ministry_dir`.
 
     Returns
     =======
-    (str):
+    str:
         Path to dedicated directory for MinistryProfile media
     """
-    return path.join(prepend, 'ministries', instance.name)
+    if type(instance) != str:
+        instance = instance.name
+    return path.join(prepend, 'ministries', instance)
 
 
 def ministry_banner_dir(instance, filename, prepend=''):
-    """ Helper function that returns dedicated directory for MinistryProfile banner media.
+    """ Returns path of dedicated directory for MinistryProfile banner media.
 
     This organizes user uploaded MinistryProfile content and is used by `ministry.models.MinistryProfile.banner_img`
         to save uploaded content.

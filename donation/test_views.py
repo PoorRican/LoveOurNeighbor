@@ -6,10 +6,10 @@ from datetime import date
 
 from people.models import User
 from ministry.models import (
-    MinistryProfile, Campaign
-    )
+    MinistryProfile,
+)
 
-from .models import Donation, ccPayment, COUNTRIES, PAYMENT_TYPES
+from .models import Donation, ccPayment, PAYMENT_TYPES
 
 
 class BaseDonationViewTestCase(TestCase):
@@ -93,8 +93,7 @@ class BaseDonationViewTestCase(TestCase):
 
         self.user_password = "doesThisWork"
         self.user_email = "user@test.com"
-        self.user = self.create_user(self.user_email, self.user_password,
-                                     display_name="Mister Test User")
+        self.user = self.create_user(self.user_email, self.user_password, )
 
         self.volatile = []
 

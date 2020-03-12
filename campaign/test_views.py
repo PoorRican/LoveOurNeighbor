@@ -14,8 +14,7 @@ class TestCampaignViews(BaseViewTestCase):
     def setUp(self):
         super().setUp()
 
-        self.user = self.create_user(self.user_email, self.user_password,
-                                     display_name="Mister Test User")
+        self.user = self.create_user(self.user_email, self.user_password, )
 
         self.min_name = "Test Ministry"
         self.min = MinistryProfile.objects.create(name=self.min_name,
@@ -38,16 +37,15 @@ class TestCampaignViews(BaseViewTestCase):
 
         # assert that User must be logged in
         response = self.client.get(_url)
-        self.assertRedirects(response,
-                             "/people/login?next=%2Fministry%2F"
-                             + "%s" % self.min.id + "%2Fcampaign%2Fcreate")
+        self.assertRedirects(response, "/people/login?next=%2Fcampaign%2Fministry%2F"
+                             + "%s" % self.min.id + "%2Fcreate")
 
         # assert correct template after user login
         self.login()
         response = self.client.get(_url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,  # assert correct template
-                            "admin_panel.html")
+                            "campaign/create_campaign")
 
         # assert proper POST data
         _new = {'title': 'a new campaign',
@@ -83,12 +81,7 @@ class TestCampaignViews(BaseViewTestCase):
                             "ministry/campaign_content")
 
         # assert redirect when incorrect permissions
-        new_user = self.create_user(email, password)
-        self.volatile.append(new_user)
-        self.login(email, password)
-
-        response = self.client.get(_url)
-        self.assertEqual(response.status_code, 302)
+        new_user = self.assert_not_authorized_redirect(_url)
         # TODO: test messages
 
         # assert rep permissions
