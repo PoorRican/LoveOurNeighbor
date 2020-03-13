@@ -123,6 +123,10 @@ def send_email(to: str, subject: str, html: str, from_email: str, tags=None, nam
 
     `MG_API_KEY` and `MG_DOMAIN` must first be set in `frontend.settings`.
 
+    Notes
+    -----
+        The `DEBUG` settings flag disables this feature completely for automated testing and debugging.
+
     Arguments
     =========
     to: (str)
@@ -148,14 +152,14 @@ def send_email(to: str, subject: str, html: str, from_email: str, tags=None, nam
     response:
         Returns requests.Response object
     """
-    return post(
-        "https://api.mailgun.net/v3/%s/messages" % settings.MG_DOMAIN,
-        auth=('api', settings.MG_API_KEY),
-        data={'from': "%s <%s>" % (name, from_email),
-              'to': to,
-              'subject': subject,
-              'html': html,
-              'o:tag': tags})
+    if not settings.DEBUG:
+        return post("https://api.mailgun.net/v3/%s/messages" % settings.MG_DOMAIN,
+                    auth=('api', settings.MG_API_KEY),
+                    data={'from': "%s <%s>" % (name, from_email),
+                          'to': to,
+                          'subject': subject,
+                          'html': html,
+                          'o:tag': tags})
 
 
 def sanitize_wysiwyg_input(data: str) -> str:
