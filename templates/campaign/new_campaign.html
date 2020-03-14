@@ -4,6 +4,7 @@
 {% extends "layout.html" %}
 
 {% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
+{% from "macros/parts/campaign_date_input_scripts.html" import campaign_date_input_scripts %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 {% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
 {% from "macros/parts/get_obj_json.html" import get_obj_json %}
@@ -50,7 +51,7 @@
           {# TODO: validate that dates have been entered #}
           <div class="col l6 s12 input-field">
             <i class="material-icons prefix">today</i>
-            <input id="start_date" type="text" name="start_date" class="datepicker"
+            <input id="start_date" type="text" name="start_date" class="pickadate"
                    style="width: calc(100% - 7rem);" required>
             <label for="start_date" style="width: calc(100% - 7rem);">{{ form.start_date.label }}</label>
             <a class="btn-flat modal-trigger grey-text darken-2" href="#start_end_help_modal">
@@ -60,7 +61,7 @@
 
           <div class="col l6 s12 input-field">
             <i class="material-icons prefix">today</i>
-            <input id="end_date" type="text" name="end_date" class="datepicker"
+            <input id="end_date" type="text" name="end_date" class="pickadate"
                    style="width: calc(100% - 7rem)" required>
             <label for="end_date" style="width: calc(100% - 7rem);">{{ form.end_date.label }}</label>
             <a class="btn-flat modal-trigger grey-text darken-2" href="#start_end_help_modal">
@@ -138,6 +139,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
+
+  {{ campaign_date_input_scripts('.pickadate') }}
 
   {% set page_assets = (
   'app.module.js',

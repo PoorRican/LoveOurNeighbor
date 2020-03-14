@@ -17,7 +17,6 @@
 - Static pages:
     * About Us Blurbs
 - Help Blurbs for ministries:
-    * Explaining start/stop dates (when creating a Campaign)
     * Explaining details in Ministry Profile Page
 - Add Cookie Consent Banner from Termly
 - Unverified ministries/campaigns should not be on homepage

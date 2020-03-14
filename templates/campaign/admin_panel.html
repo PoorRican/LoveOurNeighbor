@@ -4,6 +4,7 @@
 {% extends "layout.html" %}
 
 {% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
+{% from "macros/parts/campaign_date_input_scripts.html" import campaign_date_input_scripts %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 {% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
 {% from "macros/parts/get_obj_json.html" import get_obj_json %}
@@ -59,16 +60,16 @@
             {# TODO: validate that dates have been entered #}
             <div class="col l6 s12 input-field">
               <i class="material-icons prefix">today</i>
-              <input id="start_date" type="text" name="start_date" class="datepicker"
-                     value="{{ campaign.start_date.strftime('%m/%d/%Y') }}"
+              <input id="start_date" type="text" name="start_date" class="pickadate"
+                     data-value="{{ campaign.start_date.strftime('%m/%d/%Y') }}"
                      required>
               <label for="start_date">{{ form.start_date.label }}</label>
             </div><!-- /start_date -->
 
             <div class="col l6 s12 input-field">
               <i class="material-icons prefix">today</i>
-              <input id="end_date" type="text" name="end_date" class="datepicker"
-                     value="{{ campaign.end_date.strftime('%m/%d/%Y') }}"
+              <input id="end_date" type="text" name="end_date" class="pickadate"
+                     data-value="{{ campaign.end_date.strftime('%m/%d/%Y') }}"
                      required>
               <label for="end_date">{{ form.end_date.label }}</label>
             </div><!-- /end_date -->
@@ -260,6 +261,8 @@
 
     drawGraph(objJsonURL, donationJsonURL);
   </script>
+
+  {{ campaign_date_input_scripts('.pickadate') }}
 
 {% endblock %}
 
