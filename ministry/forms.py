@@ -31,9 +31,6 @@ class MinistryEditForm(forms.ModelForm):
         self.fields['selected_banner_img'] = forms.CharField(max_length=64, required=False)
         self.fields['selected_profile_img'] = forms.CharField(max_length=64, required=False)
 
-    def clean_description(self):
-        self.cleaned_data['description'] = sanitize_wysiwyg_input(self.cleaned_data['description'])
-
     def save(self, commit=True) -> MinistryProfile:
         """ Handles related data such as ForeignKey relationships and media directories.
 
@@ -101,6 +98,10 @@ class MinistryEditForm(forms.ModelForm):
             self.data['location'] = self.data['address']
 
         Tag.process_tags(self.instance, self.data.get('tags', ''))
+
+        # Cleaned Data
+        # for some reason the `clean_description` overwritten method nullified the value
+        self.instance.description = sanitize_wysiwyg_input(self.data.get('description', ''))
 
         return super(MinistryEditForm, self).save(commit=commit)
 

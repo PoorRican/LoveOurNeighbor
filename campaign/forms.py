@@ -20,9 +20,6 @@ class CampaignEditForm(forms.ModelForm):
         self.fields['tags'] = forms.CharField(max_length=256, required=False)
         self.fields['selected_banner_img'] = forms.CharField(max_length=64, required=False)
 
-    def clean_content(self):
-        self.cleaned_data['content'] = sanitize_wysiwyg_input(self.cleaned_data['content'])
-
     def save(self, commit=True):
         new_object = False
         try:
@@ -51,6 +48,10 @@ class CampaignEditForm(forms.ModelForm):
                 self.instance.banner_img = campaign_banner_dir(self.instance, banner_img)
 
         Tag.process_tags(self.instance, self.data.get('tags', ''))
+
+        # Cleaned Data
+        # for some reason the `clean_description` overwritten method nullified the value
+        self.instance.content = sanitize_wysiwyg_input(self.data.get('content', ''))
 
         return super(CampaignEditForm, self).save(commit=commit)
 
