@@ -41,6 +41,7 @@ strptime = datetime.strptime
 
 
 # Ministry Views
+
 @login_required
 def create_ministry(request):
     """ Renders form for creating `MinistryProfile` object.
@@ -75,6 +76,7 @@ def create_ministry(request):
             return HttpResponseRedirect(_url)
 
         else:
+            print(min_form.errors.as_data())
             for _, message in min_form.errors.items():
                 messages.add_message(request, messages.ERROR, message[0])
             _url = reverse('ministry:create_ministry')
@@ -93,7 +95,7 @@ def admin_panel(request, ministry_id):
     Redirects To
     ------------
     'ministry:ministry_profile'
-        Upon success, or if the user does not have sufficient priveleges.
+        Upon success, or if the user does not have sufficient privileges.
 
     Template
     --------
@@ -114,13 +116,12 @@ def admin_panel(request, ministry_id):
     try:
         ministry = MinistryProfile.objects.get(pk=ministry_id)
         # TODO: set up ministry permissions
-        if request.user == ministry.admin or \
-           request.user in ministry.reps.all():
+        if ministry.authorized_user(request.user):
             if request.method == 'POST':
                 _form = MinistryEditForm(request.POST, request.FILES,
                                          instance=ministry)
                 if _form.is_valid():
-                    ministry.save()
+                    _form.save()
 
                     # handle response and generate UI feedback
                     _w = 'Changes saved to %s!' % ministry.name
@@ -309,7 +310,7 @@ def login_as_ministry(request, ministry_id):
         The user is made aware upon returning via django-messages.
     """
     ministry = MinistryProfile.objects.get(pk=ministry_id)
-    if request.user == ministry.admin or request.user in ministry.reps.all():
+    if ministry.authorized_user(request.user):
         request.user.logged_in_as = ministry
         request.user.save()
 
@@ -328,6 +329,7 @@ def login_as_ministry(request, ministry_id):
 
 
 # Admin Management
+
 @login_required
 def request_to_be_rep(request, ministry_id):
     """ Enables newly created users request to be a ministry representative.
@@ -336,8 +338,7 @@ def request_to_be_rep(request, ministry_id):
         is approved by the ministry admin.
     """
     ministry = MinistryProfile.objects.get(id=ministry_id)
-    if not(request.user == ministry.admin or
-           request.user in ministry.reps.all()):
+    if not ministry.authorized_user(request.user):
         # TODO: create notification to `ministry.admin`
         ministry.requests.add(request.user)
         ministry.save()
@@ -362,14 +363,15 @@ def rep_management(request, ministry_id):
     request
     ministry_id
     """
+    # TODO: encapsulate this into a member function of `MinistryProfile`
     try:
         ministry = MinistryProfile.objects.get(pk=ministry_id)
-        if request.user == ministry.admin or \
-                request.user in ministry.reps.all():
+        if ministry.authorized_user(request.user):
             if request.method == 'POST' and request.POST['reps'].value():
                 try:
                     for r in json.loads(request.POST['reps'].value()):
-                        # TODO: notify user
+                        # TODO: notify user that their request has been accepted
+                        # TODO: catchall for when user does not exist here
                         u = User.objects.get(email=r['email'])
                         ministry.reps.add(u)
                         ministry.requests.remove(u)
@@ -390,6 +392,8 @@ def rep_management(request, ministry_id):
     return HttpResponseRedirect(_url)
 
 
+# JSON Views
+
 def ministry_json(request, ministry_id):
     """ Returns serialized `MinistryProfile` object as json.
 
@@ -407,8 +411,7 @@ def ministry_json(request, ministry_id):
 
     _json = serialize_ministry(ministry)
     _json['liked'] = _liked
-    # TODO: do not always transmit `description` to save on server side processing power
-    # del _json['description']        # remove to tx less data
+    del _json['description']  # remove to tx less data
 
     return JsonResponse(_json)
 
@@ -425,7 +428,7 @@ def ministry_banners_json(request, ministry_id):
 
     imgs = os.listdir(_dir)
     for i in imgs:
-        _json['available'][i] = os.path.join(MEDIA_URL, ministry_banner_dir(ministry, i))
+        _json['available'][i] = ministry_banner_dir(ministry, i, MEDIA_URL)
 
     try:
         _current = ministry.banner_img.path
@@ -485,10 +488,11 @@ def donations_json(request, ministry_id):
 
 
 # User Interaction
+
 @login_required
 def like_ministry(request, ministry_id):
-    """
-    Encapsulates both 'like' and 'unlike' functionality relating `User` to `MinistryProfile`
+    """ Encapsulates both 'like' and 'unlike' functionality relating `User` to `MinistryProfile`
+
     Parameters
     ----------
     request
@@ -501,6 +505,7 @@ def like_ministry(request, ministry_id):
         whether the User 'likes' the ministry.
 
     """
+    # TODO: implement this functionality into a method of `User`
     ministry = MinistryProfile.objects.get(id=ministry_id)
     if not bool(ministry in request.user.likes_m.all()):
         ministry.likes.add(request.user)

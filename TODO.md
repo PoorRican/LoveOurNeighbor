@@ -70,6 +70,7 @@ Things to do before ministries will be using the site:
 - Show feedback for denied transaction in `confirm_donation`
 - Implement similar ministries/campaigns via Tags to display on Ministry Profile page
 - Generator function to create news feed for Ministry Profile (aggregating Campaigns/News Posts, sorted by `pub_date`)
+- Implement [custom error pages](https://docs.djangoproject.com/en/3.0/topics/http/views/)
 
 ## Hard Release Features
 Things to do before Users will be using the site:
@@ -134,12 +135,14 @@ Things to do before Users will be using the site:
 - Fix Admin functionality
 - Help text should be in a dedicated app so that it is editable
 - Implement generic relations for NewsPost [using contenttypes](https://docs.djangoproject.com/en/3.0/ref/contrib/contenttypes/)
+- Implement [django-rest-framework](https://www.django-rest-framework.org/) for making way for implementing an app
 
 ## Features
 ### Priority
 - User to User messaging
 - Church profiles
 - Mailing List functionality
+- Ministry being able to send mass email to all donors or subscribers
 
 ### Low Priority
 - Commenting

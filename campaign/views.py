@@ -65,8 +65,7 @@ def edit_campaign(request, campaign_id):
     try:
         campaign = Campaign.objects.get(id=campaign_id)
         # TODO: set up permissions
-        if request.user == campaign.ministry.admin or \
-                request.user in campaign.ministry.reps.all():
+        if campaign.authorized_user(request.user):
             if request.method == 'POST':
                 _form = CampaignEditForm(request.POST, request.FILES,
                                          instance=campaign)
@@ -245,8 +244,8 @@ def donations_json(request, campaign_id):
 
 @login_required
 def like_campaign(request, campaign_id):
-    """
-    Encapsulates both 'like' and 'unlike' functionality relating `User` to `Campaign`
+    """ Encapsulates both 'like' and 'unlike' functionality relating `User` to `Campaign`
+
     Parameters
     ----------
     request
@@ -259,6 +258,7 @@ def like_campaign(request, campaign_id):
         whether the User 'likes' the ministry.
 
     """
+    # TODO: implement this functionality into a method of `User`
     cam = Campaign.objects.get(id=campaign_id)
     if not bool(cam in request.user.likes_c.all()):
         cam.likes.add(request.user)

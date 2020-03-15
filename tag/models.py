@@ -11,16 +11,11 @@ class Tag(models.Model):
 
     @classmethod
     def process_tags(cls, obj, tag_str):
-        _tags = str(tag_str).lower().split(',')
+        _tags = str(tag_str).split(', ')
+        # TODO: somehow ignore case from user input, but preserve case in existing...
         if _tags:
             # TODO: have smart tag selection (tags selected by description)
             for t in _tags:
-                if not len(t):
-                    continue
-                elif t[0] == ' ':
-                    t = t[1:]
-                elif t[-1] == ' ':
-                    t = t[:-1]
                 if t:
                     _t, _ = cls.objects.get_or_create(name=t)
                     obj.tags.add(_t)

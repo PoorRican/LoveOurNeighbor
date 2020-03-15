@@ -165,6 +165,10 @@ def ministry_images(ministry):
         and a caption string as 'caption'.
 
     """
+    # TODO: This should be redone with django's `contenttypes`
+    # TODO: It might be cleaner if media files had their own db schema,
+    #   that way media can be queried easily, and objects may easily have more
+    #   then one image associated with them.
     gallery = []
     for i in ministry.news.all():
         if i.attachment is not None:

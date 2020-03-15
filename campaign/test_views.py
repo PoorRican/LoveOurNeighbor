@@ -118,7 +118,7 @@ class TestCampaignViews(BaseViewTestCase):
             # for some reason, self.obj does not reflect changes
             _cam = Campaign.objects.get(title=_edit['title'])
             self.assertEqual(getattr(_cam, key), val)
-            self.assertRedirects(response, "/#/ministry/campaign/%s" % _cam.id)
+            self.assertRedirects(response, "/campaign/%s" % _cam.id)
 
     def testDeleteCampaign(self):
         obj = Campaign.objects.create(title="test",
@@ -162,7 +162,7 @@ class TestCampaignViews(BaseViewTestCase):
         _url = reverse('campaign:campaign_detail', kwargs={'campaign_id': self.obj.id})
 
         response = self.client.get(_url)
-        self.assertContains(response, "view_campaign.html")
+        self.assertContains(response, "campaign/view_campaign")
 
     def testCampaignJson(self):
         _url = reverse('campaign:campaign_json', kwargs={'campaign_id': self.obj.id})
@@ -177,7 +177,7 @@ class TestCampaignViews(BaseViewTestCase):
         # TODO: test data content
 
 
-class TestMinistryEditForm(TestCase):
+class TestCampaignEditForm(TestCase):
     """ These critical test cases, ensure that the CampaignEditform is working. """
 
     def setUp(self):

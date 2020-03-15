@@ -1,15 +1,17 @@
+from os import path
+from shutil import move
+
 from django.db import models
 from django.urls import reverse
 
-from pickle import loads, dumps
-from random import shuffle
-
-from frontend.settings import DEFAULT_PROFILE_IMG
+from frontend.settings import DEFAULT_PROFILE_IMG, MEDIA_ROOT
 from explore.models import GeoLocation
 from people.models import User
 from tag.models import Tag
 
 from .utils import (
+    create_ministry_dir,
+    dedicated_ministry_dir,
     ministry_banner_dir,
     ministry_profile_image_dir,
 )
@@ -65,6 +67,8 @@ class MinistryProfile(models.Model):
     def __str__(self):
         return self.name
 
+    # Properties
+
     @property
     def donated(self):
         amt = 0
@@ -97,18 +101,6 @@ class MinistryProfile(models.Model):
         gl.save()
 
     @property
-    def social_media(self):
-        try:
-            return loads(self._social_media)
-        except EOFError:
-            return {}
-
-    @social_media.setter
-    def social_media(self, links):
-        self._social_media = dumps(links)
-        self.save()
-
-    @property
     def url(self):
         return reverse('ministry:ministry_profile',
                        kwargs={'ministry_id': self.id})
@@ -123,31 +115,9 @@ class MinistryProfile(models.Model):
         return reverse('ministry:ministry_json',
                        kwargs={'ministry_id': self.id})
 
-    @classmethod
-    def new_ministries(cls):
-        if cls.objects.count() == 0:
-            return False
-
-        results = cls.objects.filter(verified='True')
-        return results.order_by('pub_date')[:10]
-
-    @classmethod
-    def random_ministries(cls):
-        if cls.objects.count() <= 10:
-            return False
-
-        results = cls.objects.filter(verified='True')
-        return results.order_by('?')[:10]
-
-    def authorized_user(self, user):
-        if user in self.reps.all() or user == self.admin:
-            return True
-        else:
-            return False
-
     @property
     def has_tags(self):
-        if self.tags.all():
+        if self.tags.count():
             return True
         else:
             return False
@@ -155,6 +125,26 @@ class MinistryProfile(models.Model):
     @property
     def like_count(self):
         return self.likes.count()
+
+    # Class Methods
+
+    @classmethod
+    def new_ministries(cls, n=10):
+        if cls.objects.count() == 0:
+            return False
+
+        results = cls.objects.filter(verified='True')
+        return results.order_by('pub_date').reverse()[:n]
+
+    @classmethod
+    def random_ministries(cls, n=10):
+        if cls.objects.count() <= 10:
+            return False
+
+        results = cls.objects.filter(verified='True')
+        return results.order_by('?')[:n]
+
+    # Member Functions
 
     def similar_ministries(self):
         """
@@ -165,9 +155,45 @@ class MinistryProfile(models.Model):
         List of `MinistryProfile`
 
         """
+        # TODO: use a `Q` to perform this query
+        # TODO: ministries should be 'scored' by # of overlapping tags
         similar = []
         for t in self.tags.all():
             for m in t.ministries.all():
                 if m not in similar and not (m == self):
                     similar.append(m)
         return similar
+
+    def authorized_user(self, user):
+        if user in self.reps.all() or user == self.admin:
+            return True
+        else:
+            return False
+
+    def rename(self, name, prepend=MEDIA_ROOT):
+        try:
+            MinistryProfile.objects.get(name=name)
+            raise ValueError("An object with this name already exists")
+        except MinistryProfile.DoesNotExist:
+            pass
+        _old_dir = dedicated_ministry_dir(self, prepend=prepend)
+        _new_dir = dedicated_ministry_dir(name, prepend=prepend)
+
+        try:
+            move(_old_dir, _new_dir)
+
+            # update object media file path attributes
+            if self.banner_img:
+                _img = path.basename(self.banner_img.path)
+                self.banner_img = ministry_banner_dir(name, _img)
+
+            if self.profile_img and self.profile_img.path != DEFAULT_PROFILE_IMG:
+                _img = path.basename(self.profile_img.path)
+                _img = ministry_profile_image_dir(name, _img)
+                self.profile_img = _img
+
+            self.save()
+        except FileNotFoundError:
+            # assume there is no dedicated directory. This is a redundant catchall.
+            create_ministry_dir(self)
+            self.rename(name)

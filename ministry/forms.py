@@ -7,7 +7,6 @@ from frontend.utils import sanitize_wysiwyg_input
 from people.models import User
 from tag.models import Tag
 
-from .models import DEFAULT_PROFILE_IMG
 from .utils import (
     dedicated_ministry_dir,
     ministry_banner_dir,
@@ -57,6 +56,7 @@ class MinistryEditForm(forms.ModelForm):
 
             # object must 'exist' before ForeignKey relationships
             super(MinistryEditForm, self).save(commit=False)
+            self.instance.save()
 
             create_ministry_dir(self.instance)
 
@@ -64,25 +64,7 @@ class MinistryEditForm(forms.ModelForm):
         else:
             # move to a new directory if name change
             if self.instance.name != self.data.get('name'):
-                _old_dir = dedicated_ministry_dir(self.instance)
-                _old_dir = path.join(settings.MEDIA_ROOT, _old_dir)
-                _new_dir = dedicated_ministry_dir(self.data.get('name'))
-                _new_dir = path.join(settings.MEDIA_ROOT, _new_dir)
-
-                try:
-                    rename(_old_dir, _new_dir)
-                    # update object media file path attributes
-                    if self.instance.banner_img:
-                        _img = path.basename(self.instance.banner_img.path)
-                        self.instance.banner_img.path = ministry_banner_dir(self.instance, _img)
-
-                    if self.instance.profile_img and self.instance.profile_img.path != DEFAULT_PROFILE_IMG:
-                        _img = path.basename(self.instance.profile_img.path)
-                        _img = ministry_profile_image_dir(self.instance, _img)
-                        self.instance.profile_img = _img
-                except FileNotFoundError:
-                    # assume there is no dedicated content. This is a redundant catchall.
-                    create_ministry_dir(self.instance)
+                self.instance.rename(self.data.get('name'))
 
             # handle selection of previously uploaded media
             _img = self.data.get('selected_banner_img', False)
@@ -95,7 +77,7 @@ class MinistryEditForm(forms.ModelForm):
 
         # Handle object relationships
         if self.data.get('address', False):
-            self.data['location'] = self.data['address']
+            self.instance.location = self.data['address']
 
         Tag.process_tags(self.instance, self.data.get('tags', ''))
 

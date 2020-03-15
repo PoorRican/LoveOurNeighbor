@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import IntegrityError, transaction
 from django.test import TestCase
 
@@ -69,7 +70,7 @@ class UserTestCase(TestCase):
         l_name = 'last'
 
         self.user.first_name = f_name
-        self.assertAlmostEqual(self.user.name.lower(), f_name)
+        self.assertEqual(self.user.name.lower(), f_name)
 
         self.user.last_name = l_name
         self.assertIn(f_name, self.user.name.lower())
@@ -77,11 +78,9 @@ class UserTestCase(TestCase):
 
     def testProfileImgFunctionality(self):
         """ Test that a user is able to use a url or a file.
-
-        This does not test storage location or UI.
         """
-        # the assumption is that an avatar url is provided by default
-        self.assertEqual(self.user.profile_img.path, DEFAULT_PROFILE_IMG)
+        # test default profile image
+        self.assertEqual(self.user.profile_img.path, path.join(settings.MEDIA_ROOT, DEFAULT_PROFILE_IMG))
 
         # assert URL of uploaded file
         with tempfile.TemporaryDirectory(dir="./static/media") as d:
@@ -124,14 +123,19 @@ class UserTestCase(TestCase):
 
         # assume that location remains the same
         self.assertEqual(type(self.user.location.location),
-                         tuple)      # coordinates
+                         tuple)  # coordinates
 
     def testDonatedProperty(self):
-        return NotImplemented
+        self.fail()
 
     ################################
     # Utility Tests #
     ################################
 
     def testAuthenticateUser(self):
-        return NotImplemented
+        self.fail()
+
+    def testLikeUtility(self):
+        """ Tests that like can handle "like/dislike" for both Campaigns and MinistryProfile
+        This is a test for a utility function that does not exist yet."""
+        self.fail()
