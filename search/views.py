@@ -1,11 +1,10 @@
 from django.conf import settings
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
 from bs4 import BeautifulSoup
-import json
 
 from campaign.models import Campaign
 from ministry.models import MinistryProfile
@@ -133,10 +132,12 @@ def search_json(request, query):
         ministry_query = Q(name__icontains=query) | Q(description__icontains=query) | Q(address__icontains=query)
         campaign_query = Q(title__icontains=query) | Q(content__icontains=query)
         news_query = Q(title__icontains=query) | Q(content__icontains=query)
+        tag_query = Q(title__icontains=query) | Q(description__icontains=query)
     else:
         ministry_query = Q(name__contains=query) | Q(description__contains=query) | Q(address__contains=query)
         campaign_query = Q(title__contains=query) | Q(content__contains=query)
         news_query = Q(title__contains=query) | Q(content__contains=query)
+        tag_query = Q(title__contains=query) | Q(description__contains=query)
 
     ministries = []
     for i in MinistryProfile.objects.filter(ministry_query):
@@ -163,13 +164,20 @@ def search_json(request, query):
         except TypeError:
             posts.append(i)
 
+    # Iterate through tags
+    for i in Tag.objects.filter(tag_query):
+        for c in i.campaigns.all():
+            campaigns.append(c)
+        for m in i.ministry.all():
+            ministries.append(m)
+
     _args = {'request': request,
              'ministries': ministries,
              'campaigns': campaigns,
              'posts': posts,
              }
 
-    return HttpResponse(json.dumps(serialize_objects(**_args)))
+    return JsonResponse(serialize_objects(**_args))
 
 
 def search_tag(request, tag_name):
@@ -177,14 +185,3 @@ def search_tag(request, tag_name):
                'query': tag_name,
                }
     return render(request, "search.html", context)
-
-
-def tag_json(request, tag_name):
-    objects = Tag.objects.get(name=tag_name)
-
-    _args = {'request': request,
-             'ministries': objects.ministries.all(),
-             'campaigns': objects.campaigns.all(),
-             }
-
-    return HttpResponse(json.dumps(serialize_objects(**_args)))
