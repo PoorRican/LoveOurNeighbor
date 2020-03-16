@@ -1,15 +1,34 @@
+# Immediate Things To Do:
+* Ensure that WYSIWYG sanitization works.
+* There is a bug in profile form
+* Display/style errorlist in admin_panel (use `form.BoundField.errors.as_data()` as per [this django doc](https://docs.djangoproject.com/en/3.0/ref/forms/api/))
+* selected banner/profile images does not seem to work from views....
+* Somehow, a duplicate website attribute was allowed...
+* Add padding to content on the home page when there is no MOTD
+* Campaigns that have ended should not be shown on the home page as new...
+* Reimplement profile/banner selection via knockout.js
+* Campaigns that have ended should not be shown on home page
+
+## From Board Meeting:
+- Campaign progress slider goal shows remainder of goal, not total goal...
+- Parent Ministry should show profile image
+- Large banner images should not start at the very top for parallax images
+- Get rid of white-space
+ofaakye@gmail.com
+
+
 # Template Port Errors:
-- Tab bar in card_area has blank space on sides
 - Allow links cards (at least in MOTD cards) to be visible
-- MinistryProfile admin panel should have separate form for details and admin/rep management
-- Implement news_card using new materialize elements
 - Implement [masonry with lightbox plugin](https://dimsemenov.com/plugins/magnific-popup/) for gallery
-- Fix footer links with embedded flatpages in default flatpage template
-- Re-implement donation progress bar (see below in Low Priority > Styling Changes)
+- Prevent 'None' from showing up in Campaign/(Ministry?) description
+- Ministry/Campaign description should be a dropdown if there are NewsPost's to show
+- Format datetime picker
+- Reformat strftime in campaign side view
+- Change 'Ends' label to 'Ended' in campaign card when Campaign has ended
 
 
 # Bugs
-- Prevent duplicate donation objects from being created upon repeating GET /donation/confirm
+
 
 # Immediate Things to Implement
 - Turn link tree/sitemap into a global in Python accessible from jinja2 environment
@@ -22,6 +41,7 @@
 - Unverified ministries/campaigns should not be on homepage
 - Create a breadcrumb utility function to determine reverse pathway (w/ URLs) given an object (this should go in `frontend`)
 
+
 ## Internal Fixes
 - Profile Image Functionality:
     * Unify naming within angular functions. eg: remove 'banner' naming
@@ -30,12 +50,12 @@
     * Better image uploading
 - Remove 'login_in_as' functionality. Add settings flag to enable/disable this feature.
 - Display of Users Email
-- Display users likes
 - Edit ministry/campaign page should provide a link to view object
 - Clean up utils/ dir. Create a module with utility functions accessible via a CLI or args.
 - Separate create/edit pages for NewsPost
 - Why does `python manage.py collectstatic` not collect static files for tinymce app in docker config?
 - Tag should have a method to for search URL
+- Prevent duplicate donation objects from being created upon repeating GET /donation/confirm
 
 
 # Medium Priority 
@@ -121,6 +141,7 @@ Things to do before Users will be using the site:
     * Add animation to like_button (eg: ripple)
     * Show "unlike" upon hover when liked
 - Implement [particle.js](https://github.com/VincentGarreau/particles.js/) as background for 'register' and 'login' pages.    
+- In Donation graph, have different colors for different statistics
 
 ## Implementation Changes
 - Create custom asset handler:
