@@ -109,6 +109,7 @@
     'js/materialize.js',
     'js/plugins.js',
     'js/search.js',
+    'js/notifications.js',
   ) %}
   {% for f in layout_assets %}
     <script src="{{ static('%s' % f) }}"></script>
@@ -165,6 +166,10 @@
 
   {% block scripts %}{% endblock %}
 
+  <!-- Notifications -->
+  <script>
+    get_notifications("{{ url_for('people:messages_json') }}")
+  </script>
 
   {# }}} #}
 

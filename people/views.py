@@ -232,13 +232,28 @@ def verify_user(request, email, confirmation):
 
 
 def messages_json(request):
+    """ Returns a list of notifications received by User in JSON format.
+
+    This is to be used in displaying UI feedback.
+
+    Notes
+    -----
+        It is not necessary for Users to be logged in, as messages remain associated to sessions and
+    agnostic to `User` objects.
+
+    Returns
+    -------
+    JsonResponse
+        dict with 'notifications' as only key
+    """
     # TODO: store notification history
+    # TODO: dedicated notification object
     _json = []
     _msg = get_messages(request)
     for msg in _msg:
         _json.append({'message': str(msg),
                       'type': msg.tags})
-    return HttpResponse(json.dumps(_json))
+    return JsonResponse({'notifications': _json})
 
 
 def profile_img_json(request):

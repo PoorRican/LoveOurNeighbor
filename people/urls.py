@@ -20,6 +20,6 @@ urlpatterns = [
 
     path('donations/json', views.donation_json),
     path('likes/json', views.likes_json),
-    path('messages/json', views.messages_json),
+    path('messages/json', views.messages_json, name='messages_json'),
     path('profile_img/json', views.profile_img_json),
 ]
