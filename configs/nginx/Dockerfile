@@ -5,7 +5,7 @@ ENV SITE="-d demo.loveourneighbor.org -d loveourneighbor.org -d www.loveourneigh
 VOLUME /etc/letsencrypt
 
 RUN apt-get update
-RUN apt-get install certbot python-certbot-nginx -y
+RUN apt-get install certbot python-certbot-nginx cron -y
 
 RUN nginx
 RUN certbot run --nginx --agree-tos -m swe.fig@gmail.com $SITE --non-interactive; exit 0;
