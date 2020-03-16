@@ -1,5 +1,6 @@
 from jinja2 import Template
 from os import path, makedirs, listdir
+from uuid import uuid4
 
 from django.conf import settings
 from django.urls import reverse
@@ -80,6 +81,21 @@ def send_verification_email(request, user):
     user.email_user('Verify Account', html, 'accounts@loveourneighbor.org',
                     ['account_verification', 'internal'], 'Love Our Neighbor')
     user.save()
+
+
+def send_forgot_password_email(request, user):
+    _template = path.join(settings.BASE_DIR, 'templates/people/forgot_password_email_template.html')
+    with open(_template) as f:
+        t = f.read()
+    t = Template(t)
+    user.confirmation = uuid4()
+    user.save()
+    url = reverse('people:reset_password', kwargs={'email': user.email,
+                                                   'confirmation': user.confirmation.hex})
+    url = request.build_absolute_uri(url)
+    html = t.render({'url': url})
+    user.email_user('Password Reset Request', html, 'accounts@loveourneighbor.org',
+                    ['password_reset', 'internal'], 'Love Our Neighbor')
 
 
 # View Utility Functions

@@ -132,3 +132,15 @@ class UserEditFormTestCase(TestCase):
 
         rmtree(path.join(settings.MEDIA_ROOT, user_profile_dedicated_dir(self.user)))
 
+
+class AdvancedUserFunctionalityTestCase(TestCase):
+    def testForgotPassword(self):
+        # call forgot_password link
+        # somehow get email template used
+        # check email template for reset_password URL. Ensure that URL has correct confirmation.
+        # Assert that posting data to reset_password link changes password
+        self.fail()
+
+    def testVerifyUser(self):
+        # enable settings flag
+        self.fail()

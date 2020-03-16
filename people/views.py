@@ -1,6 +1,5 @@
 from datetime import datetime
 import os
-from uuid import uuid4
 
 from django.conf import settings
 from django.contrib import messages
@@ -23,7 +22,7 @@ from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
 from .utils import (
     clear_previous_ministry_login, user_profile_img_dir, create_profile_img_dir,
-    send_verification_email, previous_profile_images
+    send_verification_email, previous_profile_images, send_forgot_password_email
 )
 
 
@@ -317,18 +316,7 @@ def forgot_password(request):
         try:
             user = User.objects.get(email=email)
             if user.is_verified:
-                _template = os.path.join(settings.BASE_DIR, 'templates/people/forgot_password_email_template.html')
-                with open(_template) as f:
-                    t = f.read()
-                t = Template(t)
-                user.confirmation = uuid4()
-                user.save()
-                url = reverse('people:reset_password', kwargs={'email': email,
-                                                               'confirmation': user.confirmation.hex})
-                url = request.build_absolute_uri(url)
-                html = t.render({'url': url})
-                user.email_user('Password Reset Request', html, 'accounts@loveourneighbor.org',
-                                ['password_reset', 'internal'], 'Love Our Neighbor')
+                send_forgot_password_email(request, user)
                 return render(request, 'forgot_password_email_sent.html', {'email': email})
             else:
                 return render(request, 'inactive_user.html', {'email': email})
