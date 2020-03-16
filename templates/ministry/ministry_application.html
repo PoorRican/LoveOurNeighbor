@@ -173,6 +173,29 @@
 
   {{ wysiwyg_script() }}
 
+  <!-- Knockout.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+
+  <script src="{{ static('js/checkUniqueName.js' % f) }}"></script>
+  {# Ensures that the name input into the 'name' text input of the form will not conflict with
+     any existing MinistryProfile.
+
+     `MinistryEditForm.Meta` defines the 'data-bind' attribute necessary for knockout.js.
+
+     `MinistryProfile.check_unique_name` is used to validate the name as it is typed. #}
+  <script>
+    const name_element = "#id_name";
+    let uniqueName = new UniqueNameValidator("{{ url_for('ministry:check_unique_name') }}", name_element);
+
+    let inputs = [uniqueName];
+    const form_element = "#ministryForm";
+    let validator = new FormValidator(form_element, inputs);
+
+    ko.applyBindings(uniqueName);
+    {# TODO: disable form submit button when inputs are invalid #}
+    //ko.applyBindings(validator);
+  </script>
+
 {% endblock %}
 
 

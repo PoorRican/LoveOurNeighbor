@@ -70,7 +70,9 @@
             <div class="col s12 l8" ng-controller="ministryActionCtrl">
               <div id="details">
                 <div class="card-panel">
-                  <form method="POST" name="ministryForm" enctype="multipart/form-data" action="{{ ministry.edit }}">
+                  <form method="POST" name="ministryForm" id="ministryForm"
+                        enctype="multipart/form-data" action="{{ ministry.edit }}"
+                        data-bind="submit: validator.formSubmit">
                     <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
                     <input type="hidden" id="ministry_id" value="{{ ministry.id }}">
 
@@ -98,6 +100,8 @@
                         <i class="material-icons prefix">group</i>
                         {{ form.name }}
                         {{ form.name.label_tag() }}
+                        <span class="helper-text" data-error="This name is similar to another ministry"
+                              data-success=""></span>
                       </div><!-- /name -->
 
                       <div class="col s12 input-field">
@@ -356,14 +360,38 @@
 
   {{ wysiwyg_script() }}
 
-    <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <!-- Knockout.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+
+  <script src="{{ static('js/checkUniqueName.js' % f) }}"></script>
+  {# Ensures that the name input into the 'name' text input of the form will not conflict with
+     any existing MinistryProfile.
+
+     `MinistryEditForm.Meta` defines the 'data-bind' attribute necessary for knockout.js.
+
+     `MinistryProfile.check_unique_name` is used to validate the name as it is typed. #}
+  <script>
+    const name_element = "#id_name";
+    let uniqueName = new UniqueNameValidator("{{ url_for('ministry:check_unique_name') }}", name_element);
+
+    let inputs = [uniqueName];
+    const form_element = "ministryForm";
+    let validator = new FormValidator('#' + form_element, inputs);
+
+    ko.applyBindings(uniqueName);
+    {# TODO: disable form submit button when inputs are invalid #}
+    // ko.applyBindings(validator, document.getElementById(form_element));
+  </script>
+
+  <!-- Chart Stuff -->
+  <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 
 {% endblock %}
 
 
 {% block css %}
-    <link rel="stylesheet"
-          href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+  <link rel="stylesheet"
+        href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
 {% endblock %}

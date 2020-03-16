@@ -328,6 +328,13 @@ def login_as_ministry(request, ministry_id):
         return HttpResponseRedirect(reverse('ministry:login_as_ministry', kwargs={'ministry_id': ministry_id}))
 
 
+@login_required
+def check_unique_name(request):
+    """ View wrapper for `MinistryProfile.check_unique_name`. The GET request passes the query string. """
+    name = request.GET['name']
+    return JsonResponse({'unique': MinistryProfile.check_unique_name(name)})
+
+
 # Admin Management
 
 @login_required
