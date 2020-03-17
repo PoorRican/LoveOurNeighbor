@@ -1,9 +1,6 @@
 # Immediate Things To Do:
-* Ensure that WYSIWYG sanitization works.
-* There is a bug in profile form
 * Display/style errorlist in admin_panel (use `form.BoundField.errors.as_data()` as per [this django doc](https://docs.djangoproject.com/en/3.0/ref/forms/api/))
 * selected banner/profile images does not seem to work from views....
-* Somehow, a duplicate website attribute was allowed...
 * Add padding to content on the home page when there is no MOTD
 * Campaigns that have ended should not be shown on the home page as new...
 * Reimplement profile/banner selection via knockout.js
@@ -79,36 +76,13 @@ Things to do before ministries will be using the site:
     * Random Featured Ministry
     * Posts/Campaigns from Liked Ministries
 - Show banner image in ograph metadata for media sharing
-- Show feedback for denied transaction in `confirm_donation`
-- Implement similar ministries/campaigns via Tags to display on Ministry Profile page
 - Generator function to create news feed for Ministry Profile (aggregating Campaigns/News Posts, sorted by `pub_date`)
 - Implement [custom error pages](https://docs.djangoproject.com/en/3.0/topics/http/views/)
 
 ## Hard Release Features
 Things to do before Users will be using the site:
-- User Attributes:
-    * Part of the screening process:
-        - "What Church Do You Attend?":
-        - Testimony
-- Notifications:
-    * Email users:
-        - Update on the Ministries they like
-        - Update admin and reps on MinistryProfile activity
-    * Notify Users in Site:
-        - Use [this toastr.js library](https://github.com/CodeSeven/toastr) to display notifications retrieved via
-        [js Fetch API](https://scotch.io/tutorials/how-to-use-the-javascript-fetch-api-to-get-data)
-        - Create notification history
 - Better Donation/Transaction UI:
     * Payeezy Direct API
-- Static Pages to Add:
-    * Privacy Policy
-    * Terms of Service
-    * Statement of Faith:
-        - "What makes LON a Christian Ministry"
-- Django-Admin
-    * admin link should be visible for superusers who are logged in
-    
-    
     
 # Low Priority
 ## Styling Changes
@@ -149,28 +123,6 @@ Things to do before Users will be using the site:
 - Help text should be in a dedicated app so that it is editable
 - Implement generic relations for NewsPost [using contenttypes](https://docs.djangoproject.com/en/3.0/ref/contrib/contenttypes/)
 - Implement [django-rest-framework](https://www.django-rest-framework.org/) for making way for implementing an app
-
-## Features
-### Priority
-- User to User messaging
-- Church profiles
-- Mailing List functionality
-- Ministry being able to send mass email to all donors or subscribers
-
-### Low Priority
-- Commenting
-- Enable tooltips
-- Help page
-- Enable multiple admins and permissions
-- Display help on first login
-- Milestones for MinistryProfiles (email/notification)
-- Map displaying ministry location (via 'explore' tab)
-
-### Unimportant
-- Implement authors for NewsPost objects
-- Logging for Django
-- Social Media logging
-- Search functionality should have tags as a search filter
 
 ## Deployment Changes
 - nginx container should be built via staged loading to acquire certs and avoid nginx config hacks
