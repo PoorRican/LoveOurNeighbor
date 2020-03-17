@@ -10,7 +10,7 @@
            style="display: flex; -moz-box-pack: center; -webkit-box-pack: center; justify-content: center">
     <!-- people/login -->
 
-    <div class="card-panel z-depth-4 col s12 m6 l4" style="top: 100vh; margin-left: 0; padding: 50px;">
+    <div class="card-panel z-depth-4 col s12 m6" style="top: 110vh; margin-left: 0; padding: 50px;">
       <h1>Sign In</h1>
 
       <form name="loginForm" class="login" method="POST">
@@ -33,16 +33,26 @@
           </div>
         </div>
 
-        <button class="btn btn-waves orange" type="submit">Sign In</button>
+        <div class="row">
+          <div class="col s12">
+            <button class="btn btn-waves orange" type="submit">Sign In</button>
+          </div><!-- /sign-in button -->
 
-        <a class="button secondaryAction" href="{{ url_for('people:forgot_password') }}">Forgot Password?</a>
+          <div class="col s12 mt-2">
+            <a href="{{ url_for('people:forgot_password') }}">Forgot Password?</a>
+          </div><!-- /forgot password -->
+
+          <div class="col s12 mt-6">
+            <a href="{{ url_for('people:create_user') }}">Register New Account</a>
+          </div><!-- /register new account -->
+        </div>
 
       </form>
 
     </div><!-- /.card -->
 
 
-</section>
+  </section>
 {% endblock %}
 
 

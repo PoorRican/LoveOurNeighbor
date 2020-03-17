@@ -48,9 +48,10 @@
 
   {# {{{ Top Section Overlay #}
   {% if cam.banner_img %}
-    <div class="parallax-container" style='height: 250px;'>
+    <div class="parallax-container" style='height: 350px;'>
+      {# TODO: dynamic height and positioning for banner images #}
       <div class="parallax" style="z-index: 500;">
-        <img src="{{ cam.banner_img.url }}" alt="">
+        <img src="{{ cam.banner_img.url }}" alt="" style="bottom: 100px;">
       </div>
     </div>
   {% endif %}
@@ -79,7 +80,7 @@
 
             <div class="col s12">
               <h5 style="display: inline">${{ cam.donated }}</h5>
-              <h6 style="display: inline">out of ${{ cam.goal - cam.donated }} raised</h6>
+              <h6 style="display: inline">out of ${{ cam.goal }} raised</h6>
             </div>
 
             <div class="col s12 center-align mt-2">
@@ -157,7 +158,18 @@
         <div class="row">
           <div class="col s12">
             <h6>Parent Ministry</h6>
-            <a href="{{ cam.ministry.url }}">{{ cam.ministry.name }}</a><br>
+            <a href="{{ cam.ministry.url }}">
+              <div class="row">
+                <div class="col s2 pr-1">
+                  <img class="circle responsive-img" style="height: 100%;"
+                       src="{{ cam.ministry.profile_img.url }}"
+                       alt="profile img">
+                </div>
+                <div class="col s10 pl-2">
+                  {{ cam.ministry.name }}
+                </div>
+              </div>
+            </a>
           </div>
         </div><!-- /website -->
 

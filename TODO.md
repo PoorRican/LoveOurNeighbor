@@ -8,13 +8,8 @@
 * Campaigns that have ended should not be shown on the home page as new...
 * Reimplement profile/banner selection via knockout.js
 * Campaigns that have ended should not be shown on home page
-
-## From Board Meeting:
-- Campaign progress slider goal shows remainder of goal, not total goal...
-- Parent Ministry should show profile image
-- Large banner images should not start at the very top for parallax images
-- Get rid of white-space
-ofaakye@gmail.com
+* For homepage, implement [masonry](https://masonry.desandro.com/) to get rid of whitespace in where cards appear
+* For search functionality, implement [isotope](https://isotope.metafizzy.co/) with combination toggle filters as per [this codepen](https://codepen.io/desandro/pen/zrMXQv)
 
 
 # Template Port Errors:
@@ -25,9 +20,6 @@ ofaakye@gmail.com
 - Format datetime picker
 - Reformat strftime in campaign side view
 - Change 'Ends' label to 'Ended' in campaign card when Campaign has ended
-
-
-# Bugs
 
 
 # Immediate Things to Implement
