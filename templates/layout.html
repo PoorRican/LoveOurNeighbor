@@ -115,6 +115,7 @@
     <script src="{{ static('%s' % f) }}"></script>
   {% endfor %}
 
+  <!-- Initialize Materialize elements -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       let options = {};
@@ -168,7 +169,10 @@
 
   <!-- Notifications -->
   <script>
-    get_notifications("{{ url_for('people:messages_json') }}")
+    const notification_url = "{{ url_for('people:messages_json') }}";
+
+    get_notifications(notification_url);
+    window.setInterval(get_notifications, 1000, notification_url);
   </script>
 
   {# }}} #}
