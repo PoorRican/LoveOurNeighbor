@@ -31,9 +31,6 @@ def home(request):
     """ At the moment, this just finds the most recent campaign,
         and displays it almost identically to 'ministry:campaign_detail'
 
-    Similarly to the dedicated campaign view, this also aggregates
-        all related news details.
-
     Template
     --------
     "public/home.html"
@@ -42,7 +39,6 @@ def home(request):
     -----
     Eventually, this will display a custom template that renders
         featured content, news, and trending/new content.
-        But this is not implemented in any way.
     """
 
     context = {'new_ministries': MinistryProfile.new_ministries(),
