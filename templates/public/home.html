@@ -17,7 +17,9 @@
 
 
 {% block body %}
-  <div class="content-wrapper-before gradient-45deg-purple-deep-orange"></div>
+  {% if motd %}
+    <div class="content-wrapper-before gradient-45deg-purple-deep-orange"></div>
+  {% endif %}
 
   <div class="container section">
     <div class="wrapper">
