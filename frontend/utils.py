@@ -55,7 +55,7 @@ def campaign_admin_urls(campaign):
     urls = [
         {'label': 'Admin Panel',
          'icon': 'build',
-         'reverse_url': 'campaign:edit_campaign',
+         'reverse_url': 'campaign:admin_panel',
          'kwargs': {'campaign_id': campaign.id},
          },
         {'label': 'Post News',

@@ -35,10 +35,12 @@ def create_campaign(request, ministry_id):
     """ Renders form for editing or creating `Ministry` object.
     """
     ministry = MinistryProfile.objects.get(id=ministry_id)
+    # TODO: Check `ministry.is_authorized` here
+    # TODO: Catch invalid ministry_id
     if request.method == 'POST':
-        cam_form = CampaignEditForm(request.POST, request.FILES, initial={'ministry': ministry})
-        if cam_form.is_valid():
-            cam = cam_form.save()
+        form = CampaignEditForm(request.POST, request.FILES, initial={'ministry': ministry})
+        if form.is_valid():
+            cam = form.save()
 
             # handle response and generate UI feedback
             _w = 'Ministry Profile Created!'
@@ -48,55 +50,58 @@ def create_campaign(request, ministry_id):
                            kwargs={'campaign_id': cam.id})
             return HttpResponseRedirect(_url)
         else:
-            # TODO: properly return form errors
-            print("Form Errors: ")
-            print(cam_form.errors)
+            for _, message in form.errors.items():
+                messages.add_message(request, messages.ERROR, message[0])
+
     else:
-        _form = CampaignEditForm()
-        context = {"form": _form,
-                   "start": True,
-                   "ministry": ministry}
-        return render(request, "campaign/new_campaign.html", context)
+        form = CampaignEditForm()
+
+    context = {"form": form,
+               "ministry": ministry}
+    return render(request, "campaign/new_campaign.html", context)
 
 
 @login_required
-def edit_campaign(request, campaign_id):
+def admin_panel(request, campaign_id):
     _url = ''
     try:
         campaign = Campaign.objects.get(id=campaign_id)
         # TODO: set up permissions
         if campaign.authorized_user(request.user):
             if request.method == 'POST':
-                _form = CampaignEditForm(request.POST, request.FILES,
-                                         instance=campaign)
-                if _form.is_valid():
-                    cam = _form.save()
+                form = CampaignEditForm(request.POST, request.FILES,
+                                        instance=campaign)
+                if form.is_valid():
+                    form.save()
 
                     _w = 'Edit successful!'
                     messages.add_message(request, messages.SUCCESS, _w)
 
                     _url = reverse('campaign:campaign_detail',
                                    kwargs={'campaign_id': campaign_id})
+                else:
+                    for _, message in form.errors.items():
+                        messages.add_message(request, messages.ERROR, message[0])
+
             else:
-                _form = CampaignEditForm(instance=campaign)
+                form = CampaignEditForm(instance=campaign)
 
-                # transaction table
-                donations = {}
-                count = 0
-                for donation in campaign.donations.all():
-                    try:
-                        donations[count] = serialize_donation(donation)
-                        count += 1
-                    except ValueError:
-                        # this might happen when Donation object does not have a payment
-                        pass
+            # transaction table
+            donations = {}
+            count = 0
+            for donation in campaign.donations.all():
+                try:
+                    donations[count] = serialize_donation(donation)
+                    count += 1
+                except ValueError:
+                    # this might happen when Donation object does not have a payment
+                    pass
 
-                context = {"form": _form,
-                           "campaign": campaign,
-                           "donations": donations,
-                           "goals": campaign_goals(campaign),
-                           "start": False}
-                return render(request, "campaign/admin_panel.html", context)
+            context = {"form": form,
+                       "campaign": campaign,
+                       "donations": donations,
+                       "goals": campaign_goals(campaign)}
+            return render(request, "campaign/admin_panel.html", context)
         else:
             _w = 'You do not have permission to edit this ministry.'
             messages.add_message(request, messages.WARNING, _w)

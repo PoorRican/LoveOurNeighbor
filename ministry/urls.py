@@ -11,7 +11,6 @@ urlpatterns = [
          name='admin_panel'),
     path('<int:ministry_id>/delete', views.delete_ministry,
          name='delete_ministry'),
-    path('check/unique', views.check_unique_name, name='check_unique_name'),
 
     path('<int:ministry_id>/login', views.login_as_ministry,
          name='login_as_ministry'),

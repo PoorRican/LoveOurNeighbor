@@ -61,9 +61,9 @@ def create_ministry(request):
         new objects by being passed a boolean variable `start`
     """
     if request.method == 'POST':
-        min_form = MinistryEditForm(request.POST, request.FILES, initial={'admin': request.user})
-        if min_form.is_valid():
-            ministry = min_form.save()
+        form = MinistryEditForm(request.POST, request.FILES, initial={'admin': request.user})
+        if form.is_valid():
+            ministry = form.save()
 
             # handle response and generate UI feedback
             _w = 'Ministry Profile Created!'
@@ -76,16 +76,14 @@ def create_ministry(request):
             return HttpResponseRedirect(_url)
 
         else:
-            print(min_form.errors.as_data())
-            for _, message in min_form.errors.items():
+            for _, message in form.errors.items():
                 messages.add_message(request, messages.ERROR, message[0])
-            _url = reverse('ministry:create_ministry')
-            return HttpResponseRedirect(_url)
+
     else:
-        _form = MinistryEditForm(initial={'website': 'https://', 'address': ''})
-        context = {"form": _form,
-                   "start": True}
-        return render(request, "ministry/ministry_application.html", context)
+        form = MinistryEditForm(initial={'website': 'https://', 'address': ''})
+
+    context = {"form": form}
+    return render(request, "ministry/ministry_application.html", context)
 
 
 @login_required
@@ -118,10 +116,10 @@ def admin_panel(request, ministry_id):
         # TODO: set up ministry permissions
         if ministry.authorized_user(request.user):
             if request.method == 'POST':
-                _form = MinistryEditForm(request.POST, request.FILES,
-                                         instance=ministry)
-                if _form.is_valid():
-                    _form.save()
+                form = MinistryEditForm(request.POST, request.FILES,
+                                        instance=ministry)
+                if form.is_valid():
+                    form.save()
 
                     # handle response and generate UI feedback
                     _w = 'Changes saved to %s!' % ministry.name
@@ -130,10 +128,29 @@ def admin_panel(request, ministry_id):
                     _url = reverse('ministry:ministry_profile',
                                    kwargs={'ministry_id': ministry_id})
                 else:
-                    print(_form.errors)
-            else:
-                _form = MinistryEditForm(instance=ministry)
+                    for _, message in form.errors.items():
+                        messages.add_message(request, messages.ERROR, message[0])
 
+                    # TODO: this should not be accumulated here
+                    donations = {}
+                    count = 0
+                    for donation in ministry.donations:
+                        try:
+                            donations[count] = serialize_donation(donation)
+                            count += 1
+                        except ValueError:
+                            # this might happen when Donation object does not have a payment
+                            pass
+
+                    context = {"form": form,
+                               "ministry": ministry,
+                               "donations": donations,
+                               "start": False}
+                    return render(request, "ministry/admin_panel.html", context)
+            else:
+                form = MinistryEditForm(instance=ministry)
+
+                # TODO: this should not be accumulated here
                 donations = {}
                 count = 0
                 for donation in ministry.donations:
@@ -144,7 +161,7 @@ def admin_panel(request, ministry_id):
                         # this might happen when Donation object does not have a payment
                         pass
 
-                context = {"form": _form,
+                context = {"form": form,
                            "ministry": ministry,
                            "donations": donations,
                            "start": False}
@@ -326,13 +343,6 @@ def login_as_ministry(request, ministry_id):
 
         # cause a redirect loop as deterrant
         return HttpResponseRedirect(reverse('ministry:login_as_ministry', kwargs={'ministry_id': ministry_id}))
-
-
-@login_required
-def check_unique_name(request):
-    """ View wrapper for `MinistryProfile.check_unique_name`. The GET request passes the query string. """
-    name = request.GET['name']
-    return JsonResponse({'unique': MinistryProfile.check_unique_name(name)})
 
 
 # Admin Management

@@ -1,0 +1,23 @@
+{% macro input_field(field, icon='', width='l6 s12', error_text='', helper_text='') %}
+
+    <div class="col {{ width }} input-field">
+      {% if icon %}
+          <i class="material-icons prefix">{{ icon }}</i>
+      {% endif %}
+
+      {# TODO: add 'invalid' tag to the rendered widget #}
+      {{ field }}
+      {{ field.label_tag() }}
+
+        <span class="helper-text"
+              data-error="{{ error_text }}"
+              data-success="">
+      {{ helper_text }}
+    </span>
+
+      {% for error in field.errors %}
+          <span class="helper-text red-text">{{ error }}</span>
+      {% endfor %}
+    </div>
+
+{% endmacro %}

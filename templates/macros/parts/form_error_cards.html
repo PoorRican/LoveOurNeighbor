@@ -1,0 +1,10 @@
+{% macro form_error_cards(form) %}
+  <div id="form_errors">
+    {% for error in form.errors.as_data() %}
+      <div class="card-panel red lighten-3">
+        <
+      </div>
+    {% endfor %}
+  </div>
+
+{% endmacro %}

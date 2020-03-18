@@ -3,13 +3,14 @@
 #}
 {% extends "layout.html" %}
 
-{% from "macros/parts/confirm_delete.html" import confirm_delete %}
-{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
-{% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
-{% from "macros/parts/rep_request_selection.html" import rep_selection, rep_selection_script %}
 {% from "macros/parts/banner_image_dialog.html" import banner_image_dialog %}
+{% from "macros/parts/confirm_delete.html" import confirm_delete %}
+{% from "macros/parts/input_field.html" import input_field %}
 {% from "macros/parts/profile_image_dialog.html" import profile_image_dialog %}
+{% from "macros/parts/rep_request_selection.html" import rep_selection, rep_selection_script %}
+{% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
 {% from "macros/parts/transaction_table.html" import transaction_table %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
 
 {% import "macros/cards.html" as card %}
 {# TODO: total donated amount #}
@@ -95,67 +96,34 @@
                         </div>
                       </div><!-- /#imageDialogs -->
 
-                      <div class="col s12 input-field">
-                        {# TODO: ensure that all ministry titles are unique #}
-                        <i class="material-icons prefix">group</i>
-                        {{ form.name }}
-                        {{ form.name.label_tag() }}
-                        <span class="helper-text" data-error="This name is similar to another ministry"
-                              data-success=""></span>
-                      </div><!-- /name -->
+                      {{ input_field(form.name, icon='group', width='s12',
+                                     error_text='This name is similar to another ministry',
+                                     helper_text="Your ministry's full name") }}
 
-                      <div class="col s12 input-field">
-                        {# TODO: render custom address input #}
-                        <i class="material-icons prefix">place</i>
-                        {{ form.address }}
-                        {{ form.address.label_tag() }}
-                      </div><!-- /address -->
+                      {# TODO: render custom address input #}
+                      {{ input_field(form.address, icon='place', width='s12',
+                                     helper_text="Your ministry's address or city") }}
 
-                      <div class="col l6 s12 input-field">
-                        {# TODO: render styled phone number input for international phone numbers #}
-                        <i class="material-icons prefix">phone</i>
-                        {{ form.phone_number }}
-                        {{ form.phone_number.label_tag() }}
-                      </div><!-- /phone_number -->
+                      {# TODO: render styled phone number input for any international phone numbers #}
+                      {{ input_field(form.phone_number, icon='phone', width='l6 s12') }}
 
-                      <div class="col l6 s12 input-field">
-                        <i class="material-icons prefix">explore</i>
-                        {{ form.website }}
-                        {{ form.website.label_tag() }}
-                      </div><!-- /website -->
+                      {{ input_field(form.website, icon='explore', width='l6 s12') }}
 
-                      <div class="col l6 s12 input-field">
-                        <i class="material-icons prefix">people</i>
-                        {{ form.staff }}
-                        {{ form.staff.label_tag() }}
-                      </div><!-- /staff_count -->
+                      {{ input_field(form.staff, icon='people', width='l6 s12') }}
 
-                      <div class="col l6 s12 input-field">
-                        <i class="material-icons prefix">cake</i>
-                        {{ form.founded }}
-                        {{ form.founded.label_tag() }}
-                      </div><!-- /date_founded -->
+                      {{ input_field(form.founded, icon='cake', width='l6 s12') }}
+
                     </div><!-- /details -->
 
                     <div class="row" id="socialMediaLinks">
                       <h6>Social Media Links:</h6>
                       {# TODO: Add social media Icons #}
-                      <div class="col l3 s12 input-field">
-                        {{ form.facebook }}
-                        {{ form.facebook.label_tag() }}
-                      </div>
-                      <div class="col l3 s12 input-field">
-                        {{ form.instagram }}
-                        {{ form.instagram.label_tag() }}
-                      </div>
-                      <div class="col l3 s12 input-field">
-                        {{ form.youtube }}
-                        {{ form.youtube.label_tag() }}
-                      </div>
-                      <div class="col l3 s12 input-field">
-                        {{ form.twitter }}
-                        {{ form.twitter.label_tag() }}
-                      </div>
+
+                      {{ input_field(form.facebook, width='l3 s12') }}
+                      {{ input_field(form.instagram, width='l3 s12') }}
+                      {{ input_field(form.youtube, width='l3 s12') }}
+                      {{ input_field(form.twitter, width='l3 s12') }}
+
                     </div><!-- /#social-media-links -->
 
                     <div id="WYSIWYG">
@@ -362,26 +330,6 @@
 
   <!-- Knockout.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
-
-  <script src="{{ static('js/checkUniqueName.js' % f) }}"></script>
-  {# Ensures that the name input into the 'name' text input of the form will not conflict with
-     any existing MinistryProfile.
-
-     `MinistryEditForm.Meta` defines the 'data-bind' attribute necessary for knockout.js.
-
-     `MinistryProfile.check_unique_name` is used to validate the name as it is typed. #}
-  <script>
-    const name_element = "#id_name";
-    let uniqueName = new UniqueNameValidator("{{ url_for('ministry:check_unique_name') }}", name_element);
-
-    let inputs = [uniqueName];
-    const form_element = "ministryForm";
-    let validator = new FormValidator('#' + form_element, inputs);
-
-    ko.applyBindings(uniqueName);
-    {# TODO: disable form submit button when inputs are invalid #}
-    // ko.applyBindings(validator, document.getElementById(form_element));
-  </script>
 
   <!-- Chart Stuff -->
   <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>

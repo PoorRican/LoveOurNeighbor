@@ -145,38 +145,6 @@ class MinistryProfile(models.Model):
         results = cls.objects.filter(verified='True')
         return results.order_by('?')[:n]
 
-    @classmethod
-    def check_unique_name(cls, name):
-        """ Helper method that checks if the given name is unique.
-
-        This allows for immediate client-side validation.
-
-        Parameters
-        ----------
-        name: str
-            Name to check. During runtime, this may be a partial name.
-
-        Notes
-        -----
-        The query uses case-insensitive 'contains' query.
-
-        Returns
-        -------
-        True:
-            if `name` does not already exist in the DB
-        False:
-            if `name` already exist in the DB.
-        """
-        try:
-            # this query should overcome any specific DB quirks
-            query = Q(name__iexact=name) | Q(name__istartswith=name) | Q(name__iendswith=name) | Q(name__icontains=name)
-            cls.objects.get(query)
-            return False
-        except cls.MultipleObjectsReturned:
-            return False
-        except cls.DoesNotExist:
-            return True
-
     # Member Functions
 
     def similar_ministries(self):

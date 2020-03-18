@@ -45,6 +45,9 @@
 - Why does `python manage.py collectstatic` not collect static files for tinymce app in docker config?
 - Tag should have a method to for search URL
 - Prevent duplicate donation objects from being created upon repeating GET /donation/confirm
+- In create campaign function:
+    * Ensure User `is_authorized` for ministry
+    * Catch ministries that do not exist
 
 
 # Medium Priority 
@@ -77,7 +80,10 @@ Things to do before ministries will be using the site:
     * Posts/Campaigns from Liked Ministries
 - Show banner image in ograph metadata for media sharing
 - Generator function to create news feed for Ministry Profile (aggregating Campaigns/News Posts, sorted by `pub_date`)
-- Implement [custom error pages](https://docs.djangoproject.com/en/3.0/topics/http/views/)
+- Errors:
+    * Implement [custom error pages](https://docs.djangoproject.com/en/3.0/topics/http/views/)
+    * Implement [error reporting](https://docs.djangoproject.com/en/3.0/howto/error-reporting/)
+    * Implement [custom form field error list](https://docs.djangoproject.com/en/3.0/ref/forms/api/#customizing-the-error-list-format)
 
 ## Hard Release Features
 Things to do before Users will be using the site:
