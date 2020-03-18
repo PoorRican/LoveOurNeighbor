@@ -42,8 +42,8 @@ def create_user(request):
                 _w = 'This email (%s) has already been used!' % request.POST['email']
                 messages.add_message(request, messages.SUCCESS, _w)
 
-                _url = reverse('people:create_user')
-                return HttpResponseRedirect(_url)
+                form = NewUserForm(request.POST)
+                return render(request, 'signup.html', {'form': form})
             else:
                 form = NewUserForm(request.POST, instance=user)
         except User.DoesNotExist:
@@ -72,8 +72,7 @@ def create_user(request):
                     print(msg)
                     messages.add_message(request, messages.ERROR, msg)
 
-            _url = reverse('people:create_user')
-            return HttpResponseRedirect(_url)
+            return render(request, 'signup.html', {'form': form})
 
     elif request.method == 'GET':
         form = NewUserForm()
