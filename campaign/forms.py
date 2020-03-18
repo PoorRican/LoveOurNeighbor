@@ -62,5 +62,7 @@ class CampaignEditForm(forms.ModelForm):
                   # TODO: create ui for editing `img_path`
                   )
         widgets = {'content': forms.Textarea(),
+                   'start_date': forms.TextInput(attrs={'class': 'pickadate'}),
+                   'end_date': forms.TextInput(attrs={'class': 'pickadate'}),
                    }
         labels = {'goal': 'Donation Goal'}

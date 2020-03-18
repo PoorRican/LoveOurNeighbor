@@ -100,7 +100,6 @@ class MinistryEditForm(forms.ModelForm):
                                                     'cols': 30,
                                                     'class': 'materialize-textarea'}),
                    'founded': forms.TextInput(attrs={'class': 'datepicker'}),
-                   'name': forms.TextInput(attrs={'data-bind': 'textInput: uniqueName.value'}),
                    }
         labels = {'img_path': 'Banner Image',
                   'founded': 'Date Founded',

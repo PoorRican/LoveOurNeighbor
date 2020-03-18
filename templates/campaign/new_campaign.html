@@ -3,13 +3,14 @@
 #}
 {% extends "layout.html" %}
 
-{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
+{% from "macros/parts/banner_image_dialog.html" import banner_image_dialog %}
 {% from "macros/parts/campaign_date_input_scripts.html" import campaign_date_input_scripts %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
-{% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
+{% from "macros/parts/input_field.html" import input_field %}
 {% from "macros/parts/get_obj_json.html" import get_obj_json %}
-{% from "macros/parts/banner_image_dialog.html" import banner_image_dialog %}
+{% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
 {% from "macros/parts/transaction_table.html" import transaction_table %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
 
 {% import "macros/cards.html" as card %}
 
@@ -36,38 +37,22 @@
             {{ banner_image_dialog() }}
           </div>
 
-          <div class="input-field col l6 s12">
-            {# TODO: ensure that all ministry titles are unique #}
-            {{ form.title.label_tag() }}
-            {{ form.title }}
-          </div>
+          {{ input_field(form.title, width='l6 s12') }}
 
-          <div class="input-field col l6 s12">
-            <i class="material-icons prefix">attach_money</i>
-            {{ form.goal }}
-            {{ form.goal.label_tag() }}
-          </div>
+          {{ input_field(form.goal, width='l6 s12', icon='attach_money') }}
 
-          {# TODO: validate that dates have been entered #}
-          <div class="col l6 s12 input-field">
-            <i class="material-icons prefix">today</i>
-            <input id="start_date" type="text" name="start_date" class="pickadate"
-                   style="width: calc(100% - 7rem);" required>
-            <label for="start_date" style="width: calc(100% - 7rem);">{{ form.start_date.label }}</label>
+          {{ input_field(form.start_date, width='l5 s11', icon='today') }}
+          <div class="col s1" style="padding-top: 1em;">
             <a class="btn-flat modal-trigger grey-text darken-2" href="#start_end_help_modal">
               <i class="material-icons">help_outline</i>
-            </a><!-- Start/End Date Modal Trigger -->
-          </div><!-- /Start Date Input -->
-
-          <div class="col l6 s12 input-field">
-            <i class="material-icons prefix">today</i>
-            <input id="end_date" type="text" name="end_date" class="pickadate"
-                   style="width: calc(100% - 7rem)" required>
-            <label for="end_date" style="width: calc(100% - 7rem);">{{ form.end_date.label }}</label>
+            </a>
+          </div><!-- Start/End Date Modal Trigger -->
+          {{ input_field(form.end_date, width='l5 s11', icon='today') }}
+          <div class="col s1" style="padding-top: 1em;">
             <a class="btn-flat modal-trigger grey-text darken-2" href="#start_end_help_modal">
               <i class="material-icons">help_outline</i>
-            </a><!-- Start/End Date Modal Trigger -->
-          </div><!-- /End Date Input -->
+            </a>
+          </div><!-- Start/End Date Modal Trigger -->
 
           <div id="start_end_help_modal" class="modal modal-fixed-footer">
             <div class="modal-content">

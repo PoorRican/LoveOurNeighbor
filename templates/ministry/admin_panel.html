@@ -22,7 +22,7 @@
 {% block body %}
   <!-- ministry/admin_panel -->
 
-  <div class="row" ng-app="LON">
+  <div class="row" ng-app="LON" ng-cloak>
     <div class="col s12">
       <div class="container">
         <section class="tabs-vertical mt-1 section">
@@ -72,8 +72,7 @@
               <div id="details">
                 <div class="card-panel">
                   <form method="POST" name="ministryForm" id="ministryForm"
-                        enctype="multipart/form-data" action="{{ ministry.edit }}"
-                        data-bind="submit: validator.formSubmit">
+                        enctype="multipart/form-data" action="{{ ministry.edit }}">
                     <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
                     <input type="hidden" id="ministry_id" value="{{ ministry.id }}">
 
@@ -288,21 +287,11 @@
                 </div><!-- /#donations -->
 
             </div><!-- /.col /ng-controller -->
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>
-  <section class="wrapper" ng-app="LON" ng-cloak>
-    <!-- ministry/ministry_admin_panel -->
-
-
-    <div class="col ">
-
-    </div>
-    </form>
-
-  </section>
+          </div><!-- /.row -->
+        </section><!-- /.tabs-section -->
+      </div><!-- /.container -->
+    </div><!-- /.col -->
+  </div><!-- /.row -->
 {% endblock %}
 
 

@@ -57,7 +57,7 @@ class Campaign(models.Model):
 
     @property
     def edit(self):
-        return reverse('campaign:edit_campaign',
+        return reverse('campaign:admin_panel',
                        kwargs={'campaign_id': self.id})
 
     @property
