@@ -38,7 +38,7 @@
         <div id="new_campaigns">
           <h4>New Campaigns:</h4>
           <p>Check out these campaigns that have started!</p>
-          <div class="row">
+          <div class="row grid">
             {% for c in new_campaigns %}
               {{ frontpage_campaign_card(c, request) }}
             {% endfor %}
@@ -50,7 +50,7 @@
         <div id="new_ministries">
           <h4>New Ministry Profiles:</h4>
           <p>Check out these ministries who just recently created a profile on Love Our Neighbor!</p>
-          <div class="row">
+          <div class="row grid">
             {% for m in new_ministries %}
               {{ frontpage_ministry_card(m, request) }}
             {% endfor %}
@@ -62,7 +62,7 @@
         <div id="random_campaigns">
           <h4>Ongoing Campaigns:</h4>
           <p>Check out these campaigns that have you might be interested in!</p>
-          <div class="row">
+          <div class="row grid">
             {% for c in random_campaigns %}
               {{ frontpage_campaign_card(c, request) }}
             {% endfor %}
@@ -73,7 +73,7 @@
       {% if random_ministries %}
         <div id="random_ministries">
           <h4>Ministries You Might Like</h4>
-          <div class="row">
+          <div class="row grid">
             {% for m in random_ministries %}
               {{ frontpage_ministry_card(m, request) }}
             {% endfor %}
@@ -82,4 +82,15 @@
       {% endif %}
     </div><!-- /.wrapper -->
   </div><!-- /.section -->
+{% endblock %}
+
+
+{% block scripts %}
+  <!-- masonry -->
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script>
+    $('.grid').masonry({
+      itemSelector: '.grid-item',
+    });
+  </script>
 {% endblock %}

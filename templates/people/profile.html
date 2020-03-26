@@ -130,7 +130,7 @@
 
               <div id="likes" class="col s12">
                 <div class="card-panel">
-                  <div class="row">
+                  <div class="row grid">
                     {% for obj in likes %}
                       {% if hasattr(obj, 'admin') %}{# Minitry Profile #}
                         {{ card.frontpage_ministry_card(obj, request) }}
@@ -220,6 +220,14 @@
   {% endfor %}
 
   {# TODO: implement knockout.js for viewing likes #}
+
+  <!-- masonry -->
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script>
+    $('.grid').masonry({
+      itemSelector: '.grid-item',
+    });
+  </script>
 
 {% endblock %}
 

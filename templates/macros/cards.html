@@ -9,7 +9,7 @@
   wide: (bool)
     Controls whether the card will be given the `l6` attribute, thereby forcing it to takeup the max-width
   #}
-  <div class="col s12 {% if not wide %}l6{% endif %}">
+  <div class="grid-item col s12 {% if not wide %}l6{% endif %}">
     <div class="card-panel border-radius-8 {% if post.attachment %}mt-10 card-animation-1{% endif %}">
 
       {% if post.attachment %}
@@ -266,8 +266,8 @@
   #}
   {% set AUTH = ministry.authorized_user(request.user) %}
 
-  <div class="col s12 {% if not wide %}l6{% endif %}">
-    <div class="card-panel border-radius-8 mt-10 card-animation-1">
+  <div class="grid-item col s12 {% if not wide %}l6{% endif %}">
+    <div class="card-panel border-radius-8{% if ministry.banner_img %} mt-9 card-animation-1{% endif %}">
 
       {% if ministry.banner_img %}
         <a href="{{ ministry.url }}">
@@ -340,8 +340,8 @@
   #}
   {% set AUTH = campaign.ministry.authorized_user(request.user) %}
 
-  <div class="col s12 {% if not wide %}l6{% endif %}">
-    <div class="card-panel border-radius-8 mt-10 card-animation-1">
+  <div class="grid-item col s12 {% if not wide %}l6{% endif %}">
+    <div class="card-panel border-radius-8{% if campaign.banner_img %} mt-9 card-animation-1{% endif %}">
 
       {% if campaign.banner_img %}
         <a href="{{ campaign.url }}">
