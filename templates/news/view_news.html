@@ -1,7 +1,3 @@
-{# vim: foldmethod=marker tabstop=2 shiftwidth=2:
-    templates/news/edit_news.html
-#}
-<!-- ministry/news_post -->
 {% extends "layout.html" %}
 
 {% from "macros/parts/comments_section.html" import comments_section %}
@@ -9,6 +5,7 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block body %}
+  <!-- ministry/news_post -->
 
   {# TODO: group by month and randomly (or scroll) through images per section #}
   <div class="section">

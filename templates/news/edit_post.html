@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% from "macros/parts/confirm_delete.html" import confirm_delete %}
+{% from "macros/parts/input_field.html" import input_field %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
+
+
+{% block title %}
+  {{ post.title }} Edit Post
+{% endblock %}
+
+
+{% block body %}
+  <section class="wrapper">
+    <!-- ministry/edit_post -->
+
+    <h2>Edit Post:</h2>
+
+    <form enctype="multipart/form-data" method="POST"
+          action="{{ url_for('news:edit_news', kwargs={'post_id': post.id}) }}">
+
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+      <div class="row">
+
+        {{ input_field(form.title, width='s12') }}
+
+        {{ input_field(form.attachment, width='s12') }}
+
+        <br>
+        <div class="divider"></div>
+        <br>
+
+        <div>
+          <i class="material-icons">subject</i>
+          {{ form.content.label_tag() }}
+
+          {{ wysiwyg_editor(form.content.name, post.content) }}
+        </div><!-- /WYSIWYG Editor -->
+
+        <br>
+
+        <div id="form_buttons" class="row">
+          <div class="col l3 s12">
+            <button class="btn orange" type="submit">
+              <i class="material-icons">save</i>
+              Save
+            </button>
+          </div>
+
+          <div class="col l3 s12">
+            {% if not start and post %}
+              {{ confirm_delete('news post', post.id) }}
+            {% endif %}
+          </div>
+        </div><!-- /#form_buttons -->
+
+      </div>
+
+    </form>
+
+  </section>
+
+{% endblock %}
+
+
+{% block scripts %}
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
+
+  {% set page_assets = (
+  'app.module.js',
+  'app.config.js',
+  'news/news.controller.js',
+  ) %}
+  {% for f in page_assets %}
+    <script src="{{ static('app/%s' % f) }}"></script>
+  {% endfor %}
+
+  {{ wysiwyg_script() }}
+
+{% endblock %}

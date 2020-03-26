@@ -23,22 +23,19 @@ def news_index(request):
 
 @login_required
 def create_news(request, obj_type, obj_id):
+    _url = request.META.get('HTTP_REFERER')
     # manage authenticated users
-    _auth = False
     if obj_type == 'ministry':
         obj = MinistryProfile.objects.get(id=obj_id)
-        _auth = bool(request.user == obj.admin or
-                     request.user in obj.reps.all())
     elif obj_type == 'campaign':
         obj = Campaign.objects.get(id=obj_id)
-        _auth = bool(request.user == obj.ministry.admin or
-                     request.user in obj.ministry.reps.all())
     else:
-        raise ValueError("`obj_type` is neither 'ministry' or 'campaign'")
+        _feedback = "UNKNOWN ERROR: Content was malformatted!"
+        messages.add_message(request, messages.ERROR, _feedback)
+        obj = None
 
-    if not _auth:
-        # TODO: have more meaningful error
-        return HttpResponseRedirect("/")
+    if obj and not obj.authorized_user(request.user):
+        return HttpResponseRedirect(_url)
 
     elif request.method == 'POST':
         news_form = NewsEditForm(request.POST, request.FILES)
@@ -54,13 +51,7 @@ def create_news(request, obj_type, obj_id):
             _w = "News Post Created!"
             messages.add_message(request, messages.SUCCESS, _w)
 
-            _url = '/'
-            if obj_type == 'ministry':
-                _url = '%s' % reverse('ministry:ministry_profile',
-                                      kwargs={'ministry_id': obj.id})
-            elif obj_type == 'campaign':
-                _url = '%s' % reverse('campaign:campaign_detail',
-                                      kwargs={'campaign_id': obj.id})
+            _url = obj.url
             return HttpResponseRedirect(_url)
 
     else:
@@ -69,45 +60,40 @@ def create_news(request, obj_type, obj_id):
                    "start": True,
                    "kwargs": {'obj_type': obj_type, 'obj_id': obj_id}
                    }
-        return render(request, "edit_news.html", context)
+        return render(request, "new_post.html", context)
 
 
 @login_required
 def edit_news(request, post_id):
     post = NewsPost.objects.get(id=post_id)
-    # TODO: set up ministry permissions
+    auth = False
     if post.campaign:
-        _admin = post.campaign.ministry.admin
-        _reps = post.campaign.ministry.reps.all()
-    if post.ministry:
-        _admin = post.ministry.admin
-        _reps = post.ministry.reps.all()
+        auth = post.campaign.authorized_user(request.user)
+        _url = post.campaign.url
+    elif post.ministry:
+        auth = post.ministry.authorized_user(request.user)
+        _url = post.ministry.url
+    else:
+        _feedback = "UNKNOWN ERROR: Post '%s' was malformatted!" % post.id
+        messages.add_message(request, messages.ERROR, _feedback)
+        _url = request.META.get('HTTP_REFERER')
 
-    if request.user == _admin or request.user in _reps:
+    if auth:
         if request.method == 'POST':
             _form = NewsEditForm(request.POST, request.FILES,
                                  instance=post)
             _form.save()
-            # TODO: redirect to referrer or something
-            _url = ''
-            if post.campaign:
-                _url = '%s' % reverse('campaign:campaign_detail',
-                                      kwargs={'campaign_id':
-                                                post.campaign.id})
-            elif post.ministry:
-                _url = '%s' % reverse('ministry:ministry_profile',
-                                      kwargs={'ministry_id':
-                                                post.ministry.id})
-            return HttpResponseRedirect(_url)
         else:
             _form = NewsEditForm(instance=post)
             context = {"form": _form,
                        "post": post,
                        "start": False}
-            return render(request, "edit_news.html", context)
+            return render(request, "edit_post.html", context)
     else:
-        # TODO: have more meaningful error
-        return HttpResponseRedirect("/")
+        _feedback = "You don't have permissions to be deleting this Post object!"
+        messages.add_message(request, messages.ERROR, _feedback)
+
+    return HttpResponseRedirect(_url)
 
 
 @login_required
@@ -115,29 +101,34 @@ def delete_news(request, post_id):
     post = NewsPost.objects.get(id=post_id)
 
     _url = request.META.get('HTTP_REFERER')  # url if operation successful
+
     # Setup redirect url
     if post.ministry:
-        ministry = post.ministry            # for checking auth
+        ministry = post.ministry  # for checking auth
+        if 'edit' in _url:
+            _url = reverse('ministry:admin_panel', kwargs={'ministry_id': ministry.id})
     elif post.campaign:
-        ministry = post.campaign.ministry   # for checking auth
+        ministry = post.campaign.ministry  # for checking auth
+        if 'edit' in _url:
+            _url = reverse('campaign:admin_panel', kwargs={'campaign_id': post.campaign.id})
     else:
         _url = ''
         ministry = None
 
     # check user permissions and generate feedback
-    if ministry and request.user == ministry.admin or request.user in ministry.reps.all():
+    if ministry and ministry.authorized_user(request.user):
         try:
-            _feedback = "NewsPost '%s' was successfully deleted!" % post.title
+            _feedback = "Post ('%s') successfully deleted!" % post.title
             messages.add_message(request, messages.SUCCESS, _feedback)
             post.delete()
         except ProtectedError:
-            _feedback = "There was an error deleting '%s'" % post.title
+            _feedback = "There was an error deleting post: '%s'" % post.title
             messages.add_message(request, messages.ERROR, _feedback)
     elif not ministry:
-        _feedback = "UNKNOWN ERROR: NewsPost '%s' was malformatted!" % post.id
+        _feedback = "UNKNOWN ERROR: Post '%s' was malformatted!" % post.id
         messages.add_message(request, messages.ERROR, _feedback)
     else:
-        _feedback = "You don't have permissions to be deleting this NewsPost object!"
+        _feedback = "You don't have permissions to be deleting this Post object!"
         messages.add_message(request, messages.ERROR, _feedback)
 
     return HttpResponseRedirect(_url)

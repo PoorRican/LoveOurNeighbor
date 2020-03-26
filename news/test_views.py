@@ -3,13 +3,13 @@ from datetime import date
 from .models import NewsPost
 
 from ministry.models import MinistryProfile
-from ministry.test_views import BaseMinistryViewTestCase
 from campaign.models import Campaign
+from utils.test_helpers import BaseViewTestCase
 
 
-class TestNewsPostViews(BaseMinistryViewTestCase):
+class TestNewsPostViews(BaseViewTestCase):
     def setUp(self):
-        BaseMinistryViewTestCase.setUp(self)
+        BaseViewTestCase.setUp(self)
 
         self.min_name = "Test Ministry"
         self.min = MinistryProfile.objects.create(name=self.min_name,
@@ -29,7 +29,7 @@ class TestNewsPostViews(BaseMinistryViewTestCase):
         del self.min
         del self.user
 
-        BaseMinistryViewTestCase.tearDown(self)
+        BaseViewTestCase.tearDown(self)
 
     def testCreateNews_ministry(self):
         _url_base = "/ministry/news/%s/%s/create"

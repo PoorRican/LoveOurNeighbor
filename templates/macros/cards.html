@@ -18,8 +18,9 @@
         </a><!-- /.banner-img -->
       {% endif %}
 
-      <h5 class="{% if post.attachment %} mt-5{% else %} mt-1{% endif %}">
-        <a class="deep-orange-text card-title" href="{{ post.url }}">
+      <h5 class="{% if post.attachment %} mt-5{% else %} mt-1{% endif %}"
+          style="justify-content: right;">
+        <a class="deep-orange-text card-title" href="{{ post.url }}" style="display: inline;">
           {{ post.title }}
         </a><!-- /.card-title -->
         {% if AUTH %}
@@ -31,7 +32,7 @@
 
       <div class="display-flex justify-content-between flex-wrap mt-4">
         <div class="display-flex mt-2 right-align" style="min-width: 55%; overflow: hidden;">
-          <i class="material-icons ml-10">visibility</i>
+          <i class="material-icons">visibility</i>
           <span class="ml-3 vertical-align-top">{{ post.views }}</span>
         </div>
       </div><!-- /.display-flex -->
