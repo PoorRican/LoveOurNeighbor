@@ -3,18 +3,18 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import ProtectedError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-
-# Create your views here.
-from django.urls import reverse
+from django.views.decorators.http import require_http_methods, require_safe
 
 from campaign.models import Campaign
 from news.forms import NewsEditForm
 from comment.forms import CommentForm
 from ministry.models import MinistryProfile
-from news.utils import create_news_post_dir
-from news.models import NewsPost
+
+from .utils import create_news_post_dir
+from .models import NewsPost
 
 
+@require_safe
 def news_index(request):
     # TODO: paginate and render
     all_news = NewsPost.objects.all()
@@ -22,8 +22,8 @@ def news_index(request):
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def create_news(request, obj_type, obj_id):
-    _url = request.META.get('HTTP_REFERER')
     # manage authenticated users
     if obj_type == 'ministry':
         obj = MinistryProfile.objects.get(id=obj_id)
@@ -35,37 +35,38 @@ def create_news(request, obj_type, obj_id):
         obj = None
 
     if obj and not obj.authorized_user(request.user):
-        return HttpResponseRedirect(_url)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     elif request.method == 'POST':
-        news_form = NewsEditForm(request.POST, request.FILES)
-        if news_form.is_valid():
+        form = NewsEditForm(request.POST, request.FILES)
+        if form.is_valid():
             # create NewsPost object and dedicated directory
-            news = news_form.save(commit=False)
-            setattr(news, obj_type, obj)
-            news.save()
+            post = form.save(commit=False)
+            setattr(post, obj_type, obj)
+            post.save()
 
-            create_news_post_dir(news)
+            create_news_post_dir(post)
 
             # handle redirect and UI feedback
             _w = "News Post Created!"
             messages.add_message(request, messages.SUCCESS, _w)
 
-            _url = obj.url
-            return HttpResponseRedirect(_url)
+            return HttpResponseRedirect(post.url)
 
     else:
-        _form = NewsEditForm()
-        context = {"form": _form,
-                   "start": True,
-                   "kwargs": {'obj_type': obj_type, 'obj_id': obj_id}
-                   }
-        return render(request, "new_post.html", context)
+        form = NewsEditForm()
+
+    context = {"form": form,
+               "kwargs": {'obj_type': obj_type, 'obj_id': obj_id}
+               }
+    return render(request, "new_post.html", context)
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def edit_news(request, post_id):
     post = NewsPost.objects.get(id=post_id)
+
     auth = False
     if post.campaign:
         auth = post.campaign.authorized_user(request.user)
@@ -80,15 +81,18 @@ def edit_news(request, post_id):
 
     if auth:
         if request.method == 'POST':
-            _form = NewsEditForm(request.POST, request.FILES,
-                                 instance=post)
-            _form.save()
+            form = NewsEditForm(request.POST, request.FILES,
+                                instance=post)
+
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(_url)
         else:
-            _form = NewsEditForm(instance=post)
-            context = {"form": _form,
-                       "post": post,
-                       "start": False}
-            return render(request, "edit_post.html", context)
+            form = NewsEditForm(instance=post)
+
+        context = {"form": form,
+                   "post": post}
+        return render(request, "edit_post.html", context)
     else:
         _feedback = "You don't have permissions to be deleting this Post object!"
         messages.add_message(request, messages.ERROR, _feedback)
@@ -97,6 +101,7 @@ def edit_news(request, post_id):
 
 
 @login_required
+@require_safe
 def delete_news(request, post_id):
     post = NewsPost.objects.get(id=post_id)
 
@@ -106,13 +111,12 @@ def delete_news(request, post_id):
     if post.ministry:
         ministry = post.ministry  # for checking auth
         if 'edit' in _url:
-            _url = reverse('ministry:admin_panel', kwargs={'ministry_id': ministry.id})
+            _url = ministry.edit
     elif post.campaign:
         ministry = post.campaign.ministry  # for checking auth
         if 'edit' in _url:
-            _url = reverse('campaign:admin_panel', kwargs={'campaign_id': post.campaign.id})
+            _url = post.campaign.edit
     else:
-        _url = ''
         ministry = None
 
     # check user permissions and generate feedback
@@ -134,23 +138,22 @@ def delete_news(request, post_id):
     return HttpResponseRedirect(_url)
 
 
+@require_safe
 def news_detail(request, post_id):
     post = NewsPost.objects.get(id=post_id)
     post.views += 1
     post.save()
 
-    if post.campaign:
-        _admin = post.campaign.ministry.admin
-        _reps = post.campaign.ministry.reps.all()
+    auth = False
     if post.ministry:
-        _admin = post.ministry.admin
-        _reps = post.ministry.reps.all()
-    AUTH = bool(request.user == _admin or request.user in _reps)
+        auth = post.ministry.authorized_user(request.user)
+    elif post.campaign:
+        auth = post.campaign.authorized_user(request.user)
 
     comments = CommentForm()
 
     context = {'post': post,
-               'AUTH': AUTH,
+               'AUTH': auth,
                'form': comments,
                }
     return render(request, "view_news.html", context)

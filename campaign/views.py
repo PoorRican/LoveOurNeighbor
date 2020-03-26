@@ -8,22 +8,20 @@ from django.http import (
 )
 from django.shortcuts import render
 from django.urls import reverse
+from django.views.decorators.http import require_http_methods, require_safe
 
 from frontend.settings import MEDIA_ROOT, MEDIA_URL
 
 from ministry.models import MinistryProfile
 from news.models import NewsPost
-from tag.models import Tag
 from donation.utils import serialize_donation
 
 from comment.forms import CommentForm
 
-import json
-
 from .models import Campaign
 from .forms import CampaignEditForm
 from .utils import (
-    create_campaign_dir, serialize_campaign, campaign_banner_dir,
+    serialize_campaign, campaign_banner_dir,
     campaign_images,
     campaign_goals
 )
@@ -31,6 +29,7 @@ from .utils import (
 
 # Create your views here.
 @login_required
+@require_http_methods(["GET", "POST"])
 def create_campaign(request, ministry_id):
     """ Renders form for editing or creating `Ministry` object.
     """
@@ -62,8 +61,9 @@ def create_campaign(request, ministry_id):
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def admin_panel(request, campaign_id):
-    _url = ''
+    _url = request.META.get('HTTP_REFERER')
     try:
         campaign = Campaign.objects.get(id=campaign_id)
         # TODO: set up permissions
@@ -106,9 +106,6 @@ def admin_panel(request, campaign_id):
             _w = 'You do not have permission to edit this ministry.'
             messages.add_message(request, messages.WARNING, _w)
 
-            _url = reverse('campaign:campaign_detail',
-                           kwargs={'campaign_id': campaign_id})
-
     except Campaign.DoesNotExist:
         _w = 'Invalid URL'
         messages.add_message(request, messages.ERROR, _w)
@@ -117,6 +114,7 @@ def admin_panel(request, campaign_id):
 
 
 @login_required
+@require_safe
 def delete_campaign(request, campaign_id):
     _url = request.META.get('HTTP_REFERER')  # url if operation successful
     try:
@@ -129,8 +127,6 @@ def delete_campaign(request, campaign_id):
                 _w = 'There are News Posts that are preventing deletion'
                 messages.add_message(request, messages.WARNING, _w)
 
-                _url = reverse('campaign:campaign_detail',
-                               kwargs={'campaign_id': campaign_id})
         else:
             # this creates a recursive redirect...
             #   i'm not against this being a deterrant
@@ -138,26 +134,22 @@ def delete_campaign(request, campaign_id):
             _w = 'You do not have permission to delete this campaign.'
             messages.add_message(request, messages.WARNING, _w)
 
-            _url = reverse('campaign:campaign_detail',
-                           kwargs={'campaign_id': campaign_id})
-
     except Campaign.DoesNotExist:
         # TODO: log this
         _w = 'Invalid URL'
         messages.add_message(request, messages.ERROR, _w)
 
-        _url = ''
-
-    # return HttpResponse(json.dumps(True))
     return HttpResponseRedirect(_url)
 
 
+@require_safe
 def campaign_index(request):
     # TODO: paginate and render
     all_news = NewsPost.objects.all()
     return HttpResponse(all_news)
 
 
+@require_safe
 def campaign_detail(request, campaign_id):
     cam = Campaign.objects.get(id=campaign_id)
     cam.views += 1
@@ -177,6 +169,7 @@ def campaign_detail(request, campaign_id):
     return render(request, "view_campaign.html", context)
 
 
+@require_safe
 def campaign_json(request, campaign_id):
     """ Returns json containing dynamic attributes of a specified campaign.
     These attributes are total amount of donations,
@@ -197,6 +190,7 @@ def campaign_json(request, campaign_id):
     return JsonResponse(_json)
 
 
+@require_safe
 def campaign_banners_json(request, campaign_id):
     """ View that returns all images located in dedicated
     banner directory for Campaign
@@ -219,6 +213,7 @@ def campaign_banners_json(request, campaign_id):
     return JsonResponse(_json)
 
 
+@require_safe
 def campaign_gallery_json(request, campaign_id):
     """ Return a JSON dict of all used images associated
     to the MinistryProfile selected by `ministry_id`.
@@ -236,6 +231,7 @@ def campaign_gallery_json(request, campaign_id):
 
 
 @login_required
+@require_safe
 def donations_json(request, campaign_id):
     campaign = Campaign.objects.get(pk=campaign_id)
     user = request.user
@@ -248,6 +244,7 @@ def donations_json(request, campaign_id):
 
 
 @login_required
+@require_safe
 def like_campaign(request, campaign_id):
     """ Encapsulates both 'like' and 'unlike' functionality relating `User` to `Campaign`
 

@@ -1,11 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import ProtectedError
-from django.http import (
-    HttpResponse, HttpResponseRedirect, JsonResponse
-)
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.views.decorators.http import require_http_methods, require_safe
 
 import json
 import os
@@ -28,10 +27,8 @@ from .utils import (
     serialize_ministry,
 
     # MinistryProfile utility functions
-    dedicated_ministry_dir,
     ministry_banner_dir,
     ministry_profile_image_dir,
-    create_ministry_dir,
     ministry_images,
     send_new_ministry_notification_email
 )
@@ -43,6 +40,7 @@ strptime = datetime.strptime
 # Ministry Views
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def create_ministry(request):
     """ Renders form for creating `MinistryProfile` object.
 
@@ -87,6 +85,7 @@ def create_ministry(request):
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def admin_panel(request, ministry_id):
     """ Renders form for editing `MinistryProfile object.
 
@@ -109,7 +108,7 @@ def admin_panel(request, ministry_id):
     The template differentiates from editing existing and creating
         new objects by being passed a boolean variable `start`
     """
-    _url = ''
+    _url = request.META.get('HTTP_REFERER')
 
     try:
         ministry = MinistryProfile.objects.get(pk=ministry_id)
@@ -172,19 +171,16 @@ def admin_panel(request, ministry_id):
             _w = 'You do not have permission to edit this ministry.'
             messages.add_message(request, messages.WARNING, _w)
 
-            _url = reverse('ministry:admin_panel',
-                           kwargs={'ministry_id': ministry_id})
-
     except MinistryProfile.DoesNotExist:
         # TODO: log this
         _w = 'Invalid URL'
         messages.add_message(request, messages.ERROR, _w)
-        _url = ''
 
     return HttpResponseRedirect(_url)
 
 
 @login_required
+@require_safe
 def delete_ministry(request, ministry_id):
     """ Deletes `MinistryProfile` if `request.user` has sufficient priveleges.
 
@@ -243,11 +239,10 @@ def delete_ministry(request, ministry_id):
         _w = 'Invalid URL'
         messages.add_message(request, messages.ERROR, _w)
 
-        _url = ''
-
     return HttpResponseRedirect(_url)
 
 
+@require_safe
 def ministry_profile(request, ministry_id):
     """ Primary rendering view for displaying `MinistryProfile` objects.
 
@@ -302,6 +297,7 @@ def ministry_profile(request, ministry_id):
 
 
 @login_required
+@require_safe
 def login_as_ministry(request, ministry_id):
     """ This allows an authorized user to interact with other users
         under the alias of the `MinistryProfile` identified by `ministry_id`.
@@ -348,6 +344,7 @@ def login_as_ministry(request, ministry_id):
 # Admin Management
 
 @login_required
+@require_safe
 def request_to_be_rep(request, ministry_id):
     """ Enables newly created users request to be a ministry representative.
 
@@ -367,10 +364,11 @@ def request_to_be_rep(request, ministry_id):
         _w = "You're already associated with %s" % ministry.name
         messages.add_message(request, messages.ERROR, _w)
 
-    return HttpResponseRedirect(reverse('ministry:ministry_profile',
-                                        kwargs={'ministry_id': ministry_id}))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
+@login_required
+@require_http_methods(["GET", "POST"])
 def rep_management(request, ministry_id):
     """
     Dedicated view function to manage `MinistryProfile.requests` and `MinistryProfile.reps`
@@ -398,19 +396,17 @@ def rep_management(request, ministry_id):
                         messages.add_message(request, messages.SUCCESS, _w)
                 except json.JSONDecodeError:
                     pass
-        _url = reverse('ministry:admin_panel',
-                       kwargs={'ministry_id': ministry_id})
     except MinistryProfile.DoesNotExist:
         # TODO: log this
         _w = 'Invalid URL'
         messages.add_message(request, messages.ERROR, _w)
-        _url = ''
 
-    return HttpResponseRedirect(_url)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 # JSON Views
 
+@require_safe
 def ministry_json(request, ministry_id):
     """ Returns serialized `MinistryProfile` object as json.
 
@@ -433,6 +429,7 @@ def ministry_json(request, ministry_id):
     return JsonResponse(_json)
 
 
+@require_safe
 def ministry_banners_json(request, ministry_id):
     """ View that returns all images located in dedicated
     banner directory for MinistryProfile
@@ -455,6 +452,7 @@ def ministry_banners_json(request, ministry_id):
     return JsonResponse(_json)
 
 
+@require_safe
 def ministry_profile_img_json(request, ministry_id):
     """ View that returns all images located in dedicated
     banner directory for MinistryProfile
@@ -477,6 +475,7 @@ def ministry_profile_img_json(request, ministry_id):
     return JsonResponse(_json)
 
 
+@require_safe
 def ministry_gallery_json(request, ministry_id):
     """ Return a JSON dict of all used images associated
     to the MinistryProfile selected by `ministry_id`.
@@ -492,6 +491,7 @@ def ministry_gallery_json(request, ministry_id):
 
 
 @login_required
+@require_safe
 def donations_json(request, ministry_id):
     ministry = MinistryProfile.objects.get(pk=ministry_id)
     user = request.user
@@ -507,6 +507,7 @@ def donations_json(request, ministry_id):
 # User Interaction
 
 @login_required
+@require_safe
 def like_ministry(request, ministry_id):
     """ Encapsulates both 'like' and 'unlike' functionality relating `User` to `MinistryProfile`
 

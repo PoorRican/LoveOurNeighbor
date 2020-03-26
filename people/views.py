@@ -7,11 +7,10 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.contrib.messages import get_messages
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-
-import json
+from django.views.decorators.http import require_http_methods, require_safe
 
 from campaign.utils import serialize_campaign
 from donation.utils import serialize_donation
@@ -26,6 +25,7 @@ from .utils import (
 )
 
 
+@require_http_methods(["GET", "POST"])
 def create_user(request):
     """
     Creates a User.
@@ -73,65 +73,63 @@ def create_user(request):
 
             return render(request, 'signup.html', {'form': form})
 
-    elif request.method == 'GET':
+    else:
         form = NewUserForm()
-        return render(request, 'signup.html', {'form': form})
+
+    return render(request, 'signup.html', {'form': form})
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def user_profile(request):
+    user = request.user
+
+    form = UserEditForm(instance=user)
+
     if request.method == 'POST':
         form = UserEditForm(request.POST, files=request.FILES,
-                            instance=request.user)
-        _url = reverse('people:user_profile')
-
+                            instance=user)
         if form.is_valid():
             form.save()
 
             messages.add_message(request, messages.SUCCESS,
-                                 'User profile updated')
+                                 'Your profile has been updated!')
         else:
             for _, error in form.errors.items():
                 for msg in error:
                     print(msg)
                     messages.add_message(request, messages.ERROR, msg)
 
-        return HttpResponseRedirect(_url)
+    _donations = {}
+    count = 0
+    for donation in user.donations.all():
+        try:
+            _donations[count] = serialize_donation(donation)
+            count += 1
+        except ValueError:
+            # this might happen when Donation object does not have a payment
+            pass
 
-    elif request.method == 'GET':
-        user = request.user
+    _likes = []
+    for c in user.likes_c.all():
+        _likes.append(c)
+    for m in user.likes_m.all():
+        _likes.append(m)
 
-        _donations = {}
-        count = 0
-        for donation in user.donations.all():
-            try:
-                _donations[count] = serialize_donation(donation)
-                count += 1
-            except ValueError:
-                # this might happen when Donation object does not have a payment
-                pass
+    def cmp_dt(dt):
+        """ Hack to compare `date` objects to `datetime` """
+        if not hasattr(dt, 'hour'):
+            return datetime(dt.year, dt.month, dt.day, 0, 0, 0)
+        return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
 
-        _likes = []
-        for c in user.likes_c.all():
-            _likes.append(c)
-        for m in user.likes_m.all():
-            _likes.append(m)
+    _likes.sort(key=lambda obj: cmp_dt(obj.pub_date), reverse=True)
 
-        def cmp_dt(dt):
-            """ Hack to compare `date` objects to `datetime` """
-            if not hasattr(dt, 'hour'):
-                return datetime(dt.year, dt.month, dt.day, 0, 0, 0)
-            return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
-
-        _likes.sort(key=lambda obj: cmp_dt(obj.pub_date), reverse=True)
-
-        form = UserEditForm(instance=user)
-        context = {'form': form,
-                   'request': request,
-                   'donations': _donations,
-                   'likes': _likes
-                   }
-        return render(request, "profile.html", context)
+    context = {'form': form,
+               'request': request,
+               'donations': _donations,
+               'likes': _likes
+               }
+    return render(request, "profile.html", context)
 
 
 @login_required
@@ -155,6 +153,7 @@ def be_me_again(request):
     return HttpResponseRedirect(_url)
 
 
+@require_http_methods(["GET", "POST"])
 def login_user(request):
     if request.method == 'POST':
         email = request.POST['email']
@@ -194,7 +193,8 @@ def login_user(request):
 
             _url = reverse('people:user_profile')
             return HttpResponseRedirect(_url)
-    elif request.method == 'GET':
+
+    else:
         form = UserLoginForm()
         context = {'form': form}
         return render(request, 'login.html', context)
@@ -210,6 +210,7 @@ def logout_user(request):
     return HttpResponseRedirect('/')
 
 
+@require_safe
 def verify_user(request, email, confirmation):
     try:
         user = User.objects.get(email=email)
@@ -229,6 +230,7 @@ def verify_user(request, email, confirmation):
         return HttpResponseRedirect(reverse('error'))
 
 
+@require_safe
 def messages_json(request):
     """ Returns a list of notifications received by User in JSON format.
 
@@ -254,6 +256,7 @@ def messages_json(request):
     return JsonResponse({'notifications': _json})
 
 
+@require_safe
 def profile_img_json(request):
     """ View that returns all images located in dedicated
     banner directory for MinistryProfile
@@ -268,6 +271,7 @@ def profile_img_json(request):
         _current = user.profile_img.path
     except ValueError:
         _current = ''
+        create_profile_img_dir(user)
     _json['current'] = os.path.basename(_current)
     return JsonResponse(_json)
 
@@ -284,6 +288,7 @@ def donation_json(request):
 
 
 @login_required
+@require_safe
 def likes_json(request):
     _json = {'likes': []}
     user = request.user
@@ -298,6 +303,7 @@ def likes_json(request):
     return JsonResponse(_json)
 
 
+@require_http_methods(["GET", "POST"])
 def reset_password(request, email, confirmation):
     try:
         user = User.objects.get(email=email)
@@ -321,6 +327,7 @@ def reset_password(request, email, confirmation):
         return render(request, "forgot_password_error.html")
 
 
+@require_http_methods(["GET", "POST"])
 def forgot_password(request):
     if request.method == 'GET':
         return render(request, 'forgot_password.html')
