@@ -7,18 +7,24 @@
   <script src="https://cdn.jsdelivr.net/npm/pickadate@3.5.6/lib/compressed/picker.date.min.js"></script>
   <script>
     const pickerOptions = {
-      formatSubmit: 'mm/dd/yyyy',
+      formatSubmit: 'yyyy-mm-dd',
       hiddenName: true,
+      closeOnSelect: true,
       onSet: function () {
+        console.log(this.$node.parent());
         this.$node.parent().children()[4].classList = ["active"];
-      }
+      },
+      klass: {
+        buttonClose: 'btn red mb-2'
+      },
+      min: 1
     };
     $('.pickadate').pickadate(pickerOptions);
 
-    let from_picker = $('#start_date').pickadate('picker');
-    let to_picker = $('#end_date').pickadate('picker');
+    let from_picker = $('#id_start_date').pickadate('picker');
+    let to_picker = $('#id_end_date').pickadate('picker');
 
-    from_picker.set('min', true);
+    to_picker.set('max', 360);
 
     // Check if there’s a “from” or “to” date to start with.
     if (from_picker.get('value')) {

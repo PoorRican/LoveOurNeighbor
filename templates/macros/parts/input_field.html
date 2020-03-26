@@ -9,11 +9,13 @@
       {{ field }}
       {{ field.label_tag() }}
 
-      <span class="helper-txt"
-            data-error="{{ error_text }}"
-              data-success="">
-      {{ helper_text }}
-    </span>
+      {% if error_text or helper_text %}
+          <span class="helper-text"
+                data-error="{{ error_text }}"
+                data-success="">
+          {{ helper_text }}
+        </span>
+      {% endif %}
 
       {% for error in field.errors %}
           <span class="helper-text red-text">{{ error }}</span>

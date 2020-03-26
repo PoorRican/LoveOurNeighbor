@@ -3,10 +3,11 @@
 #}
 {% extends "layout.html" %}
 
+{% from "ministry/parts/ministry_founded_field.html" import founded_field_initialer %}
+
 {% from "macros/parts/banner_image_dialog.html" import banner_image_dialog %}
 {% from "macros/parts/input_field.html" import input_field %}
 {% from "macros/parts/profile_image_dialog.html" import profile_image_dialog %}
-{% from "macros/parts/rep_request_selection.html" import rep_selection, rep_selection_script %}
 {% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
 {% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
 
@@ -17,14 +18,14 @@
 {% block body %}
   <!-- ministry/ministry_application -->
 
-  <section class="wrapper" ng-app="LON" ng-cloak>
+    <section class="wrapper" ng-app="LON" ng-cloak>
 
-    <h4>New Ministry Profile:</h4>
-    <!-- TODO: make link for more information -->
-    <h6>Please note that all ministry profiles are must be approved before they are made public</h6>
+        <h4>New Ministry:</h4>
+        <!-- TODO: make link for more information -->
+        <h6>Please note that all ministry profiles must be approved before they are made public</h6>
 
-    <form method="POST" name="ministryForm" enctype="multipart/form-data"
-          action="{{ url_for('ministry:create_ministry') }}">
+        <form method="POST" name="ministryForm" enctype="multipart/form-data"
+              action="{{ url_for('ministry:create_ministry') }}">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
       <div class="row" ng-controller="ministryActionCtrl">
@@ -137,17 +138,20 @@
   'ministry/ministry_action.controller.js',
   ) %}
   {% for f in page_assets %}
-    <script src="{{ static('app/%s' % f) }}"></script>
+      <script src="{{ static('app/%s' % f) }}"></script>
   {% endfor %}
 
   {{ wysiwyg_script() }}
 
+  {{ founded_field_initialer() }}
+
   <!-- Knockout.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
 
 {% endblock %}
 
 
 {% block css %}
-  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
+    <link rel="stylesheet"
+          href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
 {% endblock %}

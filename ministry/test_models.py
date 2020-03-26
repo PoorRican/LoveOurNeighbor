@@ -12,7 +12,7 @@ from utils.test_helpers import (
     generate_users, generate_campaigns, generate_donations, generate_ministries, generate_tags
 )
 
-from .forms import MinistryEditForm
+from .forms import MinistryEditForm, NewMinistryForm
 from .models import MinistryProfile
 from .utils import (
     dedicated_ministry_dir, create_ministry_dir,
@@ -350,16 +350,10 @@ class MinistryTestCase(BaseMinistryModelTestCase):
         self.assertTrue(isdir(dedicated_ministry_dir(new_name, prepend=settings.MEDIA_ROOT)))
 
 
-class TestMinistryEditForm(TestCase):
-    """ These critical test cases, ensure that the MinistryEditForm is working. """
-
+class BaseMinistryFormTestCase(TestCase):
     def setUp(self):
         self.admin = User.objects.create(email="test@testing.com")
-
-        post = default_ministry_data(self.admin)
-
-        form = MinistryEditForm(post)
-        form.save()
+        self.post = default_ministry_data(self.admin)
 
     def tearDown(self):
         rmtree(dedicated_ministry_dir(self.ministry, prepend=settings.MEDIA_ROOT))
@@ -370,9 +364,52 @@ class TestMinistryEditForm(TestCase):
         Avoids any black-box model regarding differences in DB and instance memory. """
         return MinistryProfile.objects.get(id=1)
 
+    def testLocation(self):
+        """ Tests that the 'address' form attribute creates a GeoLocation object """
+        form = MinistryEditForm(default_ministry_data(kwargs={'address': "New Jersey"}),
+                                instance=self.ministry)
+        form.save()
+
+        # Assert that GeoLocation contains coordinates
+        self.assertEqual(type(self.ministry.location.location), tuple)
+
+    def testTagsProcessed(self):
+        """ Tests the processing of Tag objects """
+        # create tags
+        # jsonify
+        self.fail()
+
+
+class TestNewMinistryForm(BaseMinistryFormTestCase):
+    """ These critical test cases, ensure that the MinistryEditForm is working. """
+
+    def setUp(self):
+        super(TestNewMinistryForm, self).setUp()
+
+        form = NewMinistryForm(self.post)
+        form.save()
+
+    @property
+    def ministry(self):
+        """ Returns fresh MinistryProfile object.
+        Avoids any black-box model regarding differences in DB and instance memory. """
+        return MinistryProfile.objects.get(id=1)
+
     def testDirCreated(self):
         """ Tests that new MinistryProfiles have a dedicated directory. """
         self.assertTrue(isdir(dedicated_ministry_dir(self.ministry, prepend=settings.MEDIA_ROOT)))
+
+
+class TestMinistryEditForm(BaseMinistryFormTestCase):
+    """ These critical test cases, ensure that the MinistryEditForm is working. """
+
+    def setUp(self):
+        super(TestMinistryEditForm, self).setUp()
+
+        ministry = NewMinistryForm(self.post).save()
+
+        form = MinistryEditForm(self.post, instance=ministry)
+        form.save()
 
     def testRenameDir(self):
         """ Tests renaming the dedicated directory, and that banner/profile images remain valid """
@@ -434,18 +471,3 @@ class TestMinistryEditForm(TestCase):
         form.save()
 
         self.assertEqual(ministry_profile_image_dir(self.ministry, fn1), self.ministry.profile_img.name)
-
-    def testLocation(self):
-        """ Tests that the 'address' form attribute creates a GeoLocation object """
-        form = MinistryEditForm(default_ministry_data(kwargs={'address': "New Jersey"}),
-                                instance=self.ministry)
-        form.save()
-
-        # Assert that GeoLocation contains coordinates
-        self.assertEqual(type(self.ministry.location.location), tuple)
-
-    def testTagsProcessed(self):
-        """ Tests the processing of Tag objects """
-        # create tags
-        # jsonify
-        self.fail()

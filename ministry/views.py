@@ -16,12 +16,8 @@ from frontend.settings import MEDIA_ROOT, MEDIA_URL
 from people.models import User
 from news.models import NewsPost
 
-from .forms import (
-    MinistryEditForm,
-)
-from .models import (
-    MinistryProfile, DEFAULT_PROFILE_IMG
-)
+from .forms import MinistryEditForm, NewMinistryForm
+from .models import MinistryProfile
 from .utils import (
     # serialization functions
     serialize_ministry,
@@ -59,7 +55,7 @@ def create_ministry(request):
         new objects by being passed a boolean variable `start`
     """
     if request.method == 'POST':
-        form = MinistryEditForm(request.POST, request.FILES, initial={'admin': request.user})
+        form = NewMinistryForm(request.POST, request.FILES, initial={'admin': request.user})
         if form.is_valid():
             ministry = form.save()
 
@@ -78,7 +74,7 @@ def create_ministry(request):
                 messages.add_message(request, messages.ERROR, message[0])
 
     else:
-        form = MinistryEditForm(initial={'website': 'https://', 'address': ''})
+        form = NewMinistryForm(initial={'website': 'https://', 'address': ''})
 
     context = {"form": form}
     return render(request, "ministry/ministry_application.html", context)

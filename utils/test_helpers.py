@@ -101,6 +101,7 @@ class BaseViewTestCase(TransactionTestCase):
 
         self.user_password = "doesThisWork"
         self.user_email = "user@test.com"
+        self.user = self.create_user(self.user_email, self.user_password)
 
         self.volatile = []
 
@@ -159,21 +160,28 @@ def default_ministry_data(admin: User = None, **kwargs) -> dict:
             'address': 'Philadelphia, PA',
             'phone_number': '(753)777-7777',
             'staff': 1}
+
     if admin:
         data['admin'] = admin
     for key, val in kwargs.items():
         data[key] = val
+
     return data
 
 
-def default_campaign_data(ministry: MinistryProfile = None, **kwargs) -> dict:
+def default_campaign_data(ministry: MinistryProfile = None, convert_dates=False, **kwargs) -> dict:
     """ A helper function that creates default Campaign data.
 
     Parameters
     ----------
     ministry: MinistryProfile, optional
-       Included in the return dict as the value for 'admin'.
-       Defaults to None.
+        Included in the return dict as the value for 'admin'.
+        Defaults to None.
+
+    convert_dates: bool, optional
+        Option to convert `start_date` and `end_date` to str.
+        This is used for directly passing the returned value into a Form that uses Text/CharField
+            as the Widget/Input.
 
     kwargs: dict, optional
         Values to override or supplement in the returned dict
@@ -188,10 +196,15 @@ def default_campaign_data(ministry: MinistryProfile = None, **kwargs) -> dict:
             'end_date': date(2025, 1, 1),
             'content': 'This is some content',
             'goal': 7531}
+
+    if convert_dates:
+        data['start_date'] = data['start_date'].strftime('%Y-%m-%d')
+        data['end_date'] = data['end_date'].strftime('%Y-%m-%d')
     if ministry:
         data['ministry'] = ministry
     for key, val in kwargs.items():
         data[key] = val
+
     return data
 
 

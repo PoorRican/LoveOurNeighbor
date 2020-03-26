@@ -25,7 +25,6 @@ class UserVerificationFeatureTest(BaseViewTestCase):
     @override_settings(REQUIRE_USER_VERIFICATION=False)
     def testWithFlagOff(self):
         """ Test that the flag being turned-off allows Users to be created and log in w/o verification. """
-        self.user = self.create_user(self.user_email, self.user_password)
         response = self.login()
 
         self.assertTrue(self.user.is_verified)
@@ -34,13 +33,11 @@ class UserVerificationFeatureTest(BaseViewTestCase):
     @override_settings(REQUIRE_USER_VERIFICATION=True)
     def testWithFlagOn(self):
         """ Test that the flag being turned-off reflects User.is_verified value upon object creation. """
-        self.user = self.create_user(self.user_email, self.user_password)
         self.assertFalse(self.user.is_verified)
 
     @override_settings(REQUIRE_USER_VERIFICATION=True)
     def testLoginFail(self):
         """ Test that Users will be redirected to fail page when they are not verified. """
-        self.user = self.create_user(self.user_email, self.user_password)
         response = self.login()
 
         self.assertEqual(response.status_code, 200)
@@ -49,7 +46,6 @@ class UserVerificationFeatureTest(BaseViewTestCase):
     @override_settings(REQUIRE_USER_VERIFICATION=True)
     def testStaffLogin(self):
         """ Test that Love Our Neighbor staff will be allowed to log-in w/o verification. """
-        self.user = self.create_user(self.user_email, self.user_password)
         self.user.is_staff = True
         self.user.save()
 
@@ -63,7 +59,6 @@ class UserVerificationFeatureTest(BaseViewTestCase):
     @override_settings(REQUIRE_USER_VERIFICATION=True)
     def testLoginVerifiedUsers(self):
         """ Test that verified Users are able to log-in w/o error. """
-        self.user = self.create_user(self.user_email, self.user_password)
         self.user.is_verified = True
         self.user.save()
 

@@ -27,8 +27,6 @@ class BaseMinistryProfileTestCase(BaseViewTestCase):
     def setUp(self):
         super().setUp()
 
-        self.user = self.create_user(self.user_email, self.user_password)
-
         data = default_ministry_data(self.user)
         rmtree(dedicated_ministry_dir(data['name'], settings.MEDIA_ROOT), ignore_errors=True)
         create_ministry_dir(data['name'], prepend=settings.MEDIA_ROOT)

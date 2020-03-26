@@ -19,7 +19,7 @@ from donation.utils import serialize_donation
 from comment.forms import CommentForm
 
 from .models import Campaign
-from .forms import CampaignEditForm
+from .forms import CampaignEditForm, NewCampaignForm
 from .utils import (
     serialize_campaign, campaign_banner_dir,
     campaign_images,
@@ -37,7 +37,7 @@ def create_campaign(request, ministry_id):
     # TODO: Check `ministry.is_authorized` here
     # TODO: Catch invalid ministry_id
     if request.method == 'POST':
-        form = CampaignEditForm(request.POST, request.FILES, initial={'ministry': ministry})
+        form = NewCampaignForm(request.POST, request.FILES, initial={'ministry': ministry})
         if form.is_valid():
             cam = form.save()
 
@@ -53,7 +53,7 @@ def create_campaign(request, ministry_id):
                 messages.add_message(request, messages.ERROR, message[0])
 
     else:
-        form = CampaignEditForm()
+        form = NewCampaignForm()
 
     context = {"form": form,
                "ministry": ministry}

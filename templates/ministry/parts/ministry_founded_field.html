@@ -1,0 +1,25 @@
+{% macro founded_field_initialer() %}
+
+  <!-- pickadate.js -->
+  <script src="https://cdn.jsdelivr.net/npm/pickadate@3.5.6/lib/compressed/picker.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pickadate@3.5.6/lib/compressed/picker.date.min.js"></script>
+  <script>
+    const pickerOptions = {
+      formatSubmit: 'yyyy-mm-dd',
+      closeOnSelect: true,
+      hiddenName: true,
+      onSet: function () {
+        this.$node.parent().children()[4].classList = ["active"];
+      },
+      klass: {
+        buttonClose: 'btn red mb-2'
+      },
+      max: -30,     // no ministry should have been founded less than a month ago...
+      today: '',    // remove the 'today' button
+      clear: ''     // remove the 'clear' button
+    };
+    $('.pickadate').pickadate(pickerOptions);
+
+  </script>
+
+{% endmacro %}

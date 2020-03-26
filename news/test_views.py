@@ -32,7 +32,7 @@ class TestNewsPostViews(BaseViewTestCase):
         BaseViewTestCase.tearDown(self)
 
     def testCreateNews_ministry(self):
-        _url_base = "/ministry/news/%s/%s/create"
+        _url_base = "/news/%s/%s/create"
 
         # test NewsPost for MinistryProfile
         _url = _url_base % ("ministry", self.min.id)
@@ -83,7 +83,7 @@ class TestNewsPostViews(BaseViewTestCase):
         # TODO: test incorrect POST
 
     def testCreateNews_campaign(self):
-        _url_base = "/ministry/news/%s/%s/create"
+        _url_base = "/news/%s/%s/create"
 
         # test NewsPost for Campaign
         _url = _url_base % ("campaign", self.cam.id)

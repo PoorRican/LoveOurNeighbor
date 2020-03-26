@@ -14,7 +14,7 @@ from utils.test_helpers import (
     simulate_uploaded_file, BaseViewTestCase,
 )
 
-from .forms import CampaignEditForm
+from .forms import CampaignEditForm, NewCampaignForm
 from .models import Campaign
 from .utils import campaign_banner_dir
 
@@ -24,8 +24,6 @@ email, password = "new@test-users.com", "randombasicpassword1234"
 class TestCampaignViews(BaseViewTestCase):
     def setUp(self):
         super().setUp()
-
-        self.user = self.create_user(self.user_email, self.user_password, )
 
         self.min_name = "Test Ministry"
         self.min = MinistryProfile.objects.create(name=self.min_name,
@@ -77,7 +75,7 @@ class TestCampaignViews(BaseViewTestCase):
         # TODO: test feedback on error
 
     def testEditCampaign(self):
-        _url = reverse('campaign:edit_campaign', kwargs={'campaign_id': self.obj.id})
+        _url = reverse('campaign:admin_panel', kwargs={'campaign_id': self.obj.id})
 
         # assert that User must be logged in
         response = self.client.get(_url)
@@ -177,24 +175,37 @@ class TestCampaignViews(BaseViewTestCase):
         # TODO: test data content
 
 
-class TestCampaignEditForm(TestCase):
-    """ These critical test cases, ensure that the CampaignEditform is working. """
-
+class BaseCampaignFormTestCase(TestCase):
     def setUp(self):
         admin = User.objects.create(email="test@testing.com")
         self.ministry = MinistryProfile.objects.create(**default_ministry_data(admin=admin))
 
-        post = default_campaign_data(self.ministry)
-
-        form = CampaignEditForm(post)
-        self.campaign = form.save()
+        self.post = default_campaign_data(self.ministry, convert_dates=True)
 
     def tearDown(self):
         rmtree(dedicated_ministry_dir(self.ministry, prepend=settings.MEDIA_ROOT))
 
+
+class TestNewCampaignForm(BaseCampaignFormTestCase):
+    def setUp(self):
+        super(TestNewCampaignForm, self).setUp()
+        form = NewCampaignForm(self.post)
+        self.campaign = form.save()
+
     def testDirCreated(self):
         """ Tests that new MinistryProfiles have a dedicated directory. """
         self.assertTrue(isdir(campaign_banner_dir(self.campaign, '', prepend=settings.MEDIA_ROOT)))
+
+
+class TestCampaignEditForm(BaseCampaignFormTestCase):
+    """ These critical test cases, ensure that the CampaignEditForm is working. """
+
+    def setUp(self):
+        super(TestCampaignEditForm, self).setUp()
+
+        campaign = NewCampaignForm(self.post).save()
+        form = CampaignEditForm(self.post, instance=campaign)
+        self.campaign = form.save()
 
     def testPreviousSelectedBannerImg(self):
         """ Tests that banner image selection functionality correctly sets associated ImageFields """
@@ -211,7 +222,7 @@ class TestCampaignEditForm(TestCase):
             self.assertTrue(isfile(campaign_banner_dir(self.campaign, fn, prepend=settings.MEDIA_ROOT)))
 
         # Test `selected_banner_img` functionality
-        form = CampaignEditForm(default_campaign_data(**{'selected_banner_img': fn1}),
+        form = CampaignEditForm(default_campaign_data(**{'selected_banner_img': fn1}, convert_dates=True),
                                 instance=self.campaign)
         self.assertTrue(form.is_valid())  # for some reason... test will not pass without this being called...
         form.save()
