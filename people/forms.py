@@ -7,13 +7,13 @@ from .utils import user_profile_img_dir
 class NewUserForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(NewUserForm, self).__init__(*args, **kwargs)
-        self.fields['password2'] = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':
-                                                                                         'Password (again)'}))
+        self.fields['password2'] = forms.CharField(widget=forms.PasswordInput(), label='Password (again)')
 
     def is_valid(self):
-        # Check matching passwords (this is redundant of client-side validation)
+        # Check matching passwords
         if self.data['password'] != self.data['password2']:
             self.add_error('password', "Passwords do not match.")
+            self.add_error('password2', "Passwords do not match.")
 
         # Check unique email and catch emails that have been used for donations
         try:
@@ -29,6 +29,7 @@ class NewUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email', 'password', 'first_name', 'last_name')
+        widgets = {'password': forms.PasswordInput()}
 
 
 class UserLoginForm(forms.ModelForm):

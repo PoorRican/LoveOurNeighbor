@@ -72,3 +72,19 @@ class MessageOfTheDay(models.Model):
             return cls.objects.get(display=True)
         except cls.DoesNotExist:
             return False
+
+
+class WebsiteText(models.Model):
+    label = models.CharField(unique=True, max_length=32)
+    location = models.CharField('Where is the text located?', null=True, blank=True, max_length=128)
+    text = models.TextField()
+
+    def __str__(self):
+        return self.label
+
+    @classmethod
+    def get_text(cls, label):
+        try:
+            return cls.objects.get(label=label).text
+        except cls.DoesNotExist:
+            return ''

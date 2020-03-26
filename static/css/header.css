@@ -5,11 +5,22 @@
 
 .brand-logo {
   display: inline-block;
+  padding: 0 !important;
 }
 
 .brand-logo #logo {
   height: 1.5em;
-  margin-top: -15px;
+  margin-top: 4px;
+}
+
+.brand-logo-wrapper {
+  display: inline-block;
+  padding-bottom: 6px;
+}
+
+.brand-logo-wrapper img {
+  height: 2em;
+  vertical-align: middle;
 }
 
 @media screen and (max-width: 992px) {
@@ -54,4 +65,20 @@ li.profile-area {
 .view_profile span {
   margin-left: .5em;
   margin-top: 1.5em;
+}
+
+.login-button {
+  height: 64px;
+}
+
+@media screen and (max-width: 992px) {
+  .login-button {
+    height: 56px;
+  }
+
+  .login-button i {
+    top: 6px;
+    position: relative;
+    height: 0
+  }
 }

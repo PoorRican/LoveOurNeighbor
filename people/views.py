@@ -69,7 +69,6 @@ def create_user(request):
         else:
             for _, error in form.errors.items():
                 for msg in error:
-                    print(msg)
                     messages.add_message(request, messages.ERROR, msg)
 
             return render(request, 'signup.html', {'form': form})

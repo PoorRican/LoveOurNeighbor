@@ -22,6 +22,11 @@ main {
   flex: 1 0 auto;
 }
 
+strong {
+  font-weight: 600 !important;
+  font-style: oblique;
+}
+
 .wrapper {
   padding-left: 10%;
   padding-right: 10%;
@@ -69,37 +74,6 @@ main {
   line-height: 50px;
   text-align: center;
   max-width: 96%;
-}
-
-
-.comments_section {
-  padding-left: 0;
-}
-
-.comments_section h4,
-.comments_section h3 {
-  margin-bottom: 0px;
-  border-bottom: solid 1px #FF7100;
-}
-
-.comment.md-list-item-text * {
-  color: #EEE !important;
-}
-
-.comment.md-list-item-text p {
-  font-size: 18px !important;
-  font-weight: 300 !important;
-}
-
-.comment.md-list-item-text small {
-  font-size: 12px;
-  padding-left: 5px;
-}
-
-.comment.md-list-item-text bold {
-  font-size: 14px;
-  font-weight: 500;
-  padding-left: 5px;
 }
 
 
@@ -366,7 +340,7 @@ div.dialog-trigger img {
 }
 
 @media (max-width: 600px) {
-  /* all submit and cancel button alignmet change*/
+  /* all submit and cancel button alignment change*/
   .media-body .general-action-btn {
     display: -webkit-box;
     display: -webkit-flex;

@@ -5,7 +5,8 @@ from django.urls import reverse
 from campaign.models import Campaign
 from ministry.models import MinistryProfile
 from news.models import NewsPost
-from public.models import AboutSection, FaqSection, MessageOfTheDay
+from public.models import AboutSection, FaqSection, MessageOfTheDay, WebsiteText
+from people.forms import NewUserForm
 
 seo_keywords = ['new jersey', 'non profit']
 
@@ -33,7 +34,8 @@ def home(request):
 
     Template
     --------
-    "public/home.html"
+    "public/first.html"
+    "public/feed.html"
 
     Notes
     -----
@@ -41,15 +43,19 @@ def home(request):
         featured content, news, and trending/new content.
     """
 
-    context = {'new_ministries': MinistryProfile.new_ministries(),
-               'random_ministries': MinistryProfile.random_ministries(),
-               'new_campaigns': Campaign.new_campaigns(),
-               'random_campaigns': Campaign.random_campaigns(),
-               'motd': MessageOfTheDay.get_message(),
-               'active': reverse('home'),
-               }
-
-    return render(request, "home.html", context)
+    if request.user.is_authenticated:
+        context = {'new_ministries': MinistryProfile.new_ministries(),
+                   'random_ministries': MinistryProfile.random_ministries(),
+                   'new_campaigns': Campaign.new_campaigns(),
+                   'random_campaigns': Campaign.random_campaigns(),
+                   'motd': MessageOfTheDay.get_message(),
+                   'active': reverse('home'),
+                   }
+        return render(request, "feed.html", context)
+    else:
+        context = {'signup': NewUserForm(),
+                   'banner': WebsiteText.get_text('Homepage Info')}
+        return render(request, "first.html", context)
 
 
 def about(request):

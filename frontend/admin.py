@@ -22,10 +22,10 @@ from people.admin import UserAdmin
 from people.models import User
 
 from public.admin import (
-    AboutAdmin, FAQAdmin, MOTDAdmin, SocialMediaLinkAdmin
+    AboutAdmin, FAQAdmin, MOTDAdmin, SocialMediaLinkAdmin, WebsiteTextAdmin
 )
 from public.models import (
-    AboutSection, FaqSection, MessageOfTheDay, SocialMediaLink
+    AboutSection, FaqSection, MessageOfTheDay, SocialMediaLink, WebsiteText
 )
 
 from tag.admin import TagAdmin
@@ -66,3 +66,4 @@ admin_site.register(NewsPost, NewsPostAdmin)
 admin_site.register(SocialMediaLink, SocialMediaLinkAdmin)
 admin_site.register(Tag, TagAdmin)
 admin_site.register(User, UserAdmin)
+admin_site.register(WebsiteText, WebsiteTextAdmin)

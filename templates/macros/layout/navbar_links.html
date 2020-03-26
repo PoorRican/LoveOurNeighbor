@@ -35,8 +35,8 @@
               </span><!-- /.avatar-status -->
             </a><!-- /.profile-button -->
           {% else %}
-            <a href="{{ url_for('people:login') }}">
-              <i class="material-icons">person</i>
+            <a class="login-button" href="{{ url_for('people:login') }}" style="padding-top: 6px;">
+              <i class="material-icons" style="display: inline;">person</i>
             </a>
           {% endif %}
         </li><!-- /.profile-avatar -->

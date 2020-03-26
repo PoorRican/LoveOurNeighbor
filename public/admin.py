@@ -30,3 +30,10 @@ class MOTDAdmin(ModelAdmin):
         ('Metadata', {'fields': ('pub_date', 'edit_date')}),
         ('Content', {'fields': (('title', 'display'), 'message')})
     )
+
+
+class WebsiteTextAdmin(ModelAdmin):
+    formfield_overrides = {
+        models.TextField: {'widget': AdminTinyMCE()}
+    }
+    list_display = ('label',)

@@ -1,0 +1,208 @@
+{% from "macros/layout/navbar_links.html" import navbar_links %}
+{% from "macros/layout/searchbar.html" import searchbar %}
+{% from "macros/layout/sidenav.html" import sidenav %}
+{% from "macros/layout/footer.html" import footer %}
+
+{% from "macros/parts/donate_button.html" import donate_button %}
+{% from "macros/parts/input_field.html" import input_field %}
+{% from "macros/cards.html" import frontpage_ministry_card, frontpage_campaign_card %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="keywords" content="{{ ', '.join(keywords) }}">
+
+<!-- OpenGraph meta properties -->
+<meta property="og:type" content="article"/>
+<meta property="og:image" content="https://loveourneighbor.org{{ static('img/brand/LON_letterhead.png') }}">
+<meta property="og:url" content="https://loveourneighbor.org/home">
+<meta property="og:title" content="Love Our Neighbor Homepage">
+<meta property="og:description" content="What is Love Our Neighbor?">
+<meta property="og:site_name" content="Love Our Neighbor">
+
+<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-153638464-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'UA-153638464-1');
+  </script>
+
+
+  <title>Welcome to Love Our Neighbor</title>
+
+  {# favicon #}
+  <link rel="shortcut icon" href="{{ static('img/favicon.svg') }}">
+  <link rel="apple-touch-icon" href="{{ static('img/favicon.svg') }}">
+
+  {# {{{ CSS Imports #}
+  <link rel="stylesheet" href="{{ static('theme/vendors.min.css') }}">
+  <link rel="stylesheet" href="{{ static('theme/materialize.min.css') }}">
+  <link rel="stylesheet" href="{{ static('theme/style.min.css') }}">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  {# Local Scripts #}
+  {# TODO: fetch these from CDN while on production #}
+  {% assets "css" %}
+    <link rel="stylesheet" href="/{{ ASSET_URL }}">
+  {% endassets %}
+
+  {# }}} #}
+
+</head>
+
+<body class="vertical-layout page-header-dark">
+
+<header class="page-topbar" id="header">
+  <div class="navbar navbar-fixed">
+    <nav class="navbar-main navbar-color navbar-dark gradient-45deg-purple-deep-orange gradient-shadow">
+      <div class="nav-wrapper ml-2">
+        <div class="brand-logo-wrapper">
+          <img src="{{ static('img/brand/LON_logo.svg') }}">
+          &nbsp;
+          <img src="{{ static('img/brand/LON_straight.png') }}" class="hide-on-med-and-down">
+        </div>
+
+        <div class="header-search-wrapper hide-on-med-and-down" style="width: calc(100% - 582px)">
+          {{ searchbar(small_screen=False) }}
+        </div><!-- /.header-search-wrapper -->
+
+        <ul class="navbar-list right mr-2">
+          <li class="hide-on-large-only search-input-wrapper">
+            <a class="search-button hide-on-large-only" href="javascript:void(0);">
+              <i class="material-icons">search</i>
+            </a>
+          </li>
+          <li>
+            <a class="login-button" href="{{ url_for('people:login') }}">
+              <i class="material-icons" style="display: inline;">person</i>
+            </a>
+          </li>
+        </ul>
+      </div><!-- /.nav-wrapper -->
+
+      <nav class="display-none search-sm">
+        <div class="nav-wrapper">
+          {{ searchbar(small_screen=True) }}
+        </div>
+      </nav>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrapper mt-2 mb-4">
+    <div class="row">
+      <div class="col s12 m7">
+        <!-- Marketing Content/Banner -->
+        {{ banner|safe }}
+      </div>
+      <div class="col s12 m5">
+        <!-- Login -->
+        <div class="card-panel">
+          <h3>Sign Up</h3>
+          <h6 class="grey-text">Start connecting with ministries!</h6>
+          <form class="signup" name="signupForm" method="post" action="{{ url_for('people:create_user') }}">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <div class="row">
+              {{ input_field(signup.first_name, width='l6 s12') }}
+              {{ input_field(signup.last_name, width='l6 s12') }}
+              {{ input_field(signup.email, width='s12') }}
+              {{ input_field(signup.password, width='s12') }}
+              {{ input_field(signup.password2, width='s12') }}
+            </div>
+            <button class="btn orange" type="submit">Sign Up&nbsp;&raquo;</button>
+            <p>
+              <a class="btn blue" href="{{ url_for('people:login') }}">Log In&nbsp;&raquo;</a>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{% set links =
+    [
+      (url_for('home'), 'Home', 'fa fa-home'),
+      (url_for('faq'), 'FAQ', 'fa fa-question-circle-o'),
+    ] %}
+
+{{ footer(links+get_flatpages()) }}
+
+
+{# paths must be relative to static directory #}
+{% set layout_assets = (
+    'js/ui-feedback.animations.js',
+    'js/vendors.min.js',
+    'js/materialize.js',
+    'js/plugins.js',
+    'js/search.js',
+  ) %}
+{% for f in layout_assets %}
+  <script src="{{ static('%s' % f) }}"></script>
+{% endfor %}
+
+<!-- Initialize Materialize elements -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    let options = {};
+    // Initialize Sidebar Component
+    let el = document.querySelectorAll('.sidenav');
+    M.Sidenav.init(el);
+
+    // Initialize Dropdown Components
+    el = document.querySelectorAll('.dropdown-trigger');
+    M.Dropdown.init(el, {
+      constrainWidth: false,
+    });
+
+    // Initialize Collapsible Components
+    el = document.querySelectorAll('.sidenav-accordian');
+    M.Collapsible.init(el, {
+      onOpenStart: open_collapsible,
+      onCloseStart: close_collapsible
+    });
+    el = document.querySelectorAll('.collapsible');
+    M.Collapsible.init(el);
+
+    // Initialize Datepicker components
+    el = document.querySelectorAll('.datepicker');
+    options = {format: 'mm/dd/yyyy'};
+    M.Datepicker.init(el, options);
+
+    el = document.querySelectorAll('.modal');
+    M.Modal.init(el);
+
+    // Initialize Tab Components
+    el = document.querySelectorAll('.tabs');
+    M.Tabs.init(el);
+
+    // Parallax Banner Images
+    el = document.querySelectorAll('.parallax');
+    M.Parallax.init(el);
+
+    // Image Viewer
+    el = document.querySelectorAll('.materialboxed');
+    M.Materialbox.init(el);
+
+    el = document.querySelectorAll('.tooltipped');
+    M.Tooltip.init(el);
+
+  });
+
+</script>
+
+</body>
+</html>
