@@ -9,7 +9,7 @@
 {% from "macros/parts/input_field.html" import input_field %}
 {% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
 {% from "macros/parts/get_obj_json.html" import get_obj_json %}
-{% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
+{% from "macros/parts/tag_selection.html" import tag_selection %}
 {% from "macros/parts/transaction_table.html" import transaction_table %}
 {% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
 
@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block body %}
-  <section class="wrapper" ng-app="LON" ng-cloak>
+  <section class="wrapper">
     <!-- campaign/create_campaign -->
 
     <h4>New Campaign</h4>
@@ -30,7 +30,7 @@
 
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-      <div id="details" ng-controller="campaignActionCtrl">
+      <div id="details">
         <div class="row">
 
           <br>
@@ -82,28 +82,7 @@
           {{ wysiwyg_editor(form.content.name) }}
         </div><!-- /#WYSIWYG -->
 
-        <md-input-container layout="column">
-          <md-icon><i class="material-icons">class</i></md-icon>
-          {{ form.tags.label_tag() }}
-          <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
-          <md-chips ng-model="object.tags" md-autocomplete-snap
-                    md-transform-chip="tag_service.transform_chip($chip)"
-                    md-separator-keys="tag_service.separatorKeys">
-            <md-autocomplete
-                md-search-text="tagText"
-                md-items="tag in filter_tags(tagText)"
-                md-item-text="tag"
-                md-min-length="1" flex="100">
-              <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
-            </md-autocomplete>
-            <md-chip-template>
-                  <span>
-                    <span>{% raw %}{{ $chip }}{% endraw %}</span>
-                  </span>
-            </md-chip-template>
-          </md-chips>
-          <small class="hint">Select from existing tags, or create new ones by entering a comma.</small>
-        </md-input-container><!-- /tag-selection -->
+        {{ tag_selection(form.tags) }}
 
         <div id="form_buttons">
           <button class="btn orange" type="submit">
@@ -120,28 +99,18 @@
 
 
 {% block scripts %}
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
 
   {{ campaign_date_input_scripts('.pickadate') }}
 
-  {% set page_assets = (
-  'app.module.js',
-  'app.config.js',
-  'services/tag.service.js',
-  'services/object.service.js',
-  'services/select_image_dialog.service.js',
-  'services/confirm_delete_dialog.service.js',
-  'campaign/campaign_action.controller.js',
-  ) %}
-  {% for f in page_assets %}
-    <script src="{{ static('app/%s' % f) }}"></script>
-  {% endfor %}
-
   {{ wysiwyg_script() }}
+
+  <!-- tag selection -->
+  <script src="{{ static('js/tag_selector.js') }}"></script>
+  <script>
+    const hidden_input = '{{ form.tags.auto_id }}';
+    const tags_url = '{{ url_for("tag:tags_json") }}';
+    new TagSelector(hidden_input, tags_url, el = 'tagSelector');
+  </script>
 
   <!-- Knockout.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
@@ -152,9 +121,4 @@
     ko.applyBindings(bannerSelection, document.getElementById('banner_img_input'));
   </script>
 
-{% endblock %}
-
-
-{% block css %}
-  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
 {% endblock %}

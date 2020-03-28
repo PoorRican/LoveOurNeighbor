@@ -22,7 +22,7 @@
 {% block body %}
   <!-- campaign/admin_panel -->
 
-  <div class="row" ng-app="LON" ng-cloak>
+  <div class="row">
     <div class="col s12">
       <div class="container">
         <section class="tabs-vertical mt-1 section">
@@ -59,7 +59,7 @@
             </div><!-- /.col /tabs -->
 
 
-            <div class="col s12 l8" ng-controller="campaignActionCtrl">
+            <div class="col s12 l8">
               <div id="details">
                 <div class="card-panel">
                   <form method="POST" enctype="multipart/form-data" action="{{ campaign.edit }}">
@@ -123,29 +123,7 @@
                       {{ wysiwyg_editor(form.content.name) }}
                     </div><!-- /#WYSIWYG -->
 
-                    <md-input-container layout="column">
-                      <md-icon><i class="material-icons">class</i></md-icon>
-                      {{ form.tags.label_tag() }}
-                      <input type="hidden" name="{{ form.tags.name }}"
-                             value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
-                      <md-chips ng-model="object.tags" md-autocomplete-snap
-                                md-transform-chip="tag_service.transform_chip($chip)"
-                                md-separator-keys="tag_service.separatorKeys">
-                        <md-autocomplete
-                            md-search-text="tagText"
-                            md-items="tag in filter_tags(tagText)"
-                            md-item-text="tag"
-                            md-min-length="1" flex="100">
-                          <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
-                        </md-autocomplete>
-                        <md-chip-template>
-                  <span>
-                    <span>{% raw %}{{ $chip }}{% endraw %}</span>
-                  </span>
-                        </md-chip-template>
-                      </md-chips>
-                      <small class="hint">Select from existing tags, or create new ones by entering a comma.</small>
-                    </md-input-container><!-- /tag-selection -->
+                    {{ tag_selection(form.tags) }}
 
                     <div id="form_buttons">
                       <button class="btn orange" type="submit">
@@ -237,25 +215,6 @@
 
 
 {% block scripts %}
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
-
-  {% set page_assets = (
-  'app.module.js',
-  'app.config.js',
-  'services/tag.service.js',
-  'services/object.service.js',
-  'services/select_image_dialog.service.js',
-  'services/confirm_delete_dialog.service.js',
-  'campaign/campaign_action.controller.js',
-  ) %}
-  {% for f in page_assets %}
-    <script src="{{ static('app/%s' % f) }}"></script>
-  {% endfor %}
-
   <!-- Goal Elements -->
   <script src="{{ static('js/gauge.min.js') }}"></script>
   <script>
@@ -307,6 +266,17 @@
 
   {{ campaign_date_input_scripts('.pickadate') }}
 
+  <!-- tag selection -->
+  {{ get_obj_json(campaign) }}
+  <script src="{{ static('js/tag_selector.js') }}"></script>
+  <script>
+    get_obj_json().then(function (obj) {
+      const hidden_input = '{{ form.tags.auto_id }}';
+      const tags_url = '{{ url_for("tag:tags_json") }}';
+      new TagSelector(hidden_input, tags_url, obj.tags, 'tagSelector');
+    })
+  </script>
+
   <!-- masonry -->
   <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
   <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
@@ -326,6 +296,5 @@
 
 
 {% block css %}
-  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.css">
 {% endblock %}

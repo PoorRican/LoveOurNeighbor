@@ -7,7 +7,7 @@
 
 {% from "macros/parts/input_field.html" import input_field %}
 {% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
-{% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
+{% from "macros/parts/tag_selection.html" import tag_selection %}
 {% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
 
 {% block title %}
@@ -79,30 +79,7 @@
           {{ wysiwyg_editor(form.description.name) }}
         </div><!-- /#WYSIWYG -->
 
-        <br>
-        <md-input-container layout="column">
-          <md-icon><i class="material-icons">class</i></md-icon>
-          {{ form.tags.label_tag() }}
-          <input type="hidden" name="{{ form.tags.name }}" value="{% raw %}{{ object.tags.join(', ') }}{% endraw %}">
-          <md-chips ng-model="object.tags" md-autocomplete-snap
-                    md-transform-chip="tagService.transform_chip($chip)"
-                    md-separator-keys="tagService.separatorKeys">
-            <md-autocomplete
-                md-search-text="tagText"
-                md-items="tag in filter_tags(tagText)"
-                md-item-text="tag"
-                md-min-length="1">
-              <span md-highlight-text="tagText">{% raw %}{{ tag }}{% endraw %}</span>
-            </md-autocomplete>
-            <md-chip-template>
-                  <span>
-                    <span>{% raw %}{{ $chip }}{% endraw %}</span>
-                  </span>
-            </md-chip-template>
-          </md-chips>
-          <br><br>
-          <div class="hint">Select from existing tags, or create new ones by entering a comma.</div>
-        </md-input-container><!-- /tag-selection -->
+        {{ tag_selection(form.tags) }}
 
         <div id="form_buttons" class="row">
           <div class="col l3 s12">
@@ -143,6 +120,14 @@
   {{ wysiwyg_script() }}
 
   {{ founded_field_initialer() }}
+
+  <!-- tag selection -->
+  <script src="{{ static('js/tag_selector.js') }}"></script>
+  <script>
+    const hidden_input = '{{ form.tags.auto_id }}';
+    const tags_url = '{{ url_for("tag:tags_json") }}';
+    new TagSelector(hidden_input, tags_url, el = 'tagSelector');
+  </script>
 
   <!-- Knockout.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
