@@ -1,15 +1,15 @@
 from django import forms
 
 from frontend.utils import sanitize_wysiwyg_input
+from people.models import User
 from tag.models import Tag
 
+from .models import MinistryProfile
 from .utils import (
     ministry_banner_dir,
     ministry_profile_image_dir,
     create_ministry_dirs,
 )
-
-from .models import MinistryProfile
 
 
 class NewMinistryForm(forms.ModelForm):
@@ -111,3 +111,38 @@ class MinistryEditForm(NewMinistryForm):
         self.instance.description = sanitize_wysiwyg_input(self.data.get('description', ''))
 
         return super(forms.ModelForm, self).save(commit=commit)
+
+
+class RepManagementForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(RepManagementForm, self).__init__(*args, **kwargs)
+        self.fields['reps'] = forms.CharField(max_length=512, required=False)
+        self.fields['requests'] = forms.CharField(max_length=512, required=False)
+
+    def save(self, commit=True) -> MinistryProfile:
+        reps = self.data.get('reps', '').split(', ')
+        reqs = self.data.get('requests', '').split(', ')
+
+        # promote reps
+        for email in reps:
+            if email in [i.email for i in self.instance.requests.all()]:
+                self.instance.add_representative(email)
+        # demote reps
+        for email in [i.email for i in self.instance.reps.all()]:
+            if email not in reps:
+                self.instance.remove_representative(email)
+
+        # delete requests
+        for user in self.instance.requests.all():
+            if user.email not in reqs:
+                self.instance.delete_request(user.email)
+
+        return super(RepManagementForm, self).save(commit=commit)
+
+    class Meta:
+        model = MinistryProfile
+        exclude = ('profile_img', 'banner_img',
+                   'name', 'address', 'phone_number', 'website', 'founded',
+                   'facebook', 'instagram', 'youtube', 'twitter',
+                   'admin', 'description', 'staff',
+                   'reps', 'requests')

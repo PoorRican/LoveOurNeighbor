@@ -12,10 +12,10 @@ from utils.test_helpers import (
     generate_users, generate_campaigns, generate_donations, generate_ministries, generate_tags
 )
 
-from .forms import MinistryEditForm, NewMinistryForm
+from .forms import MinistryEditForm, NewMinistryForm, RepManagementForm
 from .models import MinistryProfile
 from .utils import (
-    dedicated_ministry_dir, create_ministry_dir,
+    dedicated_ministry_dir, create_ministry_dirs,
     ministry_profile_image_dir, ministry_banner_dir,
 )
 
@@ -316,7 +316,7 @@ class MinistryTestCase(BaseMinistryModelTestCase):
         self.assertIn('name already exists', str(e.exception))
 
         # Ensure that the dedicated media directory exists
-        create_ministry_dir(self.min)
+        create_ministry_dirs(self.min)
         self.assertTrue(isdir(dedicated_ministry_dir(self.min, settings.MEDIA_ROOT)))
 
         ministry.delete()
@@ -413,7 +413,7 @@ class TestMinistryEditForm(BaseMinistryFormTestCase):
 
     def testRenameDir(self):
         """ Tests renaming the dedicated directory, and that banner/profile images remain valid """
-        create_ministry_dir(self.ministry, prepend=settings.MEDIA_ROOT)
+        create_ministry_dirs(self.ministry, prepend=settings.MEDIA_ROOT)
         self.assertTrue(dedicated_ministry_dir(self.ministry, prepend=settings.MEDIA_ROOT))
         _id = self.ministry.id
 
@@ -471,3 +471,78 @@ class TestMinistryEditForm(BaseMinistryFormTestCase):
         form.save()
 
         self.assertEqual(ministry_profile_image_dir(self.ministry, fn1), self.ministry.profile_img.name)
+
+
+class TestRepManagementForm(BaseMinistryModelTestCase):
+    def setUp(self):
+        super(TestRepManagementForm, self).setUp()
+        users = generate_users(10)
+        self.reps = users[:5]
+        self.requests = users[5:]
+
+    def testAddRep(self):
+        # simulate requests
+        for i in self.reps[:2]:
+            self.min.requests.add(i)
+        self.min.save()
+
+        post = {'reps': ', '.join([i.email for i in self.reps[:2]]),
+                'requests': ', '.join([i.email for i in self.requests])}
+        form = RepManagementForm(post, instance=self.min)
+        form.save()
+
+        reps = [i.email for i in self.min.reps.all()]
+
+        # check promoted
+        for i in self.reps[:2]:
+            self.assertIn(i.email, reps)
+
+    def testRemoveRep(self):
+        # simulate existing reps
+        for i in self.reps:
+            self.min.reps.add(i)
+        self.min.save()
+
+        post = {'reps': ', '.join([i.email for i in self.reps[2:]]),
+                'requests': ', '.join([i.email for i in self.requests + self.reps[:2]])}
+        form = RepManagementForm(post, instance=self.min)
+        form.save()
+
+        reps = [i.email for i in self.min.reps.all()]
+        requests = [i.email for i in self.min.requests.all()]
+
+        # check demoted
+        for i in self.reps[:2]:
+            self.assertNotIn(i.email, reps)
+            self.assertIn(i.email, requests)
+
+        # check remaining
+        for i in self.reps[2:]:
+            self.assertIn(i.email, reps)
+            self.assertNotIn(i.email, requests)
+
+    def testRemRequest(self):
+        # simulate existing reps
+        for i in self.requests:
+            self.min.requests.add(i)
+        for i in self.reps:
+            self.min.reps.add(i)
+        self.min.save()
+
+        post = {'reps': ', '.join([i.email for i in self.reps]),
+                'requests': ', '.join([i.email for i in self.requests[2:]])}
+        form = RepManagementForm(post, instance=self.min)
+        form.save()
+
+        reps = [i.email for i in self.min.reps.all()]
+        requests = [i.email for i in self.min.requests.all()]
+
+        # check deleted
+        for i in self.requests[:2]:
+            self.assertNotIn(i.email, requests)
+            self.assertNotIn(i.email, reps)
+
+        # check remaining
+        for i in self.requests[2:]:
+            self.assertIn(i.email, requests)
+            self.assertNotIn(i.email, reps)

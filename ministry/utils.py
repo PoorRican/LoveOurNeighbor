@@ -20,14 +20,12 @@ def serialize_ministry(ministry):
         for i in ministry.requests.all():
             _requests.append({'name': i.name,
                               'email': i.email,
-                              'img': i.profile.avatar_url,
-                              })
+                              'img': i.profile_img.url})
     if len(ministry.reps.all()):
         for i in ministry.reps.all():
             _reps.append({'name': i.name,
                           'email': i.email,
-                          'img': i.profile.avatar_url,
-                          })
+                          'img': i.profile_img.url})
 
     return {'id': ministry.id,
             'name': ministry.name,

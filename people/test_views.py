@@ -9,7 +9,7 @@ from utils.test_helpers import simulate_uploaded_file
 
 from .models import User
 from .forms import NewUserForm, UserEditForm
-from .utils import create_profile_img_dir, user_profile_img_dir, user_profile_dedicated_dir
+from .utils import create_profile_dirs, user_profile_img_dir, user_profile_dedicated_dir
 
 
 class NewUserFormTestCase(TestCase):

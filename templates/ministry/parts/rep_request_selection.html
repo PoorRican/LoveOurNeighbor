@@ -1,49 +1,39 @@
-{% macro rep_selection(form) %}
-  <input id="rep_data" name="{{ form.reps.name }}" type="hidden">
-  <div class="chips reps"></div>
-{% endmacro %}
+{% macro rep_selection(reps, requests) %}
+  <div id="repUI">
+    {{ reps.as_hidden(attrs={'data-bind': 'value: reps_value'}) }}
+    {{ requests.as_hidden(attrs={'data-bind': 'value: requests_value'}) }}
+    <h5>Representatives:</h5>
+    <div id="reps">
 
-{% macro rep_selection_script(object) %}
-  <script>
-    var requests = [];
-    var reps = [];
+      <div class="chip-wrapper" data-bind="foreach: reps">
+        <div class="chip">
+          <img data-bind="attr: {src: img}">
+          <span data-bind="text: name"></span>
+          <strong data-bind="text: email"></strong>
+          <i class="close material-icons" data-bind="click: $parent.del_rep">close</i>
+        </div><!-- /.chip -->
+      </div><!-- /.chip-wrapper -->
 
-    /**
-     * @brief Moves a chip from requests to reps
-     */
-    function addRep(el, index) {
-      console.debug(el);
-      console.debug(index);
-    }
+      <h6 data-bind="hidden: reps().length">
+        There are no representatives to manage
+      </h6>
+    </div><!-- /#reps -->
 
-    /**
-     * @brief Initializes the Rep Request input using a tag input component.
-     *
-     * Please See: https://materializecss.com/chips.html for more info on the Tags component
-     *
-     * @param obj JSON for an object (which may be MinistryProfile or Campaign).
-     *    If it is not provided, it will be fetched
-     * @returns null
-     */
-    async function initRepInput(obj) {
-      let chip = {};    // buffer for iteration
+    <h5>Pending Requests:</h5>
+    <div id="requests">
 
-      // Format existing reps
-      if (obj === null || obj === undefined) {
-        const obj_json_response = await fetch('{{ object.json }}');
-        obj = await obj_json_response.json();
-      }
-      for (chip of obj['reps']) {
-        reps.push({tag: chip['email'], image: chip['img']});
-      }
+      <div class="chip-wrapper" data-bind="foreach: reqs">
+        <div class="chip">
+          <img data-bind="attr: {src: img}, click: $parent.add_rep">
+          <span data-bind="text: name, click: $parent.add_rep"></span>
+          <strong data-bind="text: email, click: $parent.add_rep"></strong>
+          <i class="close material-icons" data-bind="click: $parent.del_req">close</i>
+        </div><!-- /.chip -->
+      </div><!-- /.chip-wrapper -->
 
-      for (chip of obj['requests']) {
-        requests.push({tag: chip['email'], image: chip['img']});
-      }
-
-      let el = document.querySelectorAll('.reps');
-      const options = {onChipSelect: addRep};
-      M.Chips.init(el, options);
-    }
-  </script>
+      <h6 data-bind="hidden: reqs().length">
+        There are pending requests
+      </h6>
+    </div><!-- /#requests -->
+  </div>
 {% endmacro %}

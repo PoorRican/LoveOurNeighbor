@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% from "ministry/parts/ministry_founded_field.html" import founded_field_initialer %}
-{% from "ministry/parts/rep_request_selection.html" import rep_selection, rep_selection_script %}
+{% from "ministry/parts/rep_request_selection.html" import rep_selection %}
 
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 {% from "macros/parts/get_obj_json.html" import get_obj_json %}
@@ -21,7 +21,7 @@
 {% block body %}
   <!-- ministry/admin_panel -->
 
-  <div class="row" ng-app="LON" ng-cloak>
+  <div class="row">
     <div class="col s12">
       <div class="container">
         <section class="tabs-vertical mt-1 section">
@@ -67,14 +67,11 @@
               </div><!-- /.card-panel -->
             </div><!-- /.col /tabs -->
 
-            <div class="col s12 l8" ng-controller="ministryActionCtrl">
+            <div class="col s12 l8">
               <div id="details">
                 <div class="card-panel">
                   <form method="POST" name="ministryForm" id="ministryForm"
                         enctype="multipart/form-data" action="{{ ministry.edit }}">
-                    <input type="hidden" id="current_object_json" value="{{ ministry.json }}">
-                    <input type="hidden" id="ministry_id" value="{{ ministry.id }}">
-
                     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
                     <div class="row">
@@ -158,53 +155,17 @@
 
               <div id="administration">
                 <div class="card-panel">
-                  <form method="POST" name="repForm"
+                  <form method="POST"
                         action="{{ url_for('ministry:rep_management', kwargs={'ministry_id': ministry.id}) }}">
 
-                    <md-content layout="column" class="md-padding autocomplete rep_requests"
-                                style="background-color: transparent">
-                      <input type="hidden" name="reps" value="{% raw %}{{ object.reps }}{% endraw %}">
-                      <label>
-                        <md-icon><i class="material-icons">group_add</i></md-icon>
-                        Representatives:
-                      </label>
-                      <md-contact-chips ng-model="object.reps"
-                                        md-contacts="filter_users($query)"
-                                        md-require-match="true"
-                                        md-contact-name="name"
-                                        md-contact-image="img"
-                                        md-contact-email="email"
-                                        placeholder="Select by name or email"
-                                        secondary-placeholder="Add another representative">
-                      </md-contact-chips>
-                      {# TODO: button to clear all pending requests #}
-                      <md-list class="available_contacts">
-                        <md-subheader>
-                          Representative Requests
-                        </md-subheader>
-                        {% if len(ministry.requests.all()) %}
-                          <md-list-item class="md-2-line contact-item" ng-repeat="(index, contact) in object.requests">
-                            {% raw %}
-                            <img class="md-avatar" ng-src="{{ contact.img }}">
-                            <div class="md-list-item-text compact">
-                              <h3>{{ contact.name }}</h3>
-                              <p>{{ contact.email }}</p>
-                            </div>
-                            {% endraw %}
-                          </md-list-item>
-                        {% else %}
-                          <md-list-item class="md-1-line">
-                            <h5>There are no requests to show</h5>
-                          </md-list-item>
-                        {% endif %}
-                      </md-list>
-                    </md-content>
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    {{ rep_selection(rep_form.reps, rep_form.requests) }}
 
                     <div id="form_buttons">
-                      <a class="btn right" type="submit">
-                        <i class="material-icons">save</i>
+                      <button class="btn orange" type="submit">
+                        <i class="material-icons left">save</i>
                         Update
-                      </a>
+                      </button>
                     </div><!-- /#form_buttons -->
 
                   </form>
@@ -265,7 +226,7 @@
                   </div><!-- /.card-panel -->
                 </div><!-- /#donations -->
 
-            </div><!-- /.col /ng-controller -->
+            </div><!-- /.col -->
           </div><!-- /.row -->
         </section><!-- /.tabs-section -->
       </div><!-- /.container -->
@@ -275,39 +236,9 @@
 
 
 {% block scripts %}
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
-
-  {% set page_assets = (
-  'app.module.js',
-  'app.config.js',
-  'services/tag.service.js',
-  'services/object.service.js',
-  'services/select_image_dialog.service.js',
-  'people/user_filter.service.js',
-  'ministry/ministry_action.controller.js',
-  ) %}
-  {% for f in page_assets %}
-    <script src="{{ static('app/%s' % f) }}"></script>
-  {% endfor %}
-
   {{ wysiwyg_script() }}
 
   {{ founded_field_initialer() }}
-
-  <!-- tag selection -->
-  {{ get_obj_json(ministry) }}
-  <script src="{{ static('js/tag_selector.js') }}"></script>
-  <script>
-    get_obj_json().then(function (obj) {
-      const hidden_input = '{{ form.tags.auto_id }}';
-      const tags_url = '{{ url_for("tag:tags_json") }}';
-      new TagSelector(hidden_input, tags_url, obj.tags, 'tagSelector');
-    })
-  </script>
 
   <!-- masonry -->
   <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
@@ -315,6 +246,8 @@
 
   <!-- Knockout.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+
+  <!-- Image/Banner Dialog -->
   <script src="{{ static('js/image_selection.js') }}"></script>
   <script>
     const bannerURL = "{{ url_for('ministry:banner_img_json', kwargs={'ministry_id': ministry.id}) }}";
@@ -327,6 +260,25 @@
     ko.applyBindings(profileSelection, document.getElementById('profile_img_input'));
   </script>
 
+  <!-- Tag Selection & Rep Management -->
+  {{ get_obj_json(ministry) }}
+  <script src="{{ static('js/rep_management.js') }}"></script>
+  <script src="{{ static('js/tag_selector.js') }}"></script>
+  <script>
+    let rep_selector;
+    get_obj_json().then(function (obj) {
+      console.debug(obj);
+      // tag selector
+      const hidden_input = '{{ form.tags.auto_id }}';
+      const tags_url = '{{ url_for("tag:tags_json") }}';
+      new TagSelector(hidden_input, tags_url, obj.tags, 'tagSelector');
+
+      // rep management
+      rep_selector = new RepManager(obj.reps, obj.requests);
+      ko.applyBindings(rep_selector, document.getElementById('repUI'));
+    })
+  </script>
+
   <!-- Chart Stuff -->
   <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
@@ -335,7 +287,5 @@
 
 
 {% block css %}
-  <link rel="stylesheet"
-        href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
 {% endblock %}

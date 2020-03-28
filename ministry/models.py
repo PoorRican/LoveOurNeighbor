@@ -1,8 +1,8 @@
 from os import path
 from shutil import move
+from typing import Union
 
 from django.db import models
-from django.db.models import Q
 from django.urls import reverse
 
 from frontend.settings import DEFAULT_PROFILE_IMG, MEDIA_ROOT
@@ -127,6 +127,69 @@ class MinistryProfile(models.Model):
     def like_count(self):
         return self.likes.count()
 
+    # Representative Management
+
+    def add_representative(self, user: Union[User, str]):
+        """
+        Adds a User as a representative.
+        Email must first exist in `self.requests`.
+
+        Parameters
+        ----------
+        user: str
+            email of User to pull from `self.requests`
+        """
+        if not hasattr(user, 'email'):
+            user = User.objects.get(email=user)
+        self.requests.remove(user)
+        self.reps.add(user)
+        self.save()
+
+    def remove_representative(self, user: Union[User, str]):
+        """
+        Removes the given User as a representative and places the User in `self.requests`.
+        Email must first exist in `self.reps`.
+
+        Parameters
+        ----------
+        user: User or str
+            email User to remove from `self.reps`
+        """
+        if not hasattr(user, 'email'):
+            user = User.objects.get(email=user)
+        self.reps.remove(user)
+        self.requests.add(user)
+        self.save()
+
+    def add_request(self, user: Union[User, str]):
+        """
+        Adds the given User to the list of requests to be approved by Ministry Admin
+
+        Parameters
+        ----------
+        user: User or str
+            User to add to `self.requests`.
+            If the value is a str, it queries along the email column.
+        """
+        if not hasattr(user, 'email'):
+            user = User.objects.get(email=user)
+        self.requests.add(user)
+        self.save()
+
+    def delete_request(self, user: Union[User, str]):
+        """
+        deletes the given representative request.
+
+        parameters
+        ----------
+        user: User or str
+            `User` or user.email to remove from `self.requests`
+        """
+        if not hasattr(user, 'email'):
+            user = self.requests.get(email=user)
+        self.requests.remove(user)
+        self.save()
+
     # Class Methods
 
     @classmethod
@@ -196,5 +259,5 @@ class MinistryProfile(models.Model):
             self.save()
         except FileNotFoundError:
             # assume there is no dedicated directory. This is a redundant catchall.
-            create_ministry_dir(self)
+            create_ministry_dirs(self)
             self.rename(name)

@@ -20,7 +20,7 @@ from people.models import DEFAULT_PROFILE_IMG
 
 from .forms import MinistryEditForm
 from .models import MinistryProfile
-from .utils import ministry_banner_dir, ministry_profile_image_dir, dedicated_ministry_dir, create_ministry_dir
+from .utils import ministry_banner_dir, ministry_profile_image_dir, dedicated_ministry_dir, create_ministry_dirs
 
 
 class BaseMinistryProfileTestCase(BaseViewTestCase):
@@ -29,7 +29,7 @@ class BaseMinistryProfileTestCase(BaseViewTestCase):
 
         data = default_ministry_data(self.user)
         rmtree(dedicated_ministry_dir(data['name'], settings.MEDIA_ROOT), ignore_errors=True)
-        create_ministry_dir(data['name'], prepend=settings.MEDIA_ROOT)
+        create_ministry_dirs(data['name'], prepend=settings.MEDIA_ROOT)
 
         self.obj = MinistryProfile.objects.create(**data)
 

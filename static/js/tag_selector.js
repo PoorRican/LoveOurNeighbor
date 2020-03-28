@@ -44,7 +44,6 @@ function TagSelector(id, url, tags = [], el = 'tagSelector') {
     for (tag of all_tags) {
       autocompleteOptions.data[tag] = null;
     }
-    console.log(autocompleteOptions);
 
     // Format existing tags
     for (tag of tags) {

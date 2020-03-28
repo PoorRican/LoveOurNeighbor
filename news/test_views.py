@@ -142,7 +142,7 @@ class TestNewsPostViews(BaseViewTestCase):
                                        content="post content",
                                        ministry=self.min)
         self.volatile.append(post)
-        _url = "/ministry/news/%s/edit" % post.id
+        _url = "/news/%s/edit" % post.id
 
         # assert User must be logged in
         response = self.client.get(_url)
@@ -188,7 +188,7 @@ class TestNewsPostViews(BaseViewTestCase):
             _np = NewsPost.objects.get(pk=post.id)
             self.assertEqual(getattr(_np, key), val)
             self.assertRedirects(response,
-                                 "/#/ministry/%s" % self.min.id)
+                                 "/ministry/%s" % self.min.id)
 
         # TODO: test incorrect POST
 
@@ -197,7 +197,7 @@ class TestNewsPostViews(BaseViewTestCase):
                                        content="post content",
                                        campaign=self.cam)
         self.volatile.append(post)
-        _url = "/ministry/news/%s/edit" % post.id
+        _url = "/news/%s/edit" % post.id
 
         # assert User must be logged in
         response = self.client.get(_url)
@@ -254,7 +254,7 @@ class TestNewsPostViews(BaseViewTestCase):
         self.volatile.append(obj)
 
         _id = obj.id
-        _url = "/ministry/news/%s/delete" % _id
+        _url = "/news/%s/delete" % _id
 
         # assert that User must be logged in
         response = self.client.get(_url)
@@ -283,7 +283,7 @@ class TestNewsPostViews(BaseViewTestCase):
         self.volatile.append(obj)
 
         _id = obj.id
-        _url = "/ministry/news/%s/delete" % _id
+        _url = "/news/%s/delete" % _id
 
         self.login()
         response = self.client.get(_url, follow=True)

@@ -16,7 +16,7 @@ from frontend.settings import MEDIA_ROOT, MEDIA_URL
 from people.models import User
 from news.models import NewsPost
 
-from .forms import MinistryEditForm, NewMinistryForm
+from .forms import MinistryEditForm, NewMinistryForm, RepManagementForm
 from .models import MinistryProfile
 from .utils import (
     # serialization functions
@@ -119,48 +119,26 @@ def admin_panel(request, ministry_id):
                     # handle response and generate UI feedback
                     _w = 'Changes saved to %s!' % ministry.name
                     messages.add_message(request, messages.SUCCESS, _w)
-
-                    _url = reverse('ministry:ministry_profile',
-                                   kwargs={'ministry_id': ministry_id})
                 else:
                     for _, message in form.errors.items():
                         messages.add_message(request, messages.ERROR, message[0])
 
-                    # TODO: this should not be accumulated here
-                    donations = {}
-                    count = 0
-                    for donation in ministry.donations:
-                        try:
-                            donations[count] = serialize_donation(donation)
-                            count += 1
-                        except ValueError:
-                            # this might happen when Donation object does not have a payment
-                            pass
+            # TODO: this should not be accumulated here
+            donations = {}
+            count = 0
+            for donation in ministry.donations:
+                try:
+                    donations[count] = serialize_donation(donation)
+                    count += 1
+                except ValueError:
+                    # this might happen when Donation object does not have a payment
+                    pass
 
-                    context = {"form": form,
-                               "ministry": ministry,
-                               "donations": donations,
-                               "start": False}
-                    return render(request, "ministry/admin_panel.html", context)
-            else:
-                form = MinistryEditForm(instance=ministry)
-
-                # TODO: this should not be accumulated here
-                donations = {}
-                count = 0
-                for donation in ministry.donations:
-                    try:
-                        donations[count] = serialize_donation(donation)
-                        count += 1
-                    except ValueError:
-                        # this might happen when Donation object does not have a payment
-                        pass
-
-                context = {"form": form,
-                           "ministry": ministry,
-                           "donations": donations,
-                           "start": False}
-                return render(request, "ministry/admin_panel.html", context)
+            context = {"form": MinistryEditForm(instance=ministry),
+                       "rep_form": RepManagementForm(instance=ministry),
+                       "ministry": ministry,
+                       "donations": donations}
+            return render(request, "ministry/admin_panel.html", context)
         else:
             # this creates a recursive redirect as a deterrent
 
@@ -364,7 +342,7 @@ def request_to_be_rep(request, ministry_id):
 
 
 @login_required
-@require_http_methods(["GET", "POST"])
+@require_http_methods(["POST"])
 def rep_management(request, ministry_id):
     """
     Dedicated view function to manage `MinistryProfile.requests` and `MinistryProfile.reps`
@@ -378,20 +356,14 @@ def rep_management(request, ministry_id):
     try:
         ministry = MinistryProfile.objects.get(pk=ministry_id)
         if ministry.authorized_user(request.user):
-            if request.method == 'POST' and request.POST['reps'].value():
-                try:
-                    for r in json.loads(request.POST['reps'].value()):
-                        # TODO: notify user that their request has been accepted
-                        # TODO: catchall for when user does not exist here
-                        u = User.objects.get(email=r['email'])
-                        ministry.reps.add(u)
-                        ministry.requests.remove(u)
+            if request.method == 'POST':
+                form = RepManagementForm(request.POST, instance=ministry)
+                if form.is_valid():
+                    form.save()
 
-                        # handle response and generate UI feedback
-                        _w = 'Changes saved to %s!' % ministry.name
-                        messages.add_message(request, messages.SUCCESS, _w)
-                except json.JSONDecodeError:
-                    pass
+                    _w = 'Changes saved to %s!' % ministry.name
+                    messages.add_message(request, messages.SUCCESS, _w)
+
     except MinistryProfile.DoesNotExist:
         # TODO: log this
         _w = 'Invalid URL'

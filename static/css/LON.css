@@ -64,6 +64,17 @@
   border-top-left-radius: 10px
 }
 
+/* Rep Selection Styling */
+
+#reps, #requests {
+  min-height: 50px;
+}
+
+#reps h6, #requests h6 {
+  margin-top: 1em;
+  margin-left: 1em;
+}
+
 /* Materialize overrides */
 
 /* Change Input Styling */
