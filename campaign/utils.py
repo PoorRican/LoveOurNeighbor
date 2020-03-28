@@ -1,7 +1,8 @@
 from datetime import date, datetime, timedelta
 from os import path, makedirs
 
-from ministry.utils import serialize_ministry, create_ministry_dir, dedicated_ministry_dir
+from frontend.utils import get_previous_images
+from ministry.utils import serialize_ministry, create_ministry_dirs, dedicated_ministry_dir
 
 from django.conf import settings
 
@@ -78,8 +79,28 @@ def create_campaign_dir(instance, prepend=settings.MEDIA_ROOT):
         try:
             makedirs(_path, exist_ok=True)
         except FileNotFoundError:
-            create_ministry_dir(instance.ministry, prepend=prepend)
+            create_ministry_dirs(instance.ministry, prepend=prepend)
             makedirs(_path, exist_ok=True)
+
+
+def prev_banner_imgs(instance, prepend=settings.MEDIA_URL):
+    """
+    Utility function that returns all previous uploaded banner images.
+
+    Parameters
+    ----------
+    instance: Model
+
+    prepend: str
+        Desired str to prepend to path. This is passed to `user_profile_img_dir`.
+        Defaults to using `settings.MEDIA_URL`.
+
+    Returns
+    -------
+        array of dicts, containing filenames as 'name', and their absolute URL paths as 'src'
+
+    """
+    return get_previous_images(campaign_banner_dir, create_ministry_dirs, instance, prepend)
 
 
 def campaign_images(campaign):

@@ -5,9 +5,9 @@
 
 {% from "campaign/parts/campaign_date_input_scripts.html" import campaign_date_input_scripts %}
 
-{% from "macros/parts/banner_image_dialog.html" import banner_image_dialog %}
 {% from "macros/parts/get_obj_json.html" import get_obj_json %}
 {% from "macros/parts/input_field.html" import input_field %}
+{% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 {% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
 {% from "macros/parts/transaction_table.html" import transaction_table %}
@@ -72,8 +72,10 @@
                     <div class="row">
 
                       <br>
-                      <div class="col s12">
-                        {{ banner_image_dialog() }}
+                      <div class="col s12" id="imageDialogs">
+                        {{ input_img_dialog('banner', 'Banner Image',
+                                            imgField=form.banner_img,
+                                            img=campaign.banner_img) }}
                       </div>
 
                       {{ input_field(form.title, width='l6 s12') }}
@@ -304,6 +306,21 @@
   </script>
 
   {{ campaign_date_input_scripts('.pickadate') }}
+
+  <!-- masonry -->
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+
+  <!-- Knockout.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+  <script src="{{ static('js/image_selection.js') }}"></script>
+  <script>
+    const bannerURL = "{{ url_for('campaign:banner_img_json', kwargs={'campaign_id': campaign.id}) }}";
+
+    let bannerSelection = new PreviousImageSelection('selected_banner_img', bannerURL);
+
+    ko.applyBindings(bannerSelection, document.getElementById('banner_img_input'));
+  </script>
 
 {% endblock %}
 

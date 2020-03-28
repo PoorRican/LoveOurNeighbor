@@ -22,7 +22,7 @@ urlpatterns = [
      path('<int:campaign_id>/json', views.campaign_json,
           name='campaign_json'),
      path('<int:campaign_id>/banners/json',
-          views.campaign_banners_json, name='campaign_banners_json'),
+          views.banner_img_json, name='banner_img_json'),
      path('<int:campaign_id>/gallery/json',
           views.campaign_gallery_json, name='campaign_gallery_json'),
      path('<int:campaign_id>/donations/json',

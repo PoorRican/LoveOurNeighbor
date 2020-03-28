@@ -4,7 +4,7 @@
 
 {% extends "layout.html" %}
 
-{% from "macros/parts/profile_image_dialog.html" import profile_image_dialog %}
+{% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
 {% import "macros/cards.html" as card %}
 
 {# TODO: liked ministries/campaigns #}
@@ -20,7 +20,7 @@
 {% block body %}
 
   <!-- people/profile -->
-  <div class="row" ng-app="LON">
+  <div class="row">
     <div class="col s12">
       <div class="container">
         <section class="tabs-vertical mt-1 section">
@@ -54,12 +54,17 @@
             <div class="col l8 s12">
               <div id="profile">
                 <div class="card-panel">
-                  <form method="POST" enctype="multipart/form-data" action="{{ url_for('people:user_profile') }}">
+                  <form method="POST" enctype="multipart/form-data"
+                        action="{{ url_for('people:user_profile') }}">
                     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-                    <div class="row" ng-controller="userProfileCtrl">
+                    <div class="row">
 
-                      <div class="col s12 mb-2">
-                        {{ profile_image_dialog(request.user.profile_img) }}
+                      <div class="col s12" id="imageDialogs">
+                        <div class="row">
+                          <div class="col s6 l2">
+                            {{ input_img_dialog('profile', 'Profile Image', form.profile_img, request.user.profile_img) }}
+                          </div>
+                        </div>
                       </div><!-- /profile_img -->
 
                       <div class="col s12 l6 input-field">
@@ -202,36 +207,20 @@
 
 
 {% block scripts %}
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
-
-  {% set page_assets = (
-  'app.module.js',
-  'app.config.js',
-  'services/select_image_dialog.service.js',
-  'services/transactionTable.service.js',
-  'people/userProfile.controller.js',
-  ) %}
-  {% for f in page_assets %}
-    <script src="{{ static('app/%s' % f) }}"></script>
-  {% endfor %}
-
-  {# TODO: implement knockout.js for viewing likes #}
 
   <!-- masonry -->
   <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+
+  <!-- Knockout.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+  <script src="{{ static('js/image_selection.js') }}"></script>
   <script>
-    $('.grid').masonry({
-      itemSelector: '.grid-item',
-    });
+    const profileURL = "{{ url_for('people:profile_img_json') }}";
+
+    let profileSelection = new PreviousImageSelection('selected_profile_img', profileURL);
+
+    ko.applyBindings(profileSelection, document.getElementById('profile_img_input'));
   </script>
 
-{% endblock %}
-
-
-{% block css %}
-  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
 {% endblock %}

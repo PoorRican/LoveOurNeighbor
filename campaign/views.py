@@ -22,7 +22,7 @@ from .models import Campaign
 from .forms import CampaignEditForm, NewCampaignForm
 from .utils import (
     serialize_campaign, campaign_banner_dir,
-    campaign_images,
+    campaign_images, prev_banner_imgs,
     campaign_goals
 )
 
@@ -191,7 +191,7 @@ def campaign_json(request, campaign_id):
 
 
 @require_safe
-def campaign_banners_json(request, campaign_id):
+def banner_img_json(request, campaign_id):
     """ View that returns all images located in dedicated
     banner directory for Campaign
     """
@@ -199,11 +199,7 @@ def campaign_banners_json(request, campaign_id):
     _dir = campaign_banner_dir(campaign, '')
     _dir = os.path.join(MEDIA_ROOT, _dir)
 
-    _json = {'available': {}}
-
-    imgs = os.listdir(_dir)
-    for i in imgs:
-        _json['available'][i] = os.path.join(MEDIA_URL, campaign_banner_dir(campaign, i))
+    _json = {'available': prev_banner_imgs(campaign)}
 
     try:
         _current = campaign.banner_img.path

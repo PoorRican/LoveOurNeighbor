@@ -6,7 +6,7 @@ from tag.models import Tag
 from .utils import (
     ministry_banner_dir,
     ministry_profile_image_dir,
-    create_ministry_dir,
+    create_ministry_dirs,
 )
 
 from .models import MinistryProfile
@@ -36,7 +36,7 @@ class NewMinistryForm(forms.ModelForm):
         super(NewMinistryForm, self).save(commit=False)
         self.instance.save()
 
-        create_ministry_dir(self.instance)
+        create_ministry_dirs(self.instance)
         # Handle object relationships
         if self.data.get('address', False):
             self.instance.location = self.data['address']

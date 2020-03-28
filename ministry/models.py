@@ -11,7 +11,7 @@ from people.models import User
 from tag.models import Tag
 
 from .utils import (
-    create_ministry_dir,
+    create_ministry_dirs,
     dedicated_ministry_dir,
     ministry_banner_dir,
     ministry_profile_image_dir,

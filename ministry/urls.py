@@ -24,10 +24,10 @@ urlpatterns = [
 
     path('<int:ministry_id>/json', views.ministry_json,
          name='ministry_json'),
-    path('<int:ministry_id>/banners/json', views.ministry_banners_json,
-         name='ministry_banners_json'),
-    path('<int:ministry_id>/profile_img/json', views.ministry_profile_img_json,
-         name='ministry_profile_img_json'),
+    path('<int:ministry_id>/banners/json', views.banner_img_json,
+         name='banner_img_json'),
+    path('<int:ministry_id>/profile_img/json', views.profile_img_json,
+         name='profile_img_json'),
     path('<int:ministry_id>/gallery/json', views.ministry_gallery_json,
          name='ministry_gallery_json'),
 ]

@@ -1,7 +1,7 @@
 from os import path, mkdir
 
 from campaign.utils import create_campaign_dir
-from ministry.utils import dedicated_ministry_dir, create_ministry_dir
+from ministry.utils import dedicated_ministry_dir, create_ministry_dirs
 
 
 def serialize_newspost(post):
@@ -93,7 +93,7 @@ def create_news_post_dir(instance, prepend='static/media'):
                 e = 'There was an unknown error finding a dir for %s' % instance.name
                 raise AttributeError(e)
 
-            create_ministry_dir(_ministry, prepend=prepend)
+            create_ministry_dirs(_ministry, prepend=prepend)
 
             # NOTE: this is infinitely recursive if `prepend` does not lead to correct directory
             create_news_post_dir(instance, prepend=prepend)

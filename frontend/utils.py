@@ -1,13 +1,15 @@
 from django.conf import settings
 from django.contrib.flatpages.models import FlatPage
+from django.db.models import Model
 
 from bs4 import BeautifulSoup, Comment
 from datetime import datetime
 from ipware import get_client_ip
 from jinja2 import Template
-from os import path
+from os import path, listdir
 from pytz import timezone
 from requests import post
+from typing import Callable
 
 from explore.utils import get_location_from_ip
 
@@ -214,6 +216,52 @@ def render_jinja_template(template_path, context):
     with open(_template) as f:
         t = f.read()
     return Template(t).render(context)
+
+
+def get_previous_images(img_dir_func: Callable[[Model, str, str], str],
+                        create_dir_func: Callable[[Model], None],
+                        instance: Model, prepend: str = settings.MEDIA_URL):
+    """
+    Utility function that returns all files in a directory given by the function `img_dir_func`
+
+    Parameters
+    ----------
+    img_dir_func: Callable[[Model, str, str], str]
+        Callback function to list contents of dedicated directory
+
+    create_dir_func: Callable[[Model], None]
+        Callback function to create a directory in case it does not exist
+
+    instance: Model
+
+    prepend: str
+        Desired str to prepend to path. This is passed to `img_dir_func`.
+        Defaults to using `settings.MEDIA_URL`.
+
+    See Also
+    --------
+    `people.utils.previous_profile_images`
+    `ministry.utils.previous_profile_images`
+    `ministry.utils.previous_banner_images`
+    `campaign.utils.previous_banner_images`
+
+    Returns
+    -------
+        array of dicts, containing filenames as 'name', and their absolute URL paths as 'src'
+
+    """
+    imgs = []
+    try:
+        imgs = listdir(img_dir_func(instance, '', settings.MEDIA_ROOT))
+    except FileNotFoundError:
+        create_dir_func(instance)
+
+    _return = []
+    for i in imgs:
+        src = img_dir_func(instance, i, prepend)
+        _return.append({'src': src,
+                        'name': i})
+    return _return
 
 
 class TimezoneMiddleware:

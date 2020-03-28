@@ -14,14 +14,13 @@ from django.views.decorators.http import require_http_methods, require_safe
 
 from campaign.utils import serialize_campaign
 from donation.utils import serialize_donation
-from frontend.settings import MEDIA_ROOT, MEDIA_URL
 from ministry.utils import serialize_ministry
 
 from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
 from .utils import (
-    clear_previous_ministry_login, user_profile_img_dir, create_profile_img_dir,
-    send_verification_email, previous_profile_images, send_forgot_password_email
+    clear_previous_ministry_login, prev_profile_imgs,
+    send_verification_email, send_forgot_password_email
 )
 
 
@@ -258,20 +257,16 @@ def messages_json(request):
 
 @require_safe
 def profile_img_json(request):
-    """ View that returns all images located in dedicated
-    banner directory for MinistryProfile
+    """ Returns all previous and current profile images
     """
     user = request.user
-    _dir = user_profile_img_dir(user, '')
-    _dir = os.path.join(MEDIA_ROOT, _dir)
 
-    _json = {'available': previous_profile_images(user)}
+    _json = {'available': prev_profile_imgs(user)}
 
     try:
         _current = user.profile_img.path
     except ValueError:
         _current = ''
-        create_profile_img_dir(user)
     _json['current'] = os.path.basename(_current)
     return JsonResponse(_json)
 

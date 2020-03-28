@@ -1,0 +1,97 @@
+{% macro input_img_dialog(id, name, imgField=False, img=False) %}
+  {#
+
+  Presents the user with a dialog to either upload a new image or select a previously uploaded image.
+
+  Image selection facilitated by knockout.js, and the selected value passed through a hidden input.
+
+  See Also
+  --------
+    For implementations of hidden input digestion:
+      `ministry.forms.MinistryEditForm`
+      `campaign.forms.CampaignEditForm`
+      `people.forms.EditUserForm`
+
+  Arguments
+  ---------
+    id: str
+      string to make this field unique on the DOM
+
+    name: str
+      string to present to User
+
+    imgField: django.ImageFieldFile or False
+      should at least have `url` attribute, or be False.
+  #}
+
+  <div id="{{ id }}_img_input">
+    {# Hidden input from knockout.js #}
+    <input data-bind="attr: {name: name}, value: selected" type="hidden">
+
+    <h6>{{ name }}:</h6>
+
+    {% if not imgField or not img %}
+      <a class="btn-large orange modal-trigger" href="#{{ id }}ImgBanner"
+         data-bind="click: open">
+        <i class="material-icons">image</i>
+      </a><!-- /.modal-trigger -->
+    {% else %}
+      <a class="image-edit-trigger modal-trigger" href="#{{ id }}ImgBanner"
+         data-bind="click: open">
+        <div class="image-edit-label-wrapper">
+          <div class="image-edit-label">
+            <i class="material-icons">edit</i>
+          </div>
+        </div><!-- /.image-edit-label-wrapper -->
+        {% if img %}
+          <img src="{{ img.url }}" class="responsive-img"/>
+        {% else %}
+          <img src="{{ imgField.url }}" class="responsive-img"/>
+        {% endif %}
+      </a><!-- /.modal-trigger -->
+    {% endif %}
+
+    <div id="{{ id }}ImgBanner" class="modal modal-fixed-footer">
+
+      <div class="modal-content">
+
+        <h4>{{ name }}</h4>
+
+        <h6>Upload New Image</h6>
+        <div id="{{ id }}Upload">
+          {{ imgField }}
+        </div>
+
+        <div class="selection-grid" data-bind="visible: available().length">
+          <h6>Select Previous</h6>
+
+          <div class="row grid" data-bind="foreach: available">
+            <div class="grid-item col s12 m6 l3">
+              <div class="img-tile">
+                <img data-bind="attr: {src: src}, click: $parent.choose_image, class: style"
+                     width="100%">
+                <span data-bind="visible: selected" class="selected-img-label">
+                  <i class="material-icons">check_circle</i>
+                </span>
+                <span data-bind="visible: current" class="current-img-label">
+                  <i class="material-icons right">check_circle</i>
+                  <span class="left">Current</span>
+                </span>
+              </div><!-- /.img-tile -->
+            </div><!-- /.grid-item -->
+          </div><!-- /.grid -->
+        </div><!-- /.selection-gri -->
+
+      </div><!-- /.modal-content -->
+
+      <div class="modal-footer">
+        <a href="#" class="modal-close btn-flat">
+          <i class="material-icons right">close</i>
+          Close
+        </a>
+      </div><!-- /.modal-footer -->
+    </div><!-- /.modal -->
+
+  </div><!-- /#profileImgInput -->
+
+{% endmacro %}

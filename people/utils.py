@@ -5,14 +5,16 @@ from uuid import uuid4
 from django.conf import settings
 from django.urls import reverse
 
+from frontend.utils import get_previous_images
+
 
 # Model Utility Functions
-def user_profile_dedicated_dir(instance):
-    return path.join('people', instance.email)
+def user_profile_dedicated_dir(instance, prepend=''):
+    return path.join(prepend, 'people', instance.email)
 
 
-def user_profile_img_dir(instance, filename):
-    return path.join(user_profile_dedicated_dir(instance),
+def user_profile_img_dir(instance, filename: str, prepend=''):
+    return path.join(user_profile_dedicated_dir(instance, prepend=prepend),
                      'profile_images', filename)
 
 
@@ -23,8 +25,8 @@ def verification_required():
         return False
 
 
-def create_profile_img_dir(instance, prepend=settings.MEDIA_ROOT):
-    """ Utility function that creates a dedicated directory for User Profile Images
+def create_profile_dirs(instance, prepend=settings.MEDIA_ROOT):
+    """ Utility function that creates dedicated directories for User Profile
 
     Arguments
     =========
@@ -43,33 +45,24 @@ def create_profile_img_dir(instance, prepend=settings.MEDIA_ROOT):
     makedirs(_path, exist_ok=True)
 
 
-def previous_profile_images(instance):
+def prev_profile_imgs(instance, prepend=settings.MEDIA_URL):
     """
     Utility function that returns all previous uploaded profile images.
 
     Parameters
     ----------
-    instance
-        `people.models.User`
+    instance: people.models.User
+
+    prepend: str
+        Desired str to prepend to path. This is passed to `user_profile_img_dir`.
+        Defaults to using `settings.MEDIA_URL`.
 
     Returns
     -------
-    dict containing filenames as keys, and their absolute URL paths as values
+        array of dicts, containing filenames as 'name', and their absolute URL paths as 'src'
 
     """
-    _dir = user_profile_img_dir(instance, '')
-    _dir = path.join(settings.MEDIA_ROOT, _dir)
-
-    img = []
-    try:
-        img = listdir(_dir)
-    except FileNotFoundError:
-        create_profile_img_dir(instance)
-
-    _return = {}
-    for i in img:
-        _return[i] = path.join(settings.MEDIA_URL, user_profile_img_dir(instance, i))
-    return _return
+    return get_previous_images(user_profile_img_dir, create_profile_dirs, instance, prepend)
 
 
 def send_verification_email(request, user):

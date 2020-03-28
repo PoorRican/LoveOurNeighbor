@@ -1,15 +1,12 @@
-{# vim: foldmethod=marker tabstop=2 shiftwidth=2:
-    templates/ministry/admin_panel.html
-#}
 {% extends "layout.html" %}
 
 {% from "ministry/parts/ministry_founded_field.html" import founded_field_initialer %}
 {% from "ministry/parts/rep_request_selection.html" import rep_selection, rep_selection_script %}
 
-{% from "macros/parts/banner_image_dialog.html" import banner_image_dialog %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
+{% from "macros/parts/get_obj_json.html" import get_obj_json %}
 {% from "macros/parts/input_field.html" import input_field %}
-{% from "macros/parts/profile_image_dialog.html" import profile_image_dialog %}
+{% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
 {% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
 {% from "macros/parts/transaction_table.html" import transaction_table %}
 {% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
@@ -88,10 +85,14 @@
                       <div class="col s12" id="imageDialogs">
                         <div class="row">
                           <div class="col s12 m6 l3">
-                            {{ profile_image_dialog(ministry.profile_img) }}
+                            {{ input_img_dialog('profile', 'Profile Image',
+                                                imgField=form.profile_img,
+                                                img=ministry.profile_img) }}
                           </div>
                           <div class="col s12 m6 l3">
-                            {{ banner_image_dialog(ministry.banner_img) }}
+                            {{ input_img_dialog('banner', 'Banner Image',
+                                                imgField=form.banner_img,
+                                                img=ministry.banner_img) }}
                           </div>
 
                         </div>
@@ -321,8 +322,23 @@
 
   {{ founded_field_initialer() }}
 
+  <!-- masonry -->
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+
   <!-- Knockout.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+  <script src="{{ static('js/image_selection.js') }}"></script>
+  <script>
+    const bannerURL = "{{ url_for('ministry:banner_img_json', kwargs={'ministry_id': ministry.id}) }}";
+    const profileURL = "{{ url_for('ministry:profile_img_json', kwargs={'ministry_id': ministry.id}) }}";
+
+    let bannerSelection = new PreviousImageSelection('selected_banner_img', bannerURL);
+    let profileSelection = new PreviousImageSelection('selected_profile_img', profileURL);
+
+    ko.applyBindings(bannerSelection, document.getElementById('banner_img_input'));
+    ko.applyBindings(profileSelection, document.getElementById('profile_img_input'));
+  </script>
 
   <!-- Chart Stuff -->
   <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>

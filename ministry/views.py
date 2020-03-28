@@ -23,7 +23,7 @@ from .utils import (
     serialize_ministry,
 
     # MinistryProfile utility functions
-    ministry_banner_dir,
+    prev_profile_imgs, prev_banner_imgs,
     ministry_profile_image_dir,
     ministry_images,
     send_new_ministry_notification_email
@@ -426,19 +426,13 @@ def ministry_json(request, ministry_id):
 
 
 @require_safe
-def ministry_banners_json(request, ministry_id):
+def banner_img_json(request, ministry_id):
     """ View that returns all images located in dedicated
     banner directory for MinistryProfile
     """
     ministry = MinistryProfile.objects.get(pk=ministry_id)
-    _dir = ministry_banner_dir(ministry, '')
-    _dir = os.path.join(MEDIA_ROOT, _dir)
 
-    _json = {'available': {}}
-
-    imgs = os.listdir(_dir)
-    for i in imgs:
-        _json['available'][i] = ministry_banner_dir(ministry, i, MEDIA_URL)
+    _json = {'available': prev_banner_imgs(ministry)}
 
     try:
         _current = ministry.banner_img.path
@@ -449,19 +443,13 @@ def ministry_banners_json(request, ministry_id):
 
 
 @require_safe
-def ministry_profile_img_json(request, ministry_id):
+def profile_img_json(request, ministry_id):
     """ View that returns all images located in dedicated
     banner directory for MinistryProfile
     """
     ministry = MinistryProfile.objects.get(pk=ministry_id)
-    _dir = ministry_profile_image_dir(ministry, '')
-    _dir = os.path.join(MEDIA_ROOT, _dir)
 
-    _json = {'available': {}}
-
-    imgs = os.listdir(_dir)
-    for i in imgs:
-        _json['available'][i] = os.path.join(MEDIA_URL, ministry_profile_image_dir(ministry, i))
+    _json = {'available': prev_profile_imgs(ministry)}
 
     try:
         _current = ministry.profile_img.path

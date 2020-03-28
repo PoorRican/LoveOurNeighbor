@@ -3,7 +3,7 @@ from os import path, makedirs
 from django.conf import settings
 from django.db.models import Model
 
-from frontend.utils import send_email, render_jinja_template
+from frontend.utils import send_email, render_jinja_template, get_previous_images
 
 P_TIME = '%Y-%m-%d'  # when reading/parsing date objects
 F_TIME = '%Y-%m-%dT23:59:59'  # when writing date objects (for JSON)
@@ -120,7 +120,7 @@ def ministry_profile_image_dir(instance, filename, prepend=''):
                      'profile_images', filename)
 
 
-def create_ministry_dir(instance, prepend=settings.MEDIA_ROOT):
+def create_ministry_dirs(instance, prepend=settings.MEDIA_ROOT):
     """ Utility function that creates a dedicated directory and all sub-directories for MinistryProfile media.
 
     Arguments
@@ -144,6 +144,46 @@ def create_ministry_dir(instance, prepend=settings.MEDIA_ROOT):
     for _ in (ministry_banner_dir, ministry_profile_image_dir):
         _path = path.split(_(instance, filename="", prepend=prepend))[0]
         makedirs(_path, exist_ok=True)
+
+
+def prev_banner_imgs(instance, prepend=settings.MEDIA_URL):
+    """
+    Utility function that returns all previous uploaded banner images.
+
+    Parameters
+    ----------
+    instance: Model
+
+    prepend: str
+        Desired str to prepend to path. This is passed to `user_profile_img_dir`.
+        Defaults to using `settings.MEDIA_URL`.
+
+    Returns
+    -------
+        array of dicts, containing filenames as 'name', and their absolute URL paths as 'src'
+
+    """
+    return get_previous_images(ministry_banner_dir, create_ministry_dirs, instance, prepend)
+
+
+def prev_profile_imgs(instance, prepend=settings.MEDIA_URL):
+    """
+    Utility function that returns all previous uploaded profile images.
+
+    Parameters
+    ----------
+    instance: Model
+
+    prepend: str
+        Desired str to prepend to path. This is passed to `user_profile_img_dir`.
+        Defaults to using `settings.MEDIA_URL`.
+
+    Returns
+    -------
+        array of dicts, containing filenames as 'name', and their absolute URL paths as 'src'
+
+    """
+    return get_previous_images(ministry_profile_image_dir, create_ministry_dirs, instance, prepend)
 
 
 def ministry_images(ministry):

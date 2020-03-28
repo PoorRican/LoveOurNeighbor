@@ -1,63 +1,68 @@
-/** Overrides **/
-.md-avatar {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  margin-top: -8px;
-  margin-left: -4px;
-  border-radius: 50%;
-  box-sizing: content-box;
+/* Image Input Dialog Styling */
+
+#imageDialogs {
+  margin-bottom: 1.5em;
 }
 
-/** Page Specific Styling **/
-.payment_select ul li {
-  list-style-type: none;
-  padding: 10px;
-  border: solid 1px rgba(0,0,0,.2);
-}
-.payment_select ul li:hover {
-  background-color: rgba(255,255,255,.05);
-}
-.payment_select ul li:first-child {
-  border-radius: 10px 10px 0 0;
-}
-.payment_select ul li:last-child {
-  border-radius: 0 0 10px 10px;
+.image-edit-trigger:hover {
+  opacity: 80% !important;
 }
 
+.image-edit-trigger .responsive-img {
+  max-height: 150px;
+}
 
-/* Ministry Profile Content */
-.banner_current {
+.image-edit-label-wrapper {
+  position: absolute;
+  height: 34px;
+  width: 34px;
+  border-bottom-right-radius: 15px;
+  background-color: rgba(255, 255, 255, .3);
+}
+
+.image-edit-label {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  color: rgba(255, 255, 255, .8);
+}
+
+.img-tile {
+  position: relative;
+  color: antiquewhite;
+}
+
+.img-tile .prev_img-current {
   outline: 2px solid red !important;
 }
-.banner_selected {
-  outline: 4px solid orange !important;
+
+.img-tile .prev_img-selected {
+  outline: 2px solid orange !important;
 }
 
-.banner_current_label {
+.img-tile .current-img-label {
   position: absolute;
-  bottom: 0;
+  bottom: 4px;
   right: 0;
   background-color: red;
-  padding: 3px 6px;
-  border-top-left-radius: 5px
+  padding: 1px 4px 3px 6px;
+  border-top-left-radius: 10px
 }
 
-.banner_selected_label {
+.current-img-label i {
+  padding-top: 2px;
+  margin-left: 7px;
+}
+
+.img-tile .selected-img-label {
   position: absolute;
-  bottom: 0;
+  bottom: 4px;
   right: 0;
   background-color: orange;
   padding-left: 3px;
   padding-top: 3px;
   border-top-left-radius: 10px
 }
-
-.news_post_media {
-  width: 80%;
-  margin: 0 10% 25px 10%;
-}
-
 
 /* Materialize overrides */
 
@@ -81,31 +86,3 @@
 [type="submit"] {
   -webkit-appearance: none;
 }
-
-
-/* sharethis.js override */
-.st-total {
-  background-color: transparent !important;
-}
-
-
-/* materialize overrides to accommodate ng-material */
-md-checkbox {
-  position: relative !important;
-  opacity: 100 !important;
-  pointer-events: auto !important;
-}
-
-section[ng-app] div#tab_bar a,
-section[ng-app] div#tab_bar ul {
-  background-color: rgb(250, 250, 250) !important;
-}
-
-md-chips input[type=search] {
-  border-bottom: none !important;
-  -webkit-box-shadow: none !important;
-  box-shadow: none !important;
-}
-
-/* vim:foldmethod=syntax shiftwidth=2 tabstop=2:
- */

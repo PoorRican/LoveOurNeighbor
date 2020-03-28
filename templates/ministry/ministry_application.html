@@ -5,9 +5,8 @@
 
 {% from "ministry/parts/ministry_founded_field.html" import founded_field_initialer %}
 
-{% from "macros/parts/banner_image_dialog.html" import banner_image_dialog %}
 {% from "macros/parts/input_field.html" import input_field %}
-{% from "macros/parts/profile_image_dialog.html" import profile_image_dialog %}
+{% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
 {% from "macros/parts/tag_selection.html" import tag_selection, tag_selection_script %}
 {% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
 
@@ -34,10 +33,10 @@
           <div class="col s12" id="imageDialogs">
             <div class="row">
               <div class="col s12 m6 l3">
-                {{ profile_image_dialog() }}
+                {{ input_img_dialog('profile', 'Profile Image', imgField=form.profile_img) }}
               </div><!-- /profile_image_dialog -->
               <div class="col s12 m6 l3">
-                {{ banner_image_dialog() }}
+                {{ input_img_dialog('banner', 'Banner Image', imgField=form.banner_img) }}
               </div><!-- /banner_image_dialog -->
             </div>
           </div><!-- /#imageDialogs -->
@@ -138,7 +137,7 @@
   'ministry/ministry_action.controller.js',
   ) %}
   {% for f in page_assets %}
-      <script src="{{ static('app/%s' % f) }}"></script>
+    <script src="{{ static('app/%s' % f) }}"></script>
   {% endfor %}
 
   {{ wysiwyg_script() }}
@@ -146,12 +145,20 @@
   {{ founded_field_initialer() }}
 
   <!-- Knockout.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+  <script src="{{ static('js/image_selection.js') }}"></script>
+  <script>
+    let bannerSelection = new PreviousImageSelection();
+    let profileSelection = new PreviousImageSelection();
+
+    ko.applyBindings(bannerSelection, document.getElementById('banner_img_input'));
+    ko.applyBindings(profileSelection, document.getElementById('profile_img_input'));
+  </script>
 
 {% endblock %}
 
 
 {% block css %}
-    <link rel="stylesheet"
-          href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
+  <link rel="stylesheet"
+        href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
 {% endblock %}
