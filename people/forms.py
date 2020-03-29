@@ -68,12 +68,8 @@ class UserEditForm(forms.ModelForm):
         -------
         Value returned by `forms.ModelForm.save`
         """
-        # Process Location
-        _location = self.data.get('_location', False)
-        if _location:
-            self.instance.location = _location
-
         # Process Profile Images
+        # TODO: prioritize uploaded image over `selected_profile_img`
         _img = self.data.get('selected_profile_img', False)
         if _img:
             self.instance.profile_img = user_profile_img_dir(self.instance, _img)
@@ -82,9 +78,8 @@ class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name',
-                  '_location', 'profile_img')
-        labels = {'_location': 'Location',
-                  'profile_img': 'Profile Image'}
+                  'profile_img')
+        labels = {'profile_img': 'Profile Image'}
 
 
 class UserAdminForm(forms.ModelForm):

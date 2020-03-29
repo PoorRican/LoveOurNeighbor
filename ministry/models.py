@@ -86,22 +86,6 @@ class MinistryProfile(models.Model):
         return _donations
 
     @property
-    def location(self):
-        if self.address:
-            gl, _ = GeoLocation.objects.get_or_create(ministry=self)
-            if _:
-                gl.location = self.address
-            return gl
-        else:
-            return None
-
-    @location.setter
-    def location(self, location):
-        gl, _ = GeoLocation.objects.get_or_create(ministry=self)
-        gl.location = location
-        gl.save()
-
-    @property
     def url(self):
         return reverse('ministry:ministry_profile',
                        kwargs={'ministry_id': self.id})

@@ -38,9 +38,6 @@ class NewMinistryForm(forms.ModelForm):
 
         create_ministry_dirs(self.instance)
         # Handle object relationships
-        if self.data.get('address', False):
-            self.instance.location = self.data['address']
-
         Tag.process_tags(self.instance, self.data.get('tags', ''))
 
         # Cleaned Data
@@ -101,9 +98,6 @@ class MinistryEditForm(NewMinistryForm):
             self.instance.profile_img = ministry_profile_image_dir(self.instance, _img)
 
         # Handle object relationships
-        if self.data.get('address', False):
-            self.instance.location = self.data['address']
-
         Tag.process_tags(self.instance, self.data.get('tags', ''))
 
         # Cleaned Data
