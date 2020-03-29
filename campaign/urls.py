@@ -5,15 +5,13 @@ from . import views
 app_name = 'campaign'
 
 urlpatterns = [
-     path('campaigns', views.campaign_index,
-          name='campaign_index'),
-     path('ministry/<int:ministry_id>/create', views.create_campaign,
+     path('ministry/<int:ministry_id>/create', views.CreateCampaign.as_view(),
           name='create_campaign'),
-     path('<int:campaign_id>/edit', views.admin_panel,
+     path('<int:campaign_id>/edit', views.AdminPanel.as_view(),
           name='admin_panel'),
-     path('<int:campaign_id>', views.campaign_detail,
+     path('<int:campaign_id>', views.CampaignDetail.as_view(),
           name='campaign_detail'),
-     path('<int:campaign_id>/like', views.like_campaign,
+     path('<int:campaign_id>/like', views.LikeCampaign.as_view(),
           name='like_campaign'),
      path('<int:campaign_id>/delete', views.delete_campaign,
           name='delete_campaign'),

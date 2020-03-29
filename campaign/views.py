@@ -1,7 +1,9 @@
 import os
+from braces.views import FormMessagesMixin, UserPassesTestMixin, JSONResponseMixin
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import ProtectedError
 from django.http import (
     HttpResponse, HttpResponseRedirect, JsonResponse
@@ -9,6 +11,9 @@ from django.http import (
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_safe
+from django.views.generic import RedirectView
+from django.views.generic.edit import CreateView, UpdateView, SingleObjectMixin
+from django.views.generic.detail import DetailView
 
 from ministry.models import MinistryProfile
 from news.models import NewsPost
@@ -25,90 +30,91 @@ from .utils import (
 )
 
 
-# Create your views here.
-@login_required
-@require_http_methods(["GET", "POST"])
-def create_campaign(request, ministry_id):
-    """ Renders form for editing or creating `Ministry` object.
+class CreateCampaign(CreateView, LoginRequiredMixin, JSONResponseMixin, SingleObjectMixin):
+    model = Campaign
+    form_class = NewCampaignForm
+    template_name = "campaign/new_campaign.html"
+    pk_url_kwarg = 'ministry_id'
+
+    def form_valid(self, form):
+        campaign = form.save()
+
+        msg = 'Your Campaign has been created!'
+        messages.add_message(self.request, messages.SUCCESS, msg)
+
+        return HttpResponseRedirect(reverse('campaign:campaign_detail', kwargs={'campaign_id': campaign.id}))
+
+    def form_invalid(self, form):
+        for _, message in form.errors.items():
+            messages.add_message(self.request, messages.ERROR, message[0])
+        return super().form_invalid(form)
+
+    def get_queryset(self):
+        """ Modifies `queryset` so that `self.get_object` returns a `MinistryProfile` instead of `Campaign`. """
+        return MinistryProfile.objects.all()
+
+    def get_context_data(self, **kwargs):
+        """ Adds 'ministry' to template context for rendering. """
+        kwargs['ministry'] = self.get_object()
+        return super().get_context_data(**kwargs)
+
+    def get_initial(self):
+        """ Passes `ministry` to `NewCampaignForm`. """
+        return {'ministry': self.get_object()}
+
+
+class AdminPanel(UpdateView, LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin):
+    """ Renders form for editing `Campaign` objects.
+
+    Redirects To
+    ------------
+    'campaign:campaign_detail'
+        Upon success, or if the User does not have sufficient privileges.
+
+    Template
+    --------
+    "campaign/admin_panel.html"
+
+    See Also
+    --------
+    `CampaignEditForm.save` for custom save method
     """
-    ministry = MinistryProfile.objects.get(id=ministry_id)
-    # TODO: Check `ministry.is_authorized` here
-    # TODO: Catch invalid ministry_id
-    if request.method == 'POST':
-        form = NewCampaignForm(request.POST, request.FILES, initial={'ministry': ministry})
-        if form.is_valid():
-            cam = form.save()
+    model = Campaign
+    form_class = CampaignEditForm
+    pk_url_kwarg = 'campaign_id'
+    template_name = "campaign/admin_panel.html"
+    permission_denied_message = "You do not have permissions to edit this campaign"
 
-            # handle response and generate UI feedback
-            _w = 'Ministry Profile Created!'
-            messages.add_message(request, messages.SUCCESS, _w)
+    def form_invalid(self, form):
+        for _, message in form.errors.items():
+            messages.add_message(self.request, messages.ERROR, message[0])
+        super().form_invalid(form)
 
-            _url = reverse('campaign:campaign_detail',
-                           kwargs={'campaign_id': cam.id})
-            return HttpResponseRedirect(_url)
-        else:
-            for _, message in form.errors.items():
-                messages.add_message(request, messages.ERROR, message[0])
+    def get_form_valid_message(self):
+        return "Changes saved to %s" % self.object
 
-    else:
-        form = NewCampaignForm()
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
 
-    context = {"form": form,
-               "ministry": ministry}
-    return render(request, "campaign/new_campaign.html", context)
+    def test_func(self, user):
+        return self.object.authorized_user(user)
 
+    def get_context_data(self, **kwargs):
+        # transaction table
+        donations = {}
+        count = 0
+        for donation in self.object.donations.all():
+            try:
+                donations[count] = serialize_donation(donation)
+                count += 1
+            except ValueError:
+                # this might happen when Donation object does not have a payment
+                pass
 
-@login_required
-@require_http_methods(["GET", "POST"])
-def admin_panel(request, campaign_id):
-    _url = request.META.get('HTTP_REFERER')
-    try:
-        campaign = Campaign.objects.get(id=campaign_id)
-        # TODO: set up permissions
-        if campaign.authorized_user(request.user):
-            if request.method == 'POST':
-                form = CampaignEditForm(request.POST, request.FILES,
-                                        instance=campaign)
-                if form.is_valid():
-                    form.save()
-
-                    _w = 'Edit successful!'
-                    messages.add_message(request, messages.SUCCESS, _w)
-
-                    _url = reverse('campaign:campaign_detail',
-                                   kwargs={'campaign_id': campaign_id})
-                else:
-                    for _, message in form.errors.items():
-                        messages.add_message(request, messages.ERROR, message[0])
-
-            else:
-                form = CampaignEditForm(instance=campaign)
-
-            # transaction table
-            donations = {}
-            count = 0
-            for donation in campaign.donations.all():
-                try:
-                    donations[count] = serialize_donation(donation)
-                    count += 1
-                except ValueError:
-                    # this might happen when Donation object does not have a payment
-                    pass
-
-            context = {"form": form,
-                       "campaign": campaign,
+        kwargs.update({"campaign": self.object,
                        "donations": donations,
-                       "goals": campaign_goals(campaign)}
-            return render(request, "campaign/admin_panel.html", context)
-        else:
-            _w = 'You do not have permission to edit this ministry.'
-            messages.add_message(request, messages.WARNING, _w)
-
-    except Campaign.DoesNotExist:
-        _w = 'Invalid URL'
-        messages.add_message(request, messages.ERROR, _w)
-
-    return HttpResponseRedirect(_url)
+                       "goals": campaign_goals(self.object)})
+        return super().get_context_data(**kwargs)
 
 
 @login_required
@@ -140,31 +146,34 @@ def delete_campaign(request, campaign_id):
     return HttpResponseRedirect(_url)
 
 
-@require_safe
-def campaign_index(request):
-    # TODO: paginate and render
-    all_news = NewsPost.objects.all()
-    return HttpResponse(all_news)
+class CampaignDetail(DetailView):
+    model = Campaign
+    pk_url_kwarg = 'campaign_id'
+    template_name = "campaign/view_campaign.html"
 
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.views += 1
+        self.object.save(update_fields=['views'])
 
-@require_safe
-def campaign_detail(request, campaign_id):
-    cam = Campaign.objects.get(id=campaign_id)
-    cam.views += 1
-    cam.save()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
-    all_news = NewsPost.objects.filter(
-        campaign=cam).order_by("-pub_date")
-    comments = CommentForm()
+    def get_context_data(self, **kwargs):
+        # TODO: do this via JSON
+        cam = self.object
+        cam.views += 1
+        cam.save()
 
-    similar = cam.similar_campaigns()
+        all_news = NewsPost.objects.filter(
+            campaign=cam).order_by("-pub_date")
 
-    context = {'cam': cam,
-               'all_news': all_news,
-               'form': comments,
-               'similar': similar,
-               }
-    return render(request, "view_campaign.html", context)
+        similar = cam.similar_campaigns()
+
+        kwargs.update({'campaign': self.object,
+                       'all_news': all_news,
+                       'similar': similar, })
+        return super().get_context_data(**kwargs)
 
 
 @require_safe
@@ -235,30 +244,27 @@ def donations_json(request, campaign_id):
         return JsonResponse({'donations': [serialize_donation(d) for d in donations]})
 
 
-@login_required
-@require_safe
-def like_campaign(request, campaign_id):
+class LikeCampaign(DetailView, JSONResponseMixin):
     """ Encapsulates both 'like' and 'unlike' functionality relating `User` to `Campaign`
-
-    Parameters
-    ----------
-    request
-    campaign_id:
-        id of MinistryProfile to select
 
     Returns
     -------
     JsonResponse key-value containing 'liked' with a boolean value reflecting
         whether the User 'likes' the ministry.
-
     """
-    # TODO: implement this functionality into a method of `User`
-    cam = Campaign.objects.get(id=campaign_id)
-    if not bool(cam in request.user.likes_c.all()):
-        cam.likes.add(request.user)
-        cam.save()
-        return JsonResponse({'liked': True})
-    else:
-        cam.likes.remove(request.user)
-        cam.save()
-        return JsonResponse({'liked': False})
+    model = Campaign
+    pk_url_kwarg = 'campaign_id'
+
+    def get(self, request, *args, **kwargs):
+        # TODO: implement this functionality into a method of `User`
+        self.object = self.get_object()
+
+        liked = False  # feedback of updated value
+        if not bool(self.object in request.user.likes_c.all()):
+            self.object.likes.add(request.user)
+            self.object.save()
+            liked = True
+        else:
+            self.object.likes.remove(request.user)
+            self.object.save()
+        return self.render_json_response({'liked': liked})

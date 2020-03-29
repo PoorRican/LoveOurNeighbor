@@ -14,23 +14,23 @@
 
 {% import "cards.html" as card %}
 
-{% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
+{% set AUTH = request.user == campaign.ministry.admin or request.user in campaign.ministry.reps.all() %}
 
 
-{% block title %}{{ cam.title }} by {{ cam.ministry.name }}{% endblock %}
+{% block title %}{{ campaign.title }} by {{ campaign.ministry.name }}{% endblock %}
 
 
 {% block metadata %}
   <meta property="og:type" content="article"/>
-  {% if cam.banner_img %}
-    <meta property="og:image" content="https://loveourneighbor.org{{ cam.banner_img.url }}">{% endif %}
-  <meta property="og:url" content="https://loveourneighbor.org/{{ cam.url }}">
-  <meta property="og:title" content="{{ cam.title }} on Love Our Neighbor">
-  <meta property="og:article:published_time" content="{{ cam.pub_date.strftime('%Y-%m-%d') }}">
-  <meta property="og:article:modified_time" content="{{ cam.start_date.strftime('%Y-%m-%d') }}">
-  <meta property="og:article:expiration_time" content="{{ cam.end_date.strftime('%Y-%m-%d') }}">
+  {% if campaign.banner_img %}
+    <meta property="og:image" content="https://loveourneighbor.org{{ campaign.banner_img.url }}">{% endif %}
+  <meta property="og:url" content="https://loveourneighbor.org/{{ campaign.url }}">
+  <meta property="og:title" content="{{ campaign.title }} on Love Our Neighbor">
+  <meta property="og:article:published_time" content="{{ campaign.pub_date.strftime('%Y-%m-%d') }}">
+  <meta property="og:article:modified_time" content="{{ campaign.start_date.strftime('%Y-%m-%d') }}">
+  <meta property="og:article:expiration_time" content="{{ campaign.end_date.strftime('%Y-%m-%d') }}">
   <meta property="og:article:section" content="Fundraiser">
-  {% for tag in cam.tags.all() %}
+  {% for tag in campaign.tags.all() %}
     <meta property="og:article:tag" content="{{ tag }}">
   {% endfor %}
   {# TODO: figure out how to implement author/profile #}
@@ -39,18 +39,18 @@
 
 {% block body %}
   <!-- campaign/view_campaign -->
-  <input type="hidden" id="current_object_json" value="{{ cam.json }}">
-  <input type="hidden" id="campaign_id" value="{{ cam.id }}">
+  <input type="hidden" id="current_object_json" value="{{ campaign.json }}">
+  <input type="hidden" id="campaign_id" value="{{ campaign.id }}">
   {% if AUTH == None %}
-    {% set AUTH = request.user == cam.ministry.admin or request.user in cam.ministry.reps.all() %}
+    {% set AUTH = request.user == campaign.ministry.admin or request.user in campaign.ministry.reps.all() %}
   {% endif %}
 
   {# {{{ Top Section Overlay #}
-  {% if cam.banner_img %}
+  {% if campaign.banner_img %}
     <div class="parallax-container" style='height: 350px;'>
       {# TODO: dynamic height and positioning for banner images #}
       <div class="parallax" style="z-index: 500;">
-        <img src="{{ cam.banner_img.url }}" alt="" style="bottom: 100px;">
+        <img src="{{ campaign.banner_img.url }}" alt="" style="bottom: 100px;">
       </div>
     </div>
   {% endif %}
@@ -68,32 +68,32 @@
 
             <br>
 
-            {{ donate_button(cam) }}
+            {{ donate_button(campaign) }}
 
           </div>
         </div><!-- profile image area -->
 
-        {% if today() >= cam.start_date %}
+        {% if today() >= campaign.start_date %}
 
           <div class="row mt-5">
 
             <div class="col s12">
-              <h5 style="display: inline">${{ cam.donated }}</h5>
-              <h6 style="display: inline">out of ${{ cam.goal }} raised</h6>
+              <h5 style="display: inline">${{ campaign.donated }}</h5>
+              <h6 style="display: inline">out of ${{ campaign.goal }} raised</h6>
             </div>
 
             <div class="col s12 center-align mt-2">
-              {{ donation_progress_bar(cam) }}
+              {{ donation_progress_bar(campaign) }}
             </div>
 
             <div class="col s6">
               <h6>Number of Donors</h6>
-              <h5>{{ cam.donations.count() }}</h5>
+              <h5>{{ campaign.donations.count() }}</h5>
             </div>
 
             <div class="col s6">
               <h6>Percentage Complete</h6>
-              <h5>{{ "{:.0%}".format((cam.donated / cam.goal)) }}</h5>
+              <h5>{{ "{:.0%}".format((campaign.donated / campaign.goal)) }}</h5>
             </div>
 
           </div><!-- /donation count -->
@@ -104,11 +104,11 @@
         <div class="row mt-5">
           <div class="col s6">
             <h6>Views</h6>
-            <h5>{{ cam.views }}</h5>
+            <h5>{{ campaign.views }}</h5>
           </div>
           <div class="col s6">
             <h6>Likes</h6>
-            <h5>{{ cam.likes.count() }}</h5>
+            <h5>{{ campaign.likes.count() }}</h5>
           </div>
         </div><!-- /views & likes -->
 
@@ -117,37 +117,37 @@
         <div class="row mt-5">
           <div class="col s6">
             <h6>
-              {% if today() <= cam.start_date %}
+              {% if today() <= campaign.start_date %}
                 Begins:
               {% else %}
                 Began:
               {% endif %}
             </h6>
             <h5>
-              {{ cam.start_date.strftime("%h %d, %Y") }}&nbsp;
+              {{ campaign.start_date.strftime("%h %d, %Y") }}&nbsp;
             </h5>
           </div>
           <div class="col s6">
             <h6>
-              {% if today() >= cam.end_date %}
+              {% if today() >= campaign.end_date %}
                 Ended:
               {% else %}
                 Ends:
               {% endif %}
             </h6>
             <h5>
-              {{ cam.end_date.strftime("%h %d, %Y") }}&nbsp;
+              {{ campaign.end_date.strftime("%h %d, %Y") }}&nbsp;
             </h5>
           </div>
         </div><!-- /start stop dates -->
 
         <hr class="grey-text text-lighten-2">
 
-        {% if cam.has_tags %}
+        {% if campaign.has_tags %}
           <div class="row">
             <div class="col s12">
               <h6>Tags</h6>
-              {{ tag_chips(cam) }}
+              {{ tag_chips(campaign) }}
             </div>
           </div>
           <hr class="grey-text text-lighten-2">
@@ -157,15 +157,15 @@
         <div class="row">
           <div class="col s12">
             <h6>Parent Ministry</h6>
-            <a href="{{ cam.ministry.url }}">
+            <a href="{{ campaign.ministry.url }}">
               <div class="row">
                 <div class="col s2 pr-1">
                   <img class="circle responsive-img" style="height: 100%;"
-                       src="{{ cam.ministry.profile_img.url }}"
+                       src="{{ campaign.ministry.profile_img.url }}"
                        alt="profile img">
                 </div>
                 <div class="col s10 pl-2">
-                  {{ cam.ministry.name }}
+                  {{ campaign.ministry.name }}
                 </div>
               </div>
             </a>
@@ -175,16 +175,16 @@
       </div><!-- /#campaignInfo -->
 
       <div id="campaignFeed" class="col s12 m8 l6">
-        <div class="card z-depth-0" style="{% if cam.banner_img %}margin-top: -1em;{% endif %}">
+        <div class="card z-depth-0" style="{% if campaign.banner_img %}margin-top: -1em;{% endif %}">
           <div class="card-content">
 
             <div class="row">
               <div class="col s12">
                 <h5 style="font-size: xx-large">
-                  {{ cam.title }}
+                  {{ campaign.title }}
                   {% if AUTH %}
                     <a class="btn-flat dropdown-trigger grey-text p-0 ml-1"
-                       data-target="campaign_{{ cam.id }}_card_dropdown">
+                       data-target="campaign_{{ campaign.id }}_card_dropdown">
                       <i class="material-icons">more_horiz</i>
                     </a><!-- /.dropdown-trigger -->
                   {% endif %}
@@ -194,8 +194,8 @@
 
             {# Admin Dropdown Menu #}
             {% if AUTH %}
-              <ul id="campaign_{{ cam.id }}_card_dropdown" class="dropdown-content" style="min-width: 6em;">
-                {% for opt in campaign_admin_urls(cam) %}
+              <ul id="campaign_{{ campaign.id }}_card_dropdown" class="dropdown-content" style="min-width: 6em;">
+                {% for opt in campaign_admin_urls(campaign) %}
                   <li>
                     <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
                       <i class="material-icons">{{ opt['icon'] }}</i>
@@ -235,7 +235,7 @@
               <div class="col s12">
                 <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Info</h5>
                 <div class="padding-4">
-                  {{ cam.content|safe }}
+                  {{ campaign.content|safe }}
                 </div>
               </div>
             </div><!-- /#content -->
@@ -289,8 +289,8 @@
   <script src="{{ static('js/like_button.js' % f) }}"></script>
 
   <script type="text/javascript">
-    const jsonURL = "{{ url_for('campaign:campaign_json', kwargs={'campaign_id': cam.id}) }}";
-    const likeURL = "{{ url_for('campaign:like_campaign', kwargs={'campaign_id': cam.id}) }}";
+    const jsonURL = "{{ url_for('campaign:campaign_json', kwargs={'campaign_id': campaign.id}) }}";
+    const likeURL = "{{ url_for('campaign:like_campaign', kwargs={'campaign_id': campaign.id}) }}";
     let ministry = {};
 
     $.getJSON(jsonURL, function (data) {

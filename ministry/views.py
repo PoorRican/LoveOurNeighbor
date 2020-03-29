@@ -175,8 +175,6 @@ class MinistryDetail(DetailView):
                     all_news.extend(_np)
         all_news.sort(key=lambda np: np.pub_date, reverse=True)
 
-        comments = CommentForm()
-
         images = ministry_images(self.object)
 
         similar = self.object.similar_ministries()
@@ -184,7 +182,6 @@ class MinistryDetail(DetailView):
         kwargs.update({'ministry': self.object,
                        'all_news': all_news,
                        'campaigns': _c,
-                       'form': comments,
                        'images': images,
                        'similar': similar, })
         return super().get_context_data(**kwargs)
