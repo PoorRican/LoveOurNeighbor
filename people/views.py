@@ -119,22 +119,12 @@ class UserProfile(UpdateView, LoginRequiredMixin):
                 # this might happen when Donation object does not have a payment
                 pass
 
-        _likes = []
-        for c in self.user.likes_c.all():
-            _likes.append(c)
-        for m in self.user.likes_m.all():
-            _likes.append(m)
-
-        def cmp_dt(dt):
-            """ Hack to compare `date` objects to `datetime` """
-            if not hasattr(dt, 'hour'):
-                return datetime(dt.year, dt.month, dt.day, 0, 0, 0)
-            return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
-
-        _likes.sort(key=lambda obj: cmp_dt(obj.pub_date), reverse=True)
+        # TODO: select option to sort by date liked or `pub_date`
+        _likes = self.user.likes.all().order_by('-date')
 
         kwargs['donations'] = _donations
-        kwargs['likes'] = _likes
+        kwargs['likes'] = [i.content_object for i in _likes]
+        print(kwargs['likes'])
         return super().get_context_data(**kwargs)
 
 

@@ -29,9 +29,9 @@ def serialize_ministry(ministry):
 
     return {'id': ministry.id,
             'name': ministry.name,
-            'views': ministry.views,
+            'views': ministry.views.count(),
             'founded': _founded,
-            'likes': len(ministry.likes.all()),
+            'likes': ministry.likes.count(),
             'requests': _requests,
             'description': ministry.description,
             'reps': _reps,

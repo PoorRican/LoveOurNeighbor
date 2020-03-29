@@ -33,7 +33,7 @@
       <div class="display-flex justify-content-between flex-wrap mt-4">
         <div class="display-flex mt-2 right-align" style="min-width: 55%; overflow: hidden;">
           <i class="material-icons">visibility</i>
-          <span class="ml-3 vertical-align-top">{{ post.views }}</span>
+          <span class="ml-3 vertical-align-top">{{ post.views.count() }}</span>
         </div>
       </div><!-- /.display-flex -->
 
@@ -294,7 +294,7 @@
           <span class="ml-3 vertical-align-top">{{ ministry.like_count }}</span>
 
           <i class="material-icons ml-10">visibility</i>
-          <span class="ml-3 vertical-align-top">{{ ministry.views }}</span>
+          <span class="ml-3 vertical-align-top">{{ ministry.views.count() }}</span>
 
           <i class="material-icons ml-10">card_giftcard</i>
           <span class="ml-3 mr-4 vertical-align-top">{{ ministry.campaigns.count() }}</span>
@@ -380,7 +380,7 @@
           <span class="ml-3 vertical-align-top">{{ campaign.like_count }}</span>
 
           <i class="material-icons ml-10">visibility</i>
-          <span class="ml-3 vertical-align-top">{{ campaign.views }}</span>
+          <span class="ml-3 vertical-align-top">{{ campaign.views.count() }}</span>
 
           <i class="material-icons ml-10">card_giftcard</i>
           <span class="ml-3 mr-4 vertical-align-top">{{ campaign.donations.count() }}</span>

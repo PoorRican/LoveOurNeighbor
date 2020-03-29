@@ -11,7 +11,7 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     pub_date = models.DateTimeField('date published', auto_now_add=True)
-    content = models.TextField()
+    content = models.TextField(null=True, blank=True)
     description = models.CharField(max_length=1024, help_text='A short description of the news post.',
                                    null=True, blank=True)
     attachment = models.ImageField('Media Image', blank=True, null=True,

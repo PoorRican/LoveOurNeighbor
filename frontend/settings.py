@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'campaign.apps.CampaignConfig',
     'news.apps.NewsConfig',
 
+    'activity.apps.ActivityConfig',
     'tag.apps.TagConfig',
     'comment.apps.CommentConfig',
     'people.apps.PeopleConfig',

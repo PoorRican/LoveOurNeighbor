@@ -6,6 +6,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
 
+from activity.models import Like, View
 from frontend.settings import DEFAULT_PROFILE_IMG, MEDIA_ROOT
 from people.models import User
 from news.models import Post
@@ -34,11 +35,6 @@ class MinistryProfile(models.Model):
     # TODO: allow the admin to enter rep emails before User creation
     # I guess this would be best implemented by proto-User class
     # this would also solve the problem of allowing donations without sign-up
-
-    # User Interaction
-    likes = models.ManyToManyField(User, blank=True, editable=False,
-                                   related_name='likes_m')
-    views = models.PositiveIntegerField('views', default=0, editable=False)
 
     # Ministry Details
     address = models.CharField(max_length=256, unique=True)
@@ -69,6 +65,10 @@ class MinistryProfile(models.Model):
     # Generic Relations
     news = GenericRelation(Post, related_query_name='_ministry',
                            content_type_field='content_type', object_id_field='object_id')
+    likes = GenericRelation(Like,
+                            content_type_field='content_type', object_id_field='object_id')
+    views = GenericRelation(View,
+                            content_type_field='content_type', object_id_field='object_id')
 
     def __str__(self):
         return self.name
@@ -104,6 +104,10 @@ class MinistryProfile(models.Model):
     def json(self):
         return reverse('ministry:ministry_json',
                        kwargs={'ministry_id': self.id})
+
+    @property
+    def like(self):
+        return reverse('activity:like', kwargs={'object': 'ministry', 'pk': self.pk})
 
     @property
     def has_tags(self):

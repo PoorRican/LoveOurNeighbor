@@ -4,12 +4,14 @@ from uuid import uuid4
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import UserManager
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 
+from activity.models import Like
 from frontend.settings import DEFAULT_PROFILE_IMG
 from frontend.utils import send_email
 from explore.models import GeoLocation
@@ -101,6 +103,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             return '%c%s' % (self.first_name[0].upper(), self.first_name[1:])
         else:
             return 'You'
+
+    @property
+    def likes(self):
+        return Like.objects.filter(user=self)
 
     def get_full_name(self):
         """

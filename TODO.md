@@ -36,7 +36,6 @@
     * Dynamically show selected/uploaded image
     * Dynamic sizing of grid in image selection dialog
     * Better image uploading
-- Remove 'login_in_as' functionality. Add settings flag to enable/disable this feature.
 - Display of Users Email
 - Edit ministry/campaign page should provide a link to view object
 - Clean up utils/ dir. Create a module with utility functions accessible via a CLI or args.

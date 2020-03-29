@@ -61,7 +61,7 @@
           <div class="row mt-5">
             <div class="col s6">
               <h6>Views</h6>
-              <h5>{{ ministry.views }}</h5>
+              <h5>{{ ministry.views.count() }}</h5>
             </div>
             <div class="col s6">
               <h6>Likes</h6>
@@ -335,8 +335,8 @@
   <script src="{{ static('js/like_button.js' % f) }}"></script>
 
   <script type="text/javascript">
-    const jsonURL = "{{ url_for('ministry:ministry_json', kwargs={'ministry_id': ministry.id}) }}";
-    const likeURL = "{{ url_for('ministry:like_ministry', kwargs={'ministry_id': ministry.id}) }}";
+    const jsonURL = "{{ ministry.json }}";
+    const likeURL = "{{ ministry.like }}";
     let ministry = {};
 
     $.getJSON(jsonURL, function (data) {

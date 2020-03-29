@@ -19,9 +19,6 @@ urlpatterns = [
     path('<int:ministry_id>/reps/manage', views.RepManagement.as_view(),
          name='rep_management'),
 
-    path('<int:ministry_id>/like', views.LikeMinistry.as_view(),
-         name='like_ministry'),
-
     path('<int:ministry_id>/json', views.ministry_json,
          name='ministry_json'),
     path('<int:ministry_id>/banners/json', views.banner_img_json,

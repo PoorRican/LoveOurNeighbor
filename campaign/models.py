@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models import Q
 from django.urls import reverse
 
+from activity.models import Like, View
 from ministry.models import MinistryProfile
 from news.models import Post
 from people.models import User
@@ -13,7 +14,6 @@ from tag.models import Tag
 from .utils import campaign_banner_dir
 
 
-# Create your models here.
 class Campaign(models.Model):
     title = models.CharField(max_length=100, unique=True)
 
@@ -22,13 +22,10 @@ class Campaign(models.Model):
     end_date = models.DateField('end date')
 
     goal = models.PositiveIntegerField('goal')
-    views = models.PositiveIntegerField('views', default=0, editable=False)
 
     ministry = models.ForeignKey(MinistryProfile, related_name='campaigns',
                                  on_delete=models.CASCADE)
     content = models.TextField(null=True, blank=True)
-    likes = models.ManyToManyField(User, blank=True, editable=False,
-                                   related_name='likes_c')
 
     # TODO: change to dynamic image uploading and implement media
     banner_img = models.ImageField('Banner Image', blank=True, null=True,
@@ -39,6 +36,10 @@ class Campaign(models.Model):
     # Generic Relations
     news = GenericRelation(Post, related_query_name='_campaign',
                            content_type_field='content_type', object_id_field='object_id')
+    likes = GenericRelation(Like,
+                            content_type_field='content_type', object_id_field='object_id')
+    views = GenericRelation(View,
+                            content_type_field='content_type', object_id_field='object_id')
 
     @property
     def donated(self):
@@ -70,6 +71,10 @@ class Campaign(models.Model):
     def json(self):
         return reverse('campaign:campaign_json',
                        kwargs={'campaign_id': self.id})
+
+    @property
+    def like(self):
+        return reverse('activity:like', kwargs={'object': 'campaign', 'pk': self.pk})
 
     @property
     def has_tags(self):

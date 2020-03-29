@@ -13,7 +13,7 @@ import os
 from braces.views import FormMessagesMixin, UserPassesTestMixin, JSONResponseMixin
 from datetime import datetime
 
-from comment.forms import CommentForm
+from activity.models import Like, View
 from donation.utils import serialize_donation
 from news.models import Post
 
@@ -157,9 +157,7 @@ class MinistryDetail(DetailView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        self.object.views += 1
-        self.object.save(update_fields=['views'])
-
+        View.create(self.object, request.user)
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 
@@ -350,7 +348,7 @@ def ministry_json(request, ministry_id):
 
     _liked = False
     if request.user.is_authenticated:
-        _liked = bool(ministry in request.user.likes_m.all())
+        _liked = Like.liked(ministry, request.user)
 
     _json = serialize_ministry(ministry)
     _json['liked'] = _liked
@@ -420,32 +418,3 @@ def donations_json(request, ministry_id):
                 donations.append(d)
         donations.sort(key=lambda obj: obj.date)  # sort based on date
         return JsonResponse({'donations': [serialize_donation(d) for d in donations]})
-
-
-# User Interaction
-
-class LikeMinistry(DetailView, JSONResponseMixin):
-    """ Encapsulates both 'like' and 'unlike' functionality relating `User` to `MinistryProfile`
-
-    Returns
-    -------
-    JsonResponse key-value containing 'liked' with a boolean value reflecting
-        whether the User 'likes' the ministry.
-
-    """
-    model = MinistryProfile
-    pk_url_kwarg = 'ministry_id'
-
-    def get(self, request, *args, **kwargs):
-        # TODO: implement this functionality into a method of `User`
-        self.object = self.get_object()
-
-        liked = False  # feedback of updated value
-        if not bool(self.object in request.user.likes_m.all()):
-            self.object.likes.add(request.user)
-            self.object.save()
-            liked = True
-        else:
-            self.object.likes.remove(request.user)
-            self.object.save()
-        return self.render_json_response({'liked': liked})

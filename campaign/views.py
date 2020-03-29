@@ -11,6 +11,7 @@ from django.views.decorators.http import require_safe
 from django.views.generic.edit import CreateView, UpdateView, SingleObjectMixin
 from django.views.generic.detail import DetailView
 
+from activity.models import Like, View
 from ministry.models import MinistryProfile
 from news.models import Post
 from donation.utils import serialize_donation
@@ -147,17 +148,12 @@ class CampaignDetail(DetailView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        self.object.views += 1
-        self.object.save(update_fields=['views'])
-
+        View.create(self.object, request.user)
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
         # TODO: do this via JSON
-        self.object.views += 1
-        self.object.save()
-
         all_news = Post.objects.filter(_campaign=self.object).order_by("-pub_date")
 
         kwargs.update({'campaign': self.object,
@@ -177,7 +173,7 @@ def campaign_json(request, campaign_id):
 
     _liked = False
     if request.user.is_authenticated:
-        _liked = bool(cam in request.user.likes_c.all())
+        _liked = Like.liked(campaign, request.user)
 
     _json = serialize_campaign(campaign)
     _json['liked'] = _liked
@@ -232,29 +228,3 @@ def donations_json(request, campaign_id):
             donations.append(d)
         donations.sort(key=lambda obj: obj.date)  # sort based on date
         return JsonResponse({'donations': [serialize_donation(d) for d in donations]})
-
-
-class LikeCampaign(DetailView, JSONResponseMixin):
-    """ Encapsulates both 'like' and 'unlike' functionality relating `User` to `Campaign`
-
-    Returns
-    -------
-    JsonResponse key-value containing 'liked' with a boolean value reflecting
-        whether the User 'likes' the ministry.
-    """
-    model = Campaign
-    pk_url_kwarg = 'campaign_id'
-
-    def get(self, request, *args, **kwargs):
-        # TODO: implement this functionality into a method of `User`
-        self.object = self.get_object()
-
-        liked = False  # feedback of updated value
-        if not bool(self.object in request.user.likes_c.all()):
-            self.object.likes.add(request.user)
-            self.object.save()
-            liked = True
-        else:
-            self.object.likes.remove(request.user)
-            self.object.save()
-        return self.render_json_response({'liked': liked})

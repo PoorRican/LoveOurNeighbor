@@ -11,18 +11,16 @@ F_TIME = '%Y-%m-%dT23:59:59'  # when writing date objects (for JSON)
 
 
 def serialize_campaign(cam):
-    _donations = len(cam.donations.all())
-
     return {'id': cam.id,
             'title': cam.title,
             'donated': float(cam.donated),
             'start_date': cam.start_date.strftime(F_TIME),
             'end_date': cam.end_date.strftime(F_TIME),
             'pub_date': cam.pub_date.strftime(F_TIME),
-            'donations': _donations,
+            'donations': cam.donations.count(),
             'goal': cam.goal,
-            'views': cam.views,
-            'likes': len(cam.likes.all()),
+            'views': cam.views.count(),
+            'likes': cam.likes.count(),
             'content': cam.content,
             'url': cam.url,
             'tags': [i.name for i in cam.tags.all()],
