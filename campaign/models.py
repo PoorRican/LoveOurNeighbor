@@ -1,10 +1,12 @@
 from datetime import date
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
 
 from ministry.models import MinistryProfile
+from news.models import Post
 from people.models import User
 from tag.models import Tag
 
@@ -32,7 +34,11 @@ class Campaign(models.Model):
     banner_img = models.ImageField('Banner Image', blank=True, null=True,
                                    upload_to=campaign_banner_dir)
     tags = models.ManyToManyField(Tag, related_name='campaigns',
-                                  blank=True,)
+                                  blank=True, )
+
+    # Generic Relations
+    news = GenericRelation(Post, related_query_name='_campaign',
+                           content_type_field='content_type', object_id_field='object_id')
 
     @property
     def donated(self):

@@ -25,14 +25,14 @@ def serialize_newspost(post):
 
 
 def news_post_media_dir(instance, filename, prepend=''):
-    """ Helper function that returns dedicated directory for NewsPost media.
+    """ Helper function that returns dedicated directory for Post media.
 
-    This organizes user uploaded NewsPost content and is used by `ministry.models.NewsPost.attachment`
+    This organizes user uploaded Post content and is used by `ministry.models.Post.attachment`
         to save uploaded content.
 
     Arguments
     =========
-    instance: (NewsPost)
+    instance: (Post)
         Must be a campaign object, to be passed to `dedicated_ministry_dir`.
         Must at least have `ministry` or `campaign` attribute.
 
@@ -48,10 +48,10 @@ def news_post_media_dir(instance, filename, prepend=''):
     (str):
         Path to dedicated directory
     """
-    if instance.campaign:
-        _ministry = instance.campaign.ministry
-    elif instance.ministry:
+    if instance.ministry:
         _ministry = instance.ministry
+    elif instance.campaign:
+        _ministry = instance.campaign.ministry
     else:
         e = 'There was an unknown error finding a dir for %s' % instance.name
         raise AttributeError(e)
@@ -61,12 +61,12 @@ def news_post_media_dir(instance, filename, prepend=''):
 
 
 def create_news_post_dir(instance, prepend='static/media'):
-    """ Utility function that creates a dedicated directory for NewsPost media.
+    """ Utility function that creates a dedicated directory for Post media.
 
     Arguments
     =========
-    instance: (NewsPost)
-        Must be a NewsPost object, to be passed to `news_post_media_dir`.
+    instance: (Post)
+        Must be a Post object, to be passed to `news_post_media_dir`.
         Must at least have `ministry` or `campaign` attribute.
 
     prepend: (str)
@@ -84,11 +84,12 @@ def create_news_post_dir(instance, prepend='static/media'):
         except FileExistsError:
             pass
         except FileNotFoundError:
-            if instance.campaign:
-                _ministry = instance.campaign.ministry
-                create_campaign_dir(instance.campaign, prepend=prepend)
-            elif instance.ministry:
+            if instance.ministry:
                 _ministry = instance.ministry
+            elif instance.campaign:
+                _campaign = instance.campaign
+                _ministry = _campaign.ministry
+                create_campaign_dir(_campaign, prepend=prepend)
             else:
                 e = 'There was an unknown error finding a dir for %s' % instance.name
                 raise AttributeError(e)

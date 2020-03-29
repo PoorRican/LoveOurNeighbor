@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from campaign.models import Campaign
 from ministry.models import MinistryProfile
-from news.models import NewsPost
+from news.models import Post
 from public.models import AboutSection, FaqSection, MessageOfTheDay, WebsiteText
 from people.forms import NewUserForm
 

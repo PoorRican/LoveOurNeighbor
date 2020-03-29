@@ -30,34 +30,34 @@
           </a></li>
 
           <li><a href="{{ url_for('news:delete_news', kwargs={'post_id': post.id}) }}">
-          <i class="material-icons">delete</i>
-          Delete News Post
+            <i class="material-icons">delete</i>
+            Delete News Post
+          </a></li>
+        {% endif %}
+
+        <li><a href="{{ post.url }}">
+          <i class="material-icons">link</i>
+          Link to news
         </a></li>
+      </ul>
+
+      {% if post.campaign %}
+        <h6>
+          <span>For:&nbsp;</span>
+          <a href="{{ post.campaign.url }}">
+            {{ post.campaign }}
+          </a>
+        </h6>
       {% endif %}
 
-      <li><a href="{{ post.url }}">
-        <i class="material-icons">link</i>
-        Link to news
-      </a></li>
-    </ul>
+      {% if post.attachment %}
+        <img src="{{ post.attachment.url }}" class="news_post_media">
+      {% endif %}
 
-    {% if post.campaign %}
-      <h6>
-        <span>For:&nbsp;</span>
-        <a href="#{{ post.campaign.url }}">
-          {{ post.campaign }}
-        </a>
-      </h6>
-    {% endif %}
+      <p class="">{{ post.content|safe }}</p>
 
-    {% if post.attachment %}
-      <img src="{{ post.attachment.url }}" class="news_post_media">
-    {% endif %}
+      {{ comments_section(post, 'news_post', request, form=form, csrf_token=csrf_token) }}
 
-    <p class="">{{ post.content|safe }}</p>
-
-    {{ comments_section(post, 'news_post', request, form=form, csrf_token=csrf_token) }}
-
-  </article>
-</div>
+    </article>
+  </div>
 {% endblock %}

@@ -2,12 +2,13 @@ from os import path
 from shutil import move
 from typing import Union
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
 
 from frontend.settings import DEFAULT_PROFILE_IMG, MEDIA_ROOT
-from explore.models import GeoLocation
 from people.models import User
+from news.models import Post
 from tag.models import Tag
 
 from .utils import (
@@ -64,6 +65,10 @@ class MinistryProfile(models.Model):
     instagram = models.URLField('Instagram', blank=True, null=True)
     youtube = models.URLField('YouTube', blank=True, null=True)
     twitter = models.URLField('Twitter', blank=True, null=True)
+
+    # Generic Relations
+    news = GenericRelation(Post, related_query_name='_ministry',
+                           content_type_field='content_type', object_id_field='object_id')
 
     def __str__(self):
         return self.name

@@ -1,6 +1,6 @@
 from datetime import date
 
-from .models import NewsPost
+from .models import Post
 
 from ministry.models import MinistryProfile
 from campaign.models import Campaign
@@ -34,7 +34,7 @@ class TestNewsPostViews(BaseViewTestCase):
     def testCreateNews_ministry(self):
         _url_base = "/news/%s/%s/create"
 
-        # test NewsPost for MinistryProfile
+        # test Post for MinistryProfile
         _url = _url_base % ("ministry", self.min.id)
 
         # assert User must be logged in
@@ -75,7 +75,7 @@ class TestNewsPostViews(BaseViewTestCase):
         _new = {'title': "news post object",
                 'content': "this is the content for the news post"}
         response = self.client.post(_url, data=_new)
-        _np = NewsPost.objects.get(title=_new['title'])
+        _np = Post.objects.get(title=_new['title'])
         self.volatile.append(_np)
         self.assertTrue(bool(_np))
         self.assertRedirects(response, "/#/ministry/%s" % self.min.id)
@@ -85,7 +85,7 @@ class TestNewsPostViews(BaseViewTestCase):
     def testCreateNews_campaign(self):
         _url_base = "/news/%s/%s/create"
 
-        # test NewsPost for Campaign
+        # test Post for Campaign
         _url = _url_base % ("campaign", self.cam.id)
 
         # assert User must be logged in
@@ -126,7 +126,7 @@ class TestNewsPostViews(BaseViewTestCase):
         _new = {'title': "news post object",
                 'content': "this is the content for the news post"}
         response = self.client.post(_url, data=_new)
-        _np = NewsPost.objects.get(title=_new['title'])
+        _np = Post.objects.get(title=_new['title'])
         self.volatile.append(_np)
         self.assertTrue(bool(_np))
         self.assertRedirects(response, "/#/ministry/campaign/%s" % self.cam.id)
@@ -138,9 +138,9 @@ class TestNewsPostViews(BaseViewTestCase):
         return NotImplemented
 
     def testEditNews_ministry(self):
-        post = NewsPost.objects.create(title="news title",
-                                       content="post content",
-                                       ministry=self.min)
+        post = Post.objects.create(title="news title",
+                                   content="post content",
+                                   ministry=self.min)
         self.volatile.append(post)
         _url = "/news/%s/edit" % post.id
 
@@ -185,7 +185,7 @@ class TestNewsPostViews(BaseViewTestCase):
             data[key] = val
             response = self.client.post(_url, data=data)
 
-            _np = NewsPost.objects.get(pk=post.id)
+            _np = Post.objects.get(pk=post.id)
             self.assertEqual(getattr(_np, key), val)
             self.assertRedirects(response,
                                  "/ministry/%s" % self.min.id)
@@ -193,9 +193,9 @@ class TestNewsPostViews(BaseViewTestCase):
         # TODO: test incorrect POST
 
     def testEditNews_campaign(self):
-        post = NewsPost.objects.create(title="news title",
-                                       content="post content",
-                                       campaign=self.cam)
+        post = Post.objects.create(title="news title",
+                                   content="post content",
+                                   campaign=self.cam)
         self.volatile.append(post)
         _url = "/news/%s/edit" % post.id
 
@@ -240,7 +240,7 @@ class TestNewsPostViews(BaseViewTestCase):
             data[key] = val
             response = self.client.post(_url, data=data)
 
-            _np = NewsPost.objects.get(pk=post.id)
+            _np = Post.objects.get(pk=post.id)
             self.assertEqual(getattr(_np, key), val)
             self.assertRedirects(response,
                                  "/#/ministry/campaign/%s" % self.cam.id)
@@ -248,9 +248,9 @@ class TestNewsPostViews(BaseViewTestCase):
         # TODO: test incorrect POST
 
     def testDeleteNews(self):
-        obj = NewsPost.objects.create(title="test news post",
-                                      ministry=self.min,
-                                      content="super interesting content")
+        obj = Post.objects.create(title="test news post",
+                                  ministry=self.min,
+                                  content="super interesting content")
         self.volatile.append(obj)
 
         _id = obj.id
@@ -272,14 +272,14 @@ class TestNewsPostViews(BaseViewTestCase):
         self.min.save()
 
         response = self.client.get(_url, follow=True)
-        self.assertContains(response,   # test redirect and template
-                            "people/profile",)
+        self.assertContains(response,  # test redirect and template
+                            "people/profile", )
         # TODO: test messages
 
         # assert admin permissions
-        obj = NewsPost.objects.create(title="test news post",
-                                      ministry=self.min,
-                                      content="super interesting content")
+        obj = Post.objects.create(title="test news post",
+                                  ministry=self.min,
+                                  content="super interesting content")
         self.volatile.append(obj)
 
         _id = obj.id
@@ -288,13 +288,13 @@ class TestNewsPostViews(BaseViewTestCase):
         self.login()
         response = self.client.get(_url, follow=True)
         # TODO: test messages
-        self.assertContains(response,   # test redirect and template
-                            "people/profile",)
+        self.assertContains(response,  # test redirect and template
+                            "people/profile", )
 
     def testNewsDetail(self):
-        obj = NewsPost.objects.create(title="test news post",
-                                      ministry=self.min,
-                                      content="super interesting content")
+        obj = Post.objects.create(title="test news post",
+                                  ministry=self.min,
+                                  content="super interesting content")
         self.volatile.append(obj)
 
         _id = obj.id

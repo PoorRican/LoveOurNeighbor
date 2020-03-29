@@ -8,7 +8,7 @@ from django.urls import reverse
 from campaign.models import Campaign
 from comment.forms import CommentForm
 from ministry.models import MinistryProfile
-from news.models import NewsPost
+from news.models import Post
 
 
 @login_required
@@ -21,7 +21,7 @@ def create_comment(request, obj_type, obj_id):
         elif obj_type == 'campaign':
             obj = Campaign.objects.get(id=obj_id)
         elif obj_type == 'news_post':
-            obj = NewsPost.objects.get(id=obj_id)
+            obj = Post.objects.get(id=obj_id)
         else:
             e = "`obj_type` is neither 'ministry', 'campaign', or 'news_post'"
             raise ValueError(e)
@@ -50,7 +50,7 @@ def create_comment(request, obj_type, obj_id):
                                             kwargs={'ministry_id':
                                                     obj.ministry.id})
                 else:
-                    e = "Incorrectly formatted NewsPost Object"
+                    e = "Incorrectly formatted Post Object"
                     raise ValueError(e)
             else:
                 e = "Unknown error in determining redirect url \

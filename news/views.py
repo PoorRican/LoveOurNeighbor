@@ -1,30 +1,26 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import ProtectedError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods, require_safe
+from django.views.generic.edit import CreateView, UpdateView, SingleObjectMixin
+from django.views.generic.detail import DetailView
+
+from braces.views import FormMessagesMixin, UserPassesTestMixin
 
 from campaign.models import Campaign
-from news.forms import NewsEditForm
-from comment.forms import CommentForm
+from news.forms import NewsEditForm, NewPostForm
 from ministry.models import MinistryProfile
 
 from .utils import create_news_post_dir
-from .models import NewsPost
-
-
-@require_safe
-def news_index(request):
-    # TODO: paginate and render
-    all_news = NewsPost.objects.all()
-    return HttpResponse(all_news)
+from .models import Post
 
 
 @login_required
 @require_http_methods(["GET", "POST"])
 def create_news(request, obj_type, obj_id):
-    # manage authenticated users
     if obj_type == 'ministry':
         obj = MinistryProfile.objects.get(id=obj_id)
     elif obj_type == 'campaign':
@@ -34,16 +30,21 @@ def create_news(request, obj_type, obj_id):
         messages.add_message(request, messages.ERROR, _feedback)
         obj = None
 
+    # manage authenticated users
     if obj and not obj.authorized_user(request.user):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     elif request.method == 'POST':
-        form = NewsEditForm(request.POST, request.FILES)
+        form = NewPostForm(request.POST, request.FILES)
         if form.is_valid():
-            # create NewsPost object and dedicated directory
+            print(obj)
+            # create Post object and dedicated directory
             post = form.save(commit=False)
-            setattr(post, obj_type, obj)
+            post.content_object = obj
+            post.author = request.user
             post.save()
+
+            print(post.ministry)
 
             create_news_post_dir(post)
 
@@ -52,6 +53,10 @@ def create_news(request, obj_type, obj_id):
             messages.add_message(request, messages.SUCCESS, _w)
 
             return HttpResponseRedirect(post.url)
+
+        else:
+            for _, message in form.errors.items():
+                messages.add_message(request, messages.ERROR, message[0])
 
     else:
         form = NewsEditForm()
@@ -65,7 +70,7 @@ def create_news(request, obj_type, obj_id):
 @login_required
 @require_http_methods(["GET", "POST"])
 def edit_news(request, post_id):
-    post = NewsPost.objects.get(id=post_id)
+    post = Post.objects.get(id=post_id)
 
     auth = False
     if post.campaign:
@@ -103,7 +108,7 @@ def edit_news(request, post_id):
 @login_required
 @require_safe
 def delete_news(request, post_id):
-    post = NewsPost.objects.get(id=post_id)
+    post = Post.objects.get(id=post_id)
 
     _url = request.META.get('HTTP_REFERER')  # url if operation successful
 
@@ -140,7 +145,7 @@ def delete_news(request, post_id):
 
 @require_safe
 def news_detail(request, post_id):
-    post = NewsPost.objects.get(id=post_id)
+    post = Post.objects.get(id=post_id)
     post.views += 1
     post.save()
 
@@ -150,10 +155,7 @@ def news_detail(request, post_id):
     elif post.campaign:
         auth = post.campaign.authorized_user(request.user)
 
-    comments = CommentForm()
-
     context = {'post': post,
                'AUTH': auth,
-               'form': comments,
                }
     return render(request, "view_news.html", context)

@@ -9,11 +9,11 @@ from bs4 import BeautifulSoup
 from campaign.models import Campaign
 from ministry.models import MinistryProfile
 from tag.models import Tag
-from news.models import NewsPost
+from news.models import Post
 from ministry.utils import (
     serialize_ministry,
     F_TIME,
-    )
+)
 from news.utils import serialize_newspost
 from campaign.utils import serialize_campaign
 
@@ -157,7 +157,7 @@ def search_json(request, query):
             campaigns.append(i)
 
     posts = []
-    for i in NewsPost.objects.filter(news_query):
+    for i in Post.objects.filter(news_query):
         try:
             for np in i:
                 posts.append(np)

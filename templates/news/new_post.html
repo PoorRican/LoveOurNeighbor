@@ -17,7 +17,7 @@
     <h2>Create News Post:</h2>
     <!-- TODO: make link for more information -->
 
-    <form method="POST" action="{{ url_for('news:create_news', kwargs=kwargs) }}">
+    <form enctype="multipart/form-data" method="POST" action="{{ url_for('news:create_news', kwargs=kwargs) }}">
 
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 

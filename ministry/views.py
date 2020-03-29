@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import ProtectedError
+from django.db.models import ProtectedError, Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_safe
@@ -15,7 +15,7 @@ from datetime import datetime
 
 from comment.forms import CommentForm
 from donation.utils import serialize_donation
-from news.models import NewsPost
+from news.models import Post
 
 from .forms import MinistryEditForm, NewMinistryForm, RepManagementForm
 from .models import MinistryProfile
@@ -147,7 +147,7 @@ class MinistryDetail(DetailView):
 
     Note
     ----
-    (from Swe) I would imagine that after a while iterating over the `NewsPost`
+    (from Swe) I would imagine that after a while iterating over the `Post`
         will be task intensive, therefore, it should be dynamically rendered
         on the client so that the page has the appearance of loading quicker.
     """
@@ -165,15 +165,8 @@ class MinistryDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         # TODO: do this via JSON
-        all_news = []
-        all_news.extend(NewsPost.objects.filter(ministry=self.object))
-        _c = self.object.campaigns.all()
-        if len(_c):
-            for i in _c:
-                _np = i.news.all()
-                if len(_np):
-                    all_news.extend(_np)
-        all_news.sort(key=lambda np: np.pub_date, reverse=True)
+        all_news = Post.objects.filter(Q(_ministry=self.object) |
+                                       Q(_campaign__ministry=self.object)).order_by("-pub_date")
 
         images = ministry_images(self.object)
 
@@ -181,7 +174,7 @@ class MinistryDetail(DetailView):
 
         kwargs.update({'ministry': self.object,
                        'all_news': all_news,
-                       'campaigns': _c,
+                       'campaigns': self.object.campaigns.all(),
                        'images': images,
                        'similar': similar, })
         return super().get_context_data(**kwargs)
@@ -217,7 +210,7 @@ def delete_ministry(request, ministry_id):
 
     Note
     ----
-    The action may be restricted by any existing `Campaign` or `NewsPost`
+    The action may be restricted by any existing `Campaign` or `Post`
         objects that are associated, and the user is notified if this occurs.
         The `MinistryProfile` can be edited after permissions have been set up.
     """

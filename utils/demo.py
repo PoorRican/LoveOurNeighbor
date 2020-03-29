@@ -293,9 +293,9 @@ def create_demo_news(obj, _type):
     desc = lorem().split("\n\n")[:2]
     desc = "<p>%s</p>" % ("</br><br>".join(desc))
 
-    np = NewsPost.objects.create(title=title,
-                                 content=desc,
-                                 **{_type: obj})
+    np = Post.objects.create(title=title,
+                             content=desc,
+                             **{_type: obj})
     return np
 
 
@@ -312,7 +312,7 @@ if __name__ == "__main__":
     from ministry.models import MinistryProfile
     from campaign.models import Campaign
     from tag.models import Tag
-    from news.models import NewsPost
+    from news.models import Post
 
     print("Beginning to populate database...\n")
     print("Starting with User objects...")
@@ -320,7 +320,7 @@ if __name__ == "__main__":
         create_demo_user()
     print("Created Users!\n")
 
-    print("Creating MinistryProfile, Campaign, NewsPost objects...\
+    print("Creating MinistryProfile, Campaign, Post objects...\
 (this might take a while)")
     count = 0
     ministry_iter = 100

@@ -5,32 +5,26 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import ProtectedError
-from django.http import (
-    HttpResponse, HttpResponseRedirect, JsonResponse
-)
-from django.shortcuts import render
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-from django.views.decorators.http import require_http_methods, require_safe
-from django.views.generic import RedirectView
+from django.views.decorators.http import require_safe
 from django.views.generic.edit import CreateView, UpdateView, SingleObjectMixin
 from django.views.generic.detail import DetailView
 
 from ministry.models import MinistryProfile
-from news.models import NewsPost
+from news.models import Post
 from donation.utils import serialize_donation
-
-from comment.forms import CommentForm
 
 from .models import Campaign
 from .forms import CampaignEditForm, NewCampaignForm
 from .utils import (
-    serialize_campaign, campaign_banner_dir,
+    serialize_campaign,
     campaign_images, prev_banner_imgs,
     campaign_goals
 )
 
 
-class CreateCampaign(CreateView, LoginRequiredMixin, JSONResponseMixin, SingleObjectMixin):
+class CreateCampaign(CreateView, LoginRequiredMixin, SingleObjectMixin):
     model = Campaign
     form_class = NewCampaignForm
     template_name = "campaign/new_campaign.html"
@@ -161,18 +155,14 @@ class CampaignDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         # TODO: do this via JSON
-        cam = self.object
-        cam.views += 1
-        cam.save()
+        self.object.views += 1
+        self.object.save()
 
-        all_news = NewsPost.objects.filter(
-            campaign=cam).order_by("-pub_date")
-
-        similar = cam.similar_campaigns()
+        all_news = Post.objects.filter(_campaign=self.object).order_by("-pub_date")
 
         kwargs.update({'campaign': self.object,
                        'all_news': all_news,
-                       'similar': similar, })
+                       'similar': self.object.similar_campaigns(), })
         return super().get_context_data(**kwargs)
 
 
@@ -183,13 +173,13 @@ def campaign_json(request, campaign_id):
         number of donations, and number of views.
     """
 
-    cam = Campaign.objects.get(id=campaign_id)
+    campaign = Campaign.objects.get(id=campaign_id)
 
     _liked = False
     if request.user.is_authenticated:
         _liked = bool(cam in request.user.likes_c.all())
 
-    _json = serialize_campaign(cam)
+    _json = serialize_campaign(campaign)
     _json['liked'] = _liked
     # TODO: do not always transmit `content` to save on server side processing power
     # del _json['content']        # remove to tx less data
