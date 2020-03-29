@@ -53,8 +53,7 @@ class NewMinistryForm(forms.ModelForm):
                   'facebook', 'instagram', 'youtube', 'twitter',
                   'admin', 'description', 'staff',)
         exclude = ('admin',)
-        widgets = {'description': forms.Textarea(attrs={'rows': 20,
-                                                        'cols': 80}),
+        widgets = {'description': forms.Textarea(attrs={'id': 'tinyEditor'}),
                    'address': forms.Textarea(attrs={'rows': 3,
                                                     'cols': 30,
                                                     'class': 'materialize-textarea'}),

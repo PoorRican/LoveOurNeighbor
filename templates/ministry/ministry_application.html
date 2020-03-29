@@ -8,7 +8,7 @@
 {% from "macros/parts/input_field.html" import input_field %}
 {% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
 {% from "macros/parts/tag_selection.html" import tag_selection %}
-{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_script %}
 
 {% block title %}
   New Ministry Application
@@ -74,9 +74,7 @@
         <div id="WYSIWYG">
           <br>
           <i class="material-icons">subject</i>
-          {{ form.description.label_tag() }}
-
-          {{ wysiwyg_editor(form.description.name) }}
+          {{ form.description }}
         </div><!-- /#WYSIWYG -->
 
         {{ tag_selection(form.tags) }}

@@ -1,15 +1,3 @@
-{% macro wysiwyg_editor(name, content='', value='') %}
-
-  {# SECURITY NOTE: it seems to be that it is possible to bypass sanitation. However, AngularJS routing seems to inhibit the
-                    browser from loading javascript after the layout renders. #}
-
-  <textarea id="tinyEditor" name="{{ name }}" style="overflow: visible;">
-    {{ content }}
-  </textarea>
-
-{% endmacro %}
-
-
 {% macro wysiwyg_script() %}
 
   <!-- WYSIWYG Editor -->

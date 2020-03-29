@@ -128,9 +128,7 @@
                     <div id="WYSIWYG">
                       <br>
                       <i class="material-icons">subject</i>
-                      {{ form.description.label_tag() }}
-
-                      {{ wysiwyg_editor(form.description.name, ministry.description) }}
+                      {{ form.description }}
                     </div><!-- /#WYSIWYG -->
 
                     {{ tag_selection(form.tags) }}

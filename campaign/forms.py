@@ -43,7 +43,7 @@ class NewCampaignForm(forms.ModelForm):
         model = Campaign
         fields = ('title', 'start_date', 'end_date', 'goal',
                   'banner_img', 'content',)
-        widgets = {'content': forms.Textarea(),
+        widgets = {'content': forms.Textarea(attrs={'id': 'tinyEditor'}),
                    'start_date': forms.TextInput(attrs={'class': 'pickadate'}),
                    'end_date': forms.TextInput(attrs={'class': 'pickadate'})}
         labels = {'goal': 'Donation Goal'}

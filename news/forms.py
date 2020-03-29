@@ -18,5 +18,4 @@ class NewsEditForm(forms.ModelForm):
         fields = ('title', 'content',
                   'attachment',
                   )
-        widgets = {'content': forms.Textarea(attrs={'rows': 20,
-                                                    'cols': 80})}
+        widgets = {'content': forms.Textarea(attrs={'id': 'tinyEditor'})}

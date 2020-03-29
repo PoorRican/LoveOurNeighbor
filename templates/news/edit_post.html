@@ -2,7 +2,7 @@
 
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 {% from "macros/parts/input_field.html" import input_field %}
-{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_script %}
 
 
 {% block title %}
@@ -33,9 +33,7 @@
 
         <div>
           <i class="material-icons">subject</i>
-          {{ form.content.label_tag() }}
-
-          {{ wysiwyg_editor(form.content.name, post.content) }}
+          {{ form.content }}
         </div><!-- /WYSIWYG Editor -->
 
         <br>

@@ -11,7 +11,7 @@
 {% from "macros/parts/get_obj_json.html" import get_obj_json %}
 {% from "macros/parts/tag_selection.html" import tag_selection %}
 {% from "macros/parts/transaction_table.html" import transaction_table %}
-{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_script %}
 
 {% import "macros/cards.html" as card %}
 
@@ -78,8 +78,7 @@
 
         <div id="WYSIWYG">
           <i class="material-icons">subject</i>
-          {{ form.content.label_tag() }}
-          {{ wysiwyg_editor(form.content.name) }}
+          {{ form.content }}
         </div><!-- /#WYSIWYG -->
 
         {{ tag_selection(form.tags) }}
