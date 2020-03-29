@@ -1,8 +1,9 @@
 from django.db import models
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
+from activity.models import Like, View
 from news.utils import news_post_media_dir
 from people.models import User
 
@@ -16,12 +17,16 @@ class Post(models.Model):
                                    null=True, blank=True)
     attachment = models.ImageField('Media Image', blank=True, null=True,
                                    upload_to=news_post_media_dir)
-    views = models.PositiveSmallIntegerField(default=0, editable=False)
 
     # Generic Relation
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
+
+    likes = GenericRelation(Like,
+                            content_type_field='content_type', object_id_field='object_id')
+    views = GenericRelation(View,
+                            content_type_field='content_type', object_id_field='object_id')
 
     def __str__(self):
         return self.title

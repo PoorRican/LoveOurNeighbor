@@ -10,6 +10,7 @@ from django.views.generic.detail import DetailView
 
 from braces.views import FormMessagesMixin, UserPassesTestMixin
 
+from activity.models import View
 from campaign.models import Campaign
 from news.forms import NewsEditForm, NewPostForm
 from ministry.models import MinistryProfile
@@ -146,8 +147,7 @@ def delete_news(request, post_id):
 @require_safe
 def news_detail(request, post_id):
     post = Post.objects.get(id=post_id)
-    post.views += 1
-    post.save()
+    View.create(post, request.user)
 
     auth = False
     if post.ministry:
