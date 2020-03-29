@@ -1,19 +1,20 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import ProtectedError
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
 from django.urls import reverse
-from django.views.decorators.http import require_http_methods, require_safe
+from django.views.decorators.http import require_safe
+from django.views.generic import RedirectView
+from django.views.generic.edit import CreateView, UpdateView, SingleObjectMixin
+from django.views.generic.detail import DetailView
 
-import json
 import os
+from braces.views import FormMessagesMixin, UserPassesTestMixin, JSONResponseMixin
 from datetime import datetime
 
 from comment.forms import CommentForm
 from donation.utils import serialize_donation
-from frontend.settings import MEDIA_ROOT, MEDIA_URL
-from people.models import User
 from news.models import NewsPost
 
 from .forms import MinistryEditForm, NewMinistryForm, RepManagementForm
@@ -24,7 +25,6 @@ from .utils import (
 
     # MinistryProfile utility functions
     prev_profile_imgs, prev_banner_imgs,
-    ministry_profile_image_dir,
     ministry_images,
     send_new_ministry_notification_email
 )
@@ -35,9 +35,7 @@ strptime = datetime.strptime
 
 # Ministry Views
 
-@login_required
-@require_http_methods(["GET", "POST"])
-def create_ministry(request):
+class CreateMinistry(CreateView, LoginRequiredMixin, FormMessagesMixin):
     """ Renders form for creating `MinistryProfile` object.
 
     Template
@@ -48,41 +46,37 @@ def create_ministry(request):
     --------
     `ministry:admin_panel`
     `MinistryEditForm.save` for custom save method
-
-    Note
-    ----
-    The template differentiates from editing existing and creating
-        new objects by being passed a boolean variable `start`
     """
-    if request.method == 'POST':
+    model = MinistryProfile
+    form_class = NewMinistryForm
+    template_name = "ministry/ministry_application.html"
+    initial = {'website': 'https://', 'address': ''}
+
+    form_valid_message = "Your Ministry has been submitted for review!"
+
+    def form_valid(self, form):
+        ministry = form.save()
+
+        send_new_ministry_notification_email(self.request, ministry)
+
+        _url = reverse('ministry:ministry_profile',
+                       kwargs={'ministry_id': ministry.id})
+        return HttpResponseRedirect(_url)
+
+    def form_invalid(self, form):
+        for _, message in form.errors.items():
+            messages.add_message(self.request, messages.ERROR, message[0])
+        return super().form_invalid(form)
+
+    def post(self, request, *args, **kwargs):
         form = NewMinistryForm(request.POST, request.FILES, initial={'admin': request.user})
         if form.is_valid():
-            ministry = form.save()
-
-            # handle response and generate UI feedback
-            _w = 'Ministry Profile Created!'
-            messages.add_message(request, messages.SUCCESS, _w)
-
-            send_new_ministry_notification_email(request, ministry)
-
-            _url = reverse('ministry:ministry_profile',
-                           kwargs={'ministry_id': ministry.id})
-            return HttpResponseRedirect(_url)
-
+            return self.form_valid(form)
         else:
-            for _, message in form.errors.items():
-                messages.add_message(request, messages.ERROR, message[0])
-
-    else:
-        form = NewMinistryForm(initial={'website': 'https://', 'address': ''})
-
-    context = {"form": form}
-    return render(request, "ministry/ministry_application.html", context)
+            return self.form_invalid(form)
 
 
-@login_required
-@require_http_methods(["GET", "POST"])
-def admin_panel(request, ministry_id):
+class AdminPanel(UpdateView, LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin):
     """ Renders form for editing `MinistryProfile object.
 
     Redirects To
@@ -96,61 +90,104 @@ def admin_panel(request, ministry_id):
 
     See Also
     --------
-    `ministry:admin_panel`
     `MinistryEditForm.save` for custom save method
+    """
+    model = MinistryProfile
+    form_class = MinistryEditForm
+    pk_url_kwarg = 'ministry_id'
+    template_name = "ministry/admin_panel.html"
+    permission_denied_message = "You do not have permissions to edit this ministry"
+
+    def form_invalid(self, form):
+        for _, message in form.errors.items():
+            messages.add_message(self.request, messages.ERROR, message[0])
+        super().form_invalid(form)
+
+    def get_form_valid_message(self):
+        return "Changes saved to %s" % self.object
+
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
+
+    def test_func(self, user):
+        return self.object.authorized_user(user)
+
+    def get_context_data(self, **kwargs):
+        donations = {}
+        count = 0
+        for donation in self.object.donations:
+            try:
+                donations[count] = serialize_donation(donation)
+                count += 1
+            except ValueError:
+                # this might happen when Donation object does not have a payment
+                pass
+
+        kwargs.update({"form": MinistryEditForm(instance=self.object),
+                       "rep_form": RepManagementForm(instance=self.object),
+                       "ministry": self.object,
+                       "donations": donations})
+        return super().get_context_data(**kwargs)
+
+
+class MinistryDetail(DetailView):
+    """ Primary rendering view for displaying `MinistryProfile` objects.
+
+    News is aggregated to be displayed, and the view counter is incremented.
+
+    Arguments
+    ---------
+    ministry_id: int
+        This is the primary key that the object is looked up by.
+        This will soon no longer be an int
+
+    Template
+    --------
+    "ministry/view_ministry.html"
 
     Note
     ----
-    The template differentiates from editing existing and creating
-        new objects by being passed a boolean variable `start`
+    (from Swe) I would imagine that after a while iterating over the `NewsPost`
+        will be task intensive, therefore, it should be dynamically rendered
+        on the client so that the page has the appearance of loading quicker.
     """
-    _url = request.META.get('HTTP_REFERER')
+    model = MinistryProfile
+    pk_url_kwarg = 'ministry_id'
+    template_name = "ministry/view_ministry.html"
 
-    try:
-        ministry = MinistryProfile.objects.get(pk=ministry_id)
-        # TODO: set up ministry permissions
-        if ministry.authorized_user(request.user):
-            if request.method == 'POST':
-                form = MinistryEditForm(request.POST, request.FILES,
-                                        instance=ministry)
-                if form.is_valid():
-                    form.save()
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.views += 1
+        self.object.save(update_fields=['views'])
 
-                    # handle response and generate UI feedback
-                    _w = 'Changes saved to %s!' % ministry.name
-                    messages.add_message(request, messages.SUCCESS, _w)
-                else:
-                    for _, message in form.errors.items():
-                        messages.add_message(request, messages.ERROR, message[0])
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
-            # TODO: this should not be accumulated here
-            donations = {}
-            count = 0
-            for donation in ministry.donations:
-                try:
-                    donations[count] = serialize_donation(donation)
-                    count += 1
-                except ValueError:
-                    # this might happen when Donation object does not have a payment
-                    pass
+    def get_context_data(self, **kwargs):
+        # TODO: do this via JSON
+        all_news = []
+        all_news.extend(NewsPost.objects.filter(ministry=self.object))
+        _c = self.object.campaigns.all()
+        if len(_c):
+            for i in _c:
+                _np = i.news.all()
+                if len(_np):
+                    all_news.extend(_np)
+        all_news.sort(key=lambda np: np.pub_date, reverse=True)
 
-            context = {"form": MinistryEditForm(instance=ministry),
-                       "rep_form": RepManagementForm(instance=ministry),
-                       "ministry": ministry,
-                       "donations": donations}
-            return render(request, "ministry/admin_panel.html", context)
-        else:
-            # this creates a recursive redirect as a deterrent
+        comments = CommentForm()
 
-            _w = 'You do not have permission to edit this ministry.'
-            messages.add_message(request, messages.WARNING, _w)
+        images = ministry_images(self.object)
 
-    except MinistryProfile.DoesNotExist:
-        # TODO: log this
-        _w = 'Invalid URL'
-        messages.add_message(request, messages.ERROR, _w)
+        similar = self.object.similar_ministries()
 
-    return HttpResponseRedirect(_url)
+        kwargs.update({'ministry': self.object,
+                       'all_news': all_news,
+                       'campaigns': _c,
+                       'form': comments,
+                       'images': images,
+                       'similar': similar, })
+        return super().get_context_data(**kwargs)
 
 
 @login_required
@@ -216,160 +253,95 @@ def delete_ministry(request, ministry_id):
     return HttpResponseRedirect(_url)
 
 
-@require_safe
-def ministry_profile(request, ministry_id):
-    """ Primary rendering view for displaying `MinistryProfile` objects.
-
-    News is aggregated to be displayed, and the view counter is incremented.
-
-    Arguments
-    ---------
-    ministry_id: int
-        This is the primary key that the object is looked up by.
-        This will soon no longer be an int
-
-    Template
-    --------
-    "ministry/view_ministry.html"
-
-    Note
-    ----
-    (from Swe) I would imagine that after a while iterating over the `NewsPost`
-        will be task intensive, therefore, it should be dynamically rendered
-        on the client so that the page has the appearance of loading quicker.
-    """
-    ministry = MinistryProfile.objects.get(pk=ministry_id)
-    ministry.views += 1
-    ministry.save()
-    # TODO: combine QuerySet of campaign and ministry news
-    # TODO: show campaigns via nav-bar in wrapper
-
-    all_news = []
-    all_news.extend(NewsPost.objects.filter(ministry=ministry))
-    _c = ministry.campaigns.all()
-    if len(_c):
-        for i in _c:
-            _np = i.news.all()
-            if len(_np):
-                all_news.extend(_np)
-    all_news.sort(key=lambda np: np.pub_date, reverse=True)
-
-    comments = CommentForm()
-
-    images = ministry_images(ministry)
-
-    similar = ministry.similar_ministries()
-
-    context = {'ministry': ministry,
-               'all_news': all_news,
-               'campaigns': _c,
-               'form': comments,
-               'images': images,
-               'similar': similar,
-               }
-    return render(request, "view_ministry.html", context)
-
-
-@login_required
-@require_safe
-def login_as_ministry(request, ministry_id):
+class LoginAsMinistry(MinistryDetail, LoginRequiredMixin, UserPassesTestMixin):
     """ This allows an authorized user to interact with other users
-        under the alias of the `MinistryProfile` identified by `ministry_id`.
+    using the `MinistryProfile` as an alias.
 
-    Feedback is given via django-messages.
+    Feedback given via django-messages.
 
-    Arguments
-    ---------
-    ministry_id: int
-        This is the primary key that the object is looked up by.
+    Warnings
+    --------
+    This is not implemented at all as of 4/2020, and was removed in a previous commit.
+    This used to be accessible in the header, in the profile dropdown... but the UI/CSS
+    was tricky to implement.
 
     Redirects To
     ------------
     'ministry:ministry_profile'
         if successful
 
-    'ministry:login_as_ministry'
-        if the user does not have sufficient permissions.
-        This attempts to create a redirect loop on the client.
-        I don't think that it causes much strain on the server,
-            aside from the `MinistryProfile` lookup (which should be cached)
-            and the permissions checking.
-        The user is made aware upon returning via django-messages.
+    Notes
+    -----
+    This view method used to create a redirect loop on the client
+    if there were insufficient permissions.
+    I don't think that it causes much strain on the server.
+    django-messages notified the User upon return to the server.
+
+    This is simply accomplished by redirecting to whatever URL accesses this.
+    It might even be more 'devious' to set `permanent=True`....
     """
-    ministry = MinistryProfile.objects.get(pk=ministry_id)
-    if ministry.authorized_user(request.user):
-        request.user.logged_in_as = ministry
+
+    permission_denied_message = "You do not have permissions to do this..."
+
+    def test_func(self, user):
+        """ This verifies that the User has appropriate permissions.
+
+        See Also
+        --------
+        `django.contrib.auth.mixins.AccessMixin`
+            https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.mixins.AccessMixin-
+        """
+        return self.get_object().authorized_user(user)
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        request.user.logged_in_as = self.object
         request.user.save()
 
-        _w = 'Logged in as %s!' % ministry.name
+        _w = 'Logged in as %s!' % self.object.name
         messages.add_message(request, messages.INFO, _w)
-
-        _url = reverse('ministry:ministry_profile', kwargs={'ministry_id': ministry_id})
-        return HttpResponseRedirect(_url)
-    else:
-        # we shouldn't really get here, but redirect to originating page
-        _w = 'You do not have permission to do this.'
-        messages.add_message(request, messages.WARNING, _w)
-
-        # cause a redirect loop as deterrant
-        return HttpResponseRedirect(reverse('ministry:login_as_ministry', kwargs={'ministry_id': ministry_id}))
+        return super().get(request, *args, **kwargs)
 
 
 # Admin Management
 
-@login_required
-@require_safe
-def request_to_be_rep(request, ministry_id):
+class RepRequest(RedirectView, SingleObjectMixin):
     """ Enables newly created users request to be a ministry representative.
 
-    Users who request this status have no permissions until authorization
-        is approved by the ministry admin.
+    Users who request this status have no permissions until authorization by the ministry admin.
     """
-    ministry = MinistryProfile.objects.get(id=ministry_id)
-    if not ministry.authorized_user(request.user):
-        # TODO: create notification to `ministry.admin`
-        ministry.requests.add(request.user)
-        ministry.save()
+    model = MinistryProfile
+    pk_url_kwarg = 'ministry_id'
 
-        _w = "Your request has been submitted to %s" % ministry.name
-        messages.add_message(request, messages.INFO, _w)
+    def __init__(self, **kwargs):
+        self.object = None
+        super().__init__(**kwargs)
 
-    else:
-        _w = "You're already associated with %s" % ministry.name
-        messages.add_message(request, messages.ERROR, _w)
+    def test_func(self, **kwargs):
+        return not self.get_object().authorized_user(self.request.user)
 
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    def get_redirect_url(self, *args, **kwargs):
+        return self.request.META.get('HTTP_REFERER')
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.authorized_user(request.user):
+            self.object.add_request(request.user)
+            self.object.save()
+
+            msg = "Your request has been submitted to %s" % self.object.name
+        else:
+            msg = "You're already associated with %s" % self.object.name
+
+        messages.add_message(self.request, messages.INFO, msg)
+        super().get(request, *args, **kwargs)
 
 
-@login_required
-@require_http_methods(["POST"])
-def rep_management(request, ministry_id):
+class RepManagement(AdminPanel):
     """
     Dedicated view function to manage `MinistryProfile.requests` and `MinistryProfile.reps`
-
-    Parameters
-    ----------
-    request
-    ministry_id
     """
-    # TODO: encapsulate this into a member function of `MinistryProfile`
-    try:
-        ministry = MinistryProfile.objects.get(pk=ministry_id)
-        if ministry.authorized_user(request.user):
-            if request.method == 'POST':
-                form = RepManagementForm(request.POST, instance=ministry)
-                if form.is_valid():
-                    form.save()
-
-                    _w = 'Changes saved to %s!' % ministry.name
-                    messages.add_message(request, messages.SUCCESS, _w)
-
-    except MinistryProfile.DoesNotExist:
-        # TODO: log this
-        _w = 'Invalid URL'
-        messages.add_message(request, messages.ERROR, _w)
-
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    form_class = RepManagementForm
 
 
 # JSON Views
@@ -462,16 +434,8 @@ def donations_json(request, ministry_id):
 
 # User Interaction
 
-@login_required
-@require_safe
-def like_ministry(request, ministry_id):
+class LikeMinistry(DetailView, JSONResponseMixin):
     """ Encapsulates both 'like' and 'unlike' functionality relating `User` to `MinistryProfile`
-
-    Parameters
-    ----------
-    request
-    ministry_id:
-        id of MinistryProfile to select
 
     Returns
     -------
@@ -479,13 +443,19 @@ def like_ministry(request, ministry_id):
         whether the User 'likes' the ministry.
 
     """
-    # TODO: implement this functionality into a method of `User`
-    ministry = MinistryProfile.objects.get(id=ministry_id)
-    if not bool(ministry in request.user.likes_m.all()):
-        ministry.likes.add(request.user)
-        ministry.save()
-        return JsonResponse({'liked': True})
-    else:
-        ministry.likes.remove(request.user)
-        ministry.save()
-        return JsonResponse({'liked': False})
+    model = MinistryProfile
+    pk_url_kwarg = 'ministry_id'
+
+    def get(self, request, *args, **kwargs):
+        # TODO: implement this functionality into a method of `User`
+        self.object = self.get_object()
+
+        liked = False  # feedback of updated value
+        if not bool(self.object in request.user.likes_m.all()):
+            self.object.likes.add(request.user)
+            self.object.save()
+            liked = True
+        else:
+            self.object.likes.remove(request.user)
+            self.object.save()
+        return self.render_json_response({'liked': liked})

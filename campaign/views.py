@@ -10,8 +10,6 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_safe
 
-from frontend.settings import MEDIA_ROOT, MEDIA_URL
-
 from ministry.models import MinistryProfile
 from news.models import NewsPost
 from donation.utils import serialize_donation
@@ -196,8 +194,6 @@ def banner_img_json(request, campaign_id):
     banner directory for Campaign
     """
     campaign = Campaign.objects.get(pk=campaign_id)
-    _dir = campaign_banner_dir(campaign, '')
-    _dir = os.path.join(MEDIA_ROOT, _dir)
 
     _json = {'available': prev_banner_imgs(campaign)}
 

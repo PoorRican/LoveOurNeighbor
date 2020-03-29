@@ -4,22 +4,22 @@ from . import views
 
 app_name = 'ministry'
 urlpatterns = [
-    path('create', views.create_ministry, name='create_ministry'),
-    path('<int:ministry_id>', views.ministry_profile,
+    path('create', views.CreateMinistry.as_view(), name='create_ministry'),
+    path('<int:ministry_id>', views.MinistryDetail.as_view(),
          name='ministry_profile'),
-    path('<int:ministry_id>/edit', views.admin_panel,
+    path('<int:ministry_id>/edit', views.AdminPanel.as_view(),
          name='admin_panel'),
     path('<int:ministry_id>/delete', views.delete_ministry,
          name='delete_ministry'),
 
-    path('<int:ministry_id>/login', views.login_as_ministry,
+    path('<int:ministry_id>/login', views.LoginAsMinistry.as_view(),
          name='login_as_ministry'),
-    path('<int:ministry_id>/reps/request', views.request_to_be_rep,
+    path('<int:ministry_id>/reps/request', views.RepRequest.as_view(),
          name='request_to_be_rep'),
-    path('<int:ministry_id>/reps/manage', views.rep_management,
+    path('<int:ministry_id>/reps/manage', views.RepManagement.as_view(),
          name='rep_management'),
 
-    path('<int:ministry_id>/like', views.like_ministry,
+    path('<int:ministry_id>/like', views.LikeMinistry.as_view(),
          name='like_ministry'),
 
     path('<int:ministry_id>/json', views.ministry_json,

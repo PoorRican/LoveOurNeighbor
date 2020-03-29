@@ -155,6 +155,7 @@ class MinistryProfile(models.Model):
             User to add to `self.requests`.
             If the value is a str, it queries along the email column.
         """
+        # TODO: email ministry admin/reps
         if not hasattr(user, 'email'):
             user = User.objects.get(email=user)
         self.requests.add(user)
