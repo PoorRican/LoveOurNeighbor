@@ -14,3 +14,4 @@ gunicorn
 pytz
 bs4
 django-tinymce
+django-braces

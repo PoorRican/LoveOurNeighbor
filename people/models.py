@@ -150,27 +150,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return (self.email,)
 
     @property
-    def location(self):
-        # lazy relationship
-        if self._location:
-            gl, _ = GeoLocation.objects.get_or_create(user=self)
-            if _:
-                gl.location = self._location
-            return gl
-        else:
-            return None
-
-    @location.setter
-    def location(self, location):
-        gl, _ = GeoLocation.objects.get_or_create(user=self)
-        gl.location = location
-        gl.save()
-
-        # lazy relationship
-        self._location = location
-        self.save()
-
-    @property
     def donated(self):
         amt = 0
         for i in self.donations.all():

@@ -21,6 +21,10 @@ class NewUserForm(forms.ModelForm):
             if not user.is_verified:
                 user.is_verified = True  # assume donor emails already verified
                 self.instance = user
+            else:
+                err = forms.ValidationError('This email (%(email)s) has already been used!',
+                                            code='existing_email', params={'email': user.email})
+                self.add_error('email', err)
         except User.DoesNotExist:
             pass
 
@@ -33,8 +37,41 @@ class NewUserForm(forms.ModelForm):
 
 
 class UserLoginForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(UserLoginForm, self).__init__(*args, **kwargs)
+    def __init__(self, request=None, *args, **kwargs):
+        self.request = request
+        self.user = None
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        password = self.cleaned_data.get('password')
+
+        if email and password:
+            try:
+                self.user = User.authenticate_user(email, password)
+            except User.DoesNotExist:
+                err = forms.ValidationError('%(email)s was not found!', code='email', params={'email': email})
+                self.add_error('email', err)
+
+            # login successful
+            if self.user and self.confirm_login_allowed(self.user):
+                return self.cleaned_data
+
+            # incorrect password
+            else:
+                err = forms.ValidationError('Incorrect password given for %(email)s',
+                                            code='password', params={'email': email})
+                self.add_error('password', err)
+
+    @staticmethod
+    def confirm_login_allowed(user):
+        if user.is_active and (user.is_verified or user.is_staff):
+            if not user.is_verified:
+                # staff users will not have to verify their email
+                user.is_verified = True
+                user.save()
+            return True
+        raise forms.ValidationError('Your account needs to be verified!', code='inactive')
 
     class Meta:
         model = User
