@@ -28,6 +28,10 @@ class NewCampaignForm(forms.ModelForm):
 
         # object must 'exist' before ForeignKey relationships
         super(NewCampaignForm, self).save(commit=False)
+        self.instance.save()
+
+        # object must 'exist' before ForeignKey relationships
+        super(NewCampaignForm, self).save(commit=False)
 
         create_campaign_dir(self.instance)
 
