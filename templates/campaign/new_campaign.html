@@ -5,6 +5,7 @@
 
 {% from "campaign/parts/campaign_date_input_scripts.html" import campaign_date_input_scripts %}
 
+{% from "macros/parts/breadcrumbs.html" import breadcrumbs %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 {% from "macros/parts/input_field.html" import input_field %}
 {% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
@@ -23,14 +24,17 @@
   <section class="wrapper">
     <!-- campaign/create_campaign -->
 
-    <h4>New Campaign</h4>
-
     <form enctype="multipart/form-data" method="POST"
           action="{{ url_for('campaign:create_campaign', kwargs={"ministry_id": ministry.id}) }}">
 
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
       <div id="details">
+
+        {{ breadcrumbs('Campaign Details',
+                       parent={'text': ministry.name, 'url': ministry.url, 'object': False},
+                       header='New Campaign') }}
+
         <div class="row">
 
           <br>

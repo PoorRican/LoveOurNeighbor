@@ -54,6 +54,10 @@ strong {
   border-bottom: solid 1px #FF7100;
 }
 
+a {
+  color: #8e24aa;
+}
+
 .donation-progress {
   height: 50px;
   border-radius: 5px;

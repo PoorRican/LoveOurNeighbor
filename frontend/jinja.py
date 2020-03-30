@@ -7,6 +7,7 @@ from django.contrib import messages
 from jinja2 import Environment
 from webassets import Environment as AssetsEnvironment
 from webassets.ext.jinja2 import AssetsExtension
+from typing import Union
 
 from frontend.settings import (
     ASSETS_DEBUG, ASSETS_AUTO_BUILD, STATIC_URL, STATIC_ROOT,
@@ -70,6 +71,45 @@ def social_media_links():
         yield i
 
 
+def unwrap_breadcrumbs(deepest: Union[None, bool, dict] = None, parent: Union[dict, None] = None, reverse=False):
+    """
+    Helper function to unwrap a chain of Objects fon use in rendering breadcrumbs.
+
+    By default, the order ranges from `deepest` (eg: home) to current page, to be displayed from left-to-right.
+
+    Parameters
+    ----------
+    parent: dict
+        parent
+    deepest: dict
+        The deepest link. If this is None, it will be set to home. Otherwise, if it is False, it will not
+        be added to the chain.
+    reverse: bool
+        Reverses the returned value (eg: label to home)
+
+    Returns
+    -------
+    (tuple of dict)
+    """
+    breadcrumbs = []
+    while parent:
+        breadcrumbs.append(parent)
+        if hasattr(parent['object'], 'parent'):
+            parent = parent['object'].parent
+        else:
+            parent = False
+
+    if deepest is None:
+        deepest = {'url': '/', 'text': 'Home'}
+    if deepest and deepest is not True:
+        breadcrumbs.append(deepest)
+
+    if not reverse:
+        breadcrumbs.reverse()
+
+    return breadcrumbs
+
+
 def environment(**options):
     env = Environment(**options)
     env.globals.update({
@@ -92,8 +132,9 @@ def environment(**options):
         'generate_payeezy_hash': generate_payeezy_hash,
         'PAYEEZY_TEST_BUTTON': PAYEEZY_TEST_BUTTON,
         'COMMENTS': COMMENTS,
+        'social_media_links': social_media_links,
         'today': date.today,
-        'social_media_links': social_media_links
+        'unwrap_breadcrumbs': unwrap_breadcrumbs
     })
     env.add_extension(AssetsExtension)
     env.assets_environment = _assets

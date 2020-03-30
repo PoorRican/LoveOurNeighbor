@@ -3,6 +3,7 @@
 {% from "ministry/parts/ministry_founded_field.html" import founded_field_initialer %}
 {% from "ministry/parts/rep_request_selection.html" import rep_selection %}
 
+{% from "macros/parts/breadcrumbs.html" import breadcrumbs %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 {% from "macros/parts/get_obj_json.html" import get_obj_json %}
 {% from "macros/parts/input_field.html" import input_field %}
@@ -27,10 +28,12 @@
         <section class="tabs-vertical mt-1 section">
           <div class="row">
 
+            {{ breadcrumbs(ministry.name, header='Admin Panel', obj=ministry) }}
+
             {% if not ministry.verified %}
               <div class="col s12">
                 <div class="card-panel orange lighten-5">
-                  <p>Your Ministry Profile has not been verified yet. This may take 1-3 business days.
+                  <p class="mt-0 mb-0">Your Ministry Profile has not been verified yet. This may take 1-3 business days.
                     Your profile will not be visible to the public before then.</p>
                 </div><!-- /.card-panel -->
               </div>

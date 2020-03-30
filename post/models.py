@@ -54,3 +54,20 @@ class Post(models.Model):
             return getattr(self, '_campaign').all()[0]
         else:
             return False
+
+    @property
+    def parent(self):
+        """
+        Used in UI to get link to parent object.
+
+        Returns
+        -------
+        (name of object, url to object)
+        """
+        if self.campaign:
+            return {'text': self.campaign.title,
+                    'url': self.campaign.url,
+                    'object': self.campaign}
+        elif self.ministry:
+            return {'text': self.ministry.title,
+                    'url': self.ministry.url}

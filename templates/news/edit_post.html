@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 
+{% from "macros/parts/breadcrumbs.html" import breadcrumbs %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 {% from "macros/parts/input_field.html" import input_field %}
 {% from "macros/parts/wysiwyg_editor.html" import wysiwyg_script %}
@@ -14,7 +15,7 @@
   <section class="wrapper">
     <!-- ministry/edit_post -->
 
-    <h2>Edit Post:</h2>
+    {{ breadcrumbs(post.title, parent=post.parent, header='Edit Post') }}
 
     <form enctype="multipart/form-data" method="POST"
           action="{{ url_for('news:edit_news', kwargs={'post_id': post.id}) }}">

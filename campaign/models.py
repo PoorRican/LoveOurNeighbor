@@ -77,6 +77,19 @@ class Campaign(models.Model):
         return reverse('activity:like', kwargs={'object': 'campaign', 'pk': self.pk})
 
     @property
+    def parent(self):
+        """
+        Used in UI to get link to parent object.
+
+        Returns
+        -------
+        (name of object, url to object)
+        """
+        return {'text': self.ministry.name,
+                'url': self.ministry.url,
+                'object': self.ministry}
+
+    @property
     def has_tags(self):
         if self.tags.all():
             return True

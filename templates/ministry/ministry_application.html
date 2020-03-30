@@ -5,6 +5,7 @@
 
 {% from "ministry/parts/ministry_founded_field.html" import founded_field_initialer %}
 
+{% from "macros/parts/breadcrumbs.html" import breadcrumbs %}
 {% from "macros/parts/input_field.html" import input_field %}
 {% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
 {% from "macros/parts/tag_selection.html" import tag_selection %}
@@ -17,14 +18,19 @@
 {% block body %}
   <!-- ministry/ministry_application -->
 
-    <section class="wrapper" ng-app="LON" ng-cloak>
+  <section class="wrapper" ng-app="LON" ng-cloak>
 
-        <h4>New Ministry:</h4>
-        <!-- TODO: make link for more information -->
-        <h6>Please note that all ministry profiles must be approved before they are made public</h6>
+    {{ breadcrumbs('Ministry Details', parent={'text': request.user.name, 'url': url_for('people:user_profile'), 'object': False}, header='New Ministry') }}
+    <!-- TODO: make link for more information -->
+    <div class="card-panel orange lighten-5">
+      <p class="mt-0 mb-0">
+        Please note that all ministry profiles must be approved before they are visible to the public.
+        This may take 1-3 business days.
+      </p>
+    </div>
 
-        <form method="POST" name="ministryForm" enctype="multipart/form-data"
-              action="{{ url_for('ministry:create_ministry') }}">
+    <form method="POST" name="ministryForm" enctype="multipart/form-data"
+          action="{{ url_for('ministry:create_ministry') }}">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
       <div class="row" ng-controller="ministryActionCtrl">
@@ -96,25 +102,6 @@
 
 
 {% block scripts %}
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
-
-  {% set page_assets = (
-  'app.module.js',
-  'app.config.js',
-  'services/tag.service.js',
-  'services/object.service.js',
-  'services/select_image_dialog.service.js',
-  'people/user_filter.service.js',
-  'ministry/ministry_action.controller.js',
-  ) %}
-  {% for f in page_assets %}
-    <script src="{{ static('app/%s' % f) }}"></script>
-  {% endfor %}
-
   {{ wysiwyg_script() }}
 
   {{ founded_field_initialer() }}
@@ -138,10 +125,4 @@
     ko.applyBindings(profileSelection, document.getElementById('profile_img_input'));
   </script>
 
-{% endblock %}
-
-
-{% block css %}
-  <link rel="stylesheet"
-        href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
 {% endblock %}
