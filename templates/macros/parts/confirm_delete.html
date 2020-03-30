@@ -1,44 +1,44 @@
 {#
 Arguments
 =========
-  type: str
-    must be 'campaign', 'ministry', or 'news post'. This is used for UI text and confirmation url
-  id: int
-    this is the identifying ID to be used for confirmation url
-  part: int
-    -1 for both trigger and modal
-    0 for trigger
-    1 for modal
+type: str
+must be 'campaign', 'ministry', or 'post post'. This is used for UI text and confirmation url
+id: int
+this is the identifying ID to be used for confirmation url
+part: int
+-1 for both trigger and modal
+0 for trigger
+1 for modal
 #}
 {% macro confirm_delete(type, id, text='Delete', anchor=False, part=-1) %}
 
-  {# Create the arguments to pass to `url_for` #}
-  {% if type == 'campaign' %}
-    {% set url_args = ('campaign:delete_campaign', {'campaign_id': id}) %}
-  {% elif type == 'ministry' %}
-    {% set url_args = ('ministry:delete_ministry', {'ministry_id': id}) %}
-  {% elif type == 'news post' %}
-    {% set url_args = ('news:delete_news', {'post_id': id}) %}
-    {% set type = 'news_post' %}
-  {% endif %}
+{# Create the arguments to pass to `url_for` #}
+{% if type == 'campaign' %}
+{% set url_args = ('campaign:delete_campaign', {'campaign_id': id}) %}
+{% elif type == 'ministry' %}
+{% set url_args = ('ministry:delete_ministry', {'ministry_id': id}) %}
+{% elif type == 'post post' %}
+{% set url_args = ('post:delete_post', {'post_id': id}) %}
+{% set type = 'news_post' %}
+{% endif %}
 
-  {% if part == -1 or part == 0 %}
-    {% if anchor %}
-      <a href="#" class="modal-trigger" data-target="confirmDeleteModal_{{ type }}_{{ id }}">
-        <i class="material-icons">delete</i>
-        {{ text }}
-      </a>
-    {% elif not anchor %}
-      <button data-target="confirmDeleteModal_{{ type }}_{{ id }}" class="btn-flat red-text modal-trigger">
-        <i class="material-icons">delete</i>
-        {{ text }}
-      </button>
-    {% endif %}
-  {% endif %}
+{% if part == -1 or part == 0 %}
+{% if anchor %}
+<a href="#" class="modal-trigger" data-target="confirmDeleteModal_{{ type }}_{{ id }}">
+  <i class="material-icons">delete</i>
+  {{ text }}
+</a>
+{% elif not anchor %}
+<button data-target="confirmDeleteModal_{{ type }}_{{ id }}" class="btn-flat red-text modal-trigger">
+  <i class="material-icons">delete</i>
+  {{ text }}
+</button>
+{% endif %}
+{% endif %}
 
 
-  {% if part == -1 or part == 1 %}
-    <div id="confirmDeleteModal_{{ type }}_{{ id }}" class="modal">
+{% if part == -1 or part == 1 %}
+<div id="confirmDeleteModal_{{ type }}_{{ id }}" class="modal">
       <div class="modal-content">
         <h2>Are you sure?</h2>
         <p>Please confirm that you want to delete this {{ type }}. This cannot be undone.</p>

@@ -51,7 +51,7 @@
                     <a href="#news"><i class="material-icons">dynamic_feed</i>
                       &nbsp;News
                     </a>
-                  </li><!-- /news -->
+                  </li><!-- /post -->
                   <li class="tab">
                     <a href="#donations"><i class="material-icons">monetization_on</i>
                       &nbsp;Donations
@@ -142,20 +142,20 @@
                 <div class="card-panel">
                   <br>
                   <a class="btn blue lighten-2" style="margin-bottom: 12px"
-                     href="{{ url_for('news:create_news', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}">
+                     href="{{ url_for('post:create_post', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}">
                     <i class="material-icons">add</i>
                     Create News Post
                   </a>
                   <div class="row">
                     {% for news in campaign.news.all() %}
-                      {{ card.news_card(news, AUTH=True) }}
+                    {{ card.news_card(news, AUTH=True) }}
                     {% else %}
-                      <p>There is no news for this campaign at this time.</p>
+                    <p>There is no news for this campaign at this time.</p>
                     {% endfor %}
                   </div>
                 </div>
 
-              </div><!-- /#news -->
+              </div><!-- /#post -->
 
               <div id="donations">
                 <div id="statistics" class="row">

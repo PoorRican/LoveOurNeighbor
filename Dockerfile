@@ -64,7 +64,7 @@ COPY ./static/media/img $APP_HOME/mediafiles/img
 
 # Clear Environment
 #RUN sh utils/clear_migrations.sh
-#RUN python manage.py makemigrations public people tag campaign ministry donation news
+#RUN python manage.py makemigrations public people tag campaign ministry donation post
 #RUN python manage.py migrate --noinput
 # delay migration to avoid `django.db.InconsistentMigrationHistory` being thrown
 #RUN python manage.py makemigrations explore comment

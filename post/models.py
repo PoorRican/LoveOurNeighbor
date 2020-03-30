@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
 from activity.models import Like, View
-from news.utils import news_post_media_dir
+from post.utils import post_media_dir
 from people.models import User
 
 
@@ -13,10 +13,10 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     pub_date = models.DateTimeField('date published', auto_now_add=True)
     content = models.TextField(null=True, blank=True)
-    description = models.CharField(max_length=1024, help_text='A short description of the news post.',
+    description = models.CharField(max_length=1024, help_text='A short description of the post post.',
                                    null=True, blank=True)
     attachment = models.ImageField('Media Image', blank=True, null=True,
-                                   upload_to=news_post_media_dir)
+                                   upload_to=post_media_dir)
 
     # Generic Relation
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -33,12 +33,12 @@ class Post(models.Model):
 
     @property
     def url(self):
-        return reverse('news:news_detail',
+        return reverse('post:post_detail',
                        kwargs={'post_id': self.id})
 
     @property
     def edit(self):
-        return reverse('news:edit_news',
+        return reverse('post:edit_post',
                        kwargs={'post_id': self.id})
 
     @property

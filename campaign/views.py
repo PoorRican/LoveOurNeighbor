@@ -13,7 +13,7 @@ from django.views.generic.detail import DetailView
 
 from activity.models import Like, View
 from ministry.models import MinistryProfile
-from news.models import Post
+from post.models import Post
 from donation.utils import serialize_donation
 
 from .models import Campaign
@@ -78,7 +78,9 @@ class AdminPanel(UpdateView, LoginRequiredMixin, FormMessagesMixin, UserPassesTe
     form_class = CampaignEditForm
     pk_url_kwarg = 'campaign_id'
     template_name = "campaign/admin_panel.html"
+
     permission_denied_message = "You do not have permissions to edit this campaign"
+    form_valid_message = "Changes Saved!"
 
     def form_invalid(self, form):
         for _, message in form.errors.items():
@@ -207,7 +209,7 @@ def campaign_gallery_json(request, campaign_id):
 
     The list that is returned is not exhaustive and
         uses images from all NewsPosts with an `attachment` image
-        from both `MinistryProfile.news` and `Campaign.news`,
+        from both `MinistryProfile.post` and `Campaign.post`,
         and `Campaign.banner_imgs`
     """
     campaign = Campaign.objects.get(pk=campaign_id)

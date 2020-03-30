@@ -16,7 +16,7 @@ fi
 
 # ensure db has been configured
 bash utils/clear_migrations.sh
-#python manage.py makemigrations public people tag campaign ministry donation news
+#python manage.py makemigrations public people tag campaign ministry donation post
 #python manage.py migrate --noinput
 # delay migration to avoid `django.db.InconsistentMigrationHistory` being thrown
 #python manage.py makemigrations explore comment

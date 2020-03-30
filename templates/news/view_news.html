@@ -29,7 +29,7 @@
             Edit News Post
           </a></li>
 
-          <li><a href="{{ url_for('news:delete_news', kwargs={'post_id': post.id}) }}">
+          <li><a href="{{ url_for('post:delete_post', kwargs={'post_id': post.id}) }}">
             <i class="material-icons">delete</i>
             Delete News Post
           </a></li>

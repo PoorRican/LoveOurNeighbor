@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from activity.models import Like, View
 from ministry.models import MinistryProfile
-from news.models import Post
+from post.models import Post
 from people.models import User
 from tag.models import Tag
 

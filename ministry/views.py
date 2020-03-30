@@ -15,7 +15,7 @@ from datetime import datetime
 
 from activity.models import Like, View
 from donation.utils import serialize_donation
-from news.models import Post
+from post.models import Post
 
 from .forms import MinistryEditForm, NewMinistryForm, RepManagementForm
 from .models import MinistryProfile
@@ -96,7 +96,9 @@ class AdminPanel(UpdateView, LoginRequiredMixin, FormMessagesMixin, UserPassesTe
     form_class = MinistryEditForm
     pk_url_kwarg = 'ministry_id'
     template_name = "ministry/admin_panel.html"
+
     permission_denied_message = "You do not have permissions to edit this ministry"
+    form_valid_message = "Changes Saved!"
 
     def form_invalid(self, form):
         for _, message in form.errors.items():

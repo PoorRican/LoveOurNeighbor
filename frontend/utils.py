@@ -62,7 +62,7 @@ def campaign_admin_urls(campaign):
          },
         {'label': 'Post News',
          'icon': 'post_add',
-         'reverse_url': 'news:create_news',
+         'reverse_url': 'post:create_post',
          'kwargs': {'obj_type': 'campaign',
                     'obj_id': campaign.id},
          }]
@@ -79,7 +79,7 @@ def ministry_admin_urls(ministry):
          },
         {'label': 'Post News',
          'icon': 'post_add',
-         'reverse_url': 'news:create_news',
+         'reverse_url': 'post:create_post',
          'kwargs': {'obj_type': 'ministry',
                     'obj_id': ministry.id},
          }]

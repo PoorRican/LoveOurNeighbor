@@ -44,12 +44,12 @@
               <i class="material-icons">create</i>
               Edit News Post
             </a></li>
-            <li>{{ confirm_delete('news post', post.id, text='Delete Post', anchor=True, part=0) }}</li>
+            <li>{{ confirm_delete('post post', post.id, text='Delete Post', anchor=True, part=0) }}</li>
           {% endif %}
         </ul>
       {% endif %}
 
-      {{ confirm_delete('news post', post.id, text='Delete Post', anchor=True, part=1) }}
+      {{ confirm_delete('post post', post.id, text='Delete Post', anchor=True, part=1) }}
 
     </div><!-- /.card-panel -->
   </div><!-- /.col -->
@@ -217,41 +217,41 @@
       <ul class="tabs">
         <li class="tab col {{ width }}"><a href="#news">News</a></li>
         {% if campaigns[0] %}
-          <li class="tab col {{ width }}"><a href="#campaigns">Campaigns</a></li>
+        <li class="tab col {{ width }}"><a href="#campaigns">Campaigns</a></li>
         {% endif %}
         <li class="tab col {{ width }}"><a href="#gallery">Gallery</a></li>
       </ul>
     </div>
   </div>
 
-  <div id="news" class="col s12">
-    {% if news %}
-      {# TODO: generate different card types (both randomly and per parent object type) #}
-      {% for n in news %}
-        {{ news_card(n, AUTH) }}
-      {% endfor %}
-    {% else %}
-      <br>
-      <p>There is no news to show at this time.</p>
-    {% endif %}
-  </div><!-- /#news -->
-
-  {% if campaigns[0] %}
-    <div id="campaigns" class="col s12">
-      {% if campaigns[1] %}
-        {% for c in campaigns[1] %}
-          {{ campaign_card(c, AUTH) }}
-        {% endfor %}
-      {% else %}
-        <br>
-        <p>There are no campaigns to show at this time.</p>
-      {% endif %}
-    </div><!-- /#campaign -->
+<div id="news" class="col s12">
+  {% if news %}
+  {# TODO: generate different card types (both randomly and per parent object type) #}
+  {% for n in news %}
+  {{ news_card(n, AUTH) }}
+  {% endfor %}
+  {% else %}
+  <br>
+  <p>There is no news to show at this time.</p>
   {% endif %}
+</div><!-- /#post -->
 
-  <div id="gallery" class="col s12">
-    {{ gallery(images) }}
-  </div><!-- /# gallery -->
+{% if campaigns[0] %}
+<div id="campaigns" class="col s12">
+  {% if campaigns[1] %}
+  {% for c in campaigns[1] %}
+  {{ campaign_card(c, AUTH) }}
+  {% endfor %}
+  {% else %}
+  <br>
+  <p>There are no campaigns to show at this time.</p>
+  {% endif %}
+</div><!-- /#campaign -->
+{% endif %}
+
+<div id="gallery" class="col s12">
+  {{ gallery(images) }}
+</div><!-- /# gallery -->
 
 {% endmacro %}
 {# }}} #}

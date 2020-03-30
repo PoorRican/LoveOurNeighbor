@@ -32,7 +32,7 @@ class TestNewsPostViews(BaseViewTestCase):
         BaseViewTestCase.tearDown(self)
 
     def testCreateNews_ministry(self):
-        _url_base = "/news/%s/%s/create"
+        _url_base = "/post/%s/%s/create"
 
         # test Post for MinistryProfile
         _url = _url_base % ("ministry", self.min.id)
@@ -72,8 +72,8 @@ class TestNewsPostViews(BaseViewTestCase):
                             "ministry/news_content")
 
         # assert proper POST data
-        _new = {'title': "news post object",
-                'content': "this is the content for the news post"}
+        _new = {'title': "post post object",
+                'content': "this is the content for the post post"}
         response = self.client.post(_url, data=_new)
         _np = Post.objects.get(title=_new['title'])
         self.volatile.append(_np)
@@ -83,7 +83,7 @@ class TestNewsPostViews(BaseViewTestCase):
         # TODO: test incorrect POST
 
     def testCreateNews_campaign(self):
-        _url_base = "/news/%s/%s/create"
+        _url_base = "/post/%s/%s/create"
 
         # test Post for Campaign
         _url = _url_base % ("campaign", self.cam.id)
@@ -123,8 +123,8 @@ class TestNewsPostViews(BaseViewTestCase):
                             "ministry/news_content")
 
         # assert proper POST data
-        _new = {'title': "news post object",
-                'content': "this is the content for the news post"}
+        _new = {'title': "post post object",
+                'content': "this is the content for the post post"}
         response = self.client.post(_url, data=_new)
         _np = Post.objects.get(title=_new['title'])
         self.volatile.append(_np)
@@ -138,11 +138,11 @@ class TestNewsPostViews(BaseViewTestCase):
         return NotImplemented
 
     def testEditNews_ministry(self):
-        post = Post.objects.create(title="news title",
+        post = Post.objects.create(title="post title",
                                    content="post content",
                                    ministry=self.min)
         self.volatile.append(post)
-        _url = "/news/%s/edit" % post.id
+        _url = "/post/%s/edit" % post.id
 
         # assert User must be logged in
         response = self.client.get(_url)
@@ -178,8 +178,8 @@ class TestNewsPostViews(BaseViewTestCase):
                             "ministry/news_content")
 
         # assert proper POST data
-        _edit = {'title': "news post object",
-                 'content': "this is the content for the news post"}
+        _edit = {'title': "post post object",
+                 'content': "this is the content for the post post"}
         for key, val in _edit.items():
             data = {attr: getattr(post, attr) for attr in _edit.keys()}
             data[key] = val
@@ -193,11 +193,11 @@ class TestNewsPostViews(BaseViewTestCase):
         # TODO: test incorrect POST
 
     def testEditNews_campaign(self):
-        post = Post.objects.create(title="news title",
+        post = Post.objects.create(title="post title",
                                    content="post content",
                                    campaign=self.cam)
         self.volatile.append(post)
-        _url = "/news/%s/edit" % post.id
+        _url = "/post/%s/edit" % post.id
 
         # assert User must be logged in
         response = self.client.get(_url)
@@ -233,8 +233,8 @@ class TestNewsPostViews(BaseViewTestCase):
                             "ministry/news_content")
 
         # assert proper POST data
-        _edit = {'title': "news post object",
-                 'content': "this is the content for the news post"}
+        _edit = {'title': "post post object",
+                 'content': "this is the content for the post post"}
         for key, val in _edit.items():
             data = {attr: getattr(post, attr) for attr in _edit.keys()}
             data[key] = val
@@ -248,13 +248,13 @@ class TestNewsPostViews(BaseViewTestCase):
         # TODO: test incorrect POST
 
     def testDeleteNews(self):
-        obj = Post.objects.create(title="test news post",
+        obj = Post.objects.create(title="test post post",
                                   ministry=self.min,
                                   content="super interesting content")
         self.volatile.append(obj)
 
         _id = obj.id
-        _url = "/news/%s/delete" % _id
+        _url = "/post/%s/delete" % _id
 
         # assert that User must be logged in
         response = self.client.get(_url)
@@ -277,13 +277,13 @@ class TestNewsPostViews(BaseViewTestCase):
         # TODO: test messages
 
         # assert admin permissions
-        obj = Post.objects.create(title="test news post",
+        obj = Post.objects.create(title="test post post",
                                   ministry=self.min,
                                   content="super interesting content")
         self.volatile.append(obj)
 
         _id = obj.id
-        _url = "/news/%s/delete" % _id
+        _url = "/post/%s/delete" % _id
 
         self.login()
         response = self.client.get(_url, follow=True)
@@ -292,13 +292,13 @@ class TestNewsPostViews(BaseViewTestCase):
                             "people/profile", )
 
     def testNewsDetail(self):
-        obj = Post.objects.create(title="test news post",
+        obj = Post.objects.create(title="test post post",
                                   ministry=self.min,
                                   content="super interesting content")
         self.volatile.append(obj)
 
         _id = obj.id
-        _url = "/ministry/news/%s" % _id
+        _url = "/ministry/post/%s" % _id
 
         response = self.client.get(_url)
         self.assertContains(response,

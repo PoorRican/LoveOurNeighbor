@@ -4,7 +4,7 @@ from django.db import models
 from tinymce.widgets import AdminTinyMCE
 
 
-class NewsPostAdmin(ModelAdmin):
+class PostsAdmin(ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': AdminTinyMCE()}
     }

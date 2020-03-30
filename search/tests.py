@@ -8,14 +8,14 @@ class SearchJsonTestCase(BaseViewTestCase):
     def testNameSearch(self):
         # using unique names, create ministries
         # using unique titles, create campaigns
-        # using unique titles, create news posts
+        # using unique titles, create post posts
         # assert returned JSON value
         self.fail()
 
     def testTagSearch(self):
         # create ministries
         # create campaigns
-        # create news posts
+        # create post posts
         # create tags (using unique words)
         # add tags to ministries/campaigns
         # assert returned JSON value

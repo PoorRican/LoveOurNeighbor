@@ -4,7 +4,7 @@ from campaign.utils import create_campaign_dir
 from ministry.utils import dedicated_ministry_dir, create_ministry_dirs
 
 
-def serialize_newspost(post):
+def serialize_post(post):
     parent = {}
     if post.ministry:
         parent['type'] = 'ministry'
@@ -24,7 +24,7 @@ def serialize_newspost(post):
             }
 
 
-def news_post_media_dir(instance, filename, prepend=''):
+def post_media_dir(instance, filename, prepend=''):
     """ Helper function that returns dedicated directory for Post media.
 
     This organizes user uploaded Post content and is used by `ministry.models.Post.attachment`
@@ -66,7 +66,7 @@ def create_news_post_dir(instance, prepend='static/media'):
     Arguments
     =========
     instance: (Post)
-        Must be a Post object, to be passed to `news_post_media_dir`.
+        Must be a Post object, to be passed to `post_media_dir`.
         Must at least have `ministry` or `campaign` attribute.
 
     prepend: (str)
@@ -77,7 +77,7 @@ def create_news_post_dir(instance, prepend='static/media'):
     =======
         None
     """
-    for _ in (news_post_media_dir,):
+    for _ in (post_media_dir,):
         _path = path.split(_(instance, "", prepend=prepend))[0]
         try:
             mkdir(_path)

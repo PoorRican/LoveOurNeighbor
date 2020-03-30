@@ -14,5 +14,5 @@ function newsCtrl($scope, $routeParams) {
   $scope.share.set('url', 'https://loveourneighbor.org/ministry/' + $routeParams.post_id);
   $scope.share.update_dom();
 
-  ga('send', 'pageview', '/campaigns/news/' + $routeParams.post_id);
+  ga('send', 'pageview', '/campaigns/post/' + $routeParams.post_id);
 }

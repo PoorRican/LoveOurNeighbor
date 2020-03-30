@@ -15,8 +15,8 @@ from donation.models import Donation
 from ministry.admin import MinistryProfileAdmin
 from ministry.models import MinistryProfile
 
-from news.admin import NewsPostAdmin
-from news.models import Post
+from post.admin import PostsAdmin
+from post.models import Post
 
 from people.admin import UserAdmin
 from people.models import User
@@ -62,7 +62,7 @@ admin_site.register(Donation, DonationAdmin)
 admin_site.register(FaqSection, FAQAdmin)
 admin_site.register(MessageOfTheDay, MOTDAdmin)
 admin_site.register(MinistryProfile, MinistryProfileAdmin)
-admin_site.register(Post, NewsPostAdmin)
+admin_site.register(Post, PostsAdmin)
 admin_site.register(SocialMediaLink, SocialMediaLinkAdmin)
 admin_site.register(Tag, TagAdmin)
 admin_site.register(User, UserAdmin)

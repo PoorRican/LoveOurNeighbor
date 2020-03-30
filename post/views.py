@@ -12,7 +12,7 @@ from braces.views import FormMessagesMixin, UserPassesTestMixin
 
 from activity.models import View
 from campaign.models import Campaign
-from news.forms import NewsEditForm, NewPostForm
+from post.forms import NewsEditForm, NewPostForm
 from ministry.models import MinistryProfile
 
 from .utils import create_news_post_dir
@@ -21,7 +21,7 @@ from .models import Post
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def create_news(request, obj_type, obj_id):
+def create_post(request, obj_type, obj_id):
     if obj_type == 'ministry':
         obj = MinistryProfile.objects.get(id=obj_id)
     elif obj_type == 'campaign':
@@ -70,7 +70,7 @@ def create_news(request, obj_type, obj_id):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def edit_news(request, post_id):
+def edit_post(request, post_id):
     post = Post.objects.get(id=post_id)
 
     auth = False
@@ -108,7 +108,7 @@ def edit_news(request, post_id):
 
 @login_required
 @require_safe
-def delete_news(request, post_id):
+def delete_post(request, post_id):
     post = Post.objects.get(id=post_id)
 
     _url = request.META.get('HTTP_REFERER')  # url if operation successful
@@ -145,7 +145,7 @@ def delete_news(request, post_id):
 
 
 @require_safe
-def news_detail(request, post_id):
+def post_detail(request, post_id):
     post = Post.objects.get(id=post_id)
     View.create(post, request.user)
 

@@ -9,12 +9,12 @@ from bs4 import BeautifulSoup
 from campaign.models import Campaign
 from ministry.models import MinistryProfile
 from tag.models import Tag
-from news.models import Post
+from post.models import Post
 from ministry.utils import (
     serialize_ministry,
     F_TIME,
 )
-from news.utils import serialize_newspost
+from post.utils import serialize_post
 from campaign.utils import serialize_campaign
 
 from explore.utils import calc_distance
@@ -77,9 +77,9 @@ def serialize_objects(request=None, ministries=[], campaigns=[], posts=[]):
 
     _posts = []
     for i in posts:
-        _post = serialize_newspost(i)
+        _post = serialize_post(i)
         _post['type'] = 'post'
-        _post['url'] = reverse('news:news_detail',
+        _post['url'] = reverse('post:post_detail',
                                kwargs={'post_id': i.id})
         # filter out any non-text elements
         _text = BeautifulSoup(i.content, 'html.parser').get_text()
@@ -131,12 +131,12 @@ def search_json(request, query):
     if 'postgresql' in settings.DATABASES['default']['ENGINE']:
         ministry_query = Q(name__icontains=query) | Q(description__icontains=query) | Q(address__icontains=query)
         campaign_query = Q(title__icontains=query) | Q(content__icontains=query)
-        news_query = Q(title__icontains=query) | Q(content__icontains=query)
+        post_query = Q(title__icontains=query) | Q(content__icontains=query)
         tag_query = Q(title__icontains=query) | Q(description__icontains=query)
     else:
         ministry_query = Q(name__contains=query) | Q(description__contains=query) | Q(address__contains=query)
         campaign_query = Q(title__contains=query) | Q(content__contains=query)
-        news_query = Q(title__contains=query) | Q(content__contains=query)
+        post_query = Q(title__contains=query) | Q(content__contains=query)
         tag_query = Q(title__contains=query) | Q(description__contains=query)
 
     ministries = []
@@ -157,7 +157,7 @@ def search_json(request, query):
             campaigns.append(i)
 
     posts = []
-    for i in Post.objects.filter(news_query):
+    for i in Post.objects.filter(post_query):
         try:
             for np in i:
                 posts.append(np)

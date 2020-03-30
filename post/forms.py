@@ -1,6 +1,6 @@
 from django import forms
 
-from news.models import Post
+from post.models import Post
 
 
 class NewPostForm(forms.ModelForm):

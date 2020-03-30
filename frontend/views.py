@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from campaign.models import Campaign
 from ministry.models import MinistryProfile
-from news.models import Post
+from post.models import Post
 from public.models import AboutSection, FaqSection, MessageOfTheDay, WebsiteText
 from people.forms import NewUserForm
 
@@ -40,7 +40,7 @@ def home(request):
     Notes
     -----
     Eventually, this will display a custom template that renders
-        featured content, news, and trending/new content.
+        featured content, post, and trending/new content.
     """
 
     if request.user.is_authenticated:

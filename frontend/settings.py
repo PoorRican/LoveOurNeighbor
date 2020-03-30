@@ -47,11 +47,10 @@ INSTALLED_APPS = [
 
     'ministry.apps.MinistryConfig',
     'campaign.apps.CampaignConfig',
-    'news.apps.NewsConfig',
+    'post.apps.PostConfig',
 
     'activity.apps.ActivityConfig',
     'tag.apps.TagConfig',
-    'comment.apps.CommentConfig',
     'people.apps.PeopleConfig',
     'donation.apps.DonationConfig',
     'explore.apps.ExploreConfig',

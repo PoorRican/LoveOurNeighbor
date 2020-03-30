@@ -330,13 +330,13 @@ if __name__ == "__main__":
         # TODO: comment 20 times per ministry
         sim_likes(m)                           # simulate likes for ministry
         for __ in (_, _):
-            create_demo_news(m, 'ministry')    # create news posts for ministry
-            # TODO: comment 20 times per ministry > news post
-            c = create_demo_campaign(m)        # create campaigns for ministry
+            create_demo_news(m, 'ministry')  # create post posts for ministry
+            # TODO: comment 20 times per ministry > post post
+            c = create_demo_campaign(m)  # create campaigns for ministry
             # TODO: comment 20 times per campaign
-            sim_likes(c)                       # simulate likes for campaign
-            create_demo_news(c, 'campaign')    # create news posts per campaign
-            # TODO: comment 20 times news post
+            sim_likes(c)  # simulate likes for campaign
+            create_demo_news(c, 'campaign')  # create post posts per campaign
+            # TODO: comment 20 times post post
         count += 1
         if not count % 10:
             print("%d/%d Complete..." % (count, ministry_iter))

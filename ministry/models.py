@@ -9,7 +9,7 @@ from django.urls import reverse
 from activity.models import Like, View
 from frontend.settings import DEFAULT_PROFILE_IMG, MEDIA_ROOT
 from people.models import User
-from news.models import Post
+from post.models import Post
 from tag.models import Tag
 
 from .utils import (

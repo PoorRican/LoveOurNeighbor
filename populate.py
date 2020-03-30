@@ -65,7 +65,7 @@ faq_sections = (
      """We provide a platform for existing, established ministries and organizations to thrive and
         upload a profile on our site.  Unlike other crowdsourcing sites that fund an individual missions,
         or one-time campaigns, the persistence of descriptive ministry profiles and the ability for ministries
-        to post news, both ministries and visitors are benefited by viewing and interacting with ministries
+        to post post, both ministries and visitors are benefited by viewing and interacting with ministries
         in a more personal way than just a fundraising website."""),
 
     ("Do you only accept Christian charities, ministries, and campaigns on your platform?",
@@ -102,7 +102,7 @@ faq_sections = (
     <p>Our website accomplishes this by placing a special emphasis on new or “unpopular” ministries
         alongside of other successful ministries for any given category.  We encourage ministries
         to utilize other social media alongside of our platform, in addition to posting as many
-        news updates to increase your presence on the site and to allow others can read about
+        post updates to increase your presence on the site and to allow others can read about
         what God is doing through your ministry.""")
 )
 about_section = (
