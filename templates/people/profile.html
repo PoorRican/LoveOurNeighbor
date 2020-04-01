@@ -199,19 +199,25 @@
 
 {% block scripts %}
 
-  <!-- masonry -->
-  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
-  <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+<!-- masonry -->
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+<script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
 
-  <!-- Knockout.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
-  <script src="{{ static('js/image_selection.js') }}"></script>
-  <script>
-    const profileURL = "{{ url_for('people:profile_img_json') }}";
+<script>
+  $('.grid').masonry({
+    itemSelector: '.grid-item',
+  });
+</script>
 
-    let profileSelection = new PreviousImageSelection('selected_profile_img', profileURL);
+<!-- Knockout.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+<script src="{{ static('js/image_selection.js') }}"></script>
+<script>
+  const profileURL = "{{ url_for('people:profile_img_json') }}";
 
-    ko.applyBindings(profileSelection, document.getElementById('profile_img_input'));
-  </script>
+  let profileSelection = new PreviousImageSelection('selected_profile_img', profileURL);
+
+  ko.applyBindings(profileSelection, document.getElementById('profile_img_input'));
+</script>
 
 {% endblock %}
