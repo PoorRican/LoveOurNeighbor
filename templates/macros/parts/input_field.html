@@ -7,10 +7,12 @@
 
       {# TODO: add 'invalid' tag to the rendered widget #}
       {{ field }}
+      {% if hasattr(field, 'label_tag') %}
       {{ field.label_tag() }}
+      {% endif %}
 
       {% if error_text or helper_text %}
-          <span class="helper-text"
+      <span class="helper-text"
                 data-error="{{ error_text }}"
                 data-success="">
           {{ helper_text }}

@@ -208,16 +208,15 @@ def ministry_images(ministry):
     #   that way media can be queried easily, and objects may easily have more
     #   then one image associated with them.
     gallery = []
-    for i in ministry.news.all():
-        if i.attachment is not None:
-            gallery.append(i)
-    for i in ministry.campaigns.all():
-        if i.banner_img is not None:
-            gallery.append(i)
-        for n in i.news.all():
-            if n.attachment is not None:
-                gallery.append(n)
-    gallery.sort(key=lambda np: np.pub_date, reverse=True)
+    for p in ministry.posts.all():
+        if p.media.count():
+            gallery.append(p)
+    for c in ministry.campaigns.all():
+        if c.banner_img is not None:
+            gallery.append(c)
+        for p in c.posts.all():
+            if p.media.count():
+                gallery.append(p)
 
     _gallery = []
     try:
@@ -228,9 +227,10 @@ def ministry_images(ministry):
 
     for i in gallery:
         try:
-            if hasattr(i, 'attachment'):
-                _gallery.append({'src': i.attachment.url, 'obj': i.url,
-                                 'caption': i.title})
+            if hasattr(i, 'media'):
+                for m in i.media.all():
+                    _gallery.append({'src': m.url, 'obj': i.url,
+                                     'caption': i.title})
             elif hasattr(i, 'banner_img'):
                 _gallery.append({'src': i.banner_img.url, 'obj': i.url,
                                  'caption': i.title})

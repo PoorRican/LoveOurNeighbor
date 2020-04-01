@@ -63,8 +63,8 @@ class MinistryProfile(models.Model):
     twitter = models.URLField('Twitter', blank=True, null=True)
 
     # Generic Relations
-    news = GenericRelation(Post, related_query_name='_ministry',
-                           content_type_field='content_type', object_id_field='object_id')
+    posts = GenericRelation(Post, related_query_name='_ministry',
+                            content_type_field='content_type', object_id_field='object_id')
     likes = GenericRelation(Like,
                             content_type_field='content_type', object_id_field='object_id')
     views = GenericRelation(View,

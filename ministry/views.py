@@ -400,7 +400,7 @@ def ministry_gallery_json(request, ministry_id):
 
     The list that is returned is not exhaustive and
         uses images from all NewsPosts with an `attachment` image
-        from both `MinistryProfile.news` and `Campaign.news`,
+        from both `MinistryProfile.posts` and `Campaign.posts`,
         and `Campaign.banner_imgs`
     """
     ministry = MinistryProfile.objects.get(pk=ministry_id)

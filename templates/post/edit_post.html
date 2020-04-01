@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% from "macros/parts/breadcrumbs.html" import breadcrumbs %}
+{% from "macros/parts/confirm_delete.html" import confirm_delete %}
+{% from "macros/parts/input_field.html" import input_field %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_script %}
+
+
+{% block title %}
+  {{ post.title }} Edit Post
+{% endblock %}
+
+
+{% block body %}
+  <section class="wrapper">
+    <!-- ministry/edit_post -->
+
+    {{ breadcrumbs(post.title, parent=post.parent, header='Edit Post') }}
+
+    <form enctype="multipart/form-data" method="POST"
+          action="{{ url_for('post:edit_post', kwargs={'post_id': post.id}) }}">
+
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+      <div class="row">
+
+        {{ input_field(form.title, width='s12') }}
+
+        <div class="col s12 pond" style="min-height: 9em;">
+          {% for i in post.media.all() %}
+          <input name="load" type="hidden" value="{{ i.image.upload_id }}">
+          {% endfor %}
+          <h6 class="grey-text text-darken-1 mb-2">
+            <i class="material-icons left">collections</i>
+            Media
+          </h6>
+          <input type="file" class="filepond browser-default"/>
+        </div>
+
+        <div class="col s12">
+          <h6 class="grey-text text-darken-1 mb-2">
+            <i class="material-icons left">subject</i>
+            Content
+          </h6>
+          {{ form.content }}
+        </div><!-- /WYSIWYG Editor -->
+
+        <div id="form_buttons" class="col s12">
+          <button class="btn orange" type="submit">
+            <i class="material-icons">save</i>
+            Save
+          </button>
+        </div><!-- /#form_buttons -->
+
+      </div>
+
+    </form>
+
+  </section>
+{% endblock %}
+
+
+{% block scripts %}
+
+<!-- filepond.js -->
+<script src="https://unpkg.com/filepond-plugin-image-preview@4.6.1/dist/filepond-plugin-image-preview.js"></script>
+<script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
+<script src="https://unpkg.com/jquery-filepond/filepond.jquery.js"></script>
+<script src="{{ static('js/filepond-init.js') }}"></script>
+
+{{ wysiwyg_script() }}
+
+{% endblock %}
+
+
+{% block css %}
+<link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+{% endblock %}

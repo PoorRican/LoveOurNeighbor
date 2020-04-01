@@ -25,9 +25,11 @@ favicon_view = RedirectView.as_view(url=join(settings.STATIC_URL, '/img/favicon.
 
 app_name = 'frontend'
 urlpatterns = [
-    # Basic URLs
     path('admin/', admin_site.urls),
     path('tinymce/', include('tinymce.urls')),
+    path('fp/', include('django_drf_filepond.urls')),
+
+    # Basic URLs
     path('', views.root),
     path('favicon.ico', favicon_view),
     path('error', views.error, name='error'),

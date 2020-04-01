@@ -1,5 +1,7 @@
 from os import path, mkdir
 
+from django.conf import settings
+
 from campaign.utils import create_campaign_dir
 from ministry.utils import dedicated_ministry_dir, create_ministry_dirs
 
@@ -24,7 +26,7 @@ def serialize_post(post):
             }
 
 
-def post_media_dir(instance, filename, prepend=''):
+def post_media_dir(instance, filename, prepend=settings.MEDIA_ROOT):
     """ Helper function that returns dedicated directory for Post media.
 
     This organizes user uploaded Post content and is used by `ministry.models.Post.attachment`
@@ -53,14 +55,14 @@ def post_media_dir(instance, filename, prepend=''):
     elif instance.campaign:
         _ministry = instance.campaign.ministry
     else:
-        e = 'There was an unknown error finding a dir for %s' % instance.name
+        e = 'There was an unknown error finding a dir for %s' % instance.title
         raise AttributeError(e)
 
     return path.join(dedicated_ministry_dir(_ministry, prepend=prepend),
                      'post_media', filename)
 
 
-def create_news_post_dir(instance, prepend='static/media'):
+def create_news_post_dir(instance, prepend=settings.MEDIA_ROOT):
     """ Utility function that creates a dedicated directory for Post media.
 
     Arguments

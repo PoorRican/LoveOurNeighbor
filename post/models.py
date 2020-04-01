@@ -1,22 +1,40 @@
-from django.db import models
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.db import models
 from django.urls import reverse
+
+from django_drf_filepond.models import StoredUpload
+from os import path
 
 from activity.models import Like, View
 from post.utils import post_media_dir
 from people.models import User
 
 
+class Media(models.Model):
+    image = models.OneToOneField(StoredUpload, blank=True, null=True, on_delete=models.CASCADE)
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    @property
+    def url(self):
+        # NOTE: in future versions of `django_drf_filepond`, `self.image.file_path` will be replaced with `FileField`
+        # It is currently a `CharField`
+        return path.join(settings.MEDIA_URL, self.image.file_path)
+
+
 class Post(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     pub_date = models.DateTimeField('date published', auto_now_add=True)
     content = models.TextField(null=True, blank=True)
-    description = models.CharField(max_length=1024, help_text='A short description of the post post.',
+    description = models.CharField(max_length=1024, help_text='A short description of the post.',
                                    null=True, blank=True)
-    attachment = models.ImageField('Media Image', blank=True, null=True,
-                                   upload_to=post_media_dir)
+    media = GenericRelation(Media,
+                            content_type_field='content_type', object_id_field='object_id')
 
     # Generic Relation
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -29,7 +47,7 @@ class Post(models.Model):
                             content_type_field='content_type', object_id_field='object_id')
 
     def __str__(self):
-        return self.title
+        return "%s by %s" % (self.title, self.content_object)
 
     @property
     def url(self):

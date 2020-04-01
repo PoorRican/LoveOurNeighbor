@@ -57,8 +57,8 @@
                     </a>
                   </li><!-- /campaigns -->
                   <li class="tab">
-                    <a href="#news"><i class="material-icons">dynamic_feed</i>
-                      &nbsp;News
+                    <a href="#posts"><i class="material-icons left">dynamic_feed</i>
+                      Posts
                     </a>
                   </li><!-- /post -->
                   <li class="tab">
@@ -195,19 +195,19 @@
                   </div><!-- /.card-panel -->
                 </div><!-- /#campaigns -->
 
-                <div id="news" class="col s12">
-                  <div class="card-panel">
+              <div id="posts" class="col s12">
+                <div class="card-panel">
 
-                    <a class="btn blue lighten-2" style="margin-bottom: 12px;"
-                       href="{{ url_for('post:create_post', kwargs={'obj_type': 'ministry', 'obj_id': ministry.id}) }}">
-                      <i class="material-icons left">add</i>
-                      Create News Post
-                    </a>
-                    <div class="row">
-                      {% for news in ministry.news.all() %}
-                      {{ card.news_card(news, AUTH=True) }}
-                      {% else %}
-                      <p>You have not posted any news for this ministry.</p>
+                  <a class="btn blue lighten-2" style="margin-bottom: 12px;"
+                     href="{{ url_for('post:create_post', kwargs={'obj_type': 'ministry', 'obj_id': ministry.id}) }}">
+                    <i class="material-icons left">add</i>
+                    Create Post
+                  </a>
+                  <div class="row">
+                    {% for posts in ministry.posts.all() %}
+                    {{ card.news_card(posts, AUTH=True) }}
+                    {% else %}
+                    <p>You have not posted any news for this ministry.</p>
                       {% endfor %}
                     </div>
                   </div><!-- /.card-panel -->

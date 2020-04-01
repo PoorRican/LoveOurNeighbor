@@ -1,6 +1,6 @@
 geopy
 jinja2
-django
+django==3.0.4
 pyyaml
 pillow
 django-ipware
@@ -15,3 +15,5 @@ pytz
 bs4
 django-tinymce
 django-braces
+django-drf-filepond==0.2.2
+django-rest-framework==0.1.0

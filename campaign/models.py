@@ -34,8 +34,8 @@ class Campaign(models.Model):
                                   blank=True, )
 
     # Generic Relations
-    news = GenericRelation(Post, related_query_name='_campaign',
-                           content_type_field='content_type', object_id_field='object_id')
+    posts = GenericRelation(Post, related_query_name='_campaign',
+                            content_type_field='content_type', object_id_field='object_id')
     likes = GenericRelation(Like,
                             content_type_field='content_type', object_id_field='object_id')
     views = GenericRelation(View,

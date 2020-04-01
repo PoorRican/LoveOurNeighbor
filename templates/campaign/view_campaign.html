@@ -216,9 +216,9 @@
                     </a>
                   </li>
                   <li class="tab col s4 p-0">
-                    <a href="#news">
+                    <a href="#posts">
                       <i class="material-icons">list_alt</i>
-                      <span class="hide-on-med-and-down">&nbsp;News</span>
+                      <span class="hide-on-med-and-down">&nbsp;Posts</span>
                     </a>
                   </li>
                   <li class="tab col s4 p-0">
@@ -240,9 +240,9 @@
               </div>
             </div><!-- /#content -->
 
-            <div id="news" class="row">
+            <div id="posts" class="row">
               <div class="col s12">
-                <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">News</h5>
+                <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Posts</h5>
                 {% for n in all_news %}
                 {{ card.news_card(n, AUTH, wide=True) }}
                 {% else %}

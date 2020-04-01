@@ -1,7 +1,5 @@
 {% extends "layout.html" %}
 
-{% from "macros/parts/comments_section.html" import comments_section %}
-
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block body %}
@@ -42,21 +40,27 @@
       </ul>
 
       {% if post.campaign %}
-        <h6>
-          <span>For:&nbsp;</span>
-          <a href="{{ post.campaign.url }}">
-            {{ post.campaign }}
-          </a>
-        </h6>
+      <h6>
+        <span>For:&nbsp;</span>
+        <a href="{{ post.campaign.url }}">
+          {{ post.campaign }}
+        </a>
+      </h6>
       {% endif %}
 
-      {% if post.attachment %}
-        <img src="{{ post.attachment.url }}" class="news_post_media">
+      {% if post.media.count() %}
+
+      <div class="row gallery grid">
+        {% for img in post.media.all() %}
+        <div class="col s12 m6">
+          <img src="{{ img.url }}" class="responsive-img" alt="">
+        </div>
+        {% endfor %}
+      </div>
+
       {% endif %}
 
       <p class="">{{ post.content|safe }}</p>
-
-      {{ comments_section(post, 'news_post', request, form=form, csrf_token=csrf_token) }}
 
     </article>
   </div>

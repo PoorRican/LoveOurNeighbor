@@ -57,6 +57,8 @@ INSTALLED_APPS = [
 
     'django_assets',
     'tinymce',
+    'django_drf_filepond',
+    'rest_framework',
 
     'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.auth',
@@ -111,7 +113,7 @@ TEMPLATES = [
 
                  'templates/ministry/',
                  'templates/campaign/',
-                 'templates/news/',
+                 'templates/post/',
 
                  'templates/donation/',
                  'templates/people/',
@@ -284,3 +286,9 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 SITE_ID = 1
+
+# FileDrop Config
+DJANGO_DRF_FILEPOND_UPLOAD_TMP = os.path.join('/tmp',
+                                              'filepond-temp-uploads')  # let the filesystem handle cleanup of temp files
+DJANGO_DRF_FILEPOND_ALLOW_EXTERNAL_UPLOAD_DIR = True
+DJANGO_DRF_FILEPOND_FILE_STORE_PATH = MEDIA_ROOT

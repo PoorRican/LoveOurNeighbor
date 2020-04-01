@@ -9,14 +9,16 @@ from django.views.generic.edit import CreateView, UpdateView, SingleObjectMixin
 from django.views.generic.detail import DetailView
 
 from braces.views import FormMessagesMixin, UserPassesTestMixin
+from django_drf_filepond.api import store_upload, delete_stored_upload
+from django_drf_filepond.models import TemporaryUpload
 
 from activity.models import View
 from campaign.models import Campaign
 from post.forms import NewsEditForm, NewPostForm
 from ministry.models import MinistryProfile
 
-from .utils import create_news_post_dir
-from .models import Post
+from .utils import create_news_post_dir, post_media_dir
+from .models import Post, Media
 
 
 @login_required
@@ -38,14 +40,22 @@ def create_post(request, obj_type, obj_id):
     elif request.method == 'POST':
         form = NewPostForm(request.POST, request.FILES)
         if form.is_valid():
-            print(obj)
-            # create Post object and dedicated directory
+            # TODO: this is a heuristic implementation....
             post = form.save(commit=False)
             post.content_object = obj
             post.author = request.user
+            form.clean_filepond()
+            upload_ids = form.cleaned_data['media']
             post.save()
 
-            print(post.ministry)
+            # create Media objects
+            for i in upload_ids:
+                tmp = TemporaryUpload.objects.get(upload_id=i)
+                _img = post_media_dir(post, tmp.upload_name, prepend='')
+                print(_img)
+                file = store_upload(i, _img)
+                Media.objects.create(image=file, content_object=post)
+            post.save()
 
             create_news_post_dir(post)
 
@@ -60,7 +70,7 @@ def create_post(request, obj_type, obj_id):
                 messages.add_message(request, messages.ERROR, message[0])
 
     else:
-        form = NewsEditForm()
+        form = NewPostForm()
 
     context = {"form": form,
                "kwargs": {'obj_type': obj_type, 'obj_id': obj_id}
@@ -73,6 +83,7 @@ def create_post(request, obj_type, obj_id):
 def edit_post(request, post_id):
     post = Post.objects.get(id=post_id)
 
+    # Check authorization
     auth = False
     if post.campaign:
         auth = post.campaign.authorized_user(request.user)
@@ -91,7 +102,26 @@ def edit_post(request, post_id):
                                 instance=post)
 
             if form.is_valid():
-                form.save()
+                post = form.save(commit=False)
+
+                # process deleted images
+                form.clean_filepond()
+                upload_ids = form.cleaned_data['media']
+                for i in post.media.all():
+                    if i.image.upload_id not in upload_ids:
+                        delete_stored_upload(i.image.upload_id, delete_file=True)
+                    i.delete()
+                # process new images
+                _current = [p.image.upload_id for p in post.media.all()]
+                for i in upload_ids:
+                    if i not in _current:
+                        tmp = TemporaryUpload.objects.get(upload_id=i)
+                        _img = post_media_dir(post, tmp.upload_name, prepend='')
+                        print(_img)
+                        file = store_upload(i, _img)
+                        Media.objects.create(image=file, content_object=post)
+                        post.save()
+
                 return HttpResponseRedirect(_url)
         else:
             form = NewsEditForm(instance=post)

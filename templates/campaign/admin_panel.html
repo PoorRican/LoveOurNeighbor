@@ -48,8 +48,8 @@
                       &nbsp;Details
                     </a></li><!-- /details -->
                   <li class="tab">
-                    <a href="#news"><i class="material-icons">dynamic_feed</i>
-                      &nbsp;News
+                    <a href="#posts"><i class="material-icons">dynamic_feed</i>
+                      Posts&nbsp;
                     </a>
                   </li><!-- /post -->
                   <li class="tab">
@@ -138,17 +138,17 @@
                 </div><!-- /.card-panel -->
               </div><!-- /#details -->
 
-              <div id="news">
+              <div id="posts">
                 <div class="card-panel">
                   <br>
                   <a class="btn blue lighten-2" style="margin-bottom: 12px"
                      href="{{ url_for('post:create_post', kwargs={'obj_type': 'campaign', 'obj_id': campaign.id}) }}">
                     <i class="material-icons">add</i>
-                    Create News Post
+                    Create Post
                   </a>
                   <div class="row">
-                    {% for news in campaign.news.all() %}
-                    {{ card.news_card(news, AUTH=True) }}
+                    {% for post in campaign.posts.all() %}
+                    {{ card.news_card(post, AUTH=True) }}
                     {% else %}
                     <p>There is no news for this campaign at this time.</p>
                     {% endfor %}
