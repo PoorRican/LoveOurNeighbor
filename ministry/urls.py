@@ -9,7 +9,7 @@ urlpatterns = [
          name='ministry_profile'),
     path('<int:ministry_id>/edit', views.AdminPanel.as_view(),
          name='admin_panel'),
-    path('<int:ministry_id>/delete', views.delete_ministry,
+    path('<int:ministry_id>/delete', views.DeleteMinistry.as_view(),
          name='delete_ministry'),
 
     path('<int:ministry_id>/login', views.LoginAsMinistry.as_view(),

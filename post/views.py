@@ -1,10 +1,9 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
 
-from braces.views import FormMessagesMixin
+from braces.views import FormMessagesMixin, LoginRequiredMixin, UserPassesTestMixin
 from django_drf_filepond.api import store_upload, delete_stored_upload
 from django_drf_filepond.models import TemporaryUpload
 
@@ -17,7 +16,9 @@ from .utils import create_news_post_dir, post_media_dir
 from .models import Post, Media
 
 
-class CreatePost(FormMessagesMixin, CreateView):
+# CRUD Views
+
+class CreatePost(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin, CreateView):
     """ Renders form for creating `MinistryProfile` object.
 
     Template
@@ -34,6 +35,7 @@ class CreatePost(FormMessagesMixin, CreateView):
     form_class = NewPostForm
     template_name = "post/new_post.html"
 
+    raise_exception = True
     form_valid_message = "Your Post has been created!"
 
     def __init__(self, **kwargs):
@@ -51,13 +53,8 @@ class CreatePost(FormMessagesMixin, CreateView):
             self.content_object = Campaign.objects.get(id=self.obj_id)
         return super().setup(request, *args, **kwargs)
 
-    def dispatch(self, request, *args, **kwargs):
-        """ Checks that `request.user` has correct permissions. """
-        if self.content_object.authorized_user(request.user):
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            messages.add_message(request, messages.WARNING, 'Insufficient Permissions...')
-            return HttpResponseRedirect('/error')
+    def test_func(self, user):
+        return self.get_object().authorized_user(user)
 
     def form_valid(self, form):
         # TODO: this is a heuristic implementation....
@@ -93,7 +90,24 @@ class CreatePost(FormMessagesMixin, CreateView):
         return super().get_context_data(**kwargs)
 
 
-class EditPost(FormMessagesMixin, LoginRequiredMixin, UpdateView):
+class PostDetail(DetailView):
+    model = Post
+    pk_url_kwarg = 'post_id'
+    template_name = "post/view_post.html"
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        if request.user.is_authenticated:
+            View.create(self.object, request.user)
+        else:
+            View.create(self.object)
+
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+
+class EditPost(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin, UpdateView):
     """ Renders form for editing `Campaign` objects.
 
     Redirects To
@@ -128,6 +142,9 @@ class EditPost(FormMessagesMixin, LoginRequiredMixin, UpdateView):
             messages.add_message(request, messages.WARNING, 'Insufficient Permissions...')
             return HttpResponseRedirect('/error')
 
+    def test_func(self, user):
+        return self.get_object().authorized_user(user)
+
     def form_invalid(self, form):
         for _, message in form.errors.items():
             messages.add_message(self.request, messages.ERROR, message[0])
@@ -159,7 +176,7 @@ class EditPost(FormMessagesMixin, LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(post.url)
 
 
-class DeletePost(LoginRequiredMixin, DeleteView):
+class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
     References
     ----------
@@ -167,6 +184,7 @@ class DeletePost(LoginRequiredMixin, DeleteView):
     """
     model = Post
     pk_url_kwarg = 'post_id'
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
         return self.delete(request, *args, **kwargs)
@@ -174,32 +192,8 @@ class DeletePost(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         return self.request.META.get('HTTP_REFERER')
 
-    def dispatch(self, request, *args, **kwargs):
-        """ Checks that `request.user` has correct permissions.
-        """
-        self.object = self.get_object()
-        if self.object.authorized_user(request.user):
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            messages.add_message(request, messages.WARNING, 'Insufficient Permissions...')
-            return HttpResponseRedirect('/error')
+    def test_func(self, user):
+        return self.get_object().authorized_user(user)
 
     def render_to_response(self, context, **response_kwargs):
         return HttpResponseRedirect(self.get_success_url())
-
-
-class PostDetail(DetailView):
-    model = Post
-    pk_url_kwarg = 'post_id'
-    template_name = "post/view_post.html"
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-
-        if request.user.is_authenticated:
-            View.create(self.object, request.user)
-        else:
-            View.create(self.object)
-
-        context = self.get_context_data(object=self.object)
-        return self.render_to_response(context)

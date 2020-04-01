@@ -1,16 +1,15 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import ProtectedError, Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_safe
 from django.views.generic import RedirectView
-from django.views.generic.edit import CreateView, UpdateView, SingleObjectMixin
+from django.views.generic.edit import CreateView, UpdateView, SingleObjectMixin, DeleteView
 from django.views.generic.detail import DetailView
 
 import os
-from braces.views import FormMessagesMixin, UserPassesTestMixin, JSONResponseMixin
+from braces.views import FormMessagesMixin, UserPassesTestMixin, JSONResponseMixin, LoginRequiredMixin
 from datetime import datetime
 
 from activity.models import Like, View
@@ -33,9 +32,9 @@ from .utils import (
 strptime = datetime.strptime
 
 
-# Ministry Views
+# CRUD Views
 
-class CreateMinistry(CreateView, LoginRequiredMixin, FormMessagesMixin):
+class CreateMinistry(LoginRequiredMixin, FormMessagesMixin, CreateView):
     """ Renders form for creating `MinistryProfile` object.
 
     Template
@@ -74,62 +73,6 @@ class CreateMinistry(CreateView, LoginRequiredMixin, FormMessagesMixin):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
-
-
-class AdminPanel(UpdateView, LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin):
-    """ Renders form for editing `MinistryProfile object.
-
-    Redirects To
-    ------------
-    'ministry:ministry_profile'
-        Upon success, or if the user does not have sufficient privileges.
-
-    Template
-    --------
-    "ministry/admin_panel.html"
-
-    See Also
-    --------
-    `MinistryEditForm.save` for custom save method
-    """
-    model = MinistryProfile
-    form_class = MinistryEditForm
-    pk_url_kwarg = 'ministry_id'
-    template_name = "ministry/admin_panel.html"
-
-    permission_denied_message = "You do not have permissions to edit this ministry"
-    form_valid_message = "Changes Saved!"
-
-    def form_invalid(self, form):
-        for _, message in form.errors.items():
-            messages.add_message(self.request, messages.ERROR, message[0])
-        super().form_invalid(form)
-
-    def get_form_valid_message(self):
-        return "Changes saved to %s" % self.object
-
-    def get_success_url(self):
-        return self.request.META.get('HTTP_REFERER')
-
-    def test_func(self, user):
-        return self.object.authorized_user(user)
-
-    def get_context_data(self, **kwargs):
-        donations = {}
-        count = 0
-        for donation in self.object.donations:
-            try:
-                donations[count] = serialize_donation(donation)
-                count += 1
-            except ValueError:
-                # this might happen when Donation object does not have a payment
-                pass
-
-        kwargs.update({"form": MinistryEditForm(instance=self.object),
-                       "rep_form": RepManagementForm(instance=self.object),
-                       "ministry": self.object,
-                       "donations": donations})
-        return super().get_context_data(**kwargs)
 
 
 class MinistryDetail(DetailView):
@@ -185,70 +128,86 @@ class MinistryDetail(DetailView):
         return super().get_context_data(**kwargs)
 
 
-@login_required
-@require_safe
-def delete_ministry(request, ministry_id):
-    """ Deletes `MinistryProfile` if `request.user` has sufficient priveleges.
-
-    At the moment, the only privilege checking is if the user is the admin
-        (eg: they originally created the object).
-
-    The user is notified of success or any errors via django-messages.
-
-    Arguments
-    ---------
-    ministry_id: int
-        This is the primary key that the object is looked up by.
+class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, UpdateView):
+    """ Renders form for editing `MinistryProfile object.
 
     Redirects To
     ------------
-    'people:user_profile'
-        If successful, or if there was a `ProtectedError` (see Note)
-
     'ministry:ministry_profile'
-        if the user does not have sufficient permissions.
-        This attempts to create a redirect loop on the client.
-        I don't think that it causes much strain on the server,
-            aside from the `MinistryProfile` lookup (which should be cached)
-            and the permissions checking.
-        The user is made aware upon returning via django-messages.
+        Upon success, or if the user does not have sufficient privileges.
 
-    Note
-    ----
-    The action may be restricted by any existing `Campaign` or `Post`
-        objects that are associated, and the user is notified if this occurs.
-        The `MinistryProfile` can be edited after permissions have been set up.
+    Template
+    --------
+    "ministry/admin_panel.html"
+
+    See Also
+    --------
+    `MinistryEditForm.save` for custom save method
     """
-    _url = request.META.get('HTTP_REFERER')  # url if operation successful
-    try:
-        ministry = MinistryProfile.objects.get(pk=ministry_id)
-        # TODO: set up ministry permissions
-        if request.user == ministry.admin:
+    model = MinistryProfile
+    form_class = MinistryEditForm
+    pk_url_kwarg = 'ministry_id'
+    template_name = "ministry/admin_panel.html"
+
+    raise_exception = True
+    permission_denied_message = "You do not have permissions to edit this ministry"
+    form_valid_message = "Changes Saved!"
+
+    def form_invalid(self, form):
+        for _, message in form.errors.items():
+            messages.add_message(self.request, messages.ERROR, message[0])
+        super().form_invalid(form)
+
+    def get_form_valid_message(self):
+        return "Changes saved to %s" % self.object
+
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
+
+    def test_func(self, user):
+        return self.get_object().authorized_user(user)
+
+    def get_context_data(self, **kwargs):
+        donations = {}
+        count = 0
+        for donation in self.object.donations:
             try:
-                ministry.delete()
-            except ProtectedError:
-                _w = 'There are News Posts or Campaigns \
-                      that are preventing deletion'
-                messages.add_message(request, messages.WARNING, _w)
+                donations[count] = serialize_donation(donation)
+                count += 1
+            except ValueError:
+                # this might happen when Donation object does not have a payment
+                pass
 
-                _url = reverse('ministry:ministry_profile',
-                               kwargs={'ministry_id': ministry_id})
-        else:
-            _w = 'You do not have permission to delete this ministry.'
-            messages.add_message(request, messages.ERROR, _w)
-
-            _url = reverse('ministry:delete_ministry',
-                           kwargs={'ministry_id': ministry_id})
-
-    except MinistryProfile.DoesNotExist:
-        # TODO: log this
-        _w = 'Invalid URL'
-        messages.add_message(request, messages.ERROR, _w)
-
-    return HttpResponseRedirect(_url)
+        kwargs.update({"form": MinistryEditForm(instance=self.object),
+                       "rep_form": RepManagementForm(instance=self.object),
+                       "ministry": self.object,
+                       "donations": donations})
+        return super().get_context_data(**kwargs)
 
 
-class LoginAsMinistry(MinistryDetail, LoginRequiredMixin, UserPassesTestMixin):
+class DeleteMinistry(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = MinistryProfile
+    pk_url_kwarg = 'ministry_id'
+    raise_exception = True
+    permission_denied_message = "You don't have permissions to be deleting this Ministry!"
+
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
+
+    def test_func(self, user):
+        """ Ensure that only the admin can delete a Ministry """
+        return self.get_object().admin == user
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        return HttpResponseRedirect(self.get_success_url())
+
+
+# Admin Management
+
+class LoginAsMinistry(LoginRequiredMixin, UserPassesTestMixin, MinistryDetail):
     """ This allows an authorized user to interact with other users
     using the `MinistryProfile` as an alias.
 
@@ -256,7 +215,7 @@ class LoginAsMinistry(MinistryDetail, LoginRequiredMixin, UserPassesTestMixin):
 
     Warnings
     --------
-    This is not implemented at all as of 4/2020, and was removed in a previous commit.
+    This is not implemented as of 4/2020, and was removed in a previous commit.
     This used to be accessible in the header, in the profile dropdown... but the UI/CSS
     was tricky to implement.
 
@@ -276,9 +235,10 @@ class LoginAsMinistry(MinistryDetail, LoginRequiredMixin, UserPassesTestMixin):
     It might even be more 'devious' to set `permanent=True`....
     """
 
+    raise_exception = True
     permission_denied_message = "You do not have permissions to do this..."
 
-    def test_func(self, user):
+    def test_func(self, user, **kwargs):
         """ This verifies that the User has appropriate permissions.
 
         See Also
@@ -298,9 +258,7 @@ class LoginAsMinistry(MinistryDetail, LoginRequiredMixin, UserPassesTestMixin):
         return super().get(request, *args, **kwargs)
 
 
-# Admin Management
-
-class RepRequest(RedirectView, SingleObjectMixin):
+class RepRequest(LoginRequiredMixin, UserPassesTestMixin, RedirectView, SingleObjectMixin):
     """ Enables newly created users request to be a ministry representative.
 
     Users who request this status have no permissions until authorization by the ministry admin.
@@ -312,8 +270,8 @@ class RepRequest(RedirectView, SingleObjectMixin):
         self.object = None
         super().__init__(**kwargs)
 
-    def test_func(self, **kwargs):
-        return not self.get_object().authorized_user(self.request.user)
+    def test_func(self, user, **kwargs):
+        return not self.get_object().authorized_user(user)
 
     def get_redirect_url(self, *args, **kwargs):
         return self.request.META.get('HTTP_REFERER')
@@ -329,12 +287,14 @@ class RepRequest(RedirectView, SingleObjectMixin):
             msg = "You're already associated with %s" % self.object.name
 
         messages.add_message(self.request, messages.INFO, msg)
-        super().get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 class RepManagement(AdminPanel):
     """
     Dedicated view function to manage `MinistryProfile.requests` and `MinistryProfile.reps`
+
+    `RepManagementForm.save` processes and handles all the data.
     """
     form_class = RepManagementForm
 

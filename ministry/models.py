@@ -27,7 +27,7 @@ class MinistryProfile(models.Model):
 
     # Administration
     admin = models.ForeignKey(User, related_name='administers',
-                              on_delete=models.PROTECT)
+                              on_delete=models.CASCADE)
     reps = models.ManyToManyField(User, blank=True,
                                   related_name='represents')
     requests = models.ManyToManyField(User, blank=True,

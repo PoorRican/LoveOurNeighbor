@@ -11,7 +11,7 @@ urlpatterns = [
           name='admin_panel'),
      path('<int:campaign_id>', views.CampaignDetail.as_view(),
           name='campaign_detail'),
-     path('<int:campaign_id>/delete', views.delete_campaign,
+     path('<int:campaign_id>/delete', views.DeleteCampaign.as_view(),
           name='delete_campaign'),
 
      # JSON views

@@ -220,3 +220,6 @@ class Campaign(models.Model):
                 if c not in similar and not (c == self):
                     similar.append(c)
         return similar
+
+    def get_absolute_url(self):
+        return self.url

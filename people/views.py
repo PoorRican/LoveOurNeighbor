@@ -29,7 +29,7 @@ from .utils import (
 )
 
 
-class SignUp(CreateView, FormValidMessageMixin):
+class SignUp(FormValidMessageMixin, CreateView):
     """
     Creates a User.
 
@@ -53,7 +53,6 @@ class SignUp(CreateView, FormValidMessageMixin):
 
         if settings.REQUIRE_USER_VERIFICATION:
             send_verification_email(self.request, user)
-
             return render(self.request, 'verification_email_sent.html', {'email': user.email})
         else:
             login(self.request, user)
@@ -66,16 +65,17 @@ class SignUp(CreateView, FormValidMessageMixin):
         return super().form_invalid(form)
 
     def post(self, request, *args, **kwargs):
+        self.object = None
         try:
-            user = User.objects.get(email=request.POST['email'])
-            form = self.get_form_class()(request.POST, instance=user)
+            self.object = User.objects.get(email=request.POST['email'])
+            form = self.get_form_class()(request.POST, instance=self.object)
         except User.DoesNotExist:
             form = self.get_form()
 
         if form.is_valid():
-            self.form_valid(form)
+            return self.form_valid(form)
         else:
-            self.form_invalid(form)
+            return self.form_invalid(form)
 
 
 class UserProfile(UpdateView, LoginRequiredMixin):
@@ -124,7 +124,6 @@ class UserProfile(UpdateView, LoginRequiredMixin):
 
         kwargs['donations'] = _donations
         kwargs['likes'] = [i.content_object for i in _likes]
-        print(kwargs['likes'])
         return super().get_context_data(**kwargs)
 
 

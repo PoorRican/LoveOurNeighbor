@@ -1,14 +1,11 @@
 import os
-from braces.views import FormMessagesMixin, UserPassesTestMixin, JSONResponseMixin
+from braces.views import FormMessagesMixin, UserPassesTestMixin, JSONResponseMixin, LoginRequiredMixin
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import ProtectedError
 from django.http import HttpResponseRedirect, JsonResponse
-from django.urls import reverse
 from django.views.decorators.http import require_safe
-from django.views.generic.edit import CreateView, UpdateView, SingleObjectMixin
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
 
 from activity.models import Like, View
@@ -25,24 +22,24 @@ from .utils import (
 )
 
 
-class CreateCampaign(CreateView, LoginRequiredMixin, SingleObjectMixin):
+# CRUD Views
+
+class CreateCampaign(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin, CreateView):
     model = Campaign
     form_class = NewCampaignForm
     template_name = "campaign/new_campaign.html"
     pk_url_kwarg = 'ministry_id'
 
-    def form_valid(self, form):
-        campaign = form.save()
-
-        msg = 'Your Campaign has been created!'
-        messages.add_message(self.request, messages.SUCCESS, msg)
-
-        return HttpResponseRedirect(reverse('campaign:campaign_detail', kwargs={'campaign_id': campaign.id}))
+    raise_exception = True
+    form_valid_message = 'Your Campaign has been created!'
 
     def form_invalid(self, form):
         for _, message in form.errors.items():
             messages.add_message(self.request, messages.ERROR, message[0])
         return super().form_invalid(form)
+
+    def test_func(self, user):
+        return self.get_object().authorized_user(user)
 
     def get_queryset(self):
         """ Modifies `queryset` so that `self.get_object` returns a `MinistryProfile` instead of `Campaign`. """
@@ -56,91 +53,6 @@ class CreateCampaign(CreateView, LoginRequiredMixin, SingleObjectMixin):
     def get_initial(self):
         """ Passes `ministry` to `NewCampaignForm`. """
         return {'ministry': self.get_object()}
-
-
-class AdminPanel(UpdateView, LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin):
-    """ Renders form for editing `Campaign` objects.
-
-    Redirects To
-    ------------
-    'campaign:campaign_detail'
-        Upon success, or if the User does not have sufficient privileges.
-
-    Template
-    --------
-    "campaign/admin_panel.html"
-
-    See Also
-    --------
-    `CampaignEditForm.save` for custom save method
-    """
-    model = Campaign
-    form_class = CampaignEditForm
-    pk_url_kwarg = 'campaign_id'
-    template_name = "campaign/admin_panel.html"
-
-    permission_denied_message = "You do not have permissions to edit this campaign"
-    form_valid_message = "Changes Saved!"
-
-    def form_invalid(self, form):
-        for _, message in form.errors.items():
-            messages.add_message(self.request, messages.ERROR, message[0])
-        super().form_invalid(form)
-
-    def get_form_valid_message(self):
-        return "Changes saved to %s" % self.object
-
-    def get_success_url(self):
-        return self.request.META.get('HTTP_REFERER')
-
-    def test_func(self, user):
-        return self.object.authorized_user(user)
-
-    def get_context_data(self, **kwargs):
-        # transaction table
-        donations = {}
-        count = 0
-        for donation in self.object.donations.all():
-            try:
-                donations[count] = serialize_donation(donation)
-                count += 1
-            except ValueError:
-                # this might happen when Donation object does not have a payment
-                pass
-
-        kwargs.update({"campaign": self.object,
-                       "donations": donations,
-                       "goals": campaign_goals(self.object)})
-        return super().get_context_data(**kwargs)
-
-
-@login_required
-@require_safe
-def delete_campaign(request, campaign_id):
-    _url = request.META.get('HTTP_REFERER')  # url if operation successful
-    try:
-        campaign = Campaign.objects.get(id=campaign_id)
-        # TODO: set up permissions
-        if request.user == campaign.ministry.admin:
-            try:
-                campaign.delete()
-            except ProtectedError:
-                _w = 'There are News Posts that are preventing deletion'
-                messages.add_message(request, messages.WARNING, _w)
-
-        else:
-            # this creates a recursive redirect...
-            #   i'm not against this being a deterrant
-
-            _w = 'You do not have permission to delete this campaign.'
-            messages.add_message(request, messages.WARNING, _w)
-
-    except Campaign.DoesNotExist:
-        # TODO: log this
-        _w = 'Invalid URL'
-        messages.add_message(request, messages.ERROR, _w)
-
-    return HttpResponseRedirect(_url)
 
 
 class CampaignDetail(DetailView):
@@ -167,6 +79,83 @@ class CampaignDetail(DetailView):
                        'all_news': all_news,
                        'similar': self.object.similar_campaigns(), })
         return super().get_context_data(**kwargs)
+
+
+class AdminPanel(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin, UpdateView):
+    """ Renders form for editing `Campaign` objects.
+
+    Redirects To
+    ------------
+    'campaign:campaign_detail'
+        Upon success, or if the User does not have sufficient privileges.
+
+    Template
+    --------
+    "campaign/admin_panel.html"
+
+    See Also
+    --------
+    `CampaignEditForm.save` for custom save method
+    """
+    model = Campaign
+    form_class = CampaignEditForm
+    pk_url_kwarg = 'campaign_id'
+    template_name = "campaign/admin_panel.html"
+
+    raise_exception = True
+    permission_denied_message = "You do not have permissions to edit this campaign"
+    form_valid_message = "Changes Saved!"
+
+    def form_invalid(self, form):
+        for _, message in form.errors.items():
+            messages.add_message(self.request, messages.ERROR, message[0])
+        super().form_invalid(form)
+
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
+
+    def test_func(self, user):
+        return self.get_object().authorized_user(user)
+
+    def get_context_data(self, **kwargs):
+        # transaction table
+        donations = {}
+        count = 0
+        for donation in self.object.donations.all():
+            try:
+                donations[count] = serialize_donation(donation)
+                count += 1
+            except ValueError:
+                # this might happen when Donation object does not have a payment
+                pass
+
+        kwargs.update({"campaign": self.object,
+                       "donations": donations,
+                       "goals": campaign_goals(self.object)})
+        return super().get_context_data(**kwargs)
+
+
+class DeleteCampaign(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Campaign
+    pk_url_kwarg = 'campaign_id'
+
+    raise_exception = True
+    permission_denied_message = "You don't have permissions to be deleting this Campaign!"
+
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
+
+    def test_func(self, user):
+        return self.get_object().authorized_user(user)
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        return HttpResponseRedirect(self.get_success_url())
+
+
+# JSON Views
 
 
 @require_safe
