@@ -4,7 +4,32 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class Activity(models.Model):
-    user = models.ForeignKey('people.User', on_delete=models.CASCADE)
+    """
+    An abstract base model for storing user activity with other objects.
+
+    Specific activities are to be subclassed as to have schema separation, more attributes,
+    and class methods.
+
+    Methods
+    -------
+    user: people.User (optional)
+        User who initiated the action.
+
+        If an activity is blank, it was initiated by an AnonymousUser. The only subclass that this
+        applies to is `View`.
+
+    content_object: GenericForeignKey
+        An abstract object with which this instance relates to. Non-specified type allows
+        broader relations.
+
+        E.g:
+            - User may "like" a Post, Campaign, Church, Ministry, etc
+            - User can "message" a Church, Ministry, other User, etc
+            - User can "view" a Post, Campaign, Church, Ministry, other User, etc
+            - User can "comment" on a Post, Campaign, Church, etc
+    """
+    user = models.ForeignKey('people.User', null=True, blank=True, on_delete=models.CASCADE)
+
     date = models.DateTimeField(auto_now_add=True)
     # TODO: OneToOne field for comments
 
@@ -48,7 +73,16 @@ class Like(Activity):
 
 
 class View(Activity):
-    pass
+    @classmethod
+    def create(cls, obj, user=None):
+        """
+        Overwritten method to allow for the `user` parameter to be None.
+
+        See Also
+        --------
+        `Activity.create`
+        """
+        super().create(user=user, obj=obj)
 
 
 class Comment(Activity):
