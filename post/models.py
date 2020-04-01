@@ -27,6 +27,10 @@ class Media(models.Model):
 
 
 class Post(models.Model):
+    # the currently implemented/allowed objects to be as `content_object`
+    # this is used to filter values of `obj_type` URL in `.urls.create_post`
+    ALLOWED_OBJECTS = ('ministry', 'campaign')
+
     title = models.CharField(max_length=100, blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     pub_date = models.DateTimeField('date published', auto_now_add=True)
@@ -89,3 +93,9 @@ class Post(models.Model):
         elif self.ministry:
             return {'text': self.ministry.title,
                     'url': self.ministry.url}
+
+    def authorized_user(self, user):
+        if self.campaign:
+            return self.campaign.authorized_user(user)
+        elif self.ministry:
+            return self.ministry.authorized_user(user)

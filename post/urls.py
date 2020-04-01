@@ -1,15 +1,16 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from . import views
+from .models import Post
 
 app_name = 'post'
 urlpatterns = [
-     path('<str:obj_type>/<int:obj_id>/create', views.create_post,
-          name='create_post'),
-     path('<int:post_id>', views.post_detail,
+     re_path(r"(?P<obj_type>%s)/(?P<obj_id>[0-9]*)/create" % '|'.join(Post.ALLOWED_OBJECTS),
+             views.CreatePost.as_view(), name='create_post'),
+     path('<int:post_id>', views.PostDetail.as_view(),
           name='post_detail'),
-     path('<int:post_id>/edit', views.edit_post,
+     path('<int:post_id>/edit', views.EditPost.as_view(),
           name='edit_post'),
-     path('<int:post_id>/delete', views.delete_post,
+     path('<int:post_id>/delete', views.DeletePost.as_view(),
           name='delete_post'),
 ]

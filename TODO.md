@@ -31,6 +31,7 @@
 
 
 ## Internal Fixes
+- Pass HTTP_REFERER to AdminPanel forms to redirect to referring page before going to admin panel
 - Profile Image Functionality:
     * Unify naming within angular functions. eg: remove 'banner' naming
     * Dynamically show selected/uploaded image

@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block body %}
+<!-- post/view_post -->
+
+{% if AUTH == None %}
+{% set AUTH = object.authorized_user(request.user) %}
+{% endif %}
+
+{# TODO: group by month and randomly (or scroll) through images per section #}
+<div class="section">
+  <article class="wrapper">
+
+    <p id="section-info">
+      <span>Published:</span>&nbsp;{{ object.pub_date.strftime("%h %d, %Y") }}
+    </p>
+
+    <h1>
+      <a class="dropdown-trigger" href="#" data-target="actionMenu">
+        {{ object.title }}
+        <i class="material-icons">arrow_drop_down</i>
+      </a>
+    </h1>
+
+    <p class="">{{ object.content|safe }}</p>
+
+    <ul id="actionMenu" class="dropdown-content">
+      {% if AUTH %}
+      <li><a href="{{ object.edit }}">
+        <i class="material-icons">create</i>
+        Edit News Post
+      </a></li>
+
+      <li><a href="{{ url_for('post:delete_post', kwargs={'post_id': object.id}) }}">
+        <i class="material-icons">delete</i>
+        Delete News Post
+      </a></li>
+        {% endif %}
+
+      <li><a href="{{ object.url }}">
+        <i class="material-icons">link</i>
+        Link to news
+      </a></li>
+      </ul>
+
+    {% if object.campaign %}
+    <h6>
+      <span>For:&nbsp;</span>
+      <a href="{{ object.campaign.url }}">
+        {{ object.campaign }}
+      </a>
+    </h6>
+    {% endif %}
+
+    {% if object.media.count() %}
+
+    <div class="row gallery grid">
+      {% for img in object.media.all() %}
+      <div class="col s12 m6">
+          <img src="{{ img.url }}" class="responsive-img" alt="">
+        </div>
+        {% endfor %}
+      </div>
+
+      {% endif %}
+
+    </article>
+  </div>
+{% endblock %}
