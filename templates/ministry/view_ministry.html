@@ -277,9 +277,9 @@
                 <div class="col s12">
                   <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Posts</h5>
                   {% for n in all_news %}
-                  {{ card.news_card(n, AUTH, wide=True) }}
+                  {{ card.post_card(n, AUTH, wide=True) }}
                   {% else %}
-                  <p>There are no news posts to show at this time.</p>
+                  <p>There are no posts to show at this time.</p>
                   {% endfor %}
                 </div>
               </div><!-- /#post -->
@@ -330,17 +330,23 @@
 
 {% block scripts %}
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+<!-- masonry -->
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+<script>
+  $('.grid').masonry({
+    itemSelector: '.grid-item',
+  });
+</script>
 
-  <script src="{{ static('js/like_button.js' % f) }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+<script src="{{ static('js/like_button.js' % f) }}"></script>
+<script type="text/javascript">
+  const jsonURL = "{{ ministry.json }}";
+  const likeURL = "{{ ministry.like }}";
+  let ministry = {};
 
-  <script type="text/javascript">
-    const jsonURL = "{{ ministry.json }}";
-    const likeURL = "{{ ministry.like }}";
-    let ministry = {};
-
-    $.getJSON(jsonURL, function (data) {
-      ministry = data;
+  $.getJSON(jsonURL, function (data) {
+    ministry = data;
       likeButton.liked(data['liked']);
     });
 

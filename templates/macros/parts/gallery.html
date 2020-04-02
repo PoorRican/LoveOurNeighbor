@@ -11,17 +11,17 @@
 
   <br>
   {% if images %}
-    <div class="row">
+    <div class="grid row">
       {% for img in images %}
-        <div class="col s12 l4 gallery-tile">
-          <img src="{{ img.src }}" class="materialboxed" style="width: 100%"
-               data-caption="{{ img.caption }}">
-          <a href="{{ img.obj }}" class="tile-caption">
-            <div>
-              {{ img.caption }}
-            </div>
-          </a>
-        </div>
+      <div class="grid-item col s12 l4">
+        <img src="{{ img.src }}" class="materialboxed" style="width: 100%"
+             data-caption="{{ img.caption }}">
+        <a href="{{ img.obj }}" class="tile-caption">
+          <div>
+            {{ img.caption }}
+          </div>
+        </a>
+      </div>
       {% endfor %}
     </div>
   {% else %}

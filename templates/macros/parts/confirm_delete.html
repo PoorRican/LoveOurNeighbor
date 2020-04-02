@@ -17,9 +17,8 @@ part: int
 {% set url_args = ('campaign:delete_campaign', {'campaign_id': id}) %}
 {% elif type == 'ministry' %}
 {% set url_args = ('ministry:delete_ministry', {'ministry_id': id}) %}
-{% elif type == 'post post' %}
+{% elif type == 'post' %}
 {% set url_args = ('post:delete_post', {'post_id': id}) %}
-{% set type = 'news_post' %}
 {% endif %}
 
 {% if part == -1 or part == 0 %}

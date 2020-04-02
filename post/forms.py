@@ -14,7 +14,7 @@ class NewPostForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['media'] = forms.FileField(required=False)
 
-    def clean_filepond(self):
+    def clean_media(self):
         _data = self.data.getlist('media')
         while '' in _data:
             _data.remove('')

@@ -2,56 +2,84 @@
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 
 {# Post Card #}
-{% macro news_card(post, AUTH=False, wide=False) %}
-  {#
-  Arguments
-  =========
-  wide: (bool)
-    Controls whether the card will be given the `l6` attribute, thereby forcing it to takeup the max-width
-  #}
-  <div class="grid-item col s12 {% if not wide %}l6{% endif %}">
-    <div class="card-panel border-radius-8 {% if post.attachment %}mt-10 card-animation-1{% endif %}">
+{% macro post_card(post, AUTH=False, wide=False) %}
+{#
+Arguments
+=========
+wide: (bool)
+Controls whether the card will be given the `l6` attribute, thereby forcing it to takeup the max-width
+#}
 
-      {% if post.attachment %}
-        <a href="{{ post.url }}">
-          <img class="responsive-img border-radius-8 z-depth-4 image-n-margin" src="{{ post.attachment.url }}">
-        </a><!-- /.banner-img -->
-      {% endif %}
+{% set has_media = post.random_images() %}
 
-      <h5 class="{% if post.attachment %} mt-5{% else %} mt-1{% endif %}"
-          style="justify-content: right;">
-        <a class="deep-orange-text card-title" href="{{ post.url }}" style="display: inline;">
-          {{ post.title }}
-        </a><!-- /.card-title -->
-        {% if AUTH %}
-          <a class="btn-flat dropdown-trigger grey-text p-0 ml-1" data-target="news_{{ post.id }}_card_dropdown">
-            <i class="material-icons">more_horiz</i>
-          </a><!-- /.dropdown-trigger -->
-        {% endif %}
-      </h5><!-- /title -->
 
-      <div class="display-flex justify-content-between flex-wrap mt-4">
-        <div class="display-flex mt-2 right-align" style="min-width: 55%; overflow: hidden;">
-          <i class="material-icons">visibility</i>
-          <span class="ml-3 vertical-align-top">{{ post.views.count() }}</span>
-        </div>
-      </div><!-- /.display-flex -->
+<div class="grid-item col s12 {% if not wide %}l6{% endif %}">
+  <div class="card-panel border-radius-8 {% if has_media %}mt-9 card-animation-1{% endif %}">
 
+    {% if has_media %}
+    <a href="{{ post.url }}">
+      <img class="responsive-img border-radius-8 z-depth-4 image-n-margin" src="{{ has_media[0].url }}">
+    </a><!-- /.banner-img -->
+    {% endif %}
+
+    <h5 class="{% if has_media %} mt-5{% else %} mt-1{% endif %}"
+        style="justify-content: right;">
+      <a class="deep-orange-text card-title" href="{{ post.url }}" style="display: inline;">
+        {{ post.title }}
+      </a><!-- /.card-title -->
       {% if AUTH %}
-        <ul id="news_{{ post.id }}_card_dropdown" class="dropdown-content" style="min-width: 13em;">
-          {% if AUTH %}
-            <li><a href="{{ post.edit }}">
-              <i class="material-icons">create</i>
-              Edit News Post
-            </a></li>
-            <li>{{ confirm_delete('post post', post.id, text='Delete Post', anchor=True, part=0) }}</li>
-          {% endif %}
-        </ul>
+      <a class="btn-flat dropdown-trigger grey-text p-0 ml-1" data-target="post_{{ post.id }}_card_dropdown">
+        <i class="material-icons">more_horiz</i>
+      </a><!-- /.dropdown-trigger -->
       {% endif %}
+    </h5><!-- /title -->
 
-      {{ confirm_delete('post post', post.id, text='Delete Post', anchor=True, part=1) }}
+    <div class="row">
+      <div class="col s6">
+        <div class="display-flex justify-content-between flex-wrap mt-4">
+          <div class="display-flex mt-2 right-align">
+            <i class="material-icons left">visibility</i>
+            <span class="ml-3 vertical-align-top">{{ post.views.count() }}</span>
+          </div>
+        </div><!-- /.display-flex -->
+      </div><!-- /.col -->
+      <div class="col s6">
+        <div class="grid row mini-gallery">
+          {% if has_media %}
+          {% for img in has_media[1:] %}
+          <a href="{{ post.url }}">
+            <div class="grid-item col s6">
+              <img src="{{ img.url }}" class="responsive-img">
+            </div>
+          </a>
+          {% endfor %}
+          {# TODO: have js make this height look good #}
+          {% if post.media.count() > len(has_media) %}
+          <div class="grid-item col s6 show-more">
+            <div class="card-panel center">
+              +{{ post.media.count() - len(has_media) }} more
+            </div>
+          </div>
+          {% endif %}
+          {% endif %}
+        </div><!-- /.mini-gallery -->
+      </div>
+    </div><!-- /.row -->
 
-    </div><!-- /.card-panel -->
+    {% if AUTH %}
+    <ul id="post_{{ post.id }}_card_dropdown" class="dropdown-content" style="min-width: 13em;">
+      {% if AUTH %}
+      <li><a href="{{ post.edit }}">
+        <i class="material-icons">create</i>
+        Edit Post
+      </a></li>
+      <li>{{ confirm_delete('post', post.id, text='Delete Post', anchor=True, part=0) }}</li>
+      {% endif %}
+    </ul><!-- .dropdown-content -->
+    {{ confirm_delete('post', post.id, text='Delete Post', anchor=True, part=1) }}
+    {% endif %}
+
+  </div><!-- /.card-panel -->
   </div><!-- /.col -->
 {% endmacro %}
 
@@ -201,21 +229,21 @@
 
 {# {{{ Card Area #}
 {# Arguments
-   =========
-  campaigns[0] determines if a campaigns tab should be displayed (eg: there are no campaigns of campaigns)
-  campaigns[1] is the actual Campaign object data
+=========
+campaigns[0] determines if a campaigns tab should be displayed (eg: there are no campaigns of campaigns)
+campaigns[1] is the actual Campaign object data
 #}
-{% macro card_area(news, campaigns=(False, []), AUTH=None, images=[]) %}
+{% macro card_area(post, campaigns=(False, []), AUTH=None, images=[]) %}
 
-  {% if campaigns[0] %}
-    {% set width="s4" %}
-  {% else %}
-    {% set width="s6" %}
-  {% endif %}
-  <div class="row">
-    <div class="col s12">
-      <ul class="tabs">
-        <li class="tab col {{ width }}"><a href="#news">News</a></li>
+{% if campaigns[0] %}
+{% set width="s4" %}
+{% else %}
+{% set width="s6" %}
+{% endif %}
+<div class="row">
+  <div class="col s12">
+    <ul class="tabs">
+      <li class="tab col {{ width }}"><a href="#posts">Posts</a></li>
         {% if campaigns[0] %}
         <li class="tab col {{ width }}"><a href="#campaigns">Campaigns</a></li>
         {% endif %}
@@ -224,15 +252,15 @@
     </div>
   </div>
 
-<div id="news" class="col s12">
-  {% if news %}
+<div id="posts" class="col s12">
+  {% if post %}
   {# TODO: generate different card types (both randomly and per parent object type) #}
-  {% for n in news %}
-  {{ news_card(n, AUTH) }}
+  {% for p in post %}
+  {{ post_card(n, AUTH) }}
   {% endfor %}
   {% else %}
   <br>
-  <p>There is no news to show at this time.</p>
+  <p>There is no post to show at this time.</p>
   {% endif %}
 </div><!-- /#post -->
 
@@ -351,7 +379,7 @@
       {% endif %}
       <h5 class="deep-orange-text{% if campaign.banner_img %} mt-5{% else %} mt-1{% endif %}"
           style="justify-content: right">
-        <a class="card-title" href="{{ campaign.url }}">
+        <a class="card-title" href="{{ campaign.url }}" style="display: inline;">
           {{ campaign.title }}
         </a><!-- /.card-title -->
 

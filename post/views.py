@@ -61,18 +61,10 @@ class CreatePost(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin, Cre
         post = form.save(commit=False)
         post.content_object = self.content_object
         post.author = self.request.user
-        form.clean_filepond()
-        upload_ids = form.cleaned_data['media']
-        post.save()
 
-        # create Media objects
-        for i in upload_ids:
-            tmp = TemporaryUpload.objects.get(upload_id=i)
-            _img = post_media_dir(post, tmp.upload_name, prepend='')
-            print(_img)
-            file = store_upload(i, _img)
-            Media.objects.create(image=file, content_object=post)
-        post.save()
+        form.clean_media()
+        upload_ids = form.cleaned_data['media']
+        post.add_media(upload_ids)
 
         create_news_post_dir(post)
 
@@ -153,22 +145,10 @@ class EditPost(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin, Updat
     def form_valid(self, form):
         post = form.save(commit=False)
 
-        # process deleted images
-        form.clean_filepond()
+        form.clean_media()
         upload_ids = form.cleaned_data['media']
-        for i in post.media.all():
-            if i.image.upload_id not in upload_ids:
-                delete_stored_upload(i.image.upload_id, delete_file=True)
-            i.delete()
-        # process new images
-        _current = [p.image.upload_id for p in post.media.all()]
-        for i in upload_ids:
-            if i not in _current:
-                tmp = TemporaryUpload.objects.get(upload_id=i)
-                _img = post_media_dir(post, tmp.upload_name, prepend='')
-                print(_img)
-                file = store_upload(i, _img)
-                Media.objects.create(image=file, content_object=post)
+        post.del_media(upload_ids)
+        post.add_media(upload_ids)
 
         post.save()
 

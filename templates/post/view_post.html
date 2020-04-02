@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% from "macros/parts/gallery.html" import gallery %}
+
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block body %}
@@ -58,14 +60,27 @@
 
     <div class="row gallery grid">
       {% for img in object.media.all() %}
-      <div class="col s12 m6">
-          <img src="{{ img.url }}" class="responsive-img" alt="">
-        </div>
-        {% endfor %}
-      </div>
+      <div class="grid-item col s12 m4" style="max-height: 25vw; padding-bottom: .5em;">
+        <img src="{{ img.url }}" class="responsive-img" alt="">
+      </div><!-- /.grid-item -->
+      {% endfor %}
+    </div>
 
-      {% endif %}
+    {% endif %}
 
-    </article>
-  </div>
+  </article>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+
+<!-- masonry -->
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+<script>
+  $('.grid').masonry({
+    itemSelector: '.grid-item',
+  });
+</script>
+
 {% endblock %}

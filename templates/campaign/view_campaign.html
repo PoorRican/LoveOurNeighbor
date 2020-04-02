@@ -244,9 +244,9 @@
               <div class="col s12">
                 <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Posts</h5>
                 {% for n in all_news %}
-                {{ card.news_card(n, AUTH, wide=True) }}
+                {{ card.post_card(n, AUTH, wide=True) }}
                 {% else %}
-                <p>There are no news posts to show at this time.</p>
+                <p>There are no posts to show at this time.</p>
                 {% endfor %}
               </div>
             </div><!-- /#post -->

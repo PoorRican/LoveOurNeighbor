@@ -199,9 +199,20 @@ div.dialog-trigger img {
 }
 
 
-/* Homepage Styling */
+/* Card Styling */
 .card .card-title {
   font-size: 24px !important;
+}
+
+
+.mini-gallery {
+  padding-bottom: 2em;
+}
+
+.mini-gallery .col {
+  padding: 0.25rem 0.5rem 0.25rem;
+  max-height: 150px;
+  overflow: hidden;
 }
 
 

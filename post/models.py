@@ -4,12 +4,17 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.urls import reverse
 
-from django_drf_filepond.models import StoredUpload
+from django_drf_filepond.api import store_upload, delete_stored_upload
+from django_drf_filepond.models import StoredUpload, TemporaryUpload
 from os import path
+from random import sample
+from secrets import choice
+from string import ascii_letters
 
 from activity.models import Like, View
-from post.utils import post_media_dir
 from people.models import User
+
+from .utils import post_media_dir
 
 
 class Media(models.Model):
@@ -99,3 +104,84 @@ class Post(models.Model):
             return self.campaign.authorized_user(user)
         elif self.ministry:
             return self.ministry.authorized_user(user)
+
+    def get_absolute_url(self):
+        return self.url
+
+    def random_images(self, n=4):
+        """ Get random images from a Post object.
+
+        This is used in cards to imply that there is a gallery of images.
+
+        Parameters
+        ----------
+        n: int
+            number of images to return
+
+        Returns
+        -------
+        Tuple of `Media`:
+            if there are Media objects
+        False:
+            if there are no Media objects
+        """
+        if self.media.count():
+            imgs = [i for i in self.media.all()]
+            try:
+                return sample(imgs, k=n)
+            except ValueError:
+                # if n > k
+                return sample(imgs, k=len(imgs))
+        return False
+
+    def add_media(self, upload_ids):
+        """ Adds uploaded images to object from ModelForms.
+
+        Accepts a list of FilePond IDs and creates `Media` objects and moves them from temporary storage
+        to dedicated media directories.
+
+        Parameters
+        ----------
+        upload_ids: iterable
+            A list of `TemporaryUpload.id` as `str` to fetch.
+
+        Returns
+        -------
+        None
+        """
+        _current = [p.image.upload_id for p in self.media.all()]
+        for i in upload_ids:
+            if i not in _current:
+                tmp = TemporaryUpload.objects.get(upload_id=i)
+                _img = post_media_dir(self, tmp.upload_name, prepend='')
+                try:
+                    file = store_upload(i, _img)
+                except FileExistsError:
+                    # prepend random string to fn if already existing
+                    _str = ''.join(choice(ascii_letters) for i in range(10))
+                    _img = post_media_dir(self, _str + tmp.upload_name, prepend='')
+                    file = store_upload(i, _img)
+                Media.objects.create(image=file, content_object=self)
+        self.save()
+
+    def del_media(self, upload_ids):
+        """ Removes uploaded images as returned by ModelForms.
+
+        Accepts a list of FilePond IDs and intersects `self.media` to delete `Media` objects.
+        Any `upload_id` in `self.media` will be deleted if not in `uploaded_ids`
+
+        Parameters
+        ----------
+        upload_ids: iterable
+            an iterable of `str` corresponding to 'upload_id` to pass to `delete_stored_upload`
+
+        Returns
+        -------
+        None
+        """
+        if upload_ids:
+            for i in self.media.all():
+                if i.image.upload_id not in upload_ids:
+                    delete_stored_upload(i.image.upload_id, delete_file=True)
+                    i.delete()
+        self.save()
