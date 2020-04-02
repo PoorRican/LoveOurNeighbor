@@ -51,8 +51,6 @@
               <img class="circle z-depth-5" src="{{ ministry.profile_img.url }}" alt="Profile Image"
                    width="120" height="120">
 
-              <br>
-
               {{ like_button("likeButton", request) }}
 
             </div>
@@ -221,29 +219,23 @@
                 </ul><!-- /.dropdown-content -->
               {% endif %}
 
+              {# Sections #}
               <div class="row">
                 <div class="col s12">
                   <ul class="tabs mt-4">
-                    {# TODO: create single feed (agreggating Campaigns and News Posts #}
-                    <li class="tab col s3 p-0">
+                    <li class="tab col s4 p-0">
                       <a href="#description">
                         <i class="material-icons">description</i>
                         <span class="hide-on-med-and-down">&nbsp;Description</span>
                       </a>
                     </li>
-                    <li class="tab col s3 p-0">
-                      <a href="#campaigns">
+                    <li class="tab col s4 p-0">
+                      <a href="#feed" class="active">
                         <i class="material-icons">flag</i>
-                        <span class="hide-on-med-and-down">&nbsp;Campaigns</span>
+                        <span class="hide-on-med-and-down">&nbsp;Feed</span>
                       </a>
                     </li>
-                    <li class="tab col s3 p-0">
-                      <a href="#posts">
-                        <i class="material-icons">list_alt</i>
-                        <span class="hide-on-med-and-down">&nbsp;Posts</span>
-                      </a>
-                    </li>
-                    <li class="tab col s3 p-0">
+                    <li class="tab col s4 p-0">
                       <a href="#gallery">
                         <i class="material-icons">photo_album</i>
                         <span class="hide-on-med-and-down">&nbsp;Gallery</span>
@@ -255,34 +247,28 @@
 
               <div id="description" class="row">
                 <div class="col s12">
-                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Info</h5>
+                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">About</h5>
                   <div class="padding-4">
                     {{ ministry.description|safe }}
                   </div>
                 </div>
               </div><!-- /#description -->
 
-              <div id="campaigns" class="row">
+              <div id="feed" class="row">
                 <div class="col s12">
-                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Campaigns</h5>
-                  {% for c in campaigns %}
-                    {{ card.frontpage_campaign_card(c, request, wide=True) }}
-                  {% else %}
-                    <p>There are no campaigns to show at this time.</p>
-                  {% endfor %}
-                </div>
-              </div><!-- #campaigns -->
+                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Feed</h5>
 
-              <div id="posts" class="row">
-                <div class="col s12">
-                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Posts</h5>
-                  {% for n in all_news %}
-                  {{ card.post_card(n, AUTH, wide=True) }}
-                  {% else %}
-                  <p>There are no posts to show at this time.</p>
+                  {% for obj in ministry.feed() %}
+
+                    {% if hasattr(obj, 'goal') %}
+                      {{ card.frontpage_campaign_card(obj, request, wide) }}
+                    {% else %}
+                      {{ card.post_card(obj, wide=True, request=request) }}
+                    {% endif %}
+
                   {% endfor %}
                 </div>
-              </div><!-- /#post -->
+              </div><!-- /#feed -->
 
               <div id="gallery" class="row">
                 <div class="col s12">
@@ -330,16 +316,18 @@
 
 {% block scripts %}
 
-<!-- masonry -->
-<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
-<script>
-  $('.grid').masonry({
-    itemSelector: '.grid-item',
-  });
-</script>
+  <!-- masonry -->
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script>
+    // this initializes all masonry objects on the page
+    $('.grid').masonry({
+      itemSelector: '.grid-item',
+    });
+  </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
-<script src="{{ static('js/like_button.js' % f) }}"></script>
+  <!-- Interactive Functionality -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+  <script src="{{ static('js/like_button.js' % f) }}"></script>
 <script type="text/javascript">
   const jsonURL = "{{ ministry.json }}";
   const likeURL = "{{ ministry.like }}";

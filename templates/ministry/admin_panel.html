@@ -57,8 +57,8 @@
                     </a>
                   </li><!-- /campaigns -->
                   <li class="tab">
-                    <a href="#posts"><i class="material-icons left">dynamic_feed</i>
-                      Posts
+                    <a href="#posts"><i class="material-icons">dynamic_feed</i>
+                      &nbsp;Posts
                     </a>
                   </li><!-- /post -->
                   <li class="tab">
@@ -205,7 +205,7 @@
                   </a>
                   <div class="row">
                     {% for posts in ministry.posts.all() %}
-                    {{ card.news_card(posts, AUTH=True) }}
+                      {{ card.post_card(posts, AUTH=True) }}
                     {% else %}
                     <p>You have not posted any news for this ministry.</p>
                       {% endfor %}

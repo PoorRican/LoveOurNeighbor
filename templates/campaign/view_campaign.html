@@ -210,13 +210,13 @@
               <div class="col s12">
                 <ul class="tabs mt-4">
                   <li class="tab col s4 p-0">
-                    <a href="#content">
+                    <a href="#about">
                       <i class="material-icons">description</i>
                       <span class="hide-on-med-and-down">&nbsp;Description</span>
                     </a>
                   </li>
                   <li class="tab col s4 p-0">
-                    <a href="#posts">
+                    <a href="#posts" class="active">
                       <i class="material-icons">list_alt</i>
                       <span class="hide-on-med-and-down">&nbsp;Posts</span>
                     </a>
@@ -231,25 +231,25 @@
               </div>
             </div><!-- /tabs -->
 
-            <div id="content" class="row">
+            <div id="about" class="row">
               <div class="col s12">
-                <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Info</h5>
+                <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">About</h5>
                 <div class="padding-4">
                   {{ campaign.content|safe }}
                 </div>
               </div>
-            </div><!-- /#content -->
+            </div><!-- /#about -->
 
             <div id="posts" class="row">
               <div class="col s12">
                 <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Posts</h5>
                 {% for n in all_news %}
-                {{ card.post_card(n, AUTH, wide=True) }}
+                  {{ card.post_card(n, AUTH, wide=True) }}
                 {% else %}
-                <p>There are no posts to show at this time.</p>
+                  <p>There are no posts to show at this time.</p>
                 {% endfor %}
               </div>
-            </div><!-- /#post -->
+            </div><!-- /#posts -->
 
             <div id="gallery" class="row">
               <div class="col s12">

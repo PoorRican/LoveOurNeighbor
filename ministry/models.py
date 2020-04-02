@@ -255,3 +255,22 @@ class MinistryProfile(models.Model):
             # assume there is no dedicated directory. This is a redundant catchall.
             create_ministry_dirs(self)
             self.rename(name)
+
+    def feed(self, n=20, page=0):
+        """ Returns a paginated stream of Post and Campaign objects to return
+
+        Returns
+        -------
+
+        """
+        _objects = [i for i in self.posts.all()]
+        for i in self.campaigns.all():
+            _objects.append(i)
+            _objects.extend([p for p in i.posts.all()])
+        _objects.sort(key=lambda o: o.pub_date, reverse=True)
+
+        start = page * n
+        end = start + n
+        # this will never return an `IndexError`
+        # slicing a list out-of-bounds returns a truncated slice, or an empty list
+        return _objects[start:end]

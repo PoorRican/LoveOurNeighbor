@@ -1,26 +1,30 @@
 {% from "macros/parts/gallery.html" import gallery %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 
+
 {# Post Card #}
-{% macro post_card(post, AUTH=False, wide=False) %}
-{#
+{% macro post_card(post, AUTH=False, request=None, wide=False) %}
+  {#
 Arguments
 =========
 wide: (bool)
 Controls whether the card will be given the `l6` attribute, thereby forcing it to takeup the max-width
 #}
 
-{% set has_media = post.random_images() %}
+  {% set has_media = post.random_images() %}
+  {% if not AUTH and request %}
+    {% set AUTH = post.authorized_user(request.user) %}
+  {% endif %}
 
 
-<div class="grid-item col s12 {% if not wide %}l6{% endif %}">
-  <div class="card-panel border-radius-8 {% if has_media %}mt-9 card-animation-1{% endif %}">
+  <div class="grid-item col s12 {% if not wide %}l6{% endif %}">
+    <div class="card-panel border-radius-8 {% if has_media %}mt-9 card-animation-1{% endif %}">
 
-    {% if has_media %}
-    <a href="{{ post.url }}">
-      <img class="responsive-img border-radius-8 z-depth-4 image-n-margin" src="{{ has_media[0].url }}">
-    </a><!-- /.banner-img -->
-    {% endif %}
+      {% if has_media %}
+        <a href="{{ post.url }}">
+          <img class="responsive-img border-radius-8 z-depth-4 image-n-margin" src="{{ has_media[0].url }}">
+        </a><!-- /.banner-img -->
+      {% endif %}
 
     <h5 class="{% if has_media %} mt-5{% else %} mt-1{% endif %}"
         style="justify-content: right;">
