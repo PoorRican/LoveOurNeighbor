@@ -1,8 +1,9 @@
 {% extends "layout.html" %}
 
-{% from "macros/parts/like_button.html" import like_button %}
+{% from "macros/parts/quick_post.html" import quick_post %}
 {% from "macros/parts/comments_section.html" import comments_section %}
 {% from "macros/parts/gallery.html" import gallery %}
+{% from "macros/parts/like_button.html" import like_button %}
 {% from "macros/parts/tag_chips.html" import tag_chips %}
 
 {% import "cards.html" as card %}
@@ -50,6 +51,7 @@
             <div class="col s12 center-align">
               <img class="circle z-depth-5" src="{{ ministry.profile_img.url }}" alt="Profile Image"
                    width="120" height="120">
+              <br>
 
               {{ like_button("likeButton", request) }}
 
@@ -255,13 +257,18 @@
               </div><!-- /#description -->
 
               <div id="feed" class="row">
+
+                {% if ministry.authorized_user(request.user) %}
+                  {{ quick_post(ministry.get_post_url(), post_form, csrf=csrf_token) }}
+                {% endif %}
+
                 <div class="col s12">
                   <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Feed</h5>
 
                   {% for obj in ministry.feed() %}
 
                     {% if hasattr(obj, 'goal') %}
-                      {{ card.frontpage_campaign_card(obj, request, wide) }}
+                      {{ card.frontpage_campaign_card(obj, request, wide=True) }}
                     {% else %}
                       {{ card.post_card(obj, wide=True, request=request) }}
                     {% endif %}
@@ -316,6 +323,12 @@
 
 {% block scripts %}
 
+  <!-- filepond.js -->
+  <script src="https://unpkg.com/filepond-plugin-image-preview@4.6.1/dist/filepond-plugin-image-preview.js"></script>
+  <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
+  <script src="https://unpkg.com/jquery-filepond/filepond.jquery.js"></script>
+  <script src="{{ static('js/filepond-init.js') }}"></script>
+
   <!-- masonry -->
   <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
   <script>
@@ -328,13 +341,13 @@
   <!-- Interactive Functionality -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
   <script src="{{ static('js/like_button.js' % f) }}"></script>
-<script type="text/javascript">
-  const jsonURL = "{{ ministry.json }}";
-  const likeURL = "{{ ministry.like }}";
-  let ministry = {};
+  <script type="text/javascript">
+    const jsonURL = "{{ ministry.json }}";
+    const likeURL = "{{ ministry.like }}";
+    let ministry = {};
 
-  $.getJSON(jsonURL, function (data) {
-    ministry = data;
+    $.getJSON(jsonURL, function (data) {
+      ministry = data;
       likeButton.liked(data['liked']);
     });
 
@@ -346,4 +359,6 @@
 
 
 {% block css %}
+  <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+  <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
 {% endblock %}

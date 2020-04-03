@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import ProtectedError, Q
+from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_safe
@@ -14,6 +14,7 @@ from datetime import datetime
 
 from activity.models import Like, View
 from donation.utils import serialize_donation
+from post.forms import QuickPostEditForm
 from post.models import Post
 
 from .forms import MinistryEditForm, NewMinistryForm, RepManagementForm
@@ -125,6 +126,8 @@ class MinistryDetail(DetailView):
                        'campaigns': self.object.campaigns.all(),
                        'images': images,
                        'similar': similar, })
+        if self.object.authorized_user(self.request.user):
+            kwargs['post_form'] = QuickPostEditForm()
         return super().get_context_data(**kwargs)
 
 

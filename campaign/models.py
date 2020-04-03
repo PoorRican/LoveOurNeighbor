@@ -223,3 +223,8 @@ class Campaign(models.Model):
 
     def get_absolute_url(self):
         return self.url
+
+    def get_post_url(self):
+        """ Return a URL for creating a Post object """
+        return reverse('post:create_post', kwargs={'obj_type': 'campaign',
+                                                   'obj_id': self.id})

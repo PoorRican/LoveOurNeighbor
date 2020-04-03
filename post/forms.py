@@ -33,3 +33,20 @@ class PostEditForm(NewPostForm):
     http://pydanny.com/core-concepts-django-modelforms.html
     """
     pass
+
+
+class QuickPostEditForm(PostEditForm):
+    """
+    Form used in the `quick_post` jinja2 macro.
+
+    This changes the `content` Field to use a basic text editor.
+
+    See Also
+    --------
+    "templates/macros/parts/quick_post.html"
+    """
+
+    class Meta(PostEditForm.Meta):
+        labels = {'title': 'Post Title'}
+        widgets = {'content': forms.Textarea(attrs={'class': 'materialize-textarea', 'autocomplete': 'off'}),
+                   'title': forms.TextInput(attrs={'autocomplete': 'off', 'required': True})}

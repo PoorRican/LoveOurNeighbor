@@ -10,6 +10,7 @@ from django.views.generic.detail import DetailView
 
 from activity.models import Like, View
 from ministry.models import MinistryProfile
+from post.forms import QuickPostEditForm
 from post.models import Post
 from donation.utils import serialize_donation
 
@@ -78,6 +79,8 @@ class CampaignDetail(DetailView):
         kwargs.update({'campaign': self.object,
                        'all_news': all_news,
                        'similar': self.object.similar_campaigns(), })
+        if self.object.authorized_user(self.request.user):
+            kwargs['post_form'] = QuickPostEditForm()
         return super().get_context_data(**kwargs)
 
 

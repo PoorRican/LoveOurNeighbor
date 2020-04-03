@@ -54,7 +54,7 @@ class CreatePost(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin, Cre
         return super().setup(request, *args, **kwargs)
 
     def test_func(self, user):
-        return self.get_object().authorized_user(user)
+        return self.content_object.authorized_user(user)
 
     def form_valid(self, form):
         # TODO: this is a heuristic implementation....

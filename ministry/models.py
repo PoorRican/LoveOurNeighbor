@@ -274,3 +274,11 @@ class MinistryProfile(models.Model):
         # this will never return an `IndexError`
         # slicing a list out-of-bounds returns a truncated slice, or an empty list
         return _objects[start:end]
+
+    def get_absolute_url(self):
+        return self.url
+
+    def get_post_url(self):
+        """ Return a URL for creating a Post object """
+        return reverse('post:create_post', kwargs={'obj_type': 'ministry',
+                                                   'obj_id': self.id})

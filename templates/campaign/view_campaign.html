@@ -6,11 +6,12 @@
 {% from "campaign/parts/donation_progress_bar.html" import donation_progress_bar %}
 
 {% from "macros/parts/comments_section.html" import comments_section %}
+{% from "macros/parts/confirm_delete.html" import confirm_delete %}
+{% from "macros/parts/donate_button.html" import donate_button %}
 {% from "macros/parts/gallery.html" import gallery %}
 {% from "macros/parts/like_button.html" import like_button %}
 {% from "macros/parts/tag_chips.html" import tag_chips %}
-{% from "macros/parts/confirm_delete.html" import confirm_delete %}
-{% from "macros/parts/donate_button.html" import donate_button %}
+{% from "macros/parts/quick_post.html" import quick_post %}
 
 {% import "cards.html" as card %}
 
@@ -241,13 +242,20 @@
             </div><!-- /#about -->
 
             <div id="posts" class="row">
+
+              {% if campaign.authorized_user(request.user) %}
+                {{ quick_post(campaign.get_post_url(), post_form, csrf=csrf_token) }}
+              {% endif %}
+
               <div class="col s12">
                 <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Posts</h5>
+
                 {% for n in all_news %}
                   {{ card.post_card(n, AUTH, wide=True) }}
                 {% else %}
                   <p>There are no posts to show at this time.</p>
                 {% endfor %}
+
               </div>
             </div><!-- /#posts -->
 
@@ -284,8 +292,23 @@
 
 {% block scripts %}
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+  <!-- filepond.js -->
+  <script src="https://unpkg.com/filepond-plugin-image-preview@4.6.1/dist/filepond-plugin-image-preview.js"></script>
+  <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
+  <script src="https://unpkg.com/jquery-filepond/filepond.jquery.js"></script>
+  <script src="{{ static('js/filepond-init.js') }}"></script>
 
+  <!-- masonry -->
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script>
+    // this initializes all masonry objects on the page
+    $('.grid').masonry({
+      itemSelector: '.grid-item',
+    });
+  </script>
+
+  <!-- Interactive Functionality -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
   <script src="{{ static('js/like_button.js' % f) }}"></script>
 
   <script type="text/javascript">
@@ -305,5 +328,6 @@
 
 
 {% block css %}
-  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
+  <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+  <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
 {% endblock %}

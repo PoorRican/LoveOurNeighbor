@@ -77,12 +77,16 @@ def ministry_admin_urls(ministry):
          'reverse_url': 'ministry:admin_panel',
          'kwargs': {'ministry_id': ministry.id},
          },
+        {'label': 'New Campaign',
+         'icon': 'flag',
+         'reverse_url': 'campaign:create_campaign',
+         'kwargs': {'ministry_id': ministry.id}},
         {'label': 'Post News',
          'icon': 'post_add',
          'reverse_url': 'post:create_post',
          'kwargs': {'obj_type': 'ministry',
-                    'obj_id': ministry.id},
-         }]
+                    'obj_id': ministry.id}}
+    ]
     return urls
 
 
