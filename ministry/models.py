@@ -266,7 +266,7 @@ class MinistryProfile(models.Model):
         _objects = [i for i in self.posts.all()]
         for i in self.campaigns.all():
             _objects.append(i)
-            _objects.extend([p for p in i.posts.all()])
+            _objects.extend(p for p in i.posts.all())
         _objects.sort(key=lambda o: o.pub_date, reverse=True)
 
         start = page * n

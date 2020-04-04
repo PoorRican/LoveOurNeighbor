@@ -329,12 +329,19 @@
   <script src="https://unpkg.com/jquery-filepond/filepond.jquery.js"></script>
   <script src="{{ static('js/filepond-init.js') }}"></script>
 
+  <!-- init dynamic card functionality -->
+  <script src="{{ static('js/mini-gallery-init.js') }}"></script>
+
   <!-- masonry -->
+  <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
   <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
   <script>
     // this initializes all masonry objects on the page
     $('.grid').masonry({
       itemSelector: '.grid-item',
+    });
+    $grid.imagesLoaded().progress(function () {
+      $grid.masonry('layout');
     });
   </script>
 

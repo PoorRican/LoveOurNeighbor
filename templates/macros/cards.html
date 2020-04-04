@@ -38,44 +38,46 @@ Controls whether the card will be given the `l6` attribute, thereby forcing it t
       {% endif %}
     </h5><!-- /title -->
 
-    <div class="row">
-      <div class="col s6">
-        <div class="display-flex justify-content-between flex-wrap mt-4">
-          <div class="display-flex mt-2 right-align">
-            <i class="material-icons left">visibility</i>
-            <span class="ml-3 vertical-align-top">{{ post.views.count() }}</span>
-          </div>
-        </div><!-- /.display-flex -->
-      </div><!-- /.col -->
-      <div class="col s6">
-        <div class="grid row mini-gallery">
-          {% if has_media %}
-          {% for img in has_media[1:] %}
-          <a href="{{ post.url }}">
-            <div class="grid-item col s6">
-              <img src="{{ img.url }}" class="responsive-img">
+      <div class="row">
+        <div class="col s6">
+          <div class="display-flex justify-content-between flex-wrap mt-4">
+            <div class="display-flex mt-2 right-align">
+              <i class="material-icons left">visibility</i>
+              <span class="ml-3 vertical-align-top">{{ post.views.count() }}</span>
             </div>
-          </a>
-          {% endfor %}
-          {# TODO: have js make this height look good #}
-          {% if post.media.count() > len(has_media) %}
-          <div class="grid-item col s6 show-more">
-            <div class="card-panel center">
-              +{{ post.media.count() - len(has_media) }} more
-            </div>
-          </div>
-          {% endif %}
-          {% endif %}
-        </div><!-- /.mini-gallery -->
-      </div>
-    </div><!-- /.row -->
+          </div><!-- /.display-flex -->
+        </div><!-- /.col -->
+        <div class="col s6">
+          <div class="mini-gallery row">
+            <a href="{{ post.url }}">
+              {% if has_media %}
+                {% for img in has_media[1:] %}
+                  <div class="col s6">
+                    <div class="tile" style="background-image: url('{{ img.url }}')"></div>
+                  </div>
+                {% endfor %}
+                {# TODO: have js make this height look good #}
+                {% if post.media.count() > len(has_media) %}
+                  <div class="col s6">
+                    <div class="card-panel tile center show-more">
+              <span>
+                +{{ post.media.count() - len(has_media) }} more
+              </span>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endif %}
+            </a>
+          </div><!-- /.mini-gallery -->
+        </div>
+      </div><!-- /.row -->
 
-    {% if AUTH %}
-    <ul id="post_{{ post.id }}_card_dropdown" class="dropdown-content" style="min-width: 13em;">
       {% if AUTH %}
-      <li><a href="{{ post.edit }}">
-        <i class="material-icons">create</i>
-        Edit Post
+        <ul id="post_{{ post.id }}_card_dropdown" class="dropdown-content" style="min-width: 13em;">
+          {% if AUTH %}
+            <li><a href="{{ post.edit }}">
+              <i class="material-icons">create</i>
+              Edit Post
       </a></li>
       <li>{{ confirm_delete('post', post.id, text='Delete Post', anchor=True, part=0) }}</li>
       {% endif %}

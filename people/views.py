@@ -1,25 +1,27 @@
-from datetime import datetime
 import os
 
-from braces.views import FormValidMessageMixin
+from braces.views import FormValidMessageMixin, LoginRequiredMixin
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.messages import get_messages
+from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_safe
+from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView
 
+from campaign.models import Campaign
 from campaign.utils import serialize_campaign
 from donation.utils import serialize_donation
 from ministry.utils import serialize_ministry
+from post.models import Post
 
 from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
@@ -78,7 +80,7 @@ class SignUp(FormValidMessageMixin, CreateView):
             return self.form_invalid(form)
 
 
-class UserProfile(UpdateView, LoginRequiredMixin):
+class UserProfile(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserEditForm
     template_name = 'profile.html'
@@ -176,6 +178,38 @@ class UserLogout(LogoutView):
     def get(self, request, *args, **kwargs):
         messages.add_message(request, messages.INFO, "You have logged out")
         return super().get(request, *args, **kwargs)
+
+
+class UserFeed(LoginRequiredMixin, ListView):
+    template_name = "people/feed.html"
+    ordering = 'pub_date'
+    paginate_by = 10
+
+    def get_queryset(self):
+        # TODO: a model, `FeedHistory`, w/ a m2o relationship to `User` will keep the feed "fresh"
+        user = self.request.user
+        _queryset = set()
+        for o in user.likes.all():
+            # get Post objects
+            if hasattr(o.content_object, 'goal'):  # distinguish between Campaign/MinistryProfile
+                q = Q(_campaign=o.content_object)
+                _queryset.add(o.content_object)
+            else:
+                # get Campaigns from MinistryProfile
+                q = Q(ministry=o.content_object)
+                _queryset |= set(i for i in Campaign.objects.filter(q).all())
+
+                q = Q(_ministry=o.content_object) | Q(_campaign__ministry=o.content_object)
+            _queryset |= set(i for i in Post.objects.filter(q).all())
+
+        # TODO: add a few related, random, and new ministries
+        # TODO: add a few related, random, and new campaigns
+        # TODO: add a few related posts
+        return sorted(_queryset, key=lambda _o: _o.pub_date, reverse=True)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        kwargs['active'] = reverse('home')
+        return super().get_context_data(object_list=object_list, **kwargs)
 
 
 @require_safe

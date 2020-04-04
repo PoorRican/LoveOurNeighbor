@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% from "macros/parts/donate_button.html" import donate_button %}
-{% from "macros/cards.html" import frontpage_ministry_card, frontpage_campaign_card %}
+{% import "macros/cards.html" as card %}
 
 
 {% block title %}Home{% endblock %}
@@ -34,63 +34,36 @@
         </div><!-- /#motd -->
       {% endif %}
 
-      {% if new_campaigns %}
-        <div id="new_campaigns">
-          <h4>New Campaigns:</h4>
-          <p>Check out these campaigns that have started!</p>
-          <div class="row grid">
-            {% for c in new_campaigns %}
-              {{ frontpage_campaign_card(c, request) }}
-            {% endfor %}
-          </div>
-        </div>
-      {% endif %}
+      <div id="feed" class="grid row">
 
-      {% if new_ministries %}
-        <div id="new_ministries">
-          <h4>New Ministry Profiles:</h4>
-          <p>Check out these ministries who just recently created a profile on Love Our Neighbor!</p>
-          <div class="row grid">
-            {% for m in new_ministries %}
-              {{ frontpage_ministry_card(m, request) }}
-            {% endfor %}
-          </div><!-- /.row -->
-        </div><!-- /# new_ministries -->
-      {% endif %}
+        {% for obj in object_list %}
 
-      {% if random_campaigns %}
-        <div id="random_campaigns">
-          <h4>Ongoing Campaigns:</h4>
-          <p>Check out these campaigns that have you might be interested in!</p>
-          <div class="row grid">
-            {% for c in random_campaigns %}
-              {{ frontpage_campaign_card(c, request) }}
-            {% endfor %}
-          </div>
-        </div>
-      {% endif %}
+          {% if hasattr(obj, 'goal') %}
+            {{ card.frontpage_campaign_card(obj, request, wide=False) }}
+          {% else %}
+            {{ card.post_card(obj, wide=False, request=request) }}
+          {% endif %}
 
-      {% if random_ministries %}
-        <div id="random_ministries">
-          <h4>Ministries You Might Like</h4>
-          <div class="row grid">
-            {% for m in random_ministries %}
-              {{ frontpage_ministry_card(m, request) }}
-            {% endfor %}
-          </div><!-- /.row -->
-        </div>
-      {% endif %}
+        {% endfor %}
+
+      </div>
+
     </div><!-- /.wrapper -->
   </div><!-- /.section -->
 {% endblock %}
 
 
 {% block scripts %}
+  <script src="{{ static('js/mini-gallery-init.js') }}"></script>
   <!-- masonry -->
+  <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
   <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
   <script>
-    $('.grid').masonry({
+    let $grid = $('.grid').masonry({
       itemSelector: '.grid-item',
+    });
+    $grid.imagesLoaded().progress(function () {
+      $grid.masonry('layout');
     });
   </script>
 {% endblock %}

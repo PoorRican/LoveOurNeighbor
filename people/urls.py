@@ -6,6 +6,7 @@ from . import views
 
 app_name = 'people'
 urlpatterns = [
+    path('feed', views.UserFeed.as_view(), name='feed'),
     path('alias/logout', views.be_me_again, name='be_me_again'),
 
     path('login', views.UserLogin.as_view(), name='login'),

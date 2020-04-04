@@ -50,7 +50,7 @@ def home(request):
                    'motd': MessageOfTheDay.get_message(),
                    'active': reverse('home'),
                    }
-        return render(request, "feed.html", context)
+        return HttpResponseRedirect(reverse('people:feed'))
     else:
         context = {'signup': NewUserForm(),
                    'banner': WebsiteText.get_text('Homepage Info')}
