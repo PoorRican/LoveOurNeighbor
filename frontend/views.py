@@ -98,3 +98,35 @@ def faq(request):
 
 def error(request):
     return render(request, "error.html")
+
+
+def handler400(request, exception):
+    msg = "<h4>%s</h4>" % exception
+    response = render(request, "error.html", {'error': msg})
+    response.status_code = 400
+    return response
+
+
+def handler403(request, exception):
+    msg = "<h4>%s</h4>" % exception + \
+          "<h6>We hope that this is simply a mistake on our end...</h6>"
+    response = render(request, "error.html", {'error': msg})
+    response.status_code = 403
+    return response
+
+
+def handler404(request, exception):
+    msg = "<h4>%s</h4>" % exception + \
+          "<h6>We hope that this is simply a mistake on our end...</h6>"
+    response = render(request, "error.html", {'error': msg})
+    response.status_code = 404
+    return response
+
+
+def handler500(request):
+    msg = "<h4>Uh oh! Something broke...</h4>" \
+          "<h6>This is our mistake...</h6>" \
+          "<h6>whatever you were doing might have been successful. Please check before trying again.</h6>"
+    response = render(request, "error.html", {'error': msg})
+    response.status_code = 500
+    return response

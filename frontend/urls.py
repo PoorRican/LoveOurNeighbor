@@ -51,3 +51,8 @@ urlpatterns = [
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+handler400 = 'frontend.views.handler400'
+handler403 = 'frontend.views.handler403'
+handler404 = 'frontend.views.handler404'
+handler500 = 'frontend.views.handler500'

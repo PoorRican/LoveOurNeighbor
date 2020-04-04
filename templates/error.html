@@ -3,17 +3,22 @@
 {% block title %}Error!{% endblock %}
 
 {% block body %}
-<div class="container">
-  <div class="section p-0 m-0 payment_done">
-    <div class="row">
-      <div class="col s12 center-align white">
-        <img src="https://img.icons8.com/cotton/256/000000/cancel-2--v2.png" class="responsive-img">
-        <h4>An unknown error occurred</h4>
-        <h6>We're sorry for any inconvenience.</h6>
-        <h6>Please reach out to us at <a href="mailto:website@loveourneighbor.org">website@loveourneighbor.org</a>.</h6>
-        <h6>Thank you for your patience!</h6>
+  <div class="container">
+    <div class="section p-0 m-0 payment_done">
+      <div class="row">
+        <div class="col s12 center-align white">
+          <img src="https://img.icons8.com/cotton/256/000000/cancel-2--v2.png" class="responsive-img" alt="">
+          {% if error %}
+            {{ error|safe }}
+          {% else %}
+            <h4>An unknown error occurred</h4>
+            <h6>We're sorry for any inconvenience.</h6>
+          {% endif %}
+          <h6>Please reach out to us at <a href="mailto:website@loveourneighbor.org">website@loveourneighbor.org</a> if
+            you have any questions or concerns.</h6>
+          <h6>Thank you for your patience!</h6>
+        </div>
       </div>
     </div>
   </div>
-</div>
 {% endblock %}
