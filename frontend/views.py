@@ -130,3 +130,7 @@ def handler500(request):
     response = render(request, "error.html", {'error': msg})
     response.status_code = 500
     return response
+
+
+def trigger_error(request):
+    division_by_zero = 1 / 0

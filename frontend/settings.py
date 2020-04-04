@@ -11,12 +11,12 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 from django.urls import reverse_lazy
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -292,3 +292,13 @@ DJANGO_DRF_FILEPOND_UPLOAD_TMP = os.path.join('/tmp',
                                               'filepond-temp-uploads')  # let the filesystem handle cleanup of temp files
 DJANGO_DRF_FILEPOND_ALLOW_EXTERNAL_UPLOAD_DIR = True
 DJANGO_DRF_FILEPOND_FILE_STORE_PATH = MEDIA_ROOT
+
+# Sentry Config
+sentry_sdk.init(
+    dsn="https://7db4edcfea7344daaa46f5924ce443de@sentry.io/5188760",
+    integrations=[DjangoIntegration()],
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)

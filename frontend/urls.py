@@ -33,6 +33,7 @@ urlpatterns = [
     path('', views.root),
     path('favicon.ico', favicon_view),
     path('error', views.error, name='error'),
+    path('sentry-debug/', views.trigger_error),
 
     # Main Pages
     path('home', views.home, name="home"),
