@@ -14,6 +14,7 @@ class FAQAdmin(ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': AdminTinyMCE()}
     }
+    list_display = ('title', 'order')
 
 
 class SocialMediaLinkAdmin(ModelAdmin):

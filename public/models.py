@@ -2,9 +2,12 @@ from django.db import models
 
 
 class FaqSection(models.Model):
+    order = models.PositiveSmallIntegerField(unique=True)
     title = models.CharField(max_length=256)
     content = models.TextField()
-    img_path = models.CharField(default='img/parallax1.jpg', max_length=100)
+
+    class Meta:
+        ordering = ['order']
 
     def __str__(self):
         return self.title
@@ -13,7 +16,6 @@ class FaqSection(models.Model):
 class AboutSection(models.Model):
     title = models.CharField(max_length=256)
     content = models.TextField()
-    img_path = models.CharField(default='img/parallax1.jpg', max_length=100)
 
     def __str__(self):
         return self.title
