@@ -1,0 +1,86 @@
+from rest_framework import serializers
+
+from activity.models import Like
+from people.serializers import UserSerializer
+from tag.serializers import TagSerializer
+
+from .models import MinistryProfile
+
+
+class MinistrySerializer(serializers.ModelSerializer):
+    requests = UserSerializer(many=True, read_only=True)
+    reps = UserSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True)
+
+    likes = serializers.IntegerField(source='like_count', read_only=True)
+    views = serializers.IntegerField(source='view_count', read_only=True)
+    liked = serializers.SerializerMethodField(required=False)
+    auth = serializers.SerializerMethodField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Allows for the `fields` attribute to be customized.
+
+        See Also
+        --------
+        https://www.django-rest-framework.org/api-guide/serializers/#dynamically-modifying-fields
+        """
+        fields = kwargs.pop('fields', None)
+        # TODO: add a parameter for dropping fields (eg: dropping the 'description' field)
+
+        super().__init__(*args, **kwargs)
+
+        if fields is not None:
+            # Drop any fields that are not specified in the `fields` argument.
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
+
+    class Meta:
+        model = MinistryProfile
+        fields = ('id', 'name', 'founded', 'description', 'url',
+                  'reps', 'requests', 'tags', 'likes', 'views', 'liked', 'auth')
+        read_only_fields = ('id', 'name', 'founded', 'description', 'url',
+                            'reps', 'requests', 'tags', 'likes', 'views')
+
+    def get_liked(self, obj) -> bool:
+        """
+        Returns if the current user currently 'likes' this Ministry.
+
+        See Also
+        --------
+        `Like.liked`
+
+        https://www.django-rest-framework.org/api-guide/fields/#serializermethodfield
+
+        Parameters
+        ----------
+        obj: MinistryProfile
+
+        Returns
+        -------
+        bool: True if `request.user` likes obj. False if not.
+
+        """
+        return Like.liked(obj, self.context['request'].user)
+
+    def get_auth(self, obj) -> bool:
+        """
+        Checks to see if current user is an authorized user of this Ministry.
+
+        This is only used to display admin UI; this function does not grant the user any privileges.
+
+        See Also
+        --------
+        https://www.django-rest-framework.org/api-guide/fields/#serializermethodfield
+
+        Parameters
+        ----------
+        obj: MinistryProfile
+
+        Returns
+        -------
+        bool: True if `request.user` is an authorized user of this Ministry
+        """
+        return obj.authorized_user(self.context['request'].user)

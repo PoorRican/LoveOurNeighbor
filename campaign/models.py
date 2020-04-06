@@ -194,6 +194,13 @@ class Campaign(models.Model):
         return self.likes.count()
 
     @property
+    def view_count(self):
+        return self.views.count()
+
+    def donation_count(self):
+        return self.donations.count()
+
+    @property
     def percent_complete(self):
         """
         Calculates percentage of campaign completion.

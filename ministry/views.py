@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
@@ -9,20 +8,20 @@ from django.views.generic.edit import CreateView, UpdateView, SingleObjectMixin,
 from django.views.generic.detail import DetailView
 
 import os
-from braces.views import FormMessagesMixin, UserPassesTestMixin, JSONResponseMixin, LoginRequiredMixin
+from braces.views import FormMessagesMixin, UserPassesTestMixin, LoginRequiredMixin
 from datetime import datetime
+from rest_framework.generics import RetrieveAPIView, ListAPIView
 
 from activity.models import Like, View
-from donation.utils import serialize_donation
+from donation.models import Donation
+from donation.serializers import DonationSerializer
 from post.forms import QuickPostEditForm
 from post.models import Post
 
 from .forms import MinistryEditForm, NewMinistryForm, RepManagementForm
 from .models import MinistryProfile
+from .serializers import MinistrySerializer
 from .utils import (
-    # serialization functions
-    serialize_ministry,
-
     # MinistryProfile utility functions
     prev_profile_imgs, prev_banner_imgs,
     ministry_images,
@@ -304,27 +303,11 @@ class RepManagement(AdminPanel):
 
 # JSON Views
 
-@require_safe
-def ministry_json(request, ministry_id):
-    """ Returns serialized `MinistryProfile` object as json.
-
-    This function relies on ministry.utils.serialize_ministry
-
-    Returns
-    -------
-    JSON formatted dict
-    """
-    ministry = MinistryProfile.objects.get(id=ministry_id)
-
-    _liked = False
-    if request.user.is_authenticated:
-        _liked = Like.liked(ministry, request.user)
-
-    _json = serialize_ministry(ministry)
-    _json['liked'] = _liked
-    del _json['description']  # remove to tx less data
-
-    return JsonResponse(_json)
+class MinistryJSON(RetrieveAPIView):
+    queryset = MinistryProfile.objects.all()
+    lookup_field = 'id'
+    lookup_url_kwarg = 'ministry_id'
+    serializer_class = MinistrySerializer
 
 
 @require_safe
@@ -376,15 +359,16 @@ def ministry_gallery_json(request, ministry_id):
     return JsonResponse({'gallery': ministry_images(ministry)})
 
 
-@login_required
-@require_safe
-def donations_json(request, ministry_id):
-    ministry = MinistryProfile.objects.get(pk=ministry_id)
-    user = request.user
-    if ministry.authorized_user(user):
-        donations = []
-        for c in ministry.campaigns.all():
-            for d in c.donations.all():
-                donations.append(d)
-        donations.sort(key=lambda obj: obj.date)  # sort based on date
-        return JsonResponse({'donations': [serialize_donation(d) for d in donations]})
+class DonationsJSON(LoginRequiredMixin, UserPassesTestMixin, ListAPIView):
+    serializer_class = DonationSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'ministry_id'
+
+    raise_exception = True
+
+    def test_func(self, user):
+        return MinistryProfile.objects.get(**{self.lookup_field: self.kwargs[self.lookup_url_kwarg]}).authorized_user(
+            user)
+
+    def get_queryset(self):
+        return Donation.objects.filter(campaign__ministry__id=self.kwargs[self.lookup_url_kwarg])

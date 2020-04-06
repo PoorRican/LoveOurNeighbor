@@ -1,5 +1,6 @@
 import os
-from braces.views import FormMessagesMixin, UserPassesTestMixin, JSONResponseMixin, LoginRequiredMixin
+from braces.views import FormMessagesMixin, UserPassesTestMixin, LoginRequiredMixin
+from rest_framework.generics import RetrieveAPIView, ListAPIView
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -9,15 +10,17 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
 
 from activity.models import Like, View
+from donation.models import Donation
+from donation.serializers import DonationSerializer
+from donation.utils import serialize_donation
 from ministry.models import MinistryProfile
 from post.forms import QuickPostEditForm
 from post.models import Post
-from donation.utils import serialize_donation
 
 from .models import Campaign
 from .forms import CampaignEditForm, NewCampaignForm
+from .serializers import CampaignSerializer
 from .utils import (
-    serialize_campaign,
     campaign_images, prev_banner_imgs,
     campaign_goals
 )
@@ -160,26 +163,11 @@ class DeleteCampaign(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 # JSON Views
 
-
-@require_safe
-def campaign_json(request, campaign_id):
-    """ Returns json containing dynamic attributes of a specified campaign.
-    These attributes are total amount of donations,
-        number of donations, and number of views.
-    """
-
-    campaign = Campaign.objects.get(id=campaign_id)
-
-    _liked = False
-    if request.user.is_authenticated:
-        _liked = Like.liked(campaign, request.user)
-
-    _json = serialize_campaign(campaign)
-    _json['liked'] = _liked
-    # TODO: do not always transmit `content` to save on server side processing power
-    # del _json['content']        # remove to tx less data
-
-    return JsonResponse(_json)
+class CampaignJSON(RetrieveAPIView):
+    queryset = Campaign.objects.all()
+    lookup_field = 'id'
+    lookup_url_kwarg = 'campaign_id'
+    serializer_class = CampaignSerializer
 
 
 @require_safe
@@ -216,14 +204,15 @@ def campaign_gallery_json(request, campaign_id):
     return JsonResponse({'gallery': gallery})
 
 
-@login_required
-@require_safe
-def donations_json(request, campaign_id):
-    campaign = Campaign.objects.get(pk=campaign_id)
-    user = request.user
-    if campaign.authorized_user(user):
-        donations = []
-        for d in campaign.donations.all():
-            donations.append(d)
-        donations.sort(key=lambda obj: obj.date)  # sort based on date
-        return JsonResponse({'donations': [serialize_donation(d) for d in donations]})
+class DonationsJSON(LoginRequiredMixin, UserPassesTestMixin, ListAPIView):
+    serializer_class = DonationSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'campaign_id'
+
+    raise_exception = True
+
+    def test_func(self, user):
+        return Campaign.objects.get(**{self.lookup_field: self.kwargs[self.lookup_url_kwarg]}).authorized_user(user)
+
+    def get_queryset(self):
+        return Donation.objects.filter(campaign__id=self.kwargs[self.lookup_url_kwarg])

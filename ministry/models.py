@@ -120,6 +120,10 @@ class MinistryProfile(models.Model):
     def like_count(self):
         return self.likes.count()
 
+    @property
+    def view_count(self):
+        return self.views.count()
+
     # Representative Management
 
     def add_representative(self, user: Union[User, str]):

@@ -1,3 +1,4 @@
+djangorestframework
 bs4
 cssmin
 django==3.0.4
