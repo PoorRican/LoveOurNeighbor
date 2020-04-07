@@ -63,14 +63,16 @@ a {
   border-radius: 5px;
   background-color: #FBFBFB;
   border: solid 1px #777;
+  max-width: 100%;
 }
 
 .donation-progress .current {
   content: "";
-  line-height: 50px;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
+  line-height: 48px;
+  border-radius: 5px;
   display: inline-block;
+  margin-bottom: 3px;
+  max-width: 100%;
 }
 
 .donation-progress .remaining {
