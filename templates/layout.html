@@ -172,10 +172,8 @@
     const notification_url = "{{ url_for('people:messages_json') }}";
 
     get_notifications(notification_url);
-    window.setInterval(get_notifications, 1000, notification_url);
+    window.setInterval(get_notifications, 5000, notification_url);
   </script>
-
-  {# }}} #}
 
   </body>
 </html>
