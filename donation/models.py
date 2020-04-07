@@ -175,7 +175,7 @@ class Payment(models.Model):
     payment_date = models.DateTimeField(default=datetime.now, editable=False)
 
     # this stores any confirmation data
-    confirmation = models.CharField(max_length=42)
+    confirmation = models.CharField(max_length=42, unique=True)
 
     # Transaction Details
     amount = models.DecimalField(max_digits=7, decimal_places=2)

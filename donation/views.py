@@ -68,6 +68,7 @@ def confirm_donation(request):
                 'tx_id': data['x_trans_id'],
             }
             ccPayment.objects.create(**kwargs)
+            # if confirmation is not unique, this function throws a 500 error... this could be made more elegant
 
             return HttpResponseRedirect(reverse('donation:view_donation',
                                                 kwargs={'donation_id': donation.id}))
