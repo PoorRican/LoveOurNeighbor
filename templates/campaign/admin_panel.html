@@ -148,61 +148,28 @@
                   </a>
                   <div class="row">
                     {% for post in campaign.posts.all() %}
-                    {{ card.news_card(post, AUTH=True) }}
+                    {{ card.post_card(post, AUTH=True) }}
                     {% else %}
-                    <p>There is no news for this campaign at this time.</p>
+                      <p>There is no news for this campaign at this time.</p>
                     {% endfor %}
                   </div>
                 </div>
 
               </div><!-- /#post -->
 
-              <div id="donations">
-                <div id="statistics" class="row">
+              <div id="donations" class="col s12">
+                <div class="card-panel">
                   <canvas id="donation-graph"></canvas>
-                  <div class="col s12 l3">
-                    <div class="campaign-goal">
-                      <div style="width: 100%">
-                        Total Goal:
-                      </div>
-                      <div class="goal-values">
-                  <span>
-                    ${{ goals.total.current }}
-                  </span>
-                        <span>
-                    ${{ goals.total.max }}
-                  </span>
-                      </div><!-- /.goal-values -->
-                      <canvas id="total_goal" width="300" height="150"></canvas>
-                    </div>
-                  </div><!-- /total_goal -->
-                  <div class="col s12 l3">
-                    <div class="campaign-goal">
-                      <div style="width: 100%;">
-                        Monthly Goal
-                      </div>
-                      <div class="goal-values">
-                  <span>
-                    ${{ goals.monthly.current }}
-                  </span>
-                        <span>
-                    ${{ goals.monthly.max }}
-                  </span>
-                      </div><!-- /.goal-values -->
-                      <canvas id="monthly_goal"></canvas>
-                    </div><!-- /.campaign-goal -->
-                  </div><!-- /monthly_goal -->
-                </div><!-- /#statistics -->
+                  {# TODO: total donated #}
+                  {# TODO: average donation #}
+                  {# TODO: average per week #}
+                  {# TODO: average per month #}
+                  {# TODO: YTD #}
+                  {# TODO: 3-month total #}
+                  {# TODO: export as CSV #}
 
-                {# TODO: total donated #}
-                {# TODO: average per campaign #}
-                {# TODO: average per week #}
-                {# TODO: average per month #}
-                {# TODO: YTD #}
-                {# TODO: 3-month total #}
-                {# TODO: export as CSV #}
-
-                {{ transaction_table(donations, show_campaign=False) }}
+                  {{ transaction_table() }}
+                </div><!-- /.card-panel -->
               </div><!-- /#donations -->
 
             </div><!-- /.l8 -->
@@ -217,56 +184,68 @@
 
 
 {% block scripts %}
-  <!-- Goal Elements -->
-  <script src="{{ static('js/gauge.min.js') }}"></script>
-  <script>
-    let opts = {
-      angle: 0.35,
-      lineWidth: 0.1,
-      radiusScale: 0.92,
-      limitMax: false,
-      limitMin: true,
-      highDpiSupport: true,
-      colorStart: '#8B0053',
-      colorStop: '#89d77c',
-      strokeColor: '#EEEEEE',
-      generateGradient: true,
-      fontSize: 20,
-    };
-
-    // total goal
-    let target = document.getElementById('total_goal');
-    let gauge = new Donut(target).setOptions(opts);
-    gauge.maxValue = {{ goals.total.max }};
-    gauge.setMinValue(0);
-    gauge.animationSpeed = 32;
-    gauge.set({{ goals.total.current }});
-
-    // monthly goal
-    target = document.getElementById('monthly_goal');
-    gauge = new Donut(target).setOptions(opts);
-    gauge.maxValue = {{ goals.monthly.max }};
-    gauge.setMinValue(0);
-    gauge.animationSpeed = 32;
-    gauge.set({{ goals.monthly.current }});
-  </script><!-- /Gauge Configuration -->
-
+  {# Initialize Input Elements #}
   {{ wysiwyg_script() }}
+  {{ campaign_date_input_scripts('.pickadate') }}
 
-  <!-- Graphing UI -->
+  <!-- Chart/Graph Stuff -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+  <script type="text/javascript"
+          src="https://cdn.datatables.net/v/zf/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-html5-1.6.1/fh-3.1.6/r-2.2.3/sp-1.0.1/datatables.min.js"></script>
+
   <script src="{{ static('js/donation_statistics.js') }}"></script>
-
   <script>
-    const donationJsonURL = "{{ request.build_absolute_uri( url_for('campaign:donations_json', kwargs={'campaign_id': campaign.id})) }}";
-    const objJsonURL = '{{ request.build_absolute_uri(campaign.json) }}';
+    $.getJSON('{{ url_for("campaign:donations_json", kwargs={'campaign_id': campaign.id}) }}').then(function (data) {
+        // Draw Graph
+        let temp = buildDatasets(data);
+        initGraph(temp.labels, temp.datasets);
 
-    drawGraph(objJsonURL, donationJsonURL);
+        // Donation table
+        $('#txTable').DataTable({
+          data: data,
+          ordering: true,
+          orderFixed: [1, 'desc'],
+          pagingType: 'full_numbers',
+          pageLength: 50,
+          lengthChange: false,
+          fixedHeader: true,
+          // TODO: enable Buttons plug-in
+          // TODO: enable SearchPane plug-in
+          columns: [
+            {
+              title: "Payment Date", data: "date",
+              render: function (data, type, row) {
+                if (type === 'display' || type === 'filter') {
+                  const d = new Date(data);
+                  return d.getMonth() + '/' + d.getDay() + '/' + d.getFullYear();
+                } else {
+                  return data;
+                }
+              }
+            },
+            {
+              title: "Amount", data: "amount",
+              render: function (data, type, row) {
+                return type === 'display' || type === 'filter' ?
+                  '$' + data :
+                  data;
+              }
+            },
+            {
+              title: "User", data: "user",
+              render: function (data, type, row) {
+                return data.name;
+              }
+            }
+          ]
+        })
+      }
+    )
   </script>
-
-  {{ campaign_date_input_scripts('.pickadate') }}
 
   <!-- tag selection -->
   {{ get_obj_json(campaign) }}
@@ -299,4 +278,8 @@
 
 {% block css %}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.css">
+  <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/searchpanes/1.0.1/css/searchPanes.dataTables.min.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/v/zf/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-html5-1.6.1/fh-3.1.6/r-2.2.3/sp-1.0.1/datatables.min.css"/>
 {% endblock %}

@@ -172,18 +172,10 @@ class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, Upd
     def get_context_data(self, **kwargs):
         donations = {}
         count = 0
-        for donation in self.object.donations:
-            try:
-                donations[count] = serialize_donation(donation)
-                count += 1
-            except ValueError:
-                # this might happen when Donation object does not have a payment
-                pass
 
         kwargs.update({"form": MinistryEditForm(instance=self.object),
                        "rep_form": RepManagementForm(instance=self.object),
-                       "ministry": self.object,
-                       "donations": donations})
+                       "ministry": self.object})
         return super().get_context_data(**kwargs)
 
 

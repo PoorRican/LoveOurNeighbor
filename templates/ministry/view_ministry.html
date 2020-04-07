@@ -262,19 +262,17 @@
                   {{ quick_post(ministry.get_post_url(), post_form, csrf=csrf_token) }}
                 {% endif %}
 
-                <div class="col s12">
-                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Feed</h5>
+                <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Feed</h5>
 
-                  {% for obj in ministry.feed() %}
+                {% for obj in ministry.feed() %}
 
-                    {% if hasattr(obj, 'goal') %}
-                      {{ card.frontpage_campaign_card(obj, request, wide=True) }}
-                    {% else %}
-                      {{ card.post_card(obj, wide=True, request=request) }}
-                    {% endif %}
+                  {% if hasattr(obj, 'goal') %}
+                    {{ card.frontpage_campaign_card(obj, request, wide=True) }}
+                  {% else %}
+                    {{ card.post_card(obj, wide=True, request=request) }}
+                  {% endif %}
 
-                  {% endfor %}
-                </div>
+                {% endfor %}
               </div><!-- /#feed -->
 
               <div id="gallery" class="row">
@@ -337,11 +335,8 @@
   <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
   <script>
     // this initializes all masonry objects on the page
-    $('.grid').masonry({
+    let grid = $('.grid').masonry({
       itemSelector: '.grid-item',
-    });
-    $grid.imagesLoaded().progress(function () {
-      $grid.masonry('layout');
     });
   </script>
 

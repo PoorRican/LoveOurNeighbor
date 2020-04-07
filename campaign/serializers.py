@@ -17,9 +17,9 @@ class CampaignSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Campaign
-        fields = ('id', 'title', 'pub_date', 'content', 'tags', 'url', 'donated',
+        fields = ('id', 'title', 'pub_date', 'content', 'tags', 'url', 'edit', 'donated',
                   'start_date', 'end_date', 'donations', 'donated', 'likes', 'views', 'ministry', 'tags', 'auth')
-        read_only_fields = ('id', 'title', 'pub_date', 'content', 'tags', 'url', 'donated',
+        read_only_fields = ('id', 'title', 'pub_date', 'content', 'tags', 'url', 'edit', 'donated',
                             'start_date', 'end_date', 'donations', 'donated', 'views', 'ministry', 'tags', 'auth')
 
     def get_auth(self, obj) -> bool:
