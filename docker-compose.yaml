@@ -50,6 +50,8 @@ services:
       PGADMIN_DEFAULT_EMAIL: swe.fig@gmail.com
       PGADMIN_DEFAULT_PASSWORD: aoeuaoeuaoeu
     restart: unless-stopped
+    volumes:
+      - pg_backups:/root
 
 
 volumes:
@@ -58,3 +60,4 @@ volumes:
   static_volume:
   media_volume:
   letsencrypt_certs:
+  pg_backups:
