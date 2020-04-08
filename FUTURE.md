@@ -16,6 +16,8 @@ These are the features that are needed, or planning to be added.
    * Update on the Ministries they like
    * Update admin and reps on MinistryProfile activity
 - Ministry being able to send mass email to all donors or subscribers
+- Events (by Ministries or Churches)
+- DB Backup (via Docker or AWS)
 
 ## Hard Release Features
 - User Attributes:
@@ -34,9 +36,9 @@ These are the features that are needed, or planning to be added.
 - Display help on first login
 - Milestones for MinistryProfiles (email/notification)
 - Map displaying ministry location (via 'explore' tab)
+- [Image Editing](https://pqina.nl/doka/)
 
 # Unimportant
-- Implement authors for NewsPost objects
 - Logging for Django
 - Social Media logging
 - Search functionality should have tags as a search filter

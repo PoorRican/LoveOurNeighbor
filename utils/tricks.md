@@ -27,3 +27,35 @@ sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-po
 
 [this tutorial](https://www.thegeekdiary.com/how-to-backup-and-restore-mysql-database/)
 
+
+# Renewing Certbot Certificates:
+
+Because auto-renew is not setup in docker image (yet):
+
+    1. Shutdown nginx service:
+        ```bash
+        docker-compose stop nginx
+        ```
+
+    2. Startup temporary container:
+        ```bash
+        docker run --volumes-from lon_nginx_1 -p 80:80 -i --tty nginx bash
+        ```
+
+    3. Then in the temporary container:
+        ```bash
+        apt-get update
+        apt-get install -y certbot python-certbot-nginx -y
+        certbot renew
+        ```
+
+    4. Exit temporary container via Ctrl-D:
+
+    5. Restart nginx service:
+        ```bash
+        docker-compose up -d nginx
+        ```
+
+The commands to run on the temp container could be bundled in step 2.
+
+Ideally, this should be run without stopping the nginx service.
