@@ -16,6 +16,7 @@ pillow
 psycopg2-binary
 pytz
 pyyaml
+numpy
 requests
 sentry-sdk==0.14.3
 webassets

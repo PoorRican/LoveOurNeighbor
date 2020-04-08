@@ -3,7 +3,7 @@
   {% if len(obj.tags.all()) %}
     {% for i in obj.tags.all() %}
 
-      <a href="{{ url_for('search:search_tag', kwargs={'tag_name': i.name}) }}">
+      <a href="{{ url_for('search:search')+ '?query=' + i.name }}">
         <div class="chip">{{ i.name }}</div>
       </a>
 

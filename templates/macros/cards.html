@@ -17,7 +17,7 @@ Controls whether the card will be given the `l6` attribute, thereby forcing it t
   {% endif %}
 
 
-  <div class="grid-item col s12 {% if not wide %}l6{% endif %}">
+  <div class="post-card grid-item col s12 {% if not wide %}l6{% endif %}">
     <div class="card-panel border-radius-8 {% if has_media %}mt-9 card-animation-1{% endif %}">
 
       {% if has_media %}
@@ -26,8 +26,8 @@ Controls whether the card will be given the `l6` attribute, thereby forcing it t
         </a><!-- /.banner-img -->
       {% endif %}
 
-    <h5 class="{% if has_media %} mt-5{% else %} mt-1{% endif %}"
-        style="justify-content: right;">
+      <h5 class="{% if has_media %} mt-5{% else %} mt-1{% endif %}"
+          style="justify-content: right;">
       <a class="deep-orange-text card-title" href="{{ post.url }}" style="display: inline;">
         {{ post.title }}
       </a><!-- /.card-title -->
@@ -300,7 +300,7 @@ campaigns[1] is the actual Campaign object data
   #}
   {% set AUTH = ministry.authorized_user(request.user) %}
 
-  <div class="grid-item col s12 {% if not wide %}l6{% endif %}">
+  <div class="ministry-card grid-item col s12 {% if not wide %}l6{% endif %}">
     <div class="card-panel border-radius-8{% if ministry.banner_img %} mt-9 card-animation-1{% endif %}">
 
       {% if ministry.banner_img %}
@@ -374,7 +374,7 @@ campaigns[1] is the actual Campaign object data
   #}
   {% set AUTH = campaign.ministry.authorized_user(request.user) %}
 
-  <div class="grid-item col s12 {% if not wide %}l6{% endif %}">
+  <div class="campaign-card grid-item col s12 {% if not wide %}l6{% endif %}">
     <div class="card-panel border-radius-8{% if campaign.banner_img %} mt-9 card-animation-1{% endif %}">
 
       {% if campaign.banner_img %}

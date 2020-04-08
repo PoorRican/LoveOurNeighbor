@@ -15,7 +15,7 @@ from frontend.settings import (
     PAYEEZY_TEST_BUTTON,
     COMMENTS,
 )
-from frontend.assets import js, css, app
+from frontend.assets import js, css
 from public.models import AboutSection, SocialMediaLink
 from donation.utils import generate_confirmation_id, generate_payeezy_hash
 
@@ -34,7 +34,6 @@ if _url[0] == '/':
 # TODO: this needs to be fixed!
 _assets = AssetsEnvironment('./static', _url, debug=ASSETS_DEBUG, auto_build=ASSETS_AUTO_BUILD)
 _assets.register('js', js)
-_assets.register('app', app)
 _assets.register('css', css)
 
 
