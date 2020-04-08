@@ -5,6 +5,7 @@
 {% extends "layout.html" %}
 
 {% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
+{% from "macros/parts/input_field.html" import input_field %}
 {% import "macros/cards.html" as card %}
 
 {# TODO: liked ministries/campaigns #}
@@ -67,14 +68,10 @@
                         </div>
                       </div><!-- /profile_img -->
 
-                      <div class="col s12 l6 input-field">
-                        {{ form.first_name.label_tag() }}
-                        {{ form.first_name }}
-                      </div><!-- /first_name -->
-                      <div class="col s12 l6 input-field">
-                        {{ form.last_name.label_tag() }}
-                        {{ form.last_name }}
-                      </div><!-- /last_name -->
+                      {{ input_field(form.first_name, icon='person') }}<!-- /first_name -->
+                      {{ input_field(form.last_name, icon='person_outline') }}<!-- /last_name -->
+
+                      {{ input_field(form._location, width='s12', icon='place') }}<!-- /location -->
 
                     </div><!-- /.row -->
 

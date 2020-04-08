@@ -114,9 +114,7 @@ class UserEditForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name',
-                  'profile_img')
-        labels = {'profile_img': 'Profile Image'}
+        fields = ('first_name', 'last_name', 'profile_img', '_location')
 
 
 class UserAdminForm(forms.ModelForm):

@@ -73,7 +73,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                                      blank=True, null=True,
                                      on_delete=models.PROTECT,
                                      related_name='+')
-    _location = models.CharField(max_length=256, blank=True, null=True)
+    _location = models.CharField('Location', max_length=256, blank=True, null=True)
     profile_img = models.ImageField('Profile Image', blank=True, null=True,
                                     default=DEFAULT_PROFILE_IMG,
                                     upload_to=user_profile_img_dir)
