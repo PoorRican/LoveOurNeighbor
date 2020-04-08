@@ -68,7 +68,7 @@ COPY ./static/media/img $APP_HOME/mediafiles/img
 #RUN python manage.py migrate --noinput
 # delay migration to avoid `django.db.InconsistentMigrationHistory` being thrown
 #RUN python manage.py makemigrations explore comment
-#RUN python manage.py migrate --noinput
+RUN python manage.py migrate --noinput
 
 #RUN python populate.py
 
