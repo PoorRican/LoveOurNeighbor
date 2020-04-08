@@ -10,11 +10,10 @@
 # vim temp files
 *.sw[a-z]
 
-# db stuff
+# db
 db.*
-*/migrations/*
 
-# media stuff
+# local media stuff
 static/media/
 
 # webassets bundled contents
@@ -23,5 +22,6 @@ static/.webassets-cache/
 static/*/.webassets-cache/
 static/*/webassets-external/
 staticfiles/
+mediafiles/
 
 *.log
