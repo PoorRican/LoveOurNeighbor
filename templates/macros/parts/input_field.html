@@ -5,7 +5,6 @@
           <i class="material-icons prefix">{{ icon }}</i>
       {% endif %}
 
-      {# TODO: add 'invalid' tag to the rendered widget #}
       {{ field }}
       {% if hasattr(field, 'label_tag') %}
       {{ field.label_tag() }}

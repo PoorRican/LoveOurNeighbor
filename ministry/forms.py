@@ -57,7 +57,7 @@ class NewMinistryForm(forms.ModelForm):
                    'address': forms.Textarea(attrs={'rows': 3,
                                                     'cols': 30,
                                                     'class': 'materialize-textarea'}),
-                   'founded': forms.TextInput(attrs={'class': 'pickadate'})}
+                   'founded': forms.TextInput(attrs={'class': 'pickadate', 'required': True})}
         labels = {'img_path': 'Banner Image',
                   'founded': 'Date Founded',
                   'phone_number': 'Phone'}
