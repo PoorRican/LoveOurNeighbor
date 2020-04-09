@@ -1,6 +1,5 @@
 # Immediate Things To Do:
 ## styling/template changes
-    * Add styling to Ministry/Campaign/Post description/content
     * Allow links cards (at least in MOTD cards) to be visible
     * Implement [masonry with lightbox plugin](https://dimsemenov.com/plugins/magnific-popup/) for gallery
     * Ministry/Campaign description should be a dropdown if there are Post's to show

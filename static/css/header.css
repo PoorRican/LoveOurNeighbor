@@ -16,16 +16,18 @@
 .brand-logo-wrapper {
   display: inline-block;
   padding-bottom: 6px;
+  max-height: 3em;
 }
 
 .brand-logo-wrapper img {
-  height: 2em;
+  height: 64px !important;
   vertical-align: middle;
 }
 
 @media screen and (max-width: 992px) {
   .brand-logo #logo {
     height: 1.5em;
+    max-height: 32px;
     vertical-align: middle;
     margin-left: 1em;
   }

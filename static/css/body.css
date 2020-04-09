@@ -44,6 +44,27 @@ strong {
 }
 
 
+/** content/description area for ministry/campaign **/
+.wysiwyg-content h1, .wysiwyg-content h2, .wysiwyg-content h3 {
+  /** neutralize big headers **/
+  font-size: 2.28rem;
+  margin: 1.14rem 0 0.912rem;
+}
+
+.wysiwyg-content p + p {
+  margin-top: 1em !important;
+}
+
+.wysiwyg-content ul,
+.wysiwyg-content ol {
+  padding-left: 40px;
+}
+
+.wysiwyg-content ul li {
+  list-style-type: circle;
+}
+
+
 /** Section **/
 .section, section {
   padding-top: 20px;
