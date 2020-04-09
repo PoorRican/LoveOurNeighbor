@@ -204,35 +204,3 @@ class ccPayment(Payment):
 
     auth_num = models.CharField(max_length=10)
     tx_id = models.CharField(max_length=16)
-
-
-class btcPayment(Payment):
-    """ Skeleton for Bitcoin payment options.
-    Transaction detail attributes have yet to be implemented.
-
-    Attributes
-    ==========
-    donation: `Donation`
-        This is the donation that the payment is meant for.
-        The relationship traverses via `Donation.btc_payment`,
-            but should be accessed by the `Donation.payment` property.
-    """
-    donation = models.OneToOneField(Donation, related_name="btc_payment",
-                                    null=True, blank=True,
-                                    on_delete=models.CASCADE)
-
-
-class braintreePayment(Payment):
-    """ Skeleton for Braintree payment options.
-    Transaction detail attributes have yet to be implemented.
-
-    Attributes
-    ==========
-    donation: `Donation`
-        This is the donation that the payment is meant for.
-        The relationship traverses via `Donation.braintree_payment`,
-            but should be accessed by the `Donation.payment` property.
-    """
-    donation = models.OneToOneField(Donation, related_name="braintree_payment",
-                                    null=True, blank=True,
-                                    on_delete=models.CASCADE)
