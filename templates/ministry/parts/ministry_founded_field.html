@@ -19,7 +19,23 @@
       clear: '',    // remove the 'clear' button
       editable: true,
     };
-    $('.pickadate').pickadate(pickerOptions);
+    let $input = $('.pickadate').pickadate(pickerOptions);
+
+    /**
+     * This re-enables the widget from working after the 'editable' option is true
+     *  'editable' needs to remain enabled so that the 'required' element remains enforced
+     *
+     *  @see https://github.com/amsul/pickadate.js/issues/542
+     */
+    let picker = $input.pickadate('picker');
+    $input.on('click', function (event) {
+      if (picker.get('open')) {
+        picker.close();
+      } else {
+        picker.open();
+      }
+      event.stopPropagation();
+    });
 
   </script>
 

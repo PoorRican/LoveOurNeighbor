@@ -22,8 +22,10 @@
     };
     $('.pickadate').pickadate(pickerOptions);
 
-    let from_picker = $('#id_start_date').pickadate('picker');
-    let to_picker = $('#id_end_date').pickadate('picker');
+    let from_in = $('#id_start_date');
+    let to_in = $('#id_end_date');
+    let from_picker = from_in.pickadate('picker');
+    let to_picker = to_in.pickadate('picker');
 
     to_picker.set('max', 360);
 
@@ -49,7 +51,30 @@
       } else if ('clear' in event) {
         from_picker.set('max', false)
       }
-    })
+    });
+
+    /**
+     * This re-enables the widget from working after the 'editable' option is true
+     *  'editable' needs to remain enabled so that the 'required' element remains enforced
+     *
+     *  @see https://github.com/amsul/pickadate.js/issues/542
+     */
+    from_in.on('click', function (event) {
+      if (from_picker.get('open')) {
+        from_picker.close();
+      } else {
+        from_picker.open();
+      }
+      event.stopPropagation();
+    });
+    to_in.on('click', function (event) {
+      if (to_picker.get('open')) {
+        to_picker.close();
+      } else {
+        to_picker.open();
+      }
+      event.stopPropagation();
+    });
   </script>
 
 {% endmacro %}
