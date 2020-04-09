@@ -63,7 +63,11 @@ class MinistrySerializer(serializers.ModelSerializer):
         bool: True if `request.user` likes obj. False if not.
 
         """
-        return Like.liked(obj, self.context['request'].user)
+        try:
+            return Like.liked(obj, self.context['request'].user)
+        except TypeError:
+            # this is raised if obj is `AnonymousUser`
+            return False
 
     def get_auth(self, obj) -> bool:
         """

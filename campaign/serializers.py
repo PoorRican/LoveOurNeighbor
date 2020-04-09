@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from activity.models import Like
 from ministry.serializers import MinistrySerializer
 from tag.serializers import TagSerializer
 
@@ -14,12 +15,13 @@ class CampaignSerializer(serializers.ModelSerializer):
     views = serializers.IntegerField(source='view_count', read_only=True)
 
     auth = serializers.SerializerMethodField(required=False)
+    liked = serializers.SerializerMethodField(required=False)
 
     class Meta:
         model = Campaign
-        fields = ('id', 'title', 'pub_date', 'content', 'tags', 'url', 'edit', 'donated',
+        fields = ('id', 'title', 'pub_date', 'content', 'tags', 'url', 'edit', 'donated', 'liked',
                   'start_date', 'end_date', 'donations', 'donated', 'likes', 'views', 'ministry', 'tags', 'auth')
-        read_only_fields = ('id', 'title', 'pub_date', 'content', 'tags', 'url', 'edit', 'donated',
+        read_only_fields = ('id', 'title', 'pub_date', 'content', 'tags', 'url', 'edit', 'donated', 'liked',
                             'start_date', 'end_date', 'donations', 'donated', 'views', 'ministry', 'tags', 'auth')
 
     def get_auth(self, obj) -> bool:
@@ -41,3 +43,28 @@ class CampaignSerializer(serializers.ModelSerializer):
         bool: True if `request.user` is an authorized user of this Campaign
         """
         return obj.authorized_user(self.context['request'].user)
+
+    def get_liked(self, obj) -> bool:
+        """
+        Returns if the current user currently 'likes' this Ministry.
+
+        See Also
+        --------
+        `Like.liked`
+
+        https://www.django-rest-framework.org/api-guide/fields/#serializermethodfield
+
+        Parameters
+        ----------
+        obj: MinistryProfile
+
+        Returns
+        -------
+        bool: True if `request.user` likes obj. False if not.
+
+        """
+        try:
+            return Like.liked(obj, self.context['request'].user)
+        except TypeError:
+            # this is raised if obj is `AnonymousUser`
+            return False
