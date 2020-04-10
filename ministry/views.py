@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_safe
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, SingleObjectMixin, DeleteView
 from django.views.generic.detail import DetailView
 
@@ -13,6 +13,7 @@ from datetime import datetime
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 
 from activity.models import Like, View
+from campaign.models import Campaign
 from donation.models import Donation
 from donation.serializers import DonationSerializer
 from post.forms import QuickPostEditForm
@@ -28,8 +29,20 @@ from .utils import (
     send_new_ministry_notification_email
 )
 
-
 strptime = datetime.strptime
+
+
+class MinistryHome(TemplateView):
+    """ Show some highlighted ministries. """
+    template_name = 'ministry/home.html'
+
+    def get_context_data(self, **kwargs):
+        context = {'new_ministries': MinistryProfile.new_ministries(),
+                   'other_campaigns': Campaign.random_campaigns(),
+                   'active': reverse('ministry:home')}
+
+        kwargs.update(context)
+        return super().get_context_data(**kwargs)
 
 
 # CRUD Views

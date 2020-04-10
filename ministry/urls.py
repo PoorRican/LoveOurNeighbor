@@ -4,6 +4,7 @@ from . import views
 
 app_name = 'ministry'
 urlpatterns = [
+    path('home', views.MinistryHome.as_view(), name='home'),
     path('create', views.CreateMinistry.as_view(), name='create_ministry'),
     path('<int:ministry_id>', views.MinistryDetail.as_view(),
          name='ministry_profile'),

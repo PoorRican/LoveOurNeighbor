@@ -129,9 +129,6 @@ class Campaign(models.Model):
         QuerySet of Campaign
 
         """
-        if cls.objects.count() <= 10:
-            return False
-
         today = date.today()
         q = Q(end_date__gte=today) & Q(ministry__verified='True')
         results = cls.objects.filter(q)

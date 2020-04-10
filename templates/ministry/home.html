@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% import "macros/cards.html" as cards %}
+
+
+{% block title %}Campaigns{% endblock %}
+
+
+{% block body %}
+  <div class="wrapper section">
+
+    <h3>New Ministries</h3>
+    {% if new_ministries %}
+      <h6 class="grey-text text-darken-2 ml-1 mb-3">These are the newest ministries that have created a profile!</h6>
+      <div class="row">
+        {% for ministry in new_ministries %}
+          {{ cards.frontpage_ministry_card(ministry, request=request) }}
+        {% endfor %}
+      </div>
+    {% else %}
+      <h6 class="grey-text text-darken-2 mt-2 ml-1">There don't seem to be any new ministries at the moment</h6>
+    {% endif %}
+
+    <h4 class="mt-6">You might also like</h4>
+    <h6 class="grey-text text-darken-2 mb-3">Don't forget to check out these campaigns!</h6>
+    <div class="row">
+      {% for campaign in other_campaigns %}
+        {{ cards.frontpage_campaign_card(campaign, request=request) }}
+      {% endfor %}
+    </div>
+
+  </div><!-- /.wrapper .section -->
+{% endblock %}
+
+
+{% block scripts %}
+  <!-- init dynamic card functionality -->
+  <script src="{{ static('js/mini-gallery-init.js') }}"></script>
+
+  <!-- masonry -->
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script>
+    // this initializes all masonry objects on the page
+    $('.grid').masonry({
+      itemSelector: '.grid-item',
+    });
+  </script>
+{% endblock %}

@@ -24,7 +24,7 @@
             <ul class="collapsible collapsible-accordian">
               <li>
                 <a class="collapsible-header" href="JavaScript:void(0)">
-                  <i class="{{ _link['fa-icon'] }}"></i>
+                  {{ _link['icon']|safe }}
                   {{ _link['title'] }}
                 </a>
                 <div class="collapsible-body"
@@ -49,9 +49,11 @@
             <a href="{{ _link[0] }}" title="{{ _link[1] }}"
                class="waves-effect{% if _link[0] == active %} active{% endif %}">
               {% if len(_link) > 2 %}
-                <i class="{{ _link[2] }}"></i>
+                {{ _link[2]|safe }}
               {% endif %}
-              <span class="menu-title">{{ _link[1] }}</span>
+              <span class="menu-title">
+                {{ _link[1] }}
+              </span>
             </a>
           </li>
         {% endif %}

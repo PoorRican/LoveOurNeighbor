@@ -4,6 +4,7 @@ from typing import Union
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 
 from activity.models import Like, View
@@ -205,6 +206,10 @@ class MinistryProfile(models.Model):
 
         results = cls.objects.filter(verified='True')
         return results.order_by('?')[:n]
+
+    @classmethod
+    def no_campaign_ministries(cls, n=10):
+        return cls.objects.filter(Q(campaigns__isnull=True) & Q(verified=True)).order_by('?')[:n]
 
     # Member Functions
 

@@ -5,6 +5,7 @@ from . import views
 app_name = 'campaign'
 
 urlpatterns = [
+     path('home', views.CampaignHome.as_view(), name='home'),
      path('ministry/<int:ministry_id>/create', views.CreateCampaign.as_view(),
           name='create_campaign'),
      path('<int:campaign_id>/edit', views.AdminPanel.as_view(),

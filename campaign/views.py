@@ -3,9 +3,10 @@ from braces.views import FormMessagesMixin, UserPassesTestMixin, LoginRequiredMi
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import reverse
 from django.views.decorators.http import require_safe
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
 
@@ -24,6 +25,19 @@ from .utils import (
     campaign_images, prev_banner_imgs,
     campaign_goals
 )
+
+
+class CampaignHome(TemplateView):
+    """ Show some highlighted campaigns. """
+    template_name = 'campaign/home.html'
+
+    def get_context_data(self, **kwargs):
+        context = {'new_campaigns': Campaign.new_campaigns(),
+                   'other_ministries': MinistryProfile.no_campaign_ministries(),
+                   'active': reverse('campaign:home')}
+
+        kwargs.update(context)
+        return super().get_context_data(**kwargs)
 
 
 # CRUD Views

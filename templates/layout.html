@@ -46,7 +46,7 @@
     </script>
 
 
-    <title>{% block title %}{% endblock %} - Love Our Neighbor</title>
+  <title>{% block title %}{% endblock %} - Love Our Neighbor</title>
 
     {# favicon #}
     <link rel="shortcut icon" href="{{ static('img/favicon.svg') }}">
@@ -69,41 +69,43 @@
 
     {# }}} #}
 
-  </head>
+</head>
 
   <body
       class="vertical-layout vertical-menu-collapsible page-header-dark vertical-modern-menu 2-columns menu-expanded fixed-navbar"
       data-open="click" data-menu="vertical-modern-menu" data-color="" data-col="2-columns">
 
-  {% if not active %}
+{% if not active %}
     {% set active = None %}
   {% endif %}
 
   <header class="page-topbar" id="header">
-    {% set links =
-    [
-      (url_for('home'), 'Home', 'fa fa-home'),
-      (url_for('faq'), 'FAQ', 'fa fa-question-circle-o'),
-    ] %}
     <div class="navbar navbar-fixed">
       {{ navbar_links(request) }}
     </div>
   </header>
 
-  <main id="main">
-    {% block body %}
-    {% endblock %}
-  </main>
+<main id="main">
+  {% block body %}
+  {% endblock %}
+</main>
 
-  {% set _links = links.copy() %}
-  <!-- {{ _links.append({'title': 'About Us', 'fa-icon': 'fa fa-compass',
+{% set links =
+  [
+    (url_for('home'), 'Home', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/home-page.png"/>'),
+    (url_for('campaign:home'), 'Campaigns', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/flag-2.png"/>'),
+    (url_for('ministry:home'), 'Ministries', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/charity.png"/>'),
+    (url_for('faq'), 'FAQ', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/faq.png"/>'),
+  ] %}
+{% set _links = links.copy() %}
+<!-- {{ _links.append({'title': 'About Us', 'icon': '<img class="left menu-icon" src="https://img.icons8.com/wired/50/000000/compass-north.png"/>',
                              'links': get_flatpages()}) }} -->
-  {{ sidenav(request, _links, active) }}
+{{ sidenav(request, _links, active) }}
 
-  {{ footer(links+get_flatpages()) }}
+{{ footer(links+get_flatpages()) }}
 
-  {# paths must be relative to static directory #}
-  {% set layout_assets = (
+{# paths must be relative to static directory #}
+{% set layout_assets = (
     'js/ui-feedback.animations.js',
     'js/vendors.min.js',
     'js/materialize.js',

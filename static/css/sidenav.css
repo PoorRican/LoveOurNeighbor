@@ -3,9 +3,6 @@
   min-height: 100vh;
   flex-direction: column;
 }
-.sidenav .edit-btn {
-  margin: 0;
-}
 
 .sidenav .spacer {
   flex-grow: 1;
@@ -28,8 +25,15 @@
   margin-bottom: 0;
 }
 
-.user-view .collapsible {
-  margin-top: 12px;
-  margin-left: -16px;
-  margin-right: -16px;
+img.menu-icon {
+  height: 2.5em;
+  margin-top: calc((44px - 2.5em) / 2);
+  margin-right: 1em;
+
+}
+
+.sidenav li:not(.open) > a.active .menu-icon {
+  -webkit-filter: invert(1);
+  filter: invert(1);
+  opacity: .8;
 }
