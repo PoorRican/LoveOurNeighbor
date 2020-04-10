@@ -49,6 +49,7 @@ class CreateCampaign(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin,
 
     raise_exception = True
     form_valid_message = 'Your Campaign has been created!'
+    form_invalid_message = 'Please fill out everything before you can continue.'
 
     def form_invalid(self, form):
         for _, message in form.errors.items():

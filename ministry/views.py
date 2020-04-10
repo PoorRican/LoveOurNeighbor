@@ -65,6 +65,7 @@ class CreateMinistry(LoginRequiredMixin, FormMessagesMixin, CreateView):
     initial = {'website': 'https://', 'address': ''}
 
     form_valid_message = "Your Ministry has been submitted for review!"
+    form_invalid_message = 'Please fill out everything before you can continue.'
 
     def form_valid(self, form):
         ministry = form.save()
@@ -81,6 +82,7 @@ class CreateMinistry(LoginRequiredMixin, FormMessagesMixin, CreateView):
         return super().form_invalid(form)
 
     def post(self, request, *args, **kwargs):
+        self.object = None
         form = NewMinistryForm(request.POST, request.FILES, initial={'admin': request.user})
         if form.is_valid():
             return self.form_valid(form)
