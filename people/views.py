@@ -22,6 +22,7 @@ from campaign.utils import serialize_campaign
 from donation.utils import serialize_donation
 from ministry.utils import serialize_ministry
 from post.models import Post
+from public.models import WebsiteText
 
 from .models import User
 from .forms import UserEditForm, UserLoginForm, NewUserForm
@@ -209,6 +210,7 @@ class UserFeed(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         kwargs['active'] = reverse('home')
+        kwargs['blank_feed_text'] = WebsiteText.get_text('Blank User Feed')
         return super().get_context_data(object_list=object_list, **kwargs)
 
 

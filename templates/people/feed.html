@@ -44,6 +44,10 @@
             {{ card.post_card(obj, wide=False, request=request) }}
           {% endif %}
 
+        {% else %}
+
+          {{ blank_feed_text|safe }}
+
         {% endfor %}
 
       </div>

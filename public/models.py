@@ -77,6 +77,13 @@ class MessageOfTheDay(models.Model):
 
 
 class WebsiteText(models.Model):
+    """ Dedicated, editable blurb of text across the website.
+    Notes
+    -----
+    Usages:
+        'Homepage Info': `frontend.views.home`
+        'Blank User Feed': `people.views.UserFeed`
+    """
     label = models.CharField(unique=True, max_length=32)
     location = models.CharField('Where is the text located?', null=True, blank=True, max_length=128)
     text = models.TextField()
