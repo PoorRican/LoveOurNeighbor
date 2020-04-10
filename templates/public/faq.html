@@ -2,15 +2,19 @@
 {% from "macros/layout/misc_layout.html" import section_start, section_close %}
 
 
+{# set the active page on the sidebar #}
+{% set active = url_for('faq') %}
+
+
 {% block title %}FAQ{% endblock %}
 
 
 {% block metadata %}
-    <meta property="og:type" content="article"/>
-    <meta property="og:image" content="https://loveourneighbor.org{{ static('img/brand/LON_letterhead.png') }}">
-    <meta property="og:url" content="https://loveourneighbor.org/faq">
-    <meta property="og:title" content="About Love Our Neighbor">
-    <meta property="og:description" content="Who is Love Our Neighbor?">
+  <meta property="og:type" content="article"/>
+  <meta property="og:image" content="https://loveourneighbor.org{{ static('img/brand/LON_letterhead.png') }}">
+  <meta property="og:url" content="https://loveourneighbor.org/faq">
+  <meta property="og:title" content="About Love Our Neighbor">
+  <meta property="og:description" content="Who is Love Our Neighbor?">
 {% endblock %}
 
 

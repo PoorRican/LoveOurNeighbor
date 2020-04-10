@@ -48,7 +48,6 @@ def home(request):
                    'new_campaigns': Campaign.new_campaigns(),
                    'random_campaigns': Campaign.random_campaigns(),
                    'motd': MessageOfTheDay.get_message(),
-                   'active': reverse('home'),
                    }
         return HttpResponseRedirect(reverse('people:feed'))
     else:
@@ -71,7 +70,6 @@ def about(request):
     """
     _about = AboutSection.objects.all()
     context = {'about': _about,
-               'active': reverse('about'),
                }
 
     return render(request, "about.html", context)
@@ -90,9 +88,7 @@ def faq(request):
         from the django admin console.
     """
     faqs = FaqSection.objects.all()
-    context = {'faqs': faqs,
-               'active': reverse('faq'),
-               }
+    context = {'faqs': faqs}
     return render(request, "faq.html", context)
 
 

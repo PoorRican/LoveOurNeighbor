@@ -9,7 +9,6 @@
 {% from "macros/layout/sidenav.html" import sidenav %}
 {% from "macros/layout/footer.html" import footer %}
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -71,19 +70,23 @@
 
 </head>
 
-  <body
-      class="vertical-layout vertical-menu-collapsible page-header-dark vertical-modern-menu 2-columns menu-expanded fixed-navbar"
-      data-open="click" data-menu="vertical-modern-menu" data-color="" data-col="2-columns">
+<body
+    class="vertical-layout vertical-menu-collapsible page-header-dark vertical-modern-menu 2-columns menu-expanded fixed-navbar"
+    data-open="click" data-menu="vertical-modern-menu" data-color="" data-col="2-columns">
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W65J9RV"
+          height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
 
-{% if not active %}
-    {% set active = None %}
-  {% endif %}
 
-  <header class="page-topbar" id="header">
-    <div class="navbar navbar-fixed">
-      {{ navbar_links(request) }}
-    </div>
-  </header>
+<header class="page-topbar" id="header">
+  <div class="navbar navbar-fixed">
+    {# It is an unusual usecase to override the header, however, it is overriden in 'first.html' #}
+    {% block header %}{{ navbar_links(request) }}{% endblock %}
+  </div>
+</header>
 
 <main id="main">
   {% block body %}
@@ -91,16 +94,17 @@
 </main>
 
 {% set links =
-  [
-    (url_for('home'), 'Home', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/home-page.png"/>'),
-    (url_for('campaign:home'), 'Campaigns', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/flag-2.png"/>'),
-    (url_for('ministry:home'), 'Ministries', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/charity.png"/>'),
-    (url_for('faq'), 'FAQ', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/faq.png"/>'),
-  ] %}
+    [
+      (url_for('home'), 'Home', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/home-page.png"/>'),
+      (url_for('campaign:home'), 'Campaigns', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/flag-2.png"/>'),
+      (url_for('ministry:home'), 'Ministries', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/charity.png"/>'),
+      (url_for('faq'), 'FAQ', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/faq.png"/>'),
+    ] %}
 {% set _links = links.copy() %}
 <!-- {{ _links.append({'title': 'About Us', 'icon': '<img class="left menu-icon" src="https://img.icons8.com/wired/50/000000/compass-north.png"/>',
-                             'links': get_flatpages()}) }} -->
-{{ sidenav(request, _links, active) }}
+                               'links': get_flatpages()}) }} -->
+{# It is an unusual usecase to override the sidebar, however, it is overriden in 'first.html' #}
+{% block sidebar %}{{ sidenav(request, _links, active) }}{% endblock %}
 
 {{ footer(links+get_flatpages()) }}
 
@@ -113,9 +117,9 @@
     'js/search.js',
     'js/notifications.js',
   ) %}
-  {% for f in layout_assets %}
-    <script src="{{ static('%s' % f) }}"></script>
-  {% endfor %}
+{% for f in layout_assets %}
+  <script src="{{ static('%s' % f) }}"></script>
+{% endfor %}
 
   <!-- Initialize Materialize elements -->
   <script>

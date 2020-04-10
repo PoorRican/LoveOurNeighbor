@@ -33,8 +33,7 @@ class CampaignHome(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = {'new_campaigns': Campaign.new_campaigns(),
-                   'other_ministries': MinistryProfile.no_campaign_ministries(),
-                   'active': reverse('campaign:home')}
+                   'other_ministries': MinistryProfile.no_campaign_ministries()}
 
         kwargs.update(context)
         return super().get_context_data(**kwargs)
