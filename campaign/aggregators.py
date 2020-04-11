@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, ExpressionWrapper, DecimalField, Sum, F, Value
 
 from datetime import date
 
@@ -29,7 +29,7 @@ def ongoing(n=10):
     if Campaign.objects.count() == 0:
         return False
 
-    q = Q(end_date__gte=today()) & Q(ministry__verified='True')
+    q = Q(start_date__lte=today()) & Q(end_date__gte=today()) & Q(ministry__verified='True')
     results = Campaign.objects.filter(q)
     return results.order_by('pub_date')[:n]
 
@@ -63,7 +63,8 @@ def recently_started(n=10):
         Newest Campaign appears first in subset
 
     """
-    if Campaign.objects.count() <= 10:
+    # don't show if there are too few campaigns
+    if Campaign.objects.count() <= n * 4:
         return False
 
     q = Q(start_date__lte=today()) & Q(end_date__gte=today) & Q(ministry__verified='True')
@@ -86,9 +87,38 @@ def almost_ending(n=10):
         Campaign with closest `end_date` appears first
 
     """
-    if Campaign.objects.count() <= 10:
+    # don't show if there are too few campaigns
+    if Campaign.objects.count() <= n * 4:
         return False
 
     q = Q(start_date__lte=today()) & Q(end_date__gte=today()) & Q(ministry__verified='True')
     results = Campaign.objects.filter(q)
     return results.order_by('-end_date')[:n]
+
+
+def almost_complete(n=10):
+    """
+
+    Parameters
+    ----------
+    n
+
+    References
+    ----------
+    https://docs.djangoproject.com/en/3.0/ref/models/expressions/
+    https://docs.djangoproject.com/en/3.0/ref/models/querysets/
+
+    Returns
+    -------
+
+    """
+    # don't show if there are too few campaigns
+    if Campaign.objects.count() <= n * 4:
+        return False
+
+    q = Q(end_date__gte=today()) & Q(ministry__verified=True)
+    completion = ExpressionWrapper(Sum('donations_cc_payment__amount') / F('goal') * Value(100),
+                                   output_field=DecimalField())
+    # filter campaigns that are more than 75% complete
+    results = Campaign.objects.filter(q).annotate(completion=completion).filter(completion__gte=75)
+    return results.order_by('completion')[:n]

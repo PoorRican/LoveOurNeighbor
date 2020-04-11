@@ -11,7 +11,8 @@ def recent(n=10):
 
 
 def random(n=10):
-    if MinistryProfile.objects.count() <= 10:
+    # don't show this list if there are too few ministries
+    if MinistryProfile.objects.count() <= n * 4:
         return False
 
     results = MinistryProfile.objects.filter(verified='True')
