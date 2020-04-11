@@ -1,4 +1,4 @@
-{% macro breadcrumbs(first, header, parent=None, deepest=None, classes='pt-1 pb-3', obj=None) %}
+{% macro breadcrumbs(first, header, parent=None, deepest=None, classes='', obj=None) %}
   {#
   Arguments
   ---------
@@ -16,13 +16,13 @@
   <div id="breadcrumbs-wrapper" class="breadcrumbs-inline {{ classes }}">
     <div class="container">
       <div class="row">
-        <div class="col s10 breadcrumbs-left">
+        <div class="col s12 m10 breadcrumbs-left mb-2">
 
           <h5 class="breadcrumbs-title mt-0 mb-0 display-inline hide-on-small-and-down">
             {{ header }}
           </h5>
 
-          <ol class="breadcrumbs mb-0">
+          <ol class="breadcrumbs">
             {% for item in unwrap_breadcrumbs(deepest, parent=parent) %}
               <li class="breadcrumb-item">
                 <a href="{{ item.url }}">{{ item.text }}</a>
@@ -34,8 +34,8 @@
           </ol>
         </div>
         {% if obj %}
-          <div class="col s2 breadcrumbs-btn right">
-            <a class="btn-large blue lighten-1" href="{{ obj.url }}">
+          <div class="col s12 m2 breadcrumbs-btn">
+            <a class="btn blue lighten-1 right mt-2" href="{{ obj.url }}">
               <i class="material-icons left">visibility</i>
               View
             </a>

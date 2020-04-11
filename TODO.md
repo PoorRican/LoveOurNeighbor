@@ -2,7 +2,6 @@
 ## styling/template changes
     * Allow links cards (at least in MOTD cards) to be visible
     * Implement [masonry with lightbox plugin](https://dimsemenov.com/plugins/magnific-popup/) for gallery
-    * Ministry/Campaign description should be a dropdown if there are Post's to show
     * Reformat strftime in campaign side view
     * Change 'Ends' label to 'Ended' in campaign card when Campaign has ended
     * On Ministry view template, title should be moved from center-pane to the left for small screens
@@ -14,9 +13,6 @@
     * Integrate [Infinite Scroll](https://infinite-scroll.com/)
     * Show `pub_date` on `post_card`
     * Loading animation on page load; set opacity of inside content to 0.
-    * Fix feed width on mobile
-    * Fix breadcrumbs on mobile
-    * When campaign donation amount exceeds goal, change "X% To Goal" to "X% of Goal!"
     
 
 ## django

@@ -25,11 +25,11 @@
   margin-bottom: 0;
 }
 
+#slide-out img,
 img.menu-icon {
-  height: 2.5em;
-  margin-top: calc((44px - 2.5em) / 2);
+  height: 35px;
+  margin-top: 4px;
   margin-right: 1em;
-
 }
 
 .sidenav li:not(.open) > a.active .menu-icon {

@@ -44,6 +44,18 @@ strong {
 }
 
 
+/** first.html content styling **/
+#welcomeBanner img {
+  margin-top: 1em;
+}
+
+
+/** feed styling **/
+#feed .row .col {
+  padding: 0 .5em;
+}
+
+
 /** content/description area for ministry/campaign **/
 .wysiwyg-content h1, .wysiwyg-content h2, .wysiwyg-content h3 {
   /** neutralize big headers **/
