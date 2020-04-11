@@ -11,19 +11,31 @@
 
 
 {% block body %}
-  <div class="wrapper section">
+    <div class="wrapper section">
 
-    <h3>New Campaigns</h3>
-    {% if new_campaigns %}
-      <h6 class="ml-1 mb-3">These are the newest campaigns that have started on LON!</h6>
-      <div class="row">
-        {% for campaign in new_campaigns %}
-          {{ cards.frontpage_campaign_card(campaign, request=request) }}
-        {% endfor %}
-      </div>
-    {% else %}
-      <h6 class="grey-text text-darken-2 mt-2 ml-1">There don't seem to be any new campaigns at the moment</h6>
-    {% endif %}
+        <h3>Upcoming</h3>
+      {% if upcoming_campaigns %}
+          <h6 class="ml-1 mb-3">Be sure to find out more and share about these upcoming campaigns!</h6>
+          <div class="row">
+            {% for campaign in upcoming_campaigns %}
+              {{ cards.frontpage_campaign_card(campaign, request=request) }}
+            {% endfor %}
+          </div>
+      {% else %}
+          <h6 class="grey-text text-darken-2 mt-2 ml-1">There don't seem to be any upcoming campaigns at the moment</h6>
+      {% endif %}
+
+        <h3>Ongoing</h3>
+      {% if new_campaigns %}
+          <h6 class="ml-1 mb-3">Check out these campaigns that have already started on LON!</h6>
+          <div class="row">
+            {% for campaign in new_campaigns %}
+              {{ cards.frontpage_campaign_card(campaign, request=request) }}
+            {% endfor %}
+          </div>
+      {% else %}
+          <h6 class="grey-text text-darken-2 mt-2 ml-1">There don't seem to be any ongoing at the moment</h6>
+      {% endif %}
 
     {% if new_campaigns %}
       <h4 class="mt-6">Also check these out</h4>

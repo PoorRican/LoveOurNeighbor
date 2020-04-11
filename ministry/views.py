@@ -12,13 +12,14 @@ from braces.views import FormMessagesMixin, UserPassesTestMixin, LoginRequiredMi
 from datetime import datetime
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 
-from activity.models import Like, View
-from campaign.models import Campaign
+from activity.models import View
+import campaign.aggregators as campaigns
 from donation.models import Donation
 from donation.serializers import DonationSerializer
 from post.forms import QuickPostEditForm
 from post.models import Post
 
+from .aggregators import recent, random
 from .forms import MinistryEditForm, NewMinistryForm, RepManagementForm
 from .models import MinistryProfile
 from .serializers import MinistrySerializer
@@ -37,8 +38,9 @@ class MinistryHome(TemplateView):
     template_name = 'ministry/home.html'
 
     def get_context_data(self, **kwargs):
-        context = {'new_ministries': MinistryProfile.new_ministries(),
-                   'other_campaigns': Campaign.random_campaigns(),
+        context = {'new_ministries': recent(),
+                   'random_ministries': random(),
+                   'other_campaigns': campaigns.random(),
                    'active': reverse('ministry:home')}
 
         kwargs.update(context)

@@ -189,28 +189,6 @@ class MinistryProfile(models.Model):
         self.requests.remove(user)
         self.save()
 
-    # Class Methods
-
-    @classmethod
-    def new_ministries(cls, n=10):
-        if cls.objects.count() == 0:
-            return False
-
-        results = cls.objects.filter(verified='True')
-        return results.order_by('pub_date').reverse()[:n]
-
-    @classmethod
-    def random_ministries(cls, n=10):
-        if cls.objects.count() <= 10:
-            return False
-
-        results = cls.objects.filter(verified='True')
-        return results.order_by('?')[:n]
-
-    @classmethod
-    def no_campaign_ministries(cls, n=10):
-        return cls.objects.filter(Q(campaigns__isnull=True) & Q(verified=True)).order_by('?')[:n]
-
     # Member Functions
 
     def similar_ministries(self):
