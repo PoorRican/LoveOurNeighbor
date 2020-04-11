@@ -43,12 +43,6 @@ def home(request):
     """
 
     if request.user.is_authenticated:
-        context = {'new_ministries': MinistryProfile.new_ministries(),
-                   'random_ministries': MinistryProfile.random_ministries(),
-                   'new_campaigns': Campaign.new_campaigns(),
-                   'random_campaigns': Campaign.random_campaigns(),
-                   'motd': MessageOfTheDay.get_message(),
-                   }
         return HttpResponseRedirect(reverse('people:feed'))
     else:
         context = {'signup': NewUserForm(),
