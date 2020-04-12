@@ -1,17 +1,18 @@
 {% extends "layout.html" %}
 
-{% from "macros/parts/donate_button.html" import donate_button %}
-{% import "macros/cards.html" as card %}
+{% from "ministry/ministry_card.html" import ministry_card %}
+{% from "campaign/campaign_card.html" import campaign_card %}
+{% from "post/post_card.html" import post_card %}
 
 
 {% block title %}Home{% endblock %}
 
 
 {% block metadata %}
-  <meta property="og:type" content="article"/>
-  <meta property="og:image" content="https://loveourneighbor.org{{ static('img/brand/LON_letterhead.png') }}">
-  <meta property="og:url" content="https://loveourneighbor.org/home">
-  <meta property="og:title" content="Love Our Neighbor Homepage">
+    <meta property="og:type" content="article"/>
+    <meta property="og:image" content="https://loveourneighbor.org{{ static('img/brand/LON_letterhead.png') }}">
+    <meta property="og:url" content="https://loveourneighbor.org/home">
+    <meta property="og:title" content="Love Our Neighbor Homepage">
   <meta property="og:description" content="What is Love Our Neighbor?">
 {% endblock %}
 
@@ -40,9 +41,9 @@
           {% for obj in object_list %}
 
             {% if hasattr(obj, 'goal') %}
-              {{ card.frontpage_campaign_card(obj, request, wide=False) }}
+              {{ campaign_card(obj, request=request, wide=False) }}
             {% else %}
-              {{ card.post_card(obj, wide=False, request=request) }}
+              {{ post_card(obj, wide=False, request=request) }}
             {% endif %}
 
           {% else %}

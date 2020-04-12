@@ -1,5 +1,8 @@
 {% extends "layout.html" %}
 
+{% from "campaign/campaign_card.html" import campaign_card %}
+{% from "post/post_card.html" import post_card %}
+
 {% from "ministry/parts/ministry_founded_field.html" import founded_field_initialer %}
 {% from "ministry/parts/rep_request_selection.html" import rep_selection %}
 
@@ -12,7 +15,6 @@
 {% from "macros/parts/transaction_table.html" import transaction_table %}
 {% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
 
-{% import "macros/cards.html" as card %}
 {# TODO: total donated amount #}
 
 {% block title %}
@@ -186,7 +188,7 @@
 
                   <div class="row">
                     {% for campaign in ministry.campaigns.all() %}
-                      {{ card.frontpage_campaign_card(campaign, request) }}
+                      {{ campaign_card(campaign, request) }}
                       {% else %}
                         <p>You have no fundraising campaigns at this time.</p>
                       {% endfor %}
@@ -205,7 +207,7 @@
                   </a>
                   <div class="row">
                     {% for posts in ministry.posts.all() %}
-                      {{ card.post_card(posts, AUTH=True) }}
+                      {{ post_card(posts, AUTH=True) }}
                     {% else %}
                     <p>You have not posted any news for this ministry.</p>
                       {% endfor %}

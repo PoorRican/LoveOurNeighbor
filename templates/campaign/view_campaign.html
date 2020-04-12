@@ -5,6 +5,8 @@
 
 {% from "campaign/parts/donation_progress_bar.html" import donation_progress_bar %}
 
+{% from "post/post_card.html" import post_card %}
+
 {% from "macros/parts/comments_section.html" import comments_section %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
 {% from "macros/parts/donate_button.html" import donate_button %}
@@ -13,7 +15,6 @@
 {% from "macros/parts/tag_chips.html" import tag_chips %}
 {% from "macros/parts/quick_post.html" import quick_post %}
 
-{% import "cards.html" as card %}
 
 {% set AUTH = request.user == campaign.ministry.admin or request.user in campaign.ministry.reps.all() %}
 
@@ -42,9 +43,6 @@
   <!-- campaign/view_campaign -->
   <input type="hidden" id="current_object_json" value="{{ campaign.json }}">
   <input type="hidden" id="campaign_id" value="{{ campaign.id }}">
-  {% if AUTH == None %}
-    {% set AUTH = request.user == campaign.ministry.admin or request.user in campaign.ministry.reps.all() %}
-  {% endif %}
 
   {# {{{ Top Section Overlay #}
   {% if campaign.banner_img %}
@@ -130,14 +128,18 @@
           </div>
           <div class="col s6">
             <h6>
-              {% if today() >= campaign.end_date %}
+              {% if campaign.ended() %}
                 Ended:
               {% else %}
                 Ends:
               {% endif %}
             </h6>
             <h5>
-              {{ campaign.end_date.strftime("%h %d, %Y") }}&nbsp;
+              {% if campaign.ends_today() %}
+                <span>TODAY</span>
+              {% else %}
+                {{ campaign.end_date.strftime("%h %d, %Y") }}&nbsp;
+              {% endif %}
             </h5>
           </div>
         </div><!-- /start stop dates -->
@@ -251,7 +253,7 @@
                 <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Posts</h5>
 
                 {% for n in all_news %}
-                  {{ card.post_card(n, AUTH, wide=True) }}
+                  {{ post_card(n, request=request, wide=True, show_parent=False) }}
                 {% else %}
                   <p>There are no posts to show at this time.</p>
                 {% endfor %}

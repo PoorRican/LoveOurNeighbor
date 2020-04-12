@@ -1,0 +1,46 @@
+{% from "macros/parts/base_content_card.html" import base_content_card %}
+
+
+{% macro ministry_card_content(ministry) %}
+
+    <div class="display-flex justify-content-between flex-wrap mt-4">
+        <div class="display-flex mt-2 right-align" style="min-width: 55%; overflow: hidden;">
+            <a href="#">
+                <i class="material-icons">favorite_border</i>
+            </a>
+            <span class="ml-3 vertical-align-top">{{ ministry.like_count }}</span>
+
+            <i class="material-icons ml-10">visibility</i>
+            <span class="ml-3 vertical-align-top">{{ ministry.views.count() }}</span>
+
+            <i class="material-icons ml-10">card_giftcard</i>
+            <span class="ml-3 mr-4 vertical-align-top">{{ ministry.campaigns.count() }}</span>
+
+        </div>
+    </div><!-- /.display-flex -->
+
+{% endmacro %}
+
+
+{% macro ministry_card_menu(ministry, class) %}
+
+    <ul id="ministry_{{ ministry.id }}_card_dropdown" class="dropdown-content" style="min-width: 8em;">
+      {% for opt in ministry_admin_urls(ministry) %}
+          <li>
+              <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                  <i class="material-icons">{{ opt['icon'] }}</i>
+                {{ opt['label'] }}
+              </a>
+          </li>
+      {% endfor %}
+    </ul><!-- /.dropdown-content -->
+
+{% endmacro %}
+
+
+{% macro ministry_card(ministry, auth=False, request=False, wide=False) %}
+
+  {{ base_content_card(ministry, ministry.banner_img, 'ministry-card', ministry_card_content, ministry_card_menu,
+      auth=auth, request=request, wide=wide, show_parent=False) }}
+
+{% endmacro %}

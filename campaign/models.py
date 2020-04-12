@@ -41,6 +41,12 @@ class Campaign(models.Model):
     views = GenericRelation(View,
                             content_type_field='content_type', object_id_field='object_id')
 
+    def __str__(self):
+        return self.title
+
+    def __unicode__(self):
+        return u'%s' % self.title
+
     @property
     def donated(self):
         amt = 0
@@ -88,6 +94,14 @@ class Campaign(models.Model):
         return {'text': self.ministry.name,
                 'url': self.ministry.url,
                 'object': self.ministry}
+
+    @property
+    def profile_img(self):
+        return self.ministry.profile_img
+
+    @property
+    def content_object(self) -> MinistryProfile:
+        return self.ministry
 
     @property
     def has_tags(self):
@@ -146,3 +160,14 @@ class Campaign(models.Model):
         """ Return a URL for creating a Post object """
         return reverse('post:create_post', kwargs={'obj_type': 'campaign',
                                                    'obj_id': self.id})
+
+    # start/end date methods
+
+    def ends_today(self):
+        return (self.end_date - date.today()).days == 0
+
+    def ends_soon(self, days=14):
+        return (self.end_date - date.today()).days <= days
+
+    def ended(self):
+        return (self.end_date - date.today()).days < 0

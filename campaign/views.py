@@ -13,7 +13,7 @@ from activity.models import View
 from donation.models import Donation
 from donation.serializers import DonationSerializer
 from donation.utils import serialize_donation
-from ministry.aggregators import no_campaigns
+import ministry.aggregators as ministries
 from ministry.models import MinistryProfile
 from post.forms import QuickPostEditForm
 from post.models import Post
@@ -35,7 +35,7 @@ class CampaignHome(TemplateView):
     def get_context_data(self, **kwargs):
         context = {'ongoing_campaigns': ongoing(),
                    'upcoming_campaigns': upcoming(),
-                   'other_ministries': no_campaigns()}
+                   'other_ministries': ministries.recent()}
 
         kwargs.update(context)
         return super().get_context_data(**kwargs)

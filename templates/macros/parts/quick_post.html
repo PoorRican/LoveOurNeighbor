@@ -1,7 +1,8 @@
 {% from "parts/input_field.html" import input_field %}
 
 {% macro quick_post(url, form, csrf) %}
-  <div class="card-panel">
+  <div style="margin: 1em 1em 1.5em;">
+    <h5 class="grey-text text-darken-1">Make a Post:</h5>
     <form action="{{ url }}" method="post" enctype="multipart/form-data" id="quickPost">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf }}">
       <div class="row">

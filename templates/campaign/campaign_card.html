@@ -1,0 +1,95 @@
+{% from "macros/parts/base_content_card.html" import base_content_card %}
+{% from "macros/parts/confirm_delete.html" import confirm_delete %}
+
+
+{% macro campaign_card_content(campaign) %}
+
+    <div class="display-flex justify-content-between flex-wrap mt-4">
+
+        <div class="display-flex mt-2 right-align">
+
+            <a href="#">
+                <i class="material-icons">favorite_border</i>
+            </a>
+            <span class="ml-3 vertical-align-top">{{ campaign.like_count }}</span>
+
+            <i class="material-icons ml-10">visibility</i>
+            <span class="ml-3 vertical-align-top">{{ campaign.views.count() }}</span>
+
+            <i class="material-icons ml-10">card_giftcard</i>
+            <span class="ml-3 mr-4 vertical-align-top">{{ campaign.donations.count() }}</span>
+
+        </div>
+
+    </div><!-- /.display-flex -->
+
+    <div class="row mt-3">
+
+        <div class="stats col s12 mt-2 right">
+            <a href="{{ campaign.url }}">
+              {# TODO: add animations #}
+              {% if campaign.ends_today() %}
+                  <span class="btn-small red">
+          Ends today!
+        </span>
+              {% elif campaign.ends_soon() %}
+                  <span class="btn-small orange">
+            {{ f_time(campaign.end_date, past_='Ended ', future_='Ends in ', switch=True) }}
+          </span>
+              {% else %}
+                  <span class="btn-small blue darken-2">
+          {{ f_time(campaign.end_date, past_='Ended ', future_='Ends in ', switch=True) }}
+        </span>
+              {% endif %}
+
+              {% if campaign.percent_complete >= 75 %}
+                {% if campaign.ends_soon() %}
+                    <span class="btn-small orange">{{ campaign.percent_complete }}% of goal</span>
+                {% else %}
+                    <span class="btn-small green">{{ campaign.percent_complete }}% of goal</span>
+                {% endif %}
+              {% elif campaign.percent_complete <= 50 %}
+                {% if campaign.ends_soon() %}
+                    <span class="btn-small red">{{ campaign.percent_complete }}% of goal</span>
+                {% else %}
+                    <span class="btn-small blue">{{ campaign.percent_complete }}% of goal</span>
+                {% endif %}
+              {% else %}
+                  <span class="btn-small deep-orange darken-1">{{ campaign.percent_complete }}% of goal</span>
+              {% endif %}
+            </a>
+        </div>
+
+      {% if campaign.has_tags %}
+          <div class="tag-area col s12 mt-2">
+            {% for tag in campaign.tags.all() %}
+              {# TODO: tag URL #}
+                <div class="chip cyan white-text">{{ tag }}</div>
+            {% endfor %}
+          </div><!-- /.tag-area -->
+      {% endif %}
+    </div><!-- /.row -->
+
+{% endmacro %}
+
+
+{% macro campaign_card_menu(campaign, class) %}
+    <ul id="{{ class }}_{{ campaign.id }}_card_dropdown" class="dropdown-content" style="min-width: 10em;">
+      {% for opt in campaign_admin_urls(campaign) %}
+          <li>
+              <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                  <i class="material-icons">{{ opt['icon'] }}</i>
+                {{ opt['label'] }}
+              </a>
+          </li>
+      {% endfor %}
+    </ul><!-- /.dropdown-content -->
+{% endmacro %}
+
+
+{% macro campaign_card(campaign, auth=False, request=False, wide=False, show_parent=True) %}
+
+  {{ base_content_card(campaign, campaign.banner_img, 'campaign-card', campaign_card_content, campaign_card_menu,
+      auth=auth, request=request, wide=wide, show_parent=show_parent, parent_text='created a campaign: ') }}
+
+{% endmacro %}

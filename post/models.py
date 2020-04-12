@@ -56,7 +56,10 @@ class Post(models.Model):
                             content_type_field='content_type', object_id_field='object_id')
 
     def __str__(self):
-        return "%s by %s" % (self.title, self.content_object)
+        return self.title
+
+    def __unicode__(self):
+        return u'%s' % self.title
 
     @property
     def url(self):

@@ -1,0 +1,73 @@
+{% macro base_content_card(obj, media, class, content, menu, auth=False, request=False, wide=False, show_parent=False, parent_text='') %}
+
+  {% if not auth and request %}
+    {% set auth = obj.authorized_user(request.user) %}
+  {% endif %}
+
+    <div class="{{ class }} grid-item col s12 {% if not wide %}l6{% endif %}">
+        <div class="card-panel border-radius-8 {% if media %} mt-6{% endif %}">
+
+          {% if media %}
+              <a href="{{ obj.url }}">
+                  <img class="responsive-img border-radius-8 z-depth-4 image-n-margin"
+                       src="{{ media.url if media is iterable else media[0].url }}">
+              </a>
+              <div>&nbsp;</div>
+          {% endif %}
+
+          {% if auth %}
+              <a class="btn-flat dropdown-trigger grey-text p-0 ml-1 right"
+                 data-target="{{ class }}_{{ obj.id }}_card_dropdown">
+                  <i class="material-icons">more_horiz</i>
+              </a><!-- /.dropdown-trigger -->
+          {% endif %}
+
+          {% if show_parent %}
+
+              <div class="profile-img-wrapper">
+                  <a href="{{ obj.content_object.url }}" rel="author">
+                      <img class="circle responsive-img vertical-text-middle"
+                           src="{{ obj.content_object.profile_img.url }}"
+                           alt="ministry profile img" width="40">
+                  </a>
+              </div><!-- /.profile-img-wrapper -->
+              <div class="parent-text">
+                  <a href="{{ obj.content_object.url }}"
+                     class="align-items-center mt-2" rel="author">
+                      <span class="pt-2">{{ obj.content_object|string|title }}</span>
+                  </a>
+                  <span class="grey-text text-darken-2">{{ parent_text }}</span>
+                  <a class="card-title deep-orange-text" href="{{ obj.url }}" style="display: inline;">
+                    {{ obj|string|title }}
+                  </a>
+
+                  <p class="pub_date">
+                    {{ f_time(obj.pub_date) }}
+                  </p>
+              </div><!-- /.parent-text -->
+
+          {% else %}
+
+              <h5 class="{% if media %} mt-5{% else %} mt-1{% endif %}">
+                  <a class="deep-orange-text card-title" href="{{ obj.url }}" style="display: inline;">
+                    {{ obj|string|title }}
+                  </a><!-- /.card-title -->
+              </h5>
+
+              <p class="pub_date">
+                {{ f_time(obj.pub_date) }}
+              </p>
+
+          {% endif %}
+          {# /show_parent #}
+
+          {{ content(obj) }}
+
+          {% if auth %}
+            {{ menu(obj, class) }}
+          {% endif %}
+
+        </div><!-- /.card-panel -->
+    </div><!-- /{{ class }}.grid-item.col -->
+
+{% endmacro %}

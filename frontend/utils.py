@@ -14,7 +14,7 @@ from typing import Callable
 from explore.utils import get_location_from_ip
 
 
-def friendly_time(dt, past_="ago", future_="from now", default="just now"):
+def friendly_time(dt, past_="ago", future_="from now", default="just now", switch=False):
     """
     Returns string representing "time since"
     or "time until" e.g.
@@ -45,9 +45,19 @@ def friendly_time(dt, past_="ago", future_="from now", default="just now"):
     for period, singular, plural in periods:
 
         if period:
-            return "%d %s %s" % (period,
-                                 singular if period == 1 else plural,
-                                 past_ if dt_is_past else future_)
+            if not switch:
+                return "%d %s %s" % (period,
+                                     singular if period == 1 else plural,
+                                     past_ if dt_is_past else future_)
+            else:
+                if dt_is_past:
+                    return "%s %d %s ago" % (past_ if dt_is_past else future_,
+                                             period,
+                                             singular if period == 1 else plural,)
+                else:
+                    return "%s %d %s" % (past_ if dt_is_past else future_,
+                                         period,
+                                         singular if period == 1 else plural,)
 
     return default
 

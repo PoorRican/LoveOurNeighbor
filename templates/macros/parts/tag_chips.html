@@ -3,9 +3,9 @@
   {% if len(obj.tags.all()) %}
     {% for i in obj.tags.all() %}
 
-      <a href="{{ url_for('search:search')+ '?query=' + i.name }}">
-        <div class="chip">{{ i.name }}</div>
-      </a>
+        <a href="{{ url_for('search:search')+ '?query=' + i.name }}" rel="">
+            <div class="chip">{{ i.name }}</div>
+        </a>
 
     {% endfor %}
   {% endif %}

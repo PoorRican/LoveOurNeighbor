@@ -1,0 +1,65 @@
+{% from "macros/parts/base_content_card.html" import base_content_card %}
+{% from "macros/parts/confirm_delete.html" import confirm_delete %}
+
+
+{% macro post_card_content(post) %}
+
+    <div class="row">
+        <div class="col s6">
+            <div class="display-flex justify-content-between flex-wrap mt-4">
+                <div class="display-flex mt-2 right-align">
+                    <i class="material-icons left">visibility</i>
+                    <span class="ml-3 vertical-align-top">{{ post.views.count() }}</span>
+                </div>
+            </div><!-- /.display-flex -->
+        </div><!-- /.col -->
+        <div class="col s6">
+            <div class="mini-gallery row">
+                <a href="{{ post.url }}">
+                  {% if has_media %}
+                    {% for img in has_media[1:] %}
+                        <div class="col s6">
+                            <div class="tile" style="background-image: url('{{ img.url }}')"></div>
+                        </div>
+                    {% endfor %}
+                    {# TODO: have js make this height look good #}
+                    {% if post.media.count() > len(has_media) %}
+                        <div class="col s6">
+                            <div class="card-panel tile center show-more">
+                      <span>
+                        +{{ post.media.count() - len(has_media) }} more
+                      </span>
+                            </div>
+                        </div>
+                    {% endif %}
+                  {% endif %}
+                </a>
+            </div><!-- /.mini-gallery -->
+        </div>
+    </div>
+
+{% endmacro %}
+
+
+{% macro post_card_menu(post, class) %}
+
+    <ul id="{{ class }}_{{ post.id }}_card_dropdown" class="dropdown-content" style="min-width: 10em;">
+        <li>
+            <a href="{{ post.edit }}">
+                <i class="material-icons">create</i>
+                Edit Post
+            </a>
+        </li>
+        <li>{{ confirm_delete('post', post.id, text='Delete Post', anchor=True, part=0) }}</li>
+    </ul><!-- .dropdown-content -->
+  {{ confirm_delete('post', post.id, text='Delete Post', anchor=True, part=1) }}
+
+{% endmacro %}
+
+
+{% macro post_card(post, auth=False, request=False, wide=False, show_parent=True) %}
+
+  {{ base_content_card(post, post.random_images(), 'post-card', post_card_content, post_card_menu,
+      auth=auth, request=request, wide=wide, show_parent=show_parent, parent_text='posted: ') }}
+
+{% endmacro %}

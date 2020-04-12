@@ -1,8 +1,12 @@
 {% extends "layout.html" %}
 
-{% import "macros/cards.html" as cards %}
+{% from "campaign/campaign_card.html" import campaign_card %}
+{% from "ministry/ministry_card.html" import ministry_card %}
+{% from "post/post_card.html" import post_card %}
+
 
 {% block body %}
+
   <div class="container">
     <section class="section">
       <div class="row">
@@ -55,15 +59,15 @@
             {% for i in results %}
               {% if hasattr(i, 'founded') %}
                 <!-- ko if: ministries -->
-                {{ cards.frontpage_ministry_card(i, request) }}
+                {{ ministry_card(i, request) }}
                 <!-- /ko -->
               {% elif hasattr(i, 'goal') %}
                 <!-- ko if: campaigns -->
-                {{ cards.frontpage_campaign_card(i, request) }}
+                {{ campaign_card(i, request) }}
                 <!-- /ko -->
               {% elif hasattr(i, 'author') %}
                 <!-- ko if: posts -->
-                {{ cards.post_card(i, request=request) }}
+                {{ post_card(i, request=request) }}
                 <!-- /ko -->
               {% endif %}
             {% endfor %}
@@ -73,6 +77,7 @@
       </div>
     </section>
   </div>
+
 {% endblock %}
 
 

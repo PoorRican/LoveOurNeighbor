@@ -4,6 +4,7 @@
 {% extends "layout.html" %}
 
 {% from "campaign/parts/campaign_date_input_scripts.html" import campaign_date_input_scripts %}
+{% from "post/post_card.html" import post_card %}
 
 {% from "macros/parts/breadcrumbs.html" import breadcrumbs %}
 {% from "macros/parts/get_obj_json.html" import get_obj_json %}
@@ -14,10 +15,9 @@
 {% from "macros/parts/transaction_table.html" import transaction_table %}
 {% from "macros/parts/wysiwyg_editor.html" import wysiwyg_script %}
 
-{% import "macros/cards.html" as card %}
 
 {% block title %}
-  {{ campaign.title }} Edit Page
+  {{ campaign|string|title }} Admin Panel
 {% endblock %}
 
 {% block body %}
@@ -28,7 +28,7 @@
       <div class="container">
         <section class="tabs-vertical mt-1 section">
 
-          {{ breadcrumbs(campaign.title, parent=campaign.parent, header='Admin Panel', obj=campaign) }}
+          {{ breadcrumbs(campaign|string|title, parent=campaign.parent, header='Admin Panel', obj=campaign) }}
 
           <div class="row">
             {% if not campaign.ministry.verified %}
@@ -148,7 +148,7 @@
                   </a>
                   <div class="row">
                     {% for post in campaign.posts.all() %}
-                    {{ card.post_card(post, AUTH=True) }}
+                      {{ post_card(post, AUTH=True) }}
                     {% else %}
                       <p>There is no news for this campaign at this time.</p>
                     {% endfor %}

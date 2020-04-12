@@ -260,6 +260,26 @@ div.dialog-trigger img {
   padding: 0;
 }
 
+.card-panel .profile-img-wrapper {
+  float: left;
+  margin-right: 0.5em;
+  height: 3em;
+}
+
+.card-panel .parent-text {
+  line-height: 1.1;
+}
+
+.card-panel .pub_date {
+  color: #9e9e9e !important;
+  margin-top: 0.3em;
+  font-size: 0.8em;
+}
+
+.card-panel h5 ~ .pub_date {
+  margin-top: -0.5em;
+}
+
 
 /* Profile Page Styling */
 /* This was used from the material admin theme "account_settings.css" */

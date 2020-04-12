@@ -2,22 +2,12 @@
 ## styling/template changes
     * Allow links cards (at least in MOTD cards) to be visible
     * Implement [masonry with lightbox plugin](https://dimsemenov.com/plugins/magnific-popup/) for gallery
-    * Reformat strftime in campaign side view
-    * Change 'Ends' label to 'Ended' in campaign card when Campaign has ended
     * On Ministry view template, title should be moved from center-pane to the left for small screens
     * On Campaign view template, title should always be on left pane
     * Justify profile image in center of if banner image
     * Small ministry card, with profile image on side (to squeeze into feeds)
-    * (optional) link to parent in post_card via macro arguments
-    * (optional) link to parent in campaign_card
     * Integrate [Infinite Scroll](https://infinite-scroll.com/)
-    * Show `pub_date` on `post_card`
     * Loading animation on page load; set opacity of inside content to 0.
-    
-
-## django
-    * Unified feed Ministry Campaign/News/Gallery [syndication](https://docs.djangoproject.com/en/3.0/ref/contrib/syndication/)
-    * Highlight ministries and campaigns using [complex queries](https://docs.djangoproject.com/en/3.0/ref/models/expressions/#using-f-with-annotations)
     
 
 
@@ -57,6 +47,8 @@
 - Automatically create and rename directories by using [django signals](https://docs.djangoproject.com/en/3.0/ref/signals/#django.db.models.signals.pre_save)
 - Implement AWS S3 storage via [django-storage](https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html)
 - Disable the submit button until FilePond finishes uploading.
+- Implement 'nofollow' attribute to social media and WYSIWYG links (ie: Wikipedia)
+- Implement 'noopener' on all User generated links
 
 
 # Medium Priority 

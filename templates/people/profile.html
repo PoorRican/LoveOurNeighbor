@@ -6,7 +6,9 @@
 
 {% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
 {% from "macros/parts/input_field.html" import input_field %}
-{% import "macros/cards.html" as card %}
+
+{% from "campaign/campaign_card.html" import campaign_card %}
+{% from "ministry/ministry_card.html" import ministry_card %}
 
 {# TODO: liked ministries/campaigns #}
 {# TODO: total donated amount #}
@@ -126,9 +128,9 @@
                   <div class="row grid">
                     {% for obj in likes %}
                       {% if hasattr(obj, 'admin') %}{# Minitry Profile #}
-                        {{ card.frontpage_ministry_card(obj, request) }}
+                        {{ ministry_card(obj, request=request) }}
                         {% else %}{# Campaign #}
-                        {{ card.frontpage_campaign_card(obj, request) }}
+                        {{ campaign_card(obj, request=request) }}
                       {% endif %}
                     {% else %}
                       <h6>You haven't liked anything yet.</h6>

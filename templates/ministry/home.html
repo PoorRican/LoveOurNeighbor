@@ -1,24 +1,25 @@
 {% extends "layout.html" %}
 
-{% import "macros/cards.html" as cards %}
-
+{% from "campaign/campaign_card.html" import campaign_card %}
+{% from "ministry/ministry_card.html" import ministry_card %}
 
 {# set the active page on the sidebar #}
 {% set active = url_for('ministry:home') %}
 
 
-{% block title %}Campaigns{% endblock %}
+{% block title %}Ministries{% endblock %}
 
 
 {% block body %}
-  <div class="wrapper section">
+    <div class="wrapper section">
 
-    <h3>New Ministries</h3>
-    {% if new_ministries %}
-      <h6 class="grey-text text-darken-2 ml-1 mb-3">These are the newest ministries that have created a profile!</h6>
-      <div class="row">
-        {% for ministry in new_ministries %}
-          {{ cards.frontpage_ministry_card(ministry, request=request) }}
+        <h3>New Ministries</h3>
+      {% if new_ministries %}
+          <h6 class="grey-text text-darken-2 ml-1 mb-3">These are the newest ministries that have created a
+              profile!</h6>
+          <div class="row">
+            {% for ministry in new_ministries %}
+              {{ ministry_card(ministry, request=request) }}
         {% endfor %}
       </div>
     {% else %}
@@ -29,14 +30,14 @@
       <h3>Some more ministries</h3>
       <h6>Check out this assortment of other ministries</h6>
       {% for ministry in random_ministries %}
-        {{ cards.frontpage_ministry_card(minsitry, request=request) }}
+        {{ ministry_card(minsitry, request=request) }}
       {% endfor %}
     {% endif %}
 
-    <h6 class="grey-text text-darken-2 mb-3">Be sure to find out about these campaigns and share!</h6>
-    <div class="row">
-      {% for campaign in other_campaigns %}
-        {{ cards.frontpage_campaign_card(campaign, request=request) }}
+        <h6 class="grey-text text-darken-2 mb-2 mt-2">Be sure to find out about these campaigns and share!</h6>
+        <div class="row">
+          {% for campaign in other_campaigns %}
+            {{ campaign_card(campaign, request=request) }}
       {% endfor %}
     </div>
 
