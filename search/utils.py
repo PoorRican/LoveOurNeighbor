@@ -59,12 +59,12 @@ def perform_search(query: str):
     # TODO: in the future, enable trigram extension
     # TODO: add a parameter to prioritize results from tags
     #  (https://docs.djangoproject.com/en/3.0/ref/contrib/postgres/search/#trigram-similarity)
-    tag_q = Q(tags__name__contains=query) | Q(tags__description__contains=query)
-    ministries = MinistryProfile.objects.filter(Q(name__contains=query) |
-                                                Q(description__contains=query) |
-                                                Q(address__contains=query) | tag_q)
-    campaigns = Campaign.objects.filter(Q(title__contains=query) | Q(content__contains=query) | tag_q)
-    posts = Post.objects.filter(Q(title__contains=query) | Q(content__contains=query))
+    tag_q = Q(tags__name__icontains=query) | Q(tags__description__icontains=query)
+    ministries = MinistryProfile.objects.filter(Q(name__icontains=query) |
+                                                Q(description__icontains=query) |
+                                                Q(address__icontains=query) | tag_q).distinct()
+    campaigns = Campaign.objects.filter(Q(title__icontains=query) | Q(content__icontains=query) | tag_q).distinct()
+    posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query)).distinct()
 
     ministries = [i for i in ministries.all()]
     campaigns = [i for i in campaigns.all()]
