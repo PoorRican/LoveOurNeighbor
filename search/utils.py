@@ -1,6 +1,4 @@
 from django.db.models import Q
-from django.conf import settings
-from django.contrib.postgres.search import TrigramSimilarity, SearchQuery, SearchVector, SearchRank
 
 import numpy as np
 
@@ -58,30 +56,19 @@ def perform_search(query: str):
         List of search results, a dict containing the totals of number of results by type
 
     """
-    if 'postgresql' in settings.DATABASES['default']['ENGINE']:
-        # TODO: in the future, enable trigram extension
-        # TODO: add a parameter to prioritize results from tags
-        #  (https://docs.djangoproject.com/en/3.0/ref/contrib/postgres/search/#trigram-similarity)
-        q = SearchQuery(query)
-        t = SearchVector('tags__name__search', 'tags__description__search')  # search tags
+    # TODO: in the future, enable trigram extension
+    # TODO: add a parameter to prioritize results from tags
+    #  (https://docs.djangoproject.com/en/3.0/ref/contrib/postgres/search/#trigram-similarity)
+    tag_q = Q(tags__name__contains=query) | Q(tags__description__contains=query)
+    ministries = MinistryProfile.objects.filter(Q(name__contains=query) |
+                                                Q(description__contains=query) |
+                                                Q(address__contains=query) | tag_q)
+    campaigns = Campaign.objects.filter(Q(title__contains=query) | Q(content__contains=query) | tag_q)
+    posts = Post.objects.filter(Q(title__contains=query) | Q(content__contains=query))
 
-        vector = SearchVector('name__search', 'description__search', 'address__search', 'tags')
-        ministries = MinistryProfile.objects.annotate(rank=SearchRank(vector + t, q)).order_by('-rank')
-
-        vector = SearchVector('title__search', 'content__search')
-        campaigns = Campaign.objects.annotate(rank=SearchRank(vector + t, q)).order_by('-rank')
-        posts = Post.objects.annotate(rank=SearchRank(vector + t, q)).order_by('-rank')
-    else:
-        tag_q = Q(tags__name__contains=query) | Q(tags__description__contains=query)
-        ministries = MinistryProfile.objects.filter(Q(name__contains=query) |
-                                                    Q(description__contains=query) |
-                                                    Q(address__contains=query) | tag_q)
-        campaigns = Campaign.objects.filter(Q(title__contains=query) | Q(content__contains=query) | tag_q)
-        posts = Post.objects.filter(Q(title__contains=query) | Q(content__contains=query))
-
-        ministries = [i for i in ministries.all()]
-        campaigns = [i for i in campaigns.all()]
-        posts = [i for i in posts.all()]
+    ministries = [i for i in ministries.all()]
+    campaigns = [i for i in campaigns.all()]
+    posts = [i for i in posts.all()]
 
     return mesh_results(ministries, campaigns, posts), {'ministries': len(ministries),
                                                         'campaigns': len(campaigns),
