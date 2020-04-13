@@ -1,10 +1,9 @@
 from datetime import date, datetime, timedelta
-from os import path, makedirs
+from os import path
 
+from frontend.models import MediaStorage
 from frontend.utils import get_previous_images
-from ministry.utils import serialize_ministry, create_ministry_dirs, dedicated_ministry_dir
-
-from django.conf import settings
+from ministry.utils import serialize_ministry, dedicated_ministry_dir
 
 P_TIME = '%Y-%m-%d'  # when reading/parsing date objects
 F_TIME = '%Y-%m-%dT23:59:59'  # when writing date objects (for JSON)
@@ -56,32 +55,7 @@ def campaign_banner_dir(instance, filename, prepend=''):
                      'campaign_banners', filename)
 
 
-def create_campaign_dir(instance, prepend=settings.MEDIA_ROOT):
-    """ Utility function that creates a dedicated directory for campaign media.
-
-    Arguments
-    =========
-    instance: (Campaign)
-        Must be a campaign object, to be passed to `campaign_banner_dir`.
-
-    prepend: (str)
-        This is a desired string to prepend to path. This is passed to `dedicated_media_dir`.
-        Defaults to `MEDIA_ROOT`.
-
-    Returns
-    =======
-        None
-    """
-    for _ in (campaign_banner_dir,):
-        _path = path.split(_(instance, filename="", prepend=prepend))[0]
-        try:
-            makedirs(_path, exist_ok=True)
-        except FileNotFoundError:
-            create_ministry_dirs(instance.ministry, prepend=prepend)
-            makedirs(_path, exist_ok=True)
-
-
-def prev_banner_imgs(instance, prepend=settings.MEDIA_URL):
+def prev_banner_imgs(instance, prepend=MediaStorage.custom_domain):
     """
     Utility function that returns all previous uploaded banner images.
 
@@ -98,7 +72,7 @@ def prev_banner_imgs(instance, prepend=settings.MEDIA_URL):
         array of dicts, containing filenames as 'name', and their absolute URL paths as 'src'
 
     """
-    return get_previous_images(campaign_banner_dir, create_ministry_dirs, instance, prepend)
+    return get_previous_images(campaign_banner_dir, instance, prepend)
 
 
 def campaign_images(campaign):

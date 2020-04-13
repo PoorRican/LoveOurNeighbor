@@ -50,8 +50,9 @@ urlpatterns = [
     path('people/', include('people.urls')),
     path('activity/', include('activity.urls')),
 ]
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if not settings.USE_S3:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler400 = 'frontend.views.handler400'
 handler403 = 'frontend.views.handler403'

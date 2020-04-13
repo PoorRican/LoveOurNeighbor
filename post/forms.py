@@ -32,10 +32,12 @@ class PostEditForm(NewPostForm):
     A good reference for Django forms is:
     http://pydanny.com/core-concepts-django-modelforms.html
     """
-    pass
+    class Meta(NewPostForm.Meta):
+        widgets = {'content': forms.Textarea(attrs={'id': 'tinyEditor'}),
+                   'title': forms.TextInput(attrs={'readonly': True, 'required': True})}
 
 
-class QuickPostEditForm(PostEditForm):
+class QuickPostForm(NewPostForm):
     """
     Form used in the `quick_post` jinja2 macro.
 
@@ -46,7 +48,7 @@ class QuickPostEditForm(PostEditForm):
     "templates/macros/parts/quick_post.html"
     """
 
-    class Meta(PostEditForm.Meta):
+    class Meta(NewPostForm.Meta):
         labels = {'title': 'Post Title'}
         widgets = {'content': forms.Textarea(attrs={'class': 'materialize-textarea', 'autocomplete': 'off'}),
                    'title': forms.TextInput(attrs={'autocomplete': 'off', 'required': True})}

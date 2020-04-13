@@ -2,8 +2,7 @@ from os import path, mkdir
 
 from django.conf import settings
 
-from campaign.utils import create_campaign_dir
-from ministry.utils import dedicated_ministry_dir, create_ministry_dirs
+from ministry.utils import dedicated_ministry_dir
 
 
 def serialize_post(post):
@@ -91,12 +90,9 @@ def create_news_post_dir(instance, prepend=settings.MEDIA_ROOT):
             elif instance.campaign:
                 _campaign = instance.campaign
                 _ministry = _campaign.ministry
-                create_campaign_dir(_campaign, prepend=prepend)
             else:
                 e = 'There was an unknown error finding a dir for %s' % instance.name
                 raise AttributeError(e)
-
-            create_ministry_dirs(_ministry, prepend=prepend)
 
             # NOTE: this is infinitely recursive if `prepend` does not lead to correct directory
             create_news_post_dir(instance, prepend=prepend)

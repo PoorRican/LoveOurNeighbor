@@ -4,7 +4,7 @@ from frontend.utils import sanitize_wysiwyg_input
 from tag.models import Tag
 
 from .models import Campaign
-from .utils import create_campaign_dir, campaign_banner_dir
+from .utils import campaign_banner_dir
 
 
 class NewCampaignForm(forms.ModelForm):
@@ -32,8 +32,6 @@ class NewCampaignForm(forms.ModelForm):
 
         # object must 'exist' before ForeignKey relationships
         super(NewCampaignForm, self).save(commit=False)
-
-        create_campaign_dir(self.instance)
 
         Tag.process_tags(self.instance, self.data.get('tags', ''))
 
@@ -76,3 +74,9 @@ class CampaignEditForm(NewCampaignForm):
         self.instance.content = sanitize_wysiwyg_input(self.data.get('content', ''))
 
         return super(forms.ModelForm, self).save(commit=commit)
+
+    class Meta(NewCampaignForm.Meta):
+        widgets = {'title': forms.TextInput(attrs={'required': True, 'readonly': True}),
+                   'content': forms.Textarea(attrs={'id': 'tinyEditor'}),
+                   'start_date': forms.TextInput(attrs={'class': 'pickadate', 'required': True}),
+                   'end_date': forms.TextInput(attrs={'class': 'pickadate', 'required': True})}

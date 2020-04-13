@@ -1,4 +1,5 @@
 djangorestframework
+boto3==1.12.39
 bs4
 cssmin
 django==3.0.4
@@ -7,7 +8,8 @@ django-braces
 django-drf-filepond==0.2.2
 django-ipware
 django-rest-framework==0.1.0
-django-tinymce
+django-storages==1.9.1
+django-tinymce==3.0.1
 geopy
 gunicorn
 jinja2

@@ -6,36 +6,37 @@
 
     <div class="row">
         <div class="col s6">
-            <div class="display-flex justify-content-between flex-wrap mt-4">
-                <div class="display-flex mt-2 right-align">
-                    <i class="material-icons left">visibility</i>
-                    <span class="ml-3 vertical-align-top">{{ post.views.count() }}</span>
-                </div>
-            </div><!-- /.display-flex -->
+          <div class="display-flex justify-content-between flex-wrap mt-4">
+            <div class="display-flex mt-2 right-align">
+              <i class="material-icons left">visibility</i>
+              <span class="ml-3 vertical-align-top">{{ post.views.count() }}</span>
+            </div>
+          </div><!-- /.display-flex -->
         </div><!-- /.col -->
-        <div class="col s6">
-            <div class="mini-gallery row">
-                <a href="{{ post.url }}">
-                  {% if has_media %}
-                    {% for img in has_media[1:] %}
-                        <div class="col s6">
-                            <div class="tile" style="background-image: url('{{ img.url }}')"></div>
-                        </div>
-                    {% endfor %}
-                    {# TODO: have js make this height look good #}
-                    {% if post.media.count() > len(has_media) %}
-                        <div class="col s6">
-                            <div class="card-panel tile center show-more">
+      <div class="col s6">
+        <div class="mini-gallery row">
+          <a href="{{ post.url }}">
+            {% set media = post.random_images() %}
+            {% if media %}
+              {% for img in media[1:] %}
+                <div class="col s6">
+                  <div class="tile" style="background-image: url('{{ img.url }}')"></div>
+                </div>
+              {% endfor %}
+              {# TODO: have js make this height look good #}
+              {% if post.media.count() > len(media) %}
+                <div class="col s6">
+                  <div class="card-panel tile center show-more">
                       <span>
-                        +{{ post.media.count() - len(has_media) }} more
+                        +{{ post.media.count() - len(media) }} more
                       </span>
-                            </div>
-                        </div>
-                    {% endif %}
-                  {% endif %}
-                </a>
-            </div><!-- /.mini-gallery -->
-        </div>
+                  </div>
+                </div>
+              {% endif %}
+            {% endif %}
+          </a>
+        </div><!-- /.mini-gallery -->
+      </div>
     </div>
 
 {% endmacro %}

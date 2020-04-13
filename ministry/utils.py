@@ -1,8 +1,9 @@
-from os import path, makedirs
+from os import path
 
 from django.conf import settings
 from django.db.models import Model
 
+from frontend.models import MediaStorage
 from frontend.utils import send_email, render_jinja_template, get_previous_images
 
 P_TIME = '%Y-%m-%d'  # when reading/parsing date objects
@@ -118,33 +119,7 @@ def ministry_profile_image_dir(instance, filename, prepend=''):
                      'profile_images', filename)
 
 
-def create_ministry_dirs(instance, prepend=settings.MEDIA_ROOT):
-    """ Utility function that creates a dedicated directory and all sub-directories for MinistryProfile media.
-
-    Arguments
-    =========
-    instance: (Campaign)
-        Must be a campaign object, to be passed to `campaign_banner_dir`.
-
-    prepend: (str)
-        This is a desired string to prepend to path.
-        This is passed to `dedicated_media_dir` to form an absolute path.
-        Defaults to `MEDIA_ROOT`.
-
-    Returns
-    =======
-        None
-    """
-    # create the top-level directory
-    makedirs(dedicated_ministry_dir(instance, prepend), exist_ok=True)
-
-    # create sub-directories
-    for _ in (ministry_banner_dir, ministry_profile_image_dir):
-        _path = path.split(_(instance, filename="", prepend=prepend))[0]
-        makedirs(_path, exist_ok=True)
-
-
-def prev_banner_imgs(instance, prepend=settings.MEDIA_URL):
+def prev_banner_imgs(instance, prepend=MediaStorage.custom_domain):
     """
     Utility function that returns all previous uploaded banner images.
 
@@ -161,10 +136,10 @@ def prev_banner_imgs(instance, prepend=settings.MEDIA_URL):
         array of dicts, containing filenames as 'name', and their absolute URL paths as 'src'
 
     """
-    return get_previous_images(ministry_banner_dir, create_ministry_dirs, instance, prepend)
+    return get_previous_images(ministry_banner_dir, instance, prepend)
 
 
-def prev_profile_imgs(instance, prepend=settings.MEDIA_URL):
+def prev_profile_imgs(instance, prepend=MediaStorage.custom_domain):
     """
     Utility function that returns all previous uploaded profile images.
 
@@ -181,7 +156,7 @@ def prev_profile_imgs(instance, prepend=settings.MEDIA_URL):
         array of dicts, containing filenames as 'name', and their absolute URL paths as 'src'
 
     """
-    return get_previous_images(ministry_profile_image_dir, create_ministry_dirs, instance, prepend)
+    return get_previous_images(ministry_profile_image_dir, instance, prepend)
 
 
 def ministry_images(ministry):

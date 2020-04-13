@@ -4,18 +4,15 @@ from typing import Union
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-from django.db.models import Q
 from django.urls import reverse
 
 from activity.models import Like, View
-from frontend.settings import DEFAULT_PROFILE_IMG, MEDIA_ROOT
+from frontend.settings import DEFAULT_PROFILE_IMG
 from people.models import User
 from post.models import Post
 from tag.models import Tag
 
 from .utils import (
-    create_ministry_dirs,
-    dedicated_ministry_dir,
     ministry_banner_dir,
     ministry_profile_image_dir,
 )
@@ -217,34 +214,6 @@ class MinistryProfile(models.Model):
             return True
         else:
             return False
-
-    def rename(self, name, prepend=MEDIA_ROOT):
-        try:
-            MinistryProfile.objects.get(name=name)
-            raise ValueError("An object with this name already exists")
-        except MinistryProfile.DoesNotExist:
-            pass
-        _old_dir = dedicated_ministry_dir(self, prepend=prepend)
-        _new_dir = dedicated_ministry_dir(name, prepend=prepend)
-
-        try:
-            move(_old_dir, _new_dir)
-
-            # update object media file path attributes
-            if self.banner_img:
-                _img = path.basename(self.banner_img.path)
-                self.banner_img = ministry_banner_dir(name, _img)
-
-            if self.profile_img and self.profile_img.path != DEFAULT_PROFILE_IMG:
-                _img = path.basename(self.profile_img.path)
-                _img = ministry_profile_image_dir(name, _img)
-                self.profile_img = _img
-
-            self.save()
-        except FileNotFoundError:
-            # assume there is no dedicated directory. This is a redundant catchall.
-            create_ministry_dirs(self)
-            self.rename(name)
 
     def feed(self, n=20, page=0):
         """ Returns a paginated stream of Post and Campaign objects to return

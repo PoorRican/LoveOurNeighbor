@@ -15,7 +15,7 @@ from donation.serializers import DonationSerializer
 from donation.utils import serialize_donation
 import ministry.aggregators as ministries
 from ministry.models import MinistryProfile
-from post.forms import QuickPostEditForm
+from post.forms import QuickPostForm
 from post.models import Post
 
 from .aggregators import ongoing, upcoming
@@ -99,7 +99,7 @@ class CampaignDetail(DetailView):
                        'all_news': all_news,
                        'similar': self.object.similar_campaigns(), })
         if self.object.authorized_user(self.request.user):
-            kwargs['post_form'] = QuickPostEditForm()
+            kwargs['post_form'] = QuickPostForm()
         return super().get_context_data(**kwargs)
 
 
@@ -126,12 +126,13 @@ class AdminPanel(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin, Upd
 
     raise_exception = True
     permission_denied_message = "You do not have permissions to edit this campaign"
+    form_invalid_message = "Please check the form for errors"
     form_valid_message = "Changes Saved!"
 
     def form_invalid(self, form):
         for _, message in form.errors.items():
             messages.add_message(self.request, messages.ERROR, message[0])
-        super().form_invalid(form)
+        return super().form_invalid(form)
 
     def get_success_url(self):
         return self.request.META.get('HTTP_REFERER')

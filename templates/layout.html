@@ -51,22 +51,22 @@
     <link rel="shortcut icon" href="{{ static('img/favicon.svg') }}">
     <link rel="apple-touch-icon" href="{{ static('img/favicon.svg') }}">
 
-    {# {{{ CSS Imports #}
-    <link rel="stylesheet" href="{{ static('theme/vendors.min.css') }}">
-    <link rel="stylesheet" href="{{ static('theme/materialize.min.css') }}">
-    <link rel="stylesheet" href="{{ static('theme/style.min.css') }}">
+  {# {{{ CSS Imports #}
+  <link rel="stylesheet" href="{{ static('theme/vendors.min.css') }}">
+  <link rel="stylesheet" href="{{ static('theme/materialize.min.css') }}">
+  <link rel="stylesheet" href="{{ static('theme/style.min.css') }}">
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    {% block css %}{% endblock %}
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  {% block css %}{% endblock %}
 
-    {# Local Scripts #}
-    {# TODO: fetch these from CDN while on production #}
-    {% assets "css" %}
-      <link rel="stylesheet" href="/{{ ASSET_URL }}">
-    {% endassets %}
+  {# Local Scripts #}
+  {% set css_assets = ('animations.css', 'body.css', 'footer.css', 'header.css', 'LON.css', 'sidenav.css') %}
+  {% for asset in css_assets %}
+    <link rel="stylesheet" href="{{ static('css/' + asset) }}">
+  {% endfor %}
 
-    {# }}} #}
+  {# }}} #}
 
 </head>
 

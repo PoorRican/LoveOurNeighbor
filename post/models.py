@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -11,6 +10,7 @@ from random import sample
 from secrets import choice
 from string import ascii_letters
 
+from frontend.models import MediaStorage
 from activity.models import Like, View
 from people.models import User
 
@@ -28,7 +28,7 @@ class Media(models.Model):
     def url(self):
         # NOTE: in future versions of `django_drf_filepond`, `self.image.file_path` will be replaced with `FileField`
         # It is currently a `CharField`
-        return path.join(settings.MEDIA_URL, self.image.file_path)
+        return path.join('https://', MediaStorage.custom_domain, self.image.file_path)
 
 
 class Post(models.Model):
@@ -75,6 +75,8 @@ class Post(models.Model):
     def ministry(self):
         if getattr(self, '_ministry').all():
             return getattr(self, '_ministry').all()[0]
+        elif hasattr(self.content_object, 'campaigns'):  # check of content_object is MinistryProfile
+            return self.content_object
         else:
             return False
 
@@ -82,6 +84,8 @@ class Post(models.Model):
     def campaign(self):
         if getattr(self, '_campaign').all():
             return getattr(self, '_campaign').all()[0]
+        elif hasattr(self.content_object, 'goal'):  # check if content_object is Campaign
+            return self.content_object
         else:
             return False
 

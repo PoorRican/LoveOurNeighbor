@@ -61,12 +61,11 @@ class CreatePost(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin, Cre
         post = form.save(commit=False)
         post.content_object = self.content_object
         post.author = self.request.user
+        post.save()
 
         form.clean_media()
         upload_ids = form.cleaned_data['media']
         post.add_media(upload_ids)
-
-        create_news_post_dir(post)
 
         messages.add_message(self.request, messages.INFO, self.form_valid_message)
 

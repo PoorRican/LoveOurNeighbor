@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'tinymce',
     'django_drf_filepond',
     'rest_framework',
+    'storages',
 
     'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.auth',
@@ -217,7 +218,22 @@ ASSETS_MODULES = [
     'frontend.assets'
 ]
 
-if DEBUG:
+USE_S3 = os.getenv('USE_S3') == 'TRUE'
+
+if USE_S3:
+    # aws settings
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+    # s3 static settings
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    DEFAULT_FILE_STORAGE = 'frontend.models.MediaStorage'
+    ASSETS_AUTO_BUILD = False
+else:
     STATIC_URL = '/static/'
     STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
 
@@ -227,16 +243,6 @@ if DEBUG:
 
     ASSETS_URL = '/static/'
     ASSETS_AUTO_BUILD = True
-
-else:
-    STATIC_URL = '/staticfiles/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-    MEDIA_URL = '/mediafiles/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
-
-    ASSETS_URL = STATIC_URL
-    ASSETS_AUTO_BUILD = False
 
 # Google Analytics
 GA_TRACKING_ID = 'UA-153638464-1'
@@ -298,7 +304,9 @@ SITE_ID = 1
 DJANGO_DRF_FILEPOND_UPLOAD_TMP = os.path.join('/tmp',
                                               'filepond-temp-uploads')  # let the filesystem handle cleanup of temp files
 DJANGO_DRF_FILEPOND_ALLOW_EXTERNAL_UPLOAD_DIR = True
-DJANGO_DRF_FILEPOND_FILE_STORE_PATH = MEDIA_ROOT
+# DJANGO_DRF_FILEPOND_FILE_STORE_PATH = MEDIA_ROOT
+
+DJANGO_DRF_FILEPOND_STORAGES_BACKEND = 'frontend.models.MediaStorage'
 
 # Sentry Config
 sentry_sdk.init(

@@ -10,7 +10,7 @@ from webassets.ext.jinja2 import AssetsExtension
 from typing import Union
 
 from frontend.settings import (
-    ASSETS_DEBUG, ASSETS_AUTO_BUILD, STATIC_URL, STATIC_ROOT,
+    ASSETS_DEBUG, ASSETS_AUTO_BUILD, STATIC_URL,
     GA_TRACKING_ID,
     PAYEEZY_TEST_BUTTON,
     COMMENTS,
@@ -27,14 +27,15 @@ from .utils import (
     active_sidenav_submenu,
 )
 
+
 # Manually register Bundles for webassets (for some reason django_assets is not working)
-_url = STATIC_URL
-if _url[0] == '/':
-    _url = _url[1:]
-# TODO: this needs to be fixed!
-_assets = AssetsEnvironment('./static', _url, debug=ASSETS_DEBUG, auto_build=ASSETS_AUTO_BUILD)
-_assets.register('js', js)
-_assets.register('css', css)
+# _url = STATIC_URL
+# if _url[0] == '/':
+#     _url = _url[1:]
+# # TODO: this needs to be fixed!
+# _assets = AssetsEnvironment('./static', _url, debug=ASSETS_DEBUG, auto_build=ASSETS_AUTO_BUILD)
+# _assets.register('js', js)
+# _assets.register('css', css)
 
 
 # hack for getting dynamic mission statement
@@ -135,6 +136,6 @@ def environment(**options):
         'today': date.today,
         'unwrap_breadcrumbs': unwrap_breadcrumbs
     })
-    env.add_extension(AssetsExtension)
-    env.assets_environment = _assets
+    # env.add_extension(AssetsExtension)
+    # env.assets_environment = _assets
     return env

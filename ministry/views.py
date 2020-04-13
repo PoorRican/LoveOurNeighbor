@@ -16,7 +16,7 @@ from activity.models import View
 import campaign.aggregators as campaigns
 from donation.models import Donation
 from donation.serializers import DonationSerializer
-from post.forms import QuickPostEditForm
+from post.forms import QuickPostForm
 from post.models import Post
 
 from .aggregators import recent, random
@@ -67,7 +67,7 @@ class CreateMinistry(LoginRequiredMixin, FormMessagesMixin, CreateView):
     initial = {'website': 'https://', 'address': ''}
 
     form_valid_message = "Your Ministry has been submitted for review!"
-    form_invalid_message = 'Please fill out everything before you can continue.'
+    form_invalid_message = 'Please fill out everything before you can continue'
 
     def form_valid(self, form):
         ministry = form.save()
@@ -143,7 +143,7 @@ class MinistryDetail(DetailView):
                        'images': images,
                        'similar': similar, })
         if self.object.authorized_user(self.request.user):
-            kwargs['post_form'] = QuickPostEditForm()
+            kwargs['post_form'] = QuickPostForm()
         return super().get_context_data(**kwargs)
 
 
@@ -170,12 +170,13 @@ class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, Upd
 
     raise_exception = True
     permission_denied_message = "You do not have permissions to edit this ministry"
+    form_invalid_message = "Please check the form for errors"
     form_valid_message = "Changes Saved!"
 
     def form_invalid(self, form):
         for _, message in form.errors.items():
             messages.add_message(self.request, messages.ERROR, message[0])
-        super().form_invalid(form)
+        return super().form_invalid(form)
 
     def get_form_valid_message(self):
         return "Changes saved to %s" % self.object
@@ -187,9 +188,6 @@ class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, Upd
         return self.get_object().authorized_user(user)
 
     def get_context_data(self, **kwargs):
-        donations = {}
-        count = 0
-
         kwargs.update({"form": MinistryEditForm(instance=self.object),
                        "rep_form": RepManagementForm(instance=self.object),
                        "ministry": self.object})
@@ -329,7 +327,7 @@ def banner_img_json(request, ministry_id):
     _json = {'available': prev_banner_imgs(ministry)}
 
     try:
-        _current = ministry.banner_img.path
+        _current = ministry.banner_img.url
     except ValueError:
         _current = ''
     _json['current'] = os.path.basename(_current)
@@ -339,14 +337,14 @@ def banner_img_json(request, ministry_id):
 @require_safe
 def profile_img_json(request, ministry_id):
     """ View that returns all images located in dedicated
-    banner directory for MinistryProfile
+    profile_img directory for MinistryProfile
     """
     ministry = MinistryProfile.objects.get(pk=ministry_id)
 
     _json = {'available': prev_profile_imgs(ministry)}
 
     try:
-        _current = ministry.profile_img.path
+        _current = ministry.profile_img.url
     except ValueError:
         _current = ''
     _json['current'] = os.path.basename(_current)

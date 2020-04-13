@@ -233,7 +233,6 @@ def render_jinja_template(template_path, context):
 
 
 def get_previous_images(img_dir_func: Callable[[Model, str, str], str],
-                        create_dir_func: Callable[[Model], None],
                         instance: Model, prepend: str = settings.MEDIA_URL):
     """
     Utility function that returns all files in a directory given by the function `img_dir_func`
@@ -242,9 +241,6 @@ def get_previous_images(img_dir_func: Callable[[Model, str, str], str],
     ----------
     img_dir_func: Callable[[Model, str, str], str]
         Callback function to list contents of dedicated directory
-
-    create_dir_func: Callable[[Model], None]
-        Callback function to create a directory in case it does not exist
 
     instance: Model
 
@@ -268,7 +264,7 @@ def get_previous_images(img_dir_func: Callable[[Model, str, str], str],
     try:
         imgs = listdir(img_dir_func(instance, '', settings.MEDIA_ROOT))
     except FileNotFoundError:
-        create_dir_func(instance)
+        pass
 
     _return = []
     for i in imgs:

@@ -45,7 +45,6 @@
 - Tag should have a method to for search URL
 - Prevent duplicate donation objects from being created upon repeating GET /donation/confirm
 - Automatically create and rename directories by using [django signals](https://docs.djangoproject.com/en/3.0/ref/signals/#django.db.models.signals.pre_save)
-- Implement AWS S3 storage via [django-storage](https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html)
 - Disable the submit button until FilePond finishes uploading.
 - Implement 'nofollow' attribute to social media and WYSIWYG links (ie: Wikipedia)
 - Implement 'noopener' on all User generated links

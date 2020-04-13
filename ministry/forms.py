@@ -8,7 +8,6 @@ from .models import MinistryProfile
 from .utils import (
     ministry_banner_dir,
     ministry_profile_image_dir,
-    create_ministry_dirs,
 )
 
 
@@ -36,7 +35,6 @@ class NewMinistryForm(forms.ModelForm):
         super(NewMinistryForm, self).save(commit=False)
         self.instance.save()
 
-        create_ministry_dirs(self.instance)
         # Handle object relationships
         Tag.process_tags(self.instance, self.data.get('tags', ''))
 
@@ -84,8 +82,9 @@ class MinistryEditForm(NewMinistryForm):
         before the model can be saved.
         """
         # move to a new directory if name change
-        if self.instance.name != self.data.get('name'):
-            self.instance.rename(self.data.get('name'))
+        # TODO: make `MinistryProfile.rename` work w/ S3 storage
+        # if self.instance.name != self.data.get('name'):
+        #     self.instance.rename(self.data.get('name'))
 
         # handle selection of previously uploaded media
         _img = self.data.get('selected_banner_img', False)
@@ -104,6 +103,14 @@ class MinistryEditForm(NewMinistryForm):
         self.instance.description = sanitize_wysiwyg_input(self.data.get('description', ''))
 
         return super(forms.ModelForm, self).save(commit=commit)
+
+    class Meta(NewMinistryForm.Meta):
+        widgets = {'name': forms.TextInput(attrs={'required': True, 'readonly': True}),
+                   'description': forms.Textarea(attrs={'id': 'tinyEditor'}),
+                   'address': forms.Textarea(attrs={'rows': 3,
+                                                    'cols': 30,
+                                                    'class': 'materialize-textarea'}),
+                   'founded': forms.TextInput(attrs={'class': 'pickadate', 'required': True})}
 
 
 class RepManagementForm(forms.ModelForm):

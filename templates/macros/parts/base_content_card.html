@@ -4,23 +4,27 @@
     {% set auth = obj.authorized_user(request.user) %}
   {% endif %}
 
-    <div class="{{ class }} grid-item col s12 {% if not wide %}l6{% endif %}">
-        <div class="card-panel border-radius-8 {% if media %} mt-6{% endif %}">
+  <div class="{{ class }} grid-item col s12 {% if not wide %}l6{% endif %}">
+    <div class="card-panel border-radius-8 {% if media %} mt-6{% endif %}">
 
-          {% if media %}
-              <a href="{{ obj.url }}">
-                  <img class="responsive-img border-radius-8 z-depth-4 image-n-margin"
-                       src="{{ media.url if media is iterable else media[0].url }}">
-              </a>
-              <div>&nbsp;</div>
+      {% if media %}
+        <a href="{{ obj.url }}">
+          {% if hasattr(media, 'url') %}
+            <img class="responsive-img border-radius-8 z-depth-4 image-n-margin" src="{{ media.url }}">
+          {% else %}
+            {# assume that `media` is iterable #}
+            <img class="responsive-img border-radius-8 z-depth-4 image-n-margin" src="{{ media[0].url }}">
           {% endif %}
+        </a>
+        <div>&nbsp;</div>
+      {% endif %}
 
-          {% if auth %}
-              <a class="btn-flat dropdown-trigger grey-text p-0 ml-1 right"
-                 data-target="{{ class }}_{{ obj.id }}_card_dropdown">
-                  <i class="material-icons">more_horiz</i>
-              </a><!-- /.dropdown-trigger -->
-          {% endif %}
+      {% if auth %}
+        <a class="btn-flat dropdown-trigger grey-text p-0 ml-1 right"
+           data-target="{{ class }}_{{ obj.id }}_card_dropdown">
+          <i class="material-icons">more_horiz</i>
+        </a><!-- /.dropdown-trigger -->
+      {% endif %}
 
           {% if show_parent %}
 
