@@ -17,7 +17,7 @@
         <h3>Upcoming</h3>
       {% if upcoming_campaigns %}
         <h6 class="ml-1 mb-3">Be sure to find out more and share about these upcoming campaigns!</h6>
-        <div class="row">
+        <div class="row grid">
           {% for campaign in upcoming_campaigns %}
             {{ campaign_card(campaign, request=request) }}
           {% endfor %}
@@ -29,7 +29,7 @@
       <h3>Ongoing</h3>
       {% if ongoing_campaigns %}
         <h6 class="ml-1 mb-3">Check out these campaigns that have already started on LON!</h6>
-        <div class="row">
+        <div class="row grid">
           {% for campaign in ongoing_campaigns %}
             {{ campaign_card(campaign, request=request) }}
           {% endfor %}

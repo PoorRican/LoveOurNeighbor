@@ -17,7 +17,7 @@
       {% if new_ministries %}
           <h6 class="grey-text text-darken-2 ml-1 mb-3">These are the newest ministries that have created a
               profile!</h6>
-          <div class="row">
+          <div class="row grid">
             {% for ministry in new_ministries %}
               {{ ministry_card(ministry, request=request) }}
         {% endfor %}
@@ -35,7 +35,7 @@
     {% endif %}
 
         <h6 class="grey-text text-darken-2 mb-2 mt-2">Be sure to find out about these campaigns and share!</h6>
-        <div class="row">
+        <div class="row grid">
           {% for campaign in other_campaigns %}
             {{ campaign_card(campaign, request=request) }}
       {% endfor %}

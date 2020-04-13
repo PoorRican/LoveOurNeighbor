@@ -31,6 +31,7 @@
 
 
 ## Internal Fixes
+- Saving User Profile should take you to /home
 - Pass HTTP_REFERER to AdminPanel forms to redirect to referring page before going to admin panel
 - Profile Image Functionality:
     * Dynamically show selected/uploaded image
