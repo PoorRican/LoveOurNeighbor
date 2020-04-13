@@ -197,7 +197,7 @@
                 <div class="col s12">
                   <h5 style="font-size: xx-large">
                     {{ ministry|string|title }}
-                    {% if AUTH %}
+                    {% if auth %}
                       <a class="btn-flat dropdown-trigger grey-text p-0 ml-1" data-target="ministry_{{ ministry.id }}">
                         <i class="material-icons">more_horiz</i>
                       </a><!-- /.dropdown-trigger -->
@@ -208,7 +208,7 @@
               </div><!-- /ministry name -->
 
               {# Admin Dropdown Menu #}
-              {% if AUTH %}
+              {% if auth %}
                 <ul id="ministry_{{ ministry.id }}" class="dropdown-content" style="min-width: 8em;">
                   {% for opt in ministry_admin_urls(ministry) %}
                     <li>

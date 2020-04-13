@@ -24,7 +24,7 @@
 
 {% macro ministry_card_menu(ministry, class) %}
 
-    <ul id="ministry_{{ ministry.id }}_card_dropdown" class="dropdown-content" style="min-width: 8em;">
+    <ul id="{{ class }}_{{ ministry.id }}_card_dropdown" class="dropdown-content" style="min-width: 12em;">
       {% for opt in ministry_admin_urls(ministry) %}
           <li>
               <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
