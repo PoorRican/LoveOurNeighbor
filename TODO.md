@@ -1,36 +1,43 @@
 # Immediate Things To Do:
 ## styling/template changes
-    * Allow links cards (at least in MOTD cards) to be visible
-    * Implement [masonry with lightbox plugin](https://dimsemenov.com/plugins/magnific-popup/) for gallery
-    * On Ministry view template, title should be moved from center-pane to the left for small screens
-    * On Campaign view template, title should always be on left pane
-    * Justify profile image in center of if banner image
-    * Small ministry card, with profile image on side (to squeeze into feeds)
-    * Integrate [Infinite Scroll](https://infinite-scroll.com/)
-    * Loading animation on page load; set opacity of inside content to 0.
+* Allow links cards (at least in MOTD cards) to be visible
+* Implement [masonry with lightbox plugin](https://dimsemenov.com/plugins/magnific-popup/) for gallery
+* On Ministry view template, title should be moved from center-pane to the left for small screens
+* On Campaign view template, title should always be on left pane
+* Justify profile image in center of if banner image
+* Small ministry card, with profile image on side (to squeeze into feeds)
+* Integrate [Infinite Scroll](https://infinite-scroll.com/)
+* Loading animation on page load; set opacity of inside content to 0.
+* Show description/content on ministry/campaign cards
+* Expand the features available in TinyMCE
     
 
 
 # Metadata / 3rd-party Integration:
-    - FBLID on Google Analytics
-    - Add FB App ID
-    - Test out sharing (OpenGraph)
-    - Show banner image in ograph metadata for media sharing
-    - Add [Facebook Like buttons](https://www.dummies.com/web-design-development/site-development/how-to-add-facebook-connect-to-your-website/)
-    - Implement [social media authentication](https://auth0.com)
+- FBLID on Google Analytics
+- Add FB App ID
+- Test out sharing (OpenGraph)
+- Show banner image in ograph metadata for media sharing
+- Add [Facebook Like buttons](https://www.dummies.com/web-design-development/site-development/how-to-add-facebook-connect-to-your-website/)
+- Implement [social media authentication](https://auth0.com)
+- Google Analytics events:
+    * User Created
+    * Donation Button Clicked
+    * Like Button Clicked
 
 
 # Immediate Things to Implement
-    - Turn link tree/sitemap into a global in Python accessible from jinja2 environment
-    - Turn MotD into modal and fire every first visit
-    - Static pages:
-        * About Us Blurbs
-    - Help Blurbs for ministries:
-        * Explaining details in Ministry Profile Page
-    - Add Cookie Consent Banner from Termly
+- Turn link tree/sitemap into a global in Python accessible from jinja2 environment
+- Turn MotD into modal and fire every first visit
+- Static pages:
+    * About Us Blurbs
+- Help Blurbs for ministries:
+    * Explaining details in Ministry Profile Page
+- Add Cookie Consent Banner from Termly
 
 
 ## Internal Fixes
+- Implement yum-cron for automatic updates [as per here](https://stackoverflow.com/questions/9206261/how-do-install-security-updates-on-an-amazon-linux-ami-ec2-instance)
 - Saving User Profile should take you to /home
 - Pass HTTP_REFERER to AdminPanel forms to redirect to referring page before going to admin panel
 - Profile Image Functionality:
@@ -42,9 +49,7 @@
     * Settings for email notifications. E.g: admin notifications, newsletters.
     * Change Password
 - Clean up utils/ dir. Create a module with utility functions accessible via a CLI or args.
-- Why does `python manage.py collectstatic` not collect static files for tinymce app in docker config?
 - Tag should have a method to for search URL
-- Prevent duplicate donation objects from being created upon repeating GET /donation/confirm
 - Automatically create and rename directories by using [django signals](https://docs.djangoproject.com/en/3.0/ref/signals/#django.db.models.signals.pre_save)
 - Disable the submit button until FilePond finishes uploading.
 - Implement 'nofollow' attribute to social media and WYSIWYG links (ie: Wikipedia)
@@ -103,14 +108,3 @@ Things to do before Users will be using the site:
 - Change nav header [based upon scroll position](https://pqina.nl/blog/applying-styles-based-on-the-user-scroll-position-with-smart-css/)
 - Show newsletter [based upon scroll position](https://pqina.nl/blog/using-smart-css-to-time-your-wonderful-newsletter-popup/)
 - Implement countdowns and number visualizations using [flip](https://pqina.nl/flip/)
-
-## Implementation Changes
-- Create custom asset handler:
-    * Override django's collectstatic method
-    * Override django's 'static' function to create url using 'STATIC_URL' and CRM URL while not debugging
-- Implement ClassAsView's:
-    * Image JSON url's should use identical view function/functor-class
-- Help text should be in a dedicated app so that it is editable
-
-## Deployment Changes
-- nginx container should be built via staged loading to acquire certs and avoid nginx config hacks

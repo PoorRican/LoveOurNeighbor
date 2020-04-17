@@ -37,6 +37,7 @@ These are the features that are needed, or planning to be added.
 - Milestones for MinistryProfiles (email/notification)
 - Map displaying ministry location (via 'explore' tab)
 - [Image Editing](https://pqina.nl/doka/)
+- [Flickity](https://flickity.metafizzy.co/) for carousels
 
 # Unimportant
 - Logging for Django
