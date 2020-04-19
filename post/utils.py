@@ -2,7 +2,7 @@ from os import path, mkdir
 
 from django.conf import settings
 
-from ministry.utils import dedicated_ministry_dir
+from frontend.utils import generic_media_dir
 
 
 def serialize_post(post):
@@ -57,7 +57,7 @@ def post_media_dir(instance, filename, prepend=settings.MEDIA_ROOT):
         e = 'There was an unknown error finding a dir for %s' % instance.title
         raise AttributeError(e)
 
-    return path.join(dedicated_ministry_dir(_ministry, prepend=prepend),
+    return path.join(generic_media_dir(_ministry, prepend=prepend),
                      'post_media', filename)
 
 

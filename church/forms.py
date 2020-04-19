@@ -1,17 +1,17 @@
 from frontend.forms import NewProfileForm, BaseRepManagementForm, ProfileEditForm
 
-from .models import Ministry
+from .models import Church
 
 
-class NewMinistryForm(NewProfileForm):
+class NewChurchForm(NewProfileForm):
     class Meta(NewProfileForm.Meta):
-        model = Ministry
+        model = Church
 
 
-class MinistryEditForm(ProfileEditForm):
+class ChurchEditForm(ProfileEditForm):
     pass
 
 
 class RepManagementForm(BaseRepManagementForm):
     class Meta(BaseRepManagementForm.Meta):
-        model = Ministry
+        model = Church

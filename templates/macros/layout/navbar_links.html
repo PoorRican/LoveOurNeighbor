@@ -61,9 +61,9 @@
           <li class="divider"></li>
 
           {% set aliases = [{'label': 'Ministries You Administer',
-                              'profiles': request.user.administers.all()},
+                              'profiles': request.user.administers_ministry.all()},
                              {'label': 'Ministries You Represent',
-                              'profiles': request.user.represents.all()}] %}
+                              'profiles': request.user.represents_ministry.all()}] %}
 
           {% for i in aliases %}
             {% if len(i['profiles']) %}

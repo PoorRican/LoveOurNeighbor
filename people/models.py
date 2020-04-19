@@ -1,10 +1,8 @@
-from hashlib import md5
 from uuid import uuid4
 
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import UserManager
-from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -17,9 +15,6 @@ from frontend.utils import send_email
 from explore.models import GeoLocation
 
 from .utils import user_profile_img_dir, verification_required
-
-
-BLANK_AVATAR = 'https://gravatar.com/avatar/blank'
 
 
 class MyUserManager(UserManager):
@@ -187,50 +182,3 @@ class User(AbstractBaseUser, PermissionsMixin):
         url = reverse('people:verify_user', kwargs={'email': self.email,
                                                     'confirmation': self.confirmation.hex})
         return request.build_absolute_uri(url)
-
-
-def set_initial_user_names(request, user, sociallogin=None, **kwargs):
-    """
-    When a social account is created successfully and this signal is received,
-    django-allauth passes in the sociallogin param, giving access to metadata on the remote account, e.g.:
-
-    sociallogin.account.provider  # e.g. 'twitter'
-    sociallogin.account.get_avatar_url()
-    sociallogin.account.get_profile_url()
-    sociallogin.account.extra_data['screen_name']
-
-    See the socialaccount_socialaccount table for more in the 'extra_data' field.
-    From http://birdhouse.org/blog/2013/12/03/django-allauth-retrieve-firstlast-names-from-fb-twitter-google/comment-page-1/
-    """
-
-    preferred_avatar_size_pixels = 256
-
-    picture_url = "http://www.gravatar.com/avatar/{0}?s={1}".format(
-        md5(user.email.encode('UTF-8')).hexdigest(),
-        preferred_avatar_size_pixels
-    )
-
-    if sociallogin:
-        # Extract first / last names from social nets and store on User record
-        if sociallogin.account.provider == 'twitter':
-            name = sociallogin.account.extra_data['name']
-            user.first_name = name.split()[0]
-            user.last_name = name.split()[1]
-
-        if sociallogin.account.provider == 'facebook':
-            user.first_name = sociallogin.account.extra_data['first_name']
-            user.last_name = sociallogin.account.extra_data['last_name']
-            # verified = sociallogin.account.extra_data['verified']
-            picture_url = "http://graph.facebook.com/{0}/picture?width={1}&height={1}".format(
-                sociallogin.account.uid, preferred_avatar_size_pixels)
-
-        if sociallogin.account.provider == 'google':
-            user.first_name = sociallogin.account.extra_data['given_name']
-            user.last_name = sociallogin.account.extra_data['family_name']
-            # verified = sociallogin.account.extra_data['verified_email']
-            picture_url = sociallogin.account.extra_data['picture']
-
-    profile = UserProfile(user=user, avatar_url=picture_url)
-    profile.save()
-    user.guess_display_name()
-    user.save()

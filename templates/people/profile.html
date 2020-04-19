@@ -93,8 +93,8 @@
                     <i class="material-icons">add</i>&nbsp;New Ministry
                   </a>
 
-                  {% set ministries = {'Minsitries You Administer': request.user.administers.all(),
-                     'Ministries You Represent': request.user.represents.all()} %}
+                  {% set ministries = {'Minsitries You Administer': request.user.administers_ministry.all(),
+                     'Ministries You Represent': request.user.represents_ministry.all()} %}
                   {# make each section half-size on large screen if there are both categories to represent #}
                   {% set full = len(ministries.values()[0]) and len(ministries.values()[1]) %}
 
