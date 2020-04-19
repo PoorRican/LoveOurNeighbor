@@ -14,7 +14,7 @@ These are the features that are needed, or planning to be added.
 - Church profiles
 - Mailing List functionality:
    * Update on the Ministries they like
-   * Update admin and reps on MinistryProfile activity
+   * Update admin and reps on Ministry activity
 - Ministry being able to send mass email to all donors or subscribers
 - Events (by Ministries or Churches)
 - DB Backup (via Docker or AWS)

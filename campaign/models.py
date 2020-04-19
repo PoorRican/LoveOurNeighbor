@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.urls import reverse
 
 from activity.models import Like, View
-from ministry.models import MinistryProfile
+from ministry.models import Ministry
 from post.models import Post
 from people.models import User
 from tag.models import Tag
@@ -23,7 +23,7 @@ class Campaign(models.Model):
 
     goal = models.PositiveIntegerField('goal')
 
-    ministry = models.ForeignKey(MinistryProfile, related_name='campaigns',
+    ministry = models.ForeignKey(Ministry, related_name='campaigns',
                                  on_delete=models.CASCADE)
     content = models.TextField(null=True, blank=True)
 
@@ -100,7 +100,7 @@ class Campaign(models.Model):
         return self.ministry.profile_img
 
     @property
-    def content_object(self) -> MinistryProfile:
+    def content_object(self) -> Ministry:
         return self.ministry
 
     @property

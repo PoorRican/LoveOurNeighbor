@@ -19,7 +19,7 @@ from .utils import (
 
 
 # Backend Functionality
-class MinistryProfile(models.Model):
+class Ministry(models.Model):
     name = models.CharField(max_length=100, unique=True)
     verified = models.BooleanField(default=False)
 
@@ -193,11 +193,11 @@ class MinistryProfile(models.Model):
 
     def similar_ministries(self):
         """
-        Traverses along tags to fetch related `MinistryProfile` objects.
+        Traverses along tags to fetch related `Ministry` objects.
 
         Returns
         -------
-        List of `MinistryProfile`
+        List of `Ministry`
 
         """
         # TODO: use a `Q` to perform this query

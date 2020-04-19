@@ -4,7 +4,7 @@ from frontend.utils import sanitize_wysiwyg_input
 from people.models import User
 from tag.models import Tag
 
-from .models import MinistryProfile
+from .models import Ministry
 from .utils import (
     ministry_banner_dir,
     ministry_profile_image_dir,
@@ -16,7 +16,7 @@ class NewMinistryForm(forms.ModelForm):
         super(NewMinistryForm, self).__init__(*args, **kwargs)
         self.fields['tags'] = forms.CharField(max_length=256, required=False)
 
-    def save(self, commit=True) -> MinistryProfile:
+    def save(self, commit=True) -> Ministry:
         """ Handles related data such as ForeignKey relationships and media directories.
 
         Notes
@@ -45,7 +45,7 @@ class NewMinistryForm(forms.ModelForm):
         return super(NewMinistryForm, self).save(commit=commit)
 
     class Meta:
-        model = MinistryProfile
+        model = Ministry
         fields = ('profile_img', 'banner_img',
                   'name', 'address', 'phone_number', 'website', 'founded',
                   'facebook', 'instagram', 'youtube', 'twitter',
@@ -62,7 +62,7 @@ class NewMinistryForm(forms.ModelForm):
 
 
 class MinistryEditForm(NewMinistryForm):
-    """Form for viewing and editing fields in a MinistryProfile object.
+    """Form for viewing and editing fields in a Ministry object.
 
     A good reference for Django forms is:
     http://pydanny.com/core-concepts-django-modelforms.html
@@ -73,7 +73,7 @@ class MinistryEditForm(NewMinistryForm):
         self.fields['selected_banner_img'] = forms.CharField(max_length=64, required=False)
         self.fields['selected_profile_img'] = forms.CharField(max_length=64, required=False)
 
-    def save(self, commit=True) -> MinistryProfile:
+    def save(self, commit=True) -> Ministry:
         """ Handles related data such as ForeignKey relationships and media directories.
 
         Notes
@@ -82,7 +82,7 @@ class MinistryEditForm(NewMinistryForm):
         before the model can be saved.
         """
         # move to a new directory if name change
-        # TODO: make `MinistryProfile.rename` work w/ S3 storage
+        # TODO: make `Ministry.rename` work w/ S3 storage
         # if self.instance.name != self.data.get('name'):
         #     self.instance.rename(self.data.get('name'))
 
@@ -119,7 +119,7 @@ class RepManagementForm(forms.ModelForm):
         self.fields['reps'] = forms.CharField(max_length=512, required=False)
         self.fields['requests'] = forms.CharField(max_length=512, required=False)
 
-    def save(self, commit=True) -> MinistryProfile:
+    def save(self, commit=True) -> Ministry:
         reps = self.data.get('reps', '').split(', ')
         reqs = self.data.get('requests', '').split(', ')
 
@@ -140,7 +140,7 @@ class RepManagementForm(forms.ModelForm):
         return super(RepManagementForm, self).save(commit=commit)
 
     class Meta:
-        model = MinistryProfile
+        model = Ministry
         exclude = ('profile_img', 'banner_img',
                    'name', 'address', 'phone_number', 'website', 'founded',
                    'facebook', 'instagram', 'youtube', 'twitter',

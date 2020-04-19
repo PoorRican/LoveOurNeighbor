@@ -56,7 +56,7 @@ class CampaignSerializer(serializers.ModelSerializer):
 
         Parameters
         ----------
-        obj: MinistryProfile
+        obj: Ministry
 
         Returns
         -------

@@ -19,7 +19,7 @@ from utils.test_helpers import (
 from people.models import DEFAULT_PROFILE_IMG
 
 from .forms import MinistryEditForm
-from .models import MinistryProfile
+from .models import Ministry
 from .utils import ministry_banner_dir, ministry_profile_image_dir, dedicated_ministry_dir, create_ministry_dirs
 
 
@@ -31,7 +31,7 @@ class BaseMinistryProfileTestCase(BaseViewTestCase):
         rmtree(dedicated_ministry_dir(data['name'], settings.MEDIA_ROOT), ignore_errors=True)
         create_ministry_dirs(data['name'], prepend=settings.MEDIA_ROOT)
 
-        self.obj = MinistryProfile.objects.create(**data)
+        self.obj = Ministry.objects.create(**data)
 
     def tearDown(self):
         rmtree(dedicated_ministry_dir(self.obj, settings.MEDIA_ROOT), ignore_errors=True)
@@ -57,15 +57,15 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
         self.obj.delete()
         _new = default_ministry_data()
         response = self.client.post(_url, data=_new)
-        _min = MinistryProfile.objects.get(name=_new['name'])
+        _min = Ministry.objects.get(name=_new['name'])
         self.volatile.append(_min)
         self.assertTrue(bool(_min))
         self.assertRedirects(response, reverse('ministry:ministry_profile',
                                                kwargs={'ministry_id': _min.id}))
 
         # TODO: test malformed POST and redirect on error
-        # TODO: test MinistryProfile.banner_img
-        # TODO: test MinistryProfile.profile_img
+        # TODO: test Ministry.banner_img
+        # TODO: test Ministry.profile_img
         # TODO: test feedback on success
 
     def testAdminPanel(self):
@@ -107,7 +107,7 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
             response = self.client.post(_url, data=data)
 
             # for some reason, self.obj does not reflect changes
-            _min = MinistryProfile.objects.get(id=self.obj.id)
+            _min = Ministry.objects.get(id=self.obj.id)
             self.assertEqual(getattr(_min, key), val)
             self.assertRedirects(response, "/ministry/%s" % self.obj.id)
 
@@ -159,7 +159,7 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
                     img.name = fn
                     response = self.client.post(_url, data=default_ministry_data(**{attr: img}))
                     self.assertRedirects(response, "/ministry/%s" % self.obj.id)
-                    obj = MinistryProfile.objects.get(id=self.obj.id)
+                    obj = Ministry.objects.get(id=self.obj.id)
                     self.assertEqual(func(obj, fn), getattr(obj, attr).name)
 
         # test previous image selection
@@ -168,15 +168,15 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
             data = default_ministry_data(**{post_attr: img})
             response = self.client.post(_url, data=data)
             self.assertRedirects(response, "/ministry/%s" % self.obj.id)
-            obj = MinistryProfile.objects.get(id=self.obj.id)
+            obj = Ministry.objects.get(id=self.obj.id)
             self.assertEqual(func(obj, img), getattr(obj, obj_attr).name)
 
     def testDelete_ministry(self):
-        obj = MinistryProfile.objects.create(name="another one",
-                                             admin=self.user,
-                                             website="unique.com",
-                                             phone_number="(753)753-2468",
-                                             address="753 Validated Ave")
+        obj = Ministry.objects.create(name="another one",
+                                      admin=self.user,
+                                      website="unique.com",
+                                      phone_number="(753)753-2468",
+                                      address="753 Validated Ave")
         self.volatile.append(obj)
 
         _url = reverse('ministry:delete_ministry', kwargs={'ministry_id': self.obj.id})

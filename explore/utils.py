@@ -44,7 +44,7 @@ def calc_distance(request, ministry_location, units='miles') -> int:
         else:
             raise ValueError('Unknown unit of length passed')
 
-    else:   # if there is location of either User or MinistryProfile
+    else:   # if there is location of either User or Ministry
         return 0
 
 

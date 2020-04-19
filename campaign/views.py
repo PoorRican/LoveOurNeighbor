@@ -14,7 +14,7 @@ from donation.models import Donation
 from donation.serializers import DonationSerializer
 from donation.utils import serialize_donation
 import ministry.aggregators as ministries
-from ministry.models import MinistryProfile
+from ministry.models import Ministry
 from post.forms import QuickPostForm
 from post.models import Post
 
@@ -62,8 +62,8 @@ class CreateCampaign(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin,
         return self.get_object().authorized_user(user)
 
     def get_queryset(self):
-        """ Modifies `queryset` so that `self.get_object` returns a `MinistryProfile` instead of `Campaign`. """
-        return MinistryProfile.objects.all()
+        """ Modifies `queryset` so that `self.get_object` returns a `Ministry` instead of `Campaign`. """
+        return Ministry.objects.all()
 
     def get_context_data(self, **kwargs):
         """ Adds 'ministry' to template context for rendering. """
@@ -207,11 +207,11 @@ def banner_img_json(request, campaign_id):
 @require_safe
 def campaign_gallery_json(request, campaign_id):
     """ Return a JSON dict of all used images associated
-    to the MinistryProfile selected by `ministry_id`.
+    to the Ministry selected by `ministry_id`.
 
     The list that is returned is not exhaustive and
         uses images from all NewsPosts with an `attachment` image
-        from both `MinistryProfile.post` and `Campaign.post`,
+        from both `Ministry.post` and `Campaign.post`,
         and `Campaign.banner_imgs`
     """
     campaign = Campaign.objects.get(pk=campaign_id)

@@ -75,7 +75,7 @@ class Post(models.Model):
     def ministry(self):
         if getattr(self, '_ministry').all():
             return getattr(self, '_ministry').all()[0]
-        elif hasattr(self.content_object, 'campaigns'):  # check of content_object is MinistryProfile
+        elif hasattr(self.content_object, 'campaigns'):  # check of content_object is Ministry
             return self.content_object
         else:
             return False

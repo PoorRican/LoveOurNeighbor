@@ -94,7 +94,7 @@ def send_forgot_password_email(request, user):
 # View Utility Functions
 
 def clear_previous_ministry_login(request, user, *args, **kwargs):
-    """ Automatically clears alias of last MinistryProfile alias.
+    """ Automatically clears alias of last Ministry alias.
     """
     user.logged_in_as = None
     user.save()

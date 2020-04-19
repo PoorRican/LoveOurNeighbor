@@ -133,7 +133,7 @@ class UserProfile(LoginRequiredMixin, UpdateView):
 @login_required
 def be_me_again(request):
     """ Allows User to interact as themselves.
-    This 'logs out' of the last MinistryProfile they were using as an alias.
+    This 'logs out' of the last Ministry they were using as an alias.
 
     This performs the same functionality as `clear_previous_ministry_login`
 
@@ -192,11 +192,11 @@ class UserFeed(LoginRequiredMixin, ListView):
         _queryset = set()
         for o in user.likes.all():
             # get Post objects
-            if hasattr(o.content_object, 'goal'):  # distinguish between Campaign/MinistryProfile
+            if hasattr(o.content_object, 'goal'):  # distinguish between Campaign/Ministry
                 q = Q(_campaign=o.content_object)
                 _queryset.add(o.content_object)
             else:
-                # get Campaigns from MinistryProfile
+                # get Campaigns from Ministry
                 q = Q(ministry=o.content_object)
                 _queryset |= set(i for i in Campaign.objects.filter(q).all())
 

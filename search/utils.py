@@ -3,7 +3,7 @@ from django.db.models import Q
 import numpy as np
 
 from campaign.models import Campaign
-from ministry.models import MinistryProfile
+from ministry.models import Ministry
 from post.models import Post
 
 
@@ -60,9 +60,9 @@ def perform_search(query: str):
     # TODO: add a parameter to prioritize results from tags
     #  (https://docs.djangoproject.com/en/3.0/ref/contrib/postgres/search/#trigram-similarity)
     tag_q = Q(tags__name__icontains=query) | Q(tags__description__icontains=query)
-    ministries = MinistryProfile.objects.filter(Q(name__icontains=query) |
-                                                Q(description__icontains=query) |
-                                                Q(address__icontains=query) | tag_q).distinct()
+    ministries = Ministry.objects.filter(Q(name__icontains=query) |
+                                         Q(description__icontains=query) |
+                                         Q(address__icontains=query) | tag_q).distinct()
     campaigns = Campaign.objects.filter(Q(title__icontains=query) | Q(content__icontains=query) | tag_q).distinct()
     posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query)).distinct()
 

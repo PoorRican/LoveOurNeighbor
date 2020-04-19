@@ -10,7 +10,7 @@ from django.urls import reverse
 
 from campaign.models import Campaign
 from donation.models import Donation, ccPayment
-from ministry.models import MinistryProfile
+from ministry.models import Ministry
 from people.models import User
 from tag.models import Tag
 
@@ -153,7 +153,7 @@ def default_ministry_data(admin: User = None, **kwargs) -> dict:
     Returns
     -------
     dict
-        Minimal values to create a MinistryProfile object
+        Minimal values to create a Ministry object
     """
     data = {'name': 'Test Ministry',
             'website': 'http://website.com',
@@ -169,12 +169,12 @@ def default_ministry_data(admin: User = None, **kwargs) -> dict:
     return data
 
 
-def default_campaign_data(ministry: MinistryProfile = None, convert_dates=False, **kwargs) -> dict:
+def default_campaign_data(ministry: Ministry = None, convert_dates=False, **kwargs) -> dict:
     """ A helper function that creates default Campaign data.
 
     Parameters
     ----------
-    ministry: MinistryProfile, optional
+    ministry: Ministry, optional
         Included in the return dict as the value for 'admin'.
         Defaults to None.
 
@@ -262,14 +262,14 @@ def generate_ministries(user: User, n: int = 10):
     Parameters
     ----------
     user: User
-        The admin of all created `MinistryProfile` objects.
+        The admin of all created `Ministry` objects.
 
     n: int, optional
         The number of `User` objects to create and return. Defaults to 10.
 
     Returns
     -------
-    List of MinistryProfile
+    List of Ministry
         All created objects names have the format "Test Ministry #", where # is an integer ranging from 0 to `n-1`
     """
     name = "Test Ministry {}"
@@ -282,11 +282,11 @@ def generate_ministries(user: User, n: int = 10):
                                               'website': site.format(i),
                                               'phone_number': str(i) * 10,
                                               'address': address.format(i)})
-        ministries.append(MinistryProfile.objects.create(**data))
+        ministries.append(Ministry.objects.create(**data))
     return ministries
 
 
-def generate_campaigns(ministry: MinistryProfile, n: int = 10):
+def generate_campaigns(ministry: Ministry, n: int = 10):
     name = "Test Campaign {}"
 
     campaigns = []

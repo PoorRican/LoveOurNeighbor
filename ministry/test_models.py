@@ -13,7 +13,7 @@ from utils.test_helpers import (
 )
 
 from .forms import MinistryEditForm, NewMinistryForm, RepManagementForm
-from .models import MinistryProfile
+from .models import Ministry
 from .utils import (
     dedicated_ministry_dir, create_ministry_dirs,
     ministry_profile_image_dir, ministry_banner_dir,
@@ -26,7 +26,7 @@ from people.models import User
 class BaseMinistryModelTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create(email="test@testing.com")
-        self.min = MinistryProfile.objects.create(**default_ministry_data(self.user))
+        self.min = Ministry.objects.create(**default_ministry_data(self.user))
         self.volatile = []
         self.rm_trees = []
         self.rm_trees.append(dedicated_ministry_dir(self.min, prepend=settings.MEDIA_ROOT))
@@ -69,7 +69,7 @@ class MinistryTestCase(BaseMinistryModelTestCase):
         for reason, kwargs in _attrs:
             with self.assertRaises(IntegrityError) as e:
                 with transaction.atomic():
-                    MinistryProfile.objects.create(**kwargs)
+                    Ministry.objects.create(**kwargs)
 
             self.assertIn(reason, str(e.exception))
             self.assertIn('UNIQUE', str(e.exception))
@@ -182,12 +182,12 @@ class MinistryTestCase(BaseMinistryModelTestCase):
     ######################
 
     def testNewMinistries(self):
-        self.assertFalse(MinistryProfile.new_ministries())
+        self.assertFalse(Ministry.new_ministries())
 
         ministries = generate_ministries(self.user, 25)
 
         # assert ministry verification filter
-        self.assertEqual(0, MinistryProfile.new_ministries().count())
+        self.assertEqual(0, Ministry.new_ministries().count())
         for m in ministries:
             m.verified = True
             m.save()
@@ -216,19 +216,19 @@ class MinistryTestCase(BaseMinistryModelTestCase):
         self.assertEqual(n, ministries.count())
 
     def testRandomMinistries(self):
-        self.assertFalse(MinistryProfile.random_ministries())
+        self.assertFalse(Ministry.random_ministries())
 
         ministries = generate_ministries(self.user, 100)
 
         # No unverified ministry should be returned
-        self.assertEqual(0, MinistryProfile.random_ministries().count())
+        self.assertEqual(0, Ministry.random_ministries().count())
         for m in ministries:
             m.verified = True
             m.save()
 
         n = 25
-        _id_1 = [i.id for i in MinistryProfile.random_ministries(n=n)]
-        _id_2 = [i.id for i in MinistryProfile.random_ministries(n=n)]
+        _id_1 = [i.id for i in Ministry.random_ministries(n=n)]
+        _id_2 = [i.id for i in Ministry.random_ministries(n=n)]
 
         # `n` should control the number of returned objects
         for i in (_id_1, _id_2):
@@ -309,7 +309,7 @@ class MinistryTestCase(BaseMinistryModelTestCase):
         ministry.name = new_name
         ministry.save()
 
-        # Attempt to illegally call `MinistryProfile.rename`
+        # Attempt to illegally call `Ministry.rename`
         with self.assertRaises(ValueError) as e:
             self.min.rename(new_name)
             self.min.save()
@@ -360,9 +360,9 @@ class BaseMinistryFormTestCase(TestCase):
 
     @property
     def ministry(self):
-        """ Returns fresh MinistryProfile object.
+        """ Returns fresh Ministry object.
         Avoids any black-box model regarding differences in DB and instance memory. """
-        return MinistryProfile.objects.get(id=1)
+        return Ministry.objects.get(id=1)
 
     def testLocation(self):
         """ Tests that the 'address' form attribute creates a GeoLocation object """
@@ -391,9 +391,9 @@ class TestNewMinistryForm(BaseMinistryFormTestCase):
 
     @property
     def ministry(self):
-        """ Returns fresh MinistryProfile object.
+        """ Returns fresh Ministry object.
         Avoids any black-box model regarding differences in DB and instance memory. """
-        return MinistryProfile.objects.get(id=1)
+        return Ministry.objects.get(id=1)
 
     def testDirCreated(self):
         """ Tests that new MinistryProfiles have a dedicated directory. """
@@ -422,7 +422,7 @@ class TestMinistryEditForm(BaseMinistryFormTestCase):
         form = MinistryEditForm(post, instance=self.ministry)
         form.save()
 
-        ministry = MinistryProfile.objects.get(id=_id)
+        ministry = Ministry.objects.get(id=_id)
         self.assertEqual(name, ministry.name)
         self.assertTrue(dedicated_ministry_dir(ministry, prepend=settings.MEDIA_ROOT))
         self.assertIn(name, dedicated_ministry_dir(ministry))

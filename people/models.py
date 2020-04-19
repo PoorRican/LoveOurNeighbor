@@ -69,7 +69,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     # TODO: implement last login
     # TODO: implement login history TextField
-    logged_in_as = models.ForeignKey('ministry.MinistryProfile',
+    logged_in_as = models.ForeignKey('ministry.Ministry',
                                      blank=True, null=True,
                                      on_delete=models.PROTECT,
                                      related_name='+')

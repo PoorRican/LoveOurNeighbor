@@ -41,7 +41,7 @@ def serialize_ministry(ministry):
             }
 
 
-# MinistryProfile Utility Functions
+# Ministry Utility Functions
 def dedicated_ministry_dir(instance: Model or str, prepend='') -> str:
     """ Returns path of dedicated directory for all ministry media.
 
@@ -49,9 +49,9 @@ def dedicated_ministry_dir(instance: Model or str, prepend='') -> str:
 
     Arguments
     =========
-    instance: MinistryProfile or str
+    instance: Ministry or str
         Must be a campaign object, or the name of. Must at least have `name` attribute.
-        `Model` is specified as one of the parameter types instead of `MinistryProfile`
+        `Model` is specified as one of the parameter types instead of `Ministry`
         prevent a circular dependency.
 
     prepend: str, optional
@@ -60,7 +60,7 @@ def dedicated_ministry_dir(instance: Model or str, prepend='') -> str:
     Returns
     =======
     str:
-        Path to dedicated directory for MinistryProfile media
+        Path to dedicated directory for Ministry media
     """
     if type(instance) != str:
         instance = instance.name
@@ -68,14 +68,14 @@ def dedicated_ministry_dir(instance: Model or str, prepend='') -> str:
 
 
 def ministry_banner_dir(instance, filename, prepend=''):
-    """ Returns path of dedicated directory for MinistryProfile banner media.
+    """ Returns path of dedicated directory for Ministry banner media.
 
-    This organizes user uploaded MinistryProfile content and is used by `ministry.models.MinistryProfile.banner_img`
+    This organizes user uploaded Ministry content and is used by `ministry.models.Ministry.banner_img`
         to save uploaded content.
 
     Arguments
     =========
-    instance: (MinistryProfile)
+    instance: (Ministry)
         Must be a campaign object to pass to `dedicated_ministry_dir`
 
     filename: (str)
@@ -87,7 +87,7 @@ def ministry_banner_dir(instance, filename, prepend=''):
     Returns
     =======
     (str):
-        Full path to dedicated directory for MinistryProfile banner images.
+        Full path to dedicated directory for Ministry banner images.
     """
     return path.join(dedicated_ministry_dir(instance, prepend=prepend),
                      'banners', filename)
@@ -96,12 +96,12 @@ def ministry_banner_dir(instance, filename, prepend=''):
 def ministry_profile_image_dir(instance, filename, prepend=''):
     """ Helper function that returns dedicated directory for ministry media.
 
-    This organizes user uploaded MinsitryProfile content and is used by `ministry.models.MinistryProfile.profile_img`
+    This organizes user uploaded MinsitryProfile content and is used by `ministry.models.Ministry.profile_img`
         to save uploaded content.
 
     Arguments
     =========
-    instance: (MinistryProfile)
+    instance: (Ministry)
         Must be a campaign object to pass to `dedicated_ministry_dir`
 
     filename: (str)
@@ -113,7 +113,7 @@ def ministry_profile_image_dir(instance, filename, prepend=''):
     Returns
     =======
     (str):
-        Full path to dedicated directory for MinistryProfile profile images.
+        Full path to dedicated directory for Ministry profile images.
     """
     return path.join(dedicated_ministry_dir(instance, prepend=prepend),
                      'profile_images', filename)
@@ -161,14 +161,14 @@ def prev_profile_imgs(instance, prepend=MediaStorage.custom_domain):
 
 def ministry_images(ministry):
     """
-    Aggregates all media images related to the given MinistryProfile object.
+    Aggregates all media images related to the given Ministry object.
 
     This is used for rendering a gallery section.
 
     Parameters
     ----------
     ministry:
-        Must be a MinistryProfile object to scrape images from
+        Must be a Ministry object to scrape images from
 
     Returns
     -------
@@ -217,7 +217,7 @@ def ministry_images(ministry):
 
 def send_new_ministry_notification_email(request, ministry):
     """
-    Sends a notification email to LON admins about a new MinistryProfile application.
+    Sends a notification email to LON admins about a new Ministry application.
 
     This uses `frontend.settings.ADMIN_EMAIL`, and "templates/ministry/profile_notification_template.html".
 
@@ -227,7 +227,7 @@ def send_new_ministry_notification_email(request, ministry):
         Request to use for building URLs (admin page)
 
     ministry:
-        MinistryProfile to notify for
+        Ministry to notify for
 
     Returns
     -------
@@ -239,6 +239,6 @@ def send_new_ministry_notification_email(request, ministry):
     context = {'ministry': ministry, 'admin_url': url}
     html = render_jinja_template('templates/ministry/profile_notification_template.html', context)
 
-    return send_email(to=settings.ADMIN_EMAIL, subject='New MinistryProfile: "%s"' % ministry.name,
+    return send_email(to=settings.ADMIN_EMAIL, subject='New Ministry: "%s"' % ministry.name,
                       html=html, from_email='website-notification@loveourneighbor.org',
                       tags=['notification', 'internal', 'new_user'], name='LON Website')

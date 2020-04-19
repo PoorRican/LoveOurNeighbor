@@ -6,7 +6,7 @@ from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 
-from ministry.models import MinistryProfile
+from ministry.models import Ministry
 from ministry.utils import dedicated_ministry_dir
 from people.models import User
 from utils.test_helpers import (
@@ -26,11 +26,11 @@ class TestCampaignViews(BaseViewTestCase):
         super().setUp()
 
         self.min_name = "Test Ministry"
-        self.min = MinistryProfile.objects.create(name=self.min_name,
-                                                  admin=self.user,
-                                                  website="justawebsite.com",
-                                                  phone_number="(753)753-7777",
-                                                  address="777 validate me ct")
+        self.min = Ministry.objects.create(name=self.min_name,
+                                           admin=self.user,
+                                           website="justawebsite.com",
+                                           phone_number="(753)753-7777",
+                                           address="777 validate me ct")
         self.volatile.append(self.min)
 
         self.obj_name = "Test Campaign"
@@ -69,8 +69,8 @@ class TestCampaignViews(BaseViewTestCase):
         self.assertRedirects(response, reverse('campaign:campaign_detail', kwargs={'campaign_id': _cam.id}))
 
         # TODO: test malformed POST and redirect on error
-        # TODO: test MinistryProfile.banner_img
-        # TODO: test MinistryProfile.profile_img
+        # TODO: test Ministry.banner_img
+        # TODO: test Ministry.profile_img
         # TODO: test feedback on success
         # TODO: test feedback on error
 
@@ -178,7 +178,7 @@ class TestCampaignViews(BaseViewTestCase):
 class BaseCampaignFormTestCase(TestCase):
     def setUp(self):
         admin = User.objects.create(email="test@testing.com")
-        self.ministry = MinistryProfile.objects.create(**default_ministry_data(admin=admin))
+        self.ministry = Ministry.objects.create(**default_ministry_data(admin=admin))
 
         self.post = default_campaign_data(self.ministry, convert_dates=True)
 

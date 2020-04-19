@@ -4,7 +4,7 @@ from activity.models import Like
 from people.serializers import UserSerializer
 from tag.serializers import TagSerializer
 
-from .models import MinistryProfile
+from .models import Ministry
 
 
 class MinistrySerializer(serializers.ModelSerializer):
@@ -38,7 +38,7 @@ class MinistrySerializer(serializers.ModelSerializer):
                 self.fields.pop(field_name)
 
     class Meta:
-        model = MinistryProfile
+        model = Ministry
         fields = ('id', 'name', 'founded', 'description', 'url',
                   'reps', 'requests', 'tags', 'likes', 'views', 'liked', 'auth')
         read_only_fields = ('id', 'name', 'founded', 'description', 'url',
@@ -56,7 +56,7 @@ class MinistrySerializer(serializers.ModelSerializer):
 
         Parameters
         ----------
-        obj: MinistryProfile
+        obj: Ministry
 
         Returns
         -------
@@ -81,7 +81,7 @@ class MinistrySerializer(serializers.ModelSerializer):
 
         Parameters
         ----------
-        obj: MinistryProfile
+        obj: Ministry
 
         Returns
         -------

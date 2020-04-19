@@ -8,7 +8,7 @@ import frontend.settings as app_settings
 
 def setup_dev():
     from people.models import User
-    from ministry.models import MinistryProfile
+    from ministry.models import Ministry
     from campaign.models import Campaign
     from donation.models import Donation, ccPayment
 
@@ -25,13 +25,13 @@ def setup_dev():
               randint(100, 999),
               randint(1000, 9999))
         pn = '+1(%d)%d-%d' % pn
-        ministry = MinistryProfile.objects.create(name=min_name,
-                                                  admin=user,
-                                                  address='Antarctica',
-                                                  website='test.com',
-                                                  phone_number=pn)
+        ministry = Ministry.objects.create(name=min_name,
+                                           admin=user,
+                                           address='Antarctica',
+                                           website='test.com',
+                                           phone_number=pn)
     except IntegrityError:
-        ministry = MinistryProfile.objects.get(name=min_name)
+        ministry = Ministry.objects.get(name=min_name)
 
     cam_title = 'test campaign'
     try:

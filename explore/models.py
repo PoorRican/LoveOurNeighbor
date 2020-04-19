@@ -12,7 +12,7 @@ class GeoLocation(models.Model):
     user = models.OneToOneField('people.User',
                                 null=True, blank=True,
                                 on_delete=models.CASCADE)
-    ministry = models.OneToOneField('ministry.MinistryProfile',
+    ministry = models.OneToOneField('ministry.Ministry',
                                     null=True, blank=True,
                                     on_delete=models.CASCADE)
     # TODO: somehow prevent simultaneous `user` and `ministry` fields

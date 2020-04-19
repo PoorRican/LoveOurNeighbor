@@ -6,13 +6,13 @@ from django.http import HttpResponse
 from braces.views import FormMessagesMixin, UserPassesTestMixin, JSONResponseMixin
 
 from campaign.models import Campaign
-from ministry.models import MinistryProfile
+from ministry.models import Ministry
 
 from .models import Like
 
 
 class LikeView(View, JSONResponseMixin):
-    """ Encapsulates both 'like' and 'unlike' functionality relating `User` to `MinistryProfile`
+    """ Encapsulates both 'like' and 'unlike' functionality relating `User` to `Ministry`
 
     Returns
     -------
@@ -23,7 +23,7 @@ class LikeView(View, JSONResponseMixin):
 
     def get(self, request, *args, **kwargs):
         # TODO: implement Post
-        _objects = {'ministry': MinistryProfile,
+        _objects = {'ministry': Ministry,
                     'campaign': Campaign}
         obj = _objects[kwargs.get('object')]
         obj = obj.objects.get(pk=kwargs.get('pk'))
