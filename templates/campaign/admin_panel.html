@@ -148,7 +148,7 @@
                   </a>
                   <div class="row">
                     {% for post in campaign.posts.all() %}
-                      {{ post_card(post, AUTH=True) }}
+                      {{ post_card(post, auth=True) }}
                     {% else %}
                       <p>There is no news for this campaign at this time.</p>
                     {% endfor %}

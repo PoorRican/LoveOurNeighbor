@@ -207,10 +207,10 @@
                   </a>
                   <div class="row">
                     {% for posts in ministry.posts.all() %}
-                      {{ post_card(posts, AUTH=True) }}
+                      {{ post_card(posts, auth=True) }}
                     {% else %}
-                    <p>You have not posted any news for this ministry.</p>
-                      {% endfor %}
+                      <p>You have not posted any news for this ministry.</p>
+                    {% endfor %}
                   </div>
                 </div><!-- /.card-panel -->
               </div><!-- /#post -->
