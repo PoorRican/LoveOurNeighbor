@@ -3,6 +3,8 @@ from uuid import uuid4
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import UserManager
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -72,6 +74,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_img = models.ImageField('Profile Image', blank=True, null=True,
                                     default=DEFAULT_PROFILE_IMG,
                                     upload_to=user_profile_img_dir)
+
+    church_association = models.ManyToManyField('church.Church', blank=True, null=True,
+                                                related_name='people')
 
     confirmation = models.UUIDField(default=uuid4, blank=True, null=True)
 
@@ -182,3 +187,68 @@ class User(AbstractBaseUser, PermissionsMixin):
         url = reverse('people:verify_user', kwargs={'email': self.email,
                                                     'confirmation': self.confirmation.hex})
         return request.build_absolute_uri(url)
+
+
+class UserRelationship(models.Model):
+    """ Base model abstracting the relationships between Users and other objects.
+
+    This will open the doors much functionality such as relationships such as "staff", "volunteer", etc.
+
+    For obvious reasons, this reciprocating object should "approve" of this relationship,
+    similar to the `rep` / `request` functionality between a Ministry and Users.
+
+    Attributes
+    ==========
+    user : User
+    title : str
+        This is an optional title of the relationship (eg: "Director", "Founder", "Pastor", etc)
+    content_object : models.Model
+        This is the generalized relationship that this model points to.
+    """
+    allowed = ('church', 'campaign', 'ministry')
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s')
+    title = models.CharField(max_length=64, null=True, blank=True)
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name='%(class)ss')
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    @classmethod
+    def create(cls, user: User, obj: models.Model, title: str = None):
+        """ Shortcut for creating relationships.
+
+        This performs type checking on `obj`.
+
+        This will create a model of whatever class inherits this.
+        """
+        if obj.__name__.lower() in cls.allowed:
+            return cls.objects.create(user=user, content_object=obj, title=title)
+        else:
+            raise ValueError(f'A relationship with type "{obj.__name__}" not allowed with "{cls.__name__}"')
+
+    class Meta:
+        abstract = True
+
+
+class Attendee(UserRelationship):
+    """ Abstracts the relationship of a church congregation.
+
+    Should this be hidden? Or somehow obfuscated? For personal security reasons?
+
+    This should not be as restricted as the other relationships.
+    """
+    allowed = 'church'
+    pass
+
+
+class Volunteer(UserRelationship):
+    """ Abstracts the `Church` and `Ministry` volunteers, and allows for a `User` to
+    volunteer for a `Campaign`.
+    """
+    pass
+
+
+class StaffMember(UserRelationship):
+    """ Abstracts the `Church` and `Ministry` staff. """
+    pass

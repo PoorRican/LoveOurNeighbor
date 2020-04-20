@@ -1,8 +1,8 @@
 from datetime import date
 
-from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Q
 from django.urls import reverse
 
 from activity.models import Like, View
@@ -60,9 +60,6 @@ class Campaign(models.Model):
                 pass
         return amt
 
-    def __str__(self):
-        return self.title
-
     @property
     def url(self):
         return reverse('campaign:campaign_detail',
@@ -110,9 +107,22 @@ class Campaign(models.Model):
         else:
             return False
 
-    @property
-    def authorized_user(self):
-        return self.ministry.authorized_user
+    def authorized_user(self, user: User) -> bool:
+        """ Give authorized access to both parent Ministry users and authorized users to partner objects.
+
+        See Also
+        ========
+        `Partner` : for an explanation of the relationship
+
+        Notes
+        =====
+        FYI::
+
+            ``max( [False, False, False] ) == False``
+            ``max( [False, True, False] ) == True``
+
+        """
+        return self.ministry.authorized_user(user) or max([i.authorized_user(user) for i in self.partners.all()])
 
     @property
     def like_count(self):
@@ -146,6 +156,7 @@ class Campaign(models.Model):
         List of `Campaign`
 
         """
+        # TODO: traverse along both `sponsors` and `partners`
         similar = []
         for t in self.tags.all():
             for c in t.campaigns.all():
@@ -171,3 +182,66 @@ class Campaign(models.Model):
 
     def ended(self):
         return (self.end_date - date.today()).days < 0
+
+
+class CampaignRelationship(models.Model):
+    """ Base model abstracting the relationships between Ministries and other objects.
+
+    This will open the doors much functionality such as Campaign "sponsors" and "Partners" (whether Church or Ministry).
+
+    The reciprocating object should "approve" of this relationship, similar to the `rep` / `request` functionality
+    between a Ministry and Users.
+    """
+    allowed = ('church', 'ministry')
+
+    campaign = models.ForeignKey(Campaign, related_name='%(class)ss', on_delete=models.CASCADE)
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    @classmethod
+    def create(cls, campaign: Campaign, obj: models.Model):
+        """ Shortcut for creating relationships.
+
+        This performs type checking on `obj` using the `allowed` parameter.
+
+        This will create a model of whatever class inherits this.
+        """
+        if obj.__name__.lower() in cls.allowed:
+            cls.objects.create(campaign=campaign, content_object=obj)
+        raise ValueError(f'A relationship with type "{obj.__name__}" not allowed with "{cls.__name__}"')
+
+    class Meta:
+        abstract = True
+
+
+class Supporter(CampaignRelationship):
+    """ Abstracts `Campaign` support by `Churches` or other `Ministry` objects.
+
+    This model might represent marketing or merely "support" as opposed to a `Collaboration`
+    and is equivalent to a "liking" the `Campaign`.
+
+    Any algorithms should consider the members of this model to be "similar" and be fed to UI elements such as
+    searching, and "suggested" objects (eg: "You May Also Like", feed injections, etc).
+
+    In the object pointed to by `campaign`, represents the object "supported", and its reverse relationship
+    should be accessible by the `supporters` attribute.
+    """
+    pass
+
+
+class Partner(CampaignRelationship):
+    """ Abstracts partnership or collaboration on a `Campaign` between `Churches` or other `Ministry` objects.
+
+    This model represents proactive collaboration. Therefore, objects pointed to by 'content_object' should have the
+    ability to create `Post` objects for this campaign.
+
+    In the object pointed to by `campaign`, represents the object sponsored, and its reverse relationship
+    should be accessible by the `sponsors` attribute.
+
+    See Also
+    ========
+    `Campaign.authorized_user` : For implementation on how this relationship model grants permissions.
+    """
+    pass
