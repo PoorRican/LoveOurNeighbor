@@ -43,6 +43,7 @@ urlpatterns = [
     # Main functionality
     path('ministry/', include('ministry.urls')),
     path('campaign/', include('campaign.urls')),
+    path('church/', include('church.urls')),
     path('donation/', include('donation.urls')),
     path('post/', include('post.urls')),
     path('tag/', include('tag.urls')),

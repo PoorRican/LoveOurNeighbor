@@ -157,11 +157,12 @@ def send_new_ministry_notification_email(request, ministry):
     response:
         Returns requests.Response object passed from send_mail (which is passed from `requests.post`
     """
-    url = request.build_absolute_uri("/admin")
+    if settings.NEW_PROFILE_EMAILS:
+        url = request.build_absolute_uri("/admin")
 
-    context = {'ministry': ministry, 'admin_url': url}
-    html = render_jinja_template('templates/ministry/profile_notification_template.html', context)
+        context = {'ministry': ministry, 'admin_url': url}
+        html = render_jinja_template('templates/ministry/profile_notification_template.html', context)
 
-    return send_email(to=settings.ADMIN_EMAIL, subject='New Ministry Profile: "%s"' % ministry.name,
-                      html=html, from_email='website-notification@loveourneighbor.org',
-                      tags=['notification', 'internal', 'new_user', 'new_ministry'], name='LON Website')
+        return send_email(to=settings.ADMIN_EMAIL, subject='New Ministry Profile: "%s"' % ministry,
+                          html=html, from_email='website-notification@loveourneighbor.org',
+                          tags=['notification', 'internal', 'new_user', 'new_ministry'], name='LON Website')

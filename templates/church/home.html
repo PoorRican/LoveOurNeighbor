@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% from "church/church_card.html" import church_card %}
+
+{# set the active page on the sidebar #}
+{% set active = url_for('ministry:home') %}
+
+
+{% block title %}Churches{% endblock %}
+
+
+{% block body %}
+  <div class="wrapper section">
+
+    <h3>New Churches</h3>
+    {% if new_churches %}
+        <h6 class="grey-text text-darken-2 ml-1 mb-3">These are the newest churches that have created a
+            profile!</h6>
+        <div class="row grid">
+          {% for church in new_churches %}
+            {{ church_card(church, request=request) }}
+          {% endfor %}
+        </div>
+    {% else %}
+      <h6 class="grey-text text-darken-2 mt-2 ml-1 mb-4">There don't seem to be any new churches at the moment</h6>
+    {% endif %}
+
+    {% if random_churches %}
+      <h3>Some more churches</h3>
+      <h6>Check out the content from these other churches</h6>
+      {% for church in random_churches %}
+        {{ church_card(church, request=request) }}
+      {% endfor %}
+    {% endif %}
+
+  </div><!-- /.wrapper .section -->
+{% endblock %}
+
+
+{% block scripts %}
+  <!-- init dynamic card functionality -->
+  <script src="{{ static('js/mini-gallery-init.js') }}"></script>
+
+  <!-- masonry -->
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script>
+    // this initializes all masonry objects on the page
+    $('.grid').masonry({
+      itemSelector: '.grid-item',
+    });
+  </script>
+{% endblock %}

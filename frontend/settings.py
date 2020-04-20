@@ -33,6 +33,9 @@ ASSETS_DEBUG = True
 REQUIRE_MINISTRY_VERIFICATION = False  # TODO: implement
 REQUIRE_USER_VERIFICATION = False
 
+# Email Switches
+NEW_PROFILE_EMAILS = False
+
 # Feature Switches
 COMMENTS = False
 

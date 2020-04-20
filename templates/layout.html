@@ -96,8 +96,9 @@
 {% set links =
     [
       (url_for('home'), 'Home', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/home-page.png"/>'),
-      (url_for('campaign:home'), 'Campaigns', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/flag-2.png"/>'),
+      (url_for('church:home'), 'Churches', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/church.png"/>'),
       (url_for('ministry:home'), 'Ministries', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/charity.png"/>'),
+      (url_for('campaign:home'), 'Campaigns', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/flag-2.png"/>'),
       (url_for('faq'), 'FAQ', '<img class="left menu-icon" src="https://img.icons8.com/wired/64/000000/faq.png"/>'),
     ] %}
 {% set _links = links.copy() %}

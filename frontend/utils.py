@@ -79,6 +79,23 @@ def campaign_admin_urls(campaign):
     return urls
 
 
+def church_admin_urls(church):
+    # TODO: implement user permissions checking to implement deletion
+    urls = [
+        {'label': 'Admin Panel',
+         'icon': 'build',
+         'reverse_url': 'church:admin_panel',
+         'kwargs': {'church_id': church.id},
+         },
+        {'label': 'Post News',
+         'icon': 'post_add',
+         'reverse_url': 'post:create_post',
+         'kwargs': {'obj_type': 'church',
+                    'obj_id': church.id},
+         }]
+    return urls
+
+
 def ministry_admin_urls(ministry):
     # TODO: implement user permissions checking to implement deletion
     urls = [

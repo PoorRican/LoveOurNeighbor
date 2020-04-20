@@ -74,11 +74,12 @@ def send_new_church_notification_email(request, church):
     response:
         Returns requests.Response object passed from send_mail (which is passed from `requests.post`
     """
-    url = request.build_absolute_uri("/admin")
+    if settings.NEW_PROFILE_EMAILS:
+        url = request.build_absolute_uri("/admin")
 
-    context = {'church': church, 'admin_url': url}
-    html = render_jinja_template('templates/ministry/profile_notification_template.html', context)
+        context = {'church': church, 'admin_url': url}
+        html = render_jinja_template('templates/church/profile_notification_template.html', context)
 
-    return send_email(to=settings.ADMIN_EMAIL, subject='New Church Profile: "%s"' % church.name,
-                      html=html, from_email='website-notification@loveourneighbor.org',
-                      tags=['notification', 'internal', 'new_user', 'new_church'], name='LON Website')
+        return send_email(to=settings.ADMIN_EMAIL, subject='New Church Profile: "%s"' % church,
+                          html=html, from_email='website-notification@loveourneighbor.org',
+                          tags=['notification', 'internal', 'new_user', 'new_church'], name='LON Website')

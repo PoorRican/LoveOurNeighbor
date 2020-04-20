@@ -2,10 +2,13 @@ from rest_framework import serializers
 
 from activity.models import Like
 from people.serializers import UserSerializer
-from models import Campaign, Ministry
 from tag.serializers import TagSerializer
 
-from serializers import CampaignSerializer, MinistrySerializer
+from campaign.models import Campaign
+from campaign.serializers import CampaignSerializer
+
+from ministry.models import Ministry
+from ministry.serializers import MinistrySerializer
 
 
 class ActivityObjectRelatedField(serializers.RelatedField):

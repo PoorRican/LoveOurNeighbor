@@ -8,9 +8,9 @@
 {% from "macros/parts/input_field.html" import input_field %}
 
 {% from "campaign/campaign_card.html" import campaign_card %}
+{% from "church/church_card.html" import church_card %}
 {% from "ministry/ministry_card.html" import ministry_card %}
 
-{# TODO: liked ministries/campaigns #}
 {# TODO: total donated amount #}
 {# TODO: campaigns involved in #}
 {# TODO: user submissions #}
@@ -37,8 +37,8 @@
                     </a>
                   </li>
                   <li class="tab">
-                    <a href="#ministries">
-                      <i class="material-icons">public</i>&nbsp;Ministries
+                    <a href="#profiles_admin">
+                      <i class="material-icons">public</i>&nbsp;Profiles You Manage
                     </a>
                   </li>
                   <li class="tab">
@@ -87,18 +87,22 @@
                 </div><!-- /.card-panel -->
               </div><!-- /#profile -->
 
-              <div id="ministries">
+              <div id="profiles_admin">
                 <div class="card-panel">
-                  <a class="btn purple lighten-2" href="{{ url_for('ministry:create_ministry') }}">
-                    <i class="material-icons">add</i>&nbsp;New Ministry
-                  </a>
 
-                  {% set ministries = {'Minsitries You Administer': request.user.administers_ministry.all(),
-                     'Ministries You Represent': request.user.represents_ministry.all()} %}
-                  {# make each section half-size on large screen if there are both categories to represent #}
-                  {% set full = len(ministries.values()[0]) and len(ministries.values()[1]) %}
-
+                  <h4>
+                    Ministry Profiles&nbsp;
+                    <a class="btn purple lighten-2" href="{{ url_for('ministry:create_ministry') }}">
+                      <i class="material-icons">add</i>&nbsp;New Ministry
+                    </a>
+                  </h4>
                   <div class="row">
+
+                    {% set ministries = {'Minsitries You Administer': request.user.administers_ministry.all(),
+                     'Ministries You Represent': request.user.represents_ministry.all()} %}
+                    {# make each section half-size on large screen if there are both categories to represent #}
+                    {% set full = len(ministries.values()[0]) and len(ministries.values()[1]) %}
+
                     {% for text, iter in ministries.items() %}
                       {% if len(iter) %}
                         <div class="col {% if full %}l6{% endif %} s12">
@@ -119,7 +123,44 @@
                         </div><!-- /.col -->
                       {% endif %}
                     {% endfor %}
+
                   </div><!-- /.row -->
+
+                  <h4>
+                    Church Profiles&nbsp;
+                    <a class="btn purple lighten-2" href="{{ url_for('church:create_church') }}">
+                      <i class="material-icons">add</i>&nbsp;New Church
+                    </a>
+                  </h4>
+                  <div class="row">
+                    {% set churches = {'Church Profiles You Administer': request.user.administers_church.all(),
+                     'Church Profiles You Represent': request.user.represents_church.all()} %}
+                    {# make each section half-size on large screen if there are both categories to represent #}
+                    {% set full = len(churches.values()[0]) and len(churches.values()[1]) %}
+
+                    {% for text, iter in churches.items() %}
+                      {% if len(iter) %}
+                        <div class="col {% if full %}l6{% endif %} s12">
+                          <h5 class="text-grey darken-2">{{ text }}</h5>
+                          <ul class="collection">
+                            {% for church in iter %}
+                              <li class="collection-item avatar">
+                                <img src="{{ church.profile_img.url }}" class="circle" alt="profile-image">
+                                <a href="{{ church.url }}" class="title">
+                                  {{ church|string }}
+                                </a>
+                                <a href="{{ church.edit }}" class="secondary-content">
+                                  <i class="material-icons">settings</i>
+                                </a>
+                              </li>
+                            {% endfor %}
+                          </ul><!-- /.collection -->
+                        </div><!-- /.col -->
+                      {% endif %}
+                    {% endfor %}
+
+                  </div><!-- /.row -->
+
                 </div><!-- /.card-panel -->
               </div><!-- /#ministries -->
 
@@ -127,9 +168,11 @@
                 <div class="card-panel">
                   <div class="row grid">
                     {% for obj in likes %}
-                      {% if hasattr(obj, 'admin') %}{# Minitry Profile #}
+                      {% if hasattr(obj, 'founded') and hasattr(obj, 'campaigns') %}{# Minitry Profile #}
                         {{ ministry_card(obj, request=request) }}
-                        {% else %}{# Campaign #}
+                      {% elif hasattr(obj, 'founded') %}{# Church Profile #}
+                        {{ church_card(obj, request=request) }}
+                      {% else %}{# Campaign #}
                         {{ campaign_card(obj, request=request) }}
                       {% endif %}
                     {% else %}

@@ -7,28 +7,30 @@ class Church(BaseProfile):
     media_dir_root = 'churches'
     obj_type = 'church'
 
+    class Meta:
+        verbose_name_plural = "churches"
+
     # URL properties
 
     @property
     def url(self):
-        return NotImplemented
+        return reverse('church:church_profile',
+                       kwargs={'church_id': self.id})
 
     @property
     def edit(self):
-        return NotImplemented
+        return reverse('church:admin_panel',
+                       kwargs={'church_id': self.id})
 
     @property
     def json(self):
-        return NotImplemented
-
-    @property
-    def like(self):
-        return NotImplemented
+        return reverse('church:church_json',
+                       kwargs={'church_id': self.id})
 
     # Member Functions
 
     def feed(self, n=20, page=0):
-        return NotImplemented
+        return self.posts.all().order_by('-pub_date')
 
     def local(self, n=20, page=0):
         """ Function that returns both ministries and other churches in proximity.
@@ -44,4 +46,5 @@ class Church(BaseProfile):
         -------
 
         """
+        # TODO: implement PostGIS
         return NotImplemented

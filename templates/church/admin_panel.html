@@ -17,11 +17,11 @@
 {# TODO: total donated amount #}
 
 {% block title %}
-  {{ ministry.name }} Admin Panel
+  {{ church|string|title }} Admin Panel
 {% endblock %}
 
 {% block body %}
-  <!-- ministry/admin_panel -->
+  <!-- church/admin_panel -->
 
   <div class="row">
     <div class="col s12">
@@ -29,12 +29,12 @@
         <section class="tabs-vertical mt-1 section">
           <div class="row">
 
-            {{ breadcrumbs(ministry.name, header='Admin Panel', obj=ministry) }}
+            {{ breadcrumbs(church.name, header='Admin Panel', obj=church) }}
 
-            {% if not ministry.verified %}
+            {% if not church.verified %}
               <div class="col s12">
                 <div class="card-panel orange lighten-5">
-                  <p class="mt-0 mb-0">Your Ministry Profile has not been verified yet. This may take 1-3 business days.
+                  <p class="mt-0 mb-0">Your Church Profile has not been verified yet. This may take 1-3 business days.
                     Your profile will not be visible to the public before then.</p>
                 </div><!-- /.card-panel -->
               </div>
@@ -53,20 +53,10 @@
                     </a>
                   </li><!-- /administration -->
                   <li class="tab">
-                    <a href="#campaigns"><i class="material-icons">public</i>
-                      &nbsp;Campaigns
-                    </a>
-                  </li><!-- /campaigns -->
-                  <li class="tab">
                     <a href="#posts"><i class="material-icons">dynamic_feed</i>
                       &nbsp;Posts
                     </a>
                   </li><!-- /post -->
-                  <li class="tab">
-                    <a href="#donations"><i class="material-icons">poll</i>
-                      &nbsp;Donations
-                    </a>
-                  </li><!-- /donations -->
                 </ul><!-- /.tabs -->
               </div><!-- /.card-panel -->
             </div><!-- /.col /tabs -->
@@ -74,8 +64,8 @@
             <div class="col s12 l8">
               <div id="details">
                 <div class="card-panel">
-                  <form method="POST" name="ministryForm" id="ministryForm"
-                        enctype="multipart/form-data" action="{{ ministry.edit }}">
+                  <form method="POST" name="churchForm" id="churchForm"
+                        enctype="multipart/form-data" action="{{ church.edit }}">
                     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
                     <div class="row">
@@ -88,24 +78,24 @@
                           <div class="col s12 m6 l3">
                             {{ input_img_dialog('profile', 'Profile Image',
                                                 imgField=form.profile_img,
-                                                img=ministry.profile_img) }}
+                                                img=church.profile_img) }}
                           </div>
                           <div class="col s12 m6 l3">
                             {{ input_img_dialog('banner', 'Banner Image',
                                                 imgField=form.banner_img,
-                                                img=ministry.banner_img) }}
+                                                img=church.banner_img) }}
                           </div>
 
                         </div>
                       </div><!-- /#imageDialogs -->
 
                       {{ input_field(form.name, icon='group', width='s12',
-                                     error_text='This name is similar to another ministry',
-                                     helper_text="Your ministry's full name") }}
+                                     error_text='This name is similar to another church',
+                                     helper_text="Your church's full name") }}
 
                       {# TODO: render custom address input #}
                       {{ input_field(form.address, icon='place', width='s12',
-                                     helper_text="Your ministry's address or city") }}
+                                     helper_text="Your church's address or city") }}
 
                       {# TODO: render styled phone number input for any international phone numbers #}
                       {{ input_field(form.phone_number, icon='phone', width='l6 s12') }}
@@ -146,7 +136,7 @@
                       </div>
 
                       <div class="col l3 s12">
-                        {{ confirm_delete('ministry', ministry.id) }}
+                        {{ confirm_delete('church', church.id) }}
                       </div>
                     </div><!-- /#form_buttons -->
 
@@ -158,7 +148,7 @@
               <div id="administration">
                 <div class="card-panel">
                   <form method="POST"
-                        action="{{ url_for('ministry:rep_management', kwargs={'ministry_id': ministry.id}) }}">
+                        action="{{ url_for('church:rep_management', kwargs={'church_id': church.id}) }}">
 
                     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                     {{ rep_selection(rep_form.reps, rep_form.requests) }}
@@ -174,59 +164,23 @@
                 </div><!-- /.card-panel -->
               </div><!-- /#administration -->
 
-              <div id="campaigns">
-                <div class="card-panel">
-
-                  {# TODO: differentiate between current and previous fundraisers #}
-                  <a class="btn purple lighten-2"
-                     href="{{ url_for('campaign:create_campaign', kwargs={'ministry_id': ministry.id}) }}"
-                     style="margin-bottom: 12px">
-                    <i class="left material-icons">add</i>
-                    New Campaign
-                  </a>
-
-                  <div class="row">
-                    {% for campaign in ministry.campaigns.all() %}
-                      {{ campaign_card(campaign, request) }}
-                      {% else %}
-                        <p>You have no fundraising campaigns at this time.</p>
-                      {% endfor %}
-                  </div>
-
-                </div><!-- /.card-panel -->
-              </div><!-- /#campaigns -->
-
               <div id="posts">
                 <div class="card-panel">
 
                   <a class="btn blue lighten-2" style="margin-bottom: 12px;"
-                     href="{{ url_for('post:create_post', kwargs={'obj_type': 'ministry', 'obj_id': ministry.id}) }}">
+                     href="{{ url_for('post:create_post', kwargs={'obj_type': 'church', 'obj_id': church.id}) }}">
                     <i class="material-icons left">add</i>
                     Create Post
                   </a>
                   <div class="row">
-                    {% for posts in ministry.posts.all() %}
-                      {{ post_card(posts, AUTH=True) }}
+                    {% for posts in church.posts.all() %}
+                      {{ post_card(posts, auth=True) }}
                     {% else %}
-                    <p>You have not posted any news for this ministry.</p>
-                      {% endfor %}
+                      <p>You have not posted any news for this church.</p>
+                    {% endfor %}
                   </div>
                 </div><!-- /.card-panel -->
-              </div><!-- /#post -->
-
-              <div id="donations">
-                <div class="card-panel">
-                  {# TODO: total donated #}
-                  {# TODO: average per campaign #}
-                  {# TODO: average per week #}
-                  {# TODO: average per month #}
-                  {# TODO: YTD #}
-                  {# TODO: 3-month total #}
-                  {# TODO: export as CSV #}
-
-                  {{ transaction_table() }}
-                </div><!-- /.card-panel -->
-              </div><!-- /#donations -->
+              </div><!-- /#posts -->
 
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -250,10 +204,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
 
   <!-- Image/Banner Dialog -->
+  <!--
   <script src="{{ static('js/image_selection.js') }}"></script>
   <script>
-    const bannerURL = "{{ url_for('ministry:banner_img_json', kwargs={'ministry_id': ministry.id}) }}";
-    const profileURL = "{{ url_for('ministry:profile_img_json', kwargs={'ministry_id': ministry.id}) }}";
+    const bannerURL = "{# url_for('church:banner_img_json', kwargs={'church_id': church.id}) #}";
+    const profileURL = "{# url_for('church:profile_img_json', kwargs={'church_id': church.id}) #}";
 
     let bannerSelection = new PreviousImageSelection('selected_banner_img', bannerURL);
     let profileSelection = new PreviousImageSelection('selected_profile_img', profileURL);
@@ -261,9 +216,10 @@
     ko.applyBindings(bannerSelection, document.getElementById('banner_img_input'));
     ko.applyBindings(profileSelection, document.getElementById('profile_img_input'));
   </script>
+  -->
 
   <!-- Tag Selection & Rep Management -->
-  {{ get_obj_json(ministry) }}
+  {{ get_obj_json(church) }}
   <script src="{{ static('js/rep_management.js') }}"></script>
   <script src="{{ static('js/tag_selector.js') }}"></script>
   <script>
@@ -280,71 +236,4 @@
       ko.applyBindings(rep_selector, document.getElementById('repUI'));
     })
   </script>
-
-  <!-- Chart/Tables Stuff -->
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-  <script type="text/javascript"
-          src="https://cdn.datatables.net/v/zf/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-html5-1.6.1/fh-3.1.6/r-2.2.3/sp-1.0.1/datatables.min.js"></script>
-  <script>
-    $.getJSON('{{ url_for("ministry:donations_json", kwargs={'ministry_id': ministry.id}) }}').then(function (data) {
-        $('#txTable').DataTable({
-          data: data,
-          ordering: true,
-          orderFixed: [1, 'desc'],
-          pagingType: 'full_numbers',
-          pageLength: 50,
-          lengthChange: false,
-          fixedHeader: true,
-          // TODO: enable Buttons plug-in
-          // TODO: enable SearchPane plug-in
-          columns: [
-            {
-              title: "Campaign", data: "campaign",
-              render: function (data, type, row) {
-                return '<a href="' + data.edit + '#donations">' + data.title + '</a>';
-              }
-            },
-            {
-              title: "Payment Date", data: "date",
-              render: function (data, type, row) {
-                if (type === 'display' || type === 'filter') {
-                  const d = new Date(data);
-                  return d.getMonth() + '/' + d.getDay() + '/' + d.getFullYear();
-                } else {
-                  return data;
-                }
-              }
-            },
-            {
-              title: "Amount", data: "amount",
-              render: function (data, type, row) {
-                return type === 'display' || type === 'filter' ?
-                  '$' + data :
-                  data;
-              }
-            },
-            {
-              title: "User", data: "user",
-              render: function (data, type, row) {
-                return data.name;
-              }
-            }
-          ]
-        })
-      }
-    )
-  </script>
-  <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-
-{% endblock %}
-
-
-{% block css %}
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css"/>
-  <link rel="stylesheet" type="text/css"
-        href="https://cdn.datatables.net/searchpanes/1.0.1/css/searchPanes.dataTables.min.css"/>
-  <link rel="stylesheet" type="text/css"
-        href="https://cdn.datatables.net/v/zf/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-html5-1.6.1/fh-3.1.6/r-2.2.3/sp-1.0.1/datatables.min.css"/>
 {% endblock %}

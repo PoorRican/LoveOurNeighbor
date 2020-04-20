@@ -21,8 +21,9 @@ from donation.utils import generate_confirmation_id, generate_payeezy_hash
 
 from .utils import (
     friendly_time,
-    ministry_admin_urls,
     campaign_admin_urls,
+    church_admin_urls,
+    ministry_admin_urls,
     get_flatpages,
     active_sidenav_submenu,
 )
@@ -126,6 +127,7 @@ def environment(**options):
         'f_time': friendly_time,
         'ministry_admin_urls': ministry_admin_urls,
         'campaign_admin_urls': campaign_admin_urls,
+        'church_admin_urls': church_admin_urls,
         'mission_statement': mission_statement,
         'generate_confirmation_id': generate_confirmation_id,
         'GA_TRACKING_ID': GA_TRACKING_ID,

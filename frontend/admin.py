@@ -9,6 +9,9 @@ from tinymce.widgets import AdminTinyMCE
 from campaign.admin import CampaignAdmin
 from campaign.models import Campaign
 
+from church.admin import ChurchAdmin
+from church.models import Church
+
 from donation.admin import DonationAdmin
 from donation.models import Donation
 
@@ -58,6 +61,7 @@ admin_site.register(FlatPage, NewFlatPageAdmin)
 
 admin_site.register(AboutSection, AboutAdmin)
 admin_site.register(Campaign, CampaignAdmin)
+admin_site.register(Church, ChurchAdmin)
 admin_site.register(Donation, DonationAdmin)
 admin_site.register(FaqSection, FAQAdmin)
 admin_site.register(MessageOfTheDay, MOTDAdmin)

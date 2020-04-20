@@ -1,0 +1,43 @@
+{% from "macros/parts/base_content_card.html" import base_content_card %}
+
+
+{% macro church_card_content(church) %}
+
+    <div class="display-flex justify-content-between flex-wrap mt-4">
+        <div class="display-flex mt-2 right-align" style="min-width: 55%; overflow: hidden;">
+            <a href="#">
+                <i class="material-icons">favorite_border</i>
+            </a>
+            <span class="ml-3 vertical-align-top">{{ church.like_count }}</span>
+
+            <i class="material-icons ml-10">visibility</i>
+            <span class="ml-3 vertical-align-top">{{ church.views.count() }}</span>
+
+        </div>
+    </div><!-- /.display-flex -->
+
+{% endmacro %}
+
+
+{% macro church_card_menu(church, class) %}
+
+    <ul id="{{ class }}_{{ church.id }}_card_dropdown" class="dropdown-content" style="min-width: 12em;">
+      {% for opt in church_admin_urls(church) %}
+          <li>
+              <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                  <i class="material-icons">{{ opt['icon'] }}</i>
+                {{ opt['label'] }}
+              </a>
+          </li>
+      {% endfor %}
+    </ul><!-- /.dropdown-content -->
+
+{% endmacro %}
+
+
+{% macro church_card(church, auth=False, request=False, wide=False) %}
+
+  {{ base_content_card(church, church.banner_img, 'church-card', church_card_content, church_card_menu,
+      auth=auth, request=request, wide=wide, show_parent=False) }}
+
+{% endmacro %}

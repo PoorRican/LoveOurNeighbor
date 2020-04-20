@@ -29,6 +29,7 @@ class ChurchHome(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = {'new_churches': recent(),
+                   'random_churches': random(),
                    'active': reverse('church:home')}
 
         kwargs.update(context)
@@ -37,17 +38,17 @@ class ChurchHome(TemplateView):
 
 # CRUD Views
 
-class CreateMinistry(LoginRequiredMixin, FormMessagesMixin, CreateView):
-    """ Renders form for creating `Ministry` object.
+class CreateChurch(LoginRequiredMixin, FormMessagesMixin, CreateView):
+    """ Renders form for creating `Church` object.
 
     Template
     --------
-    "ministry/ministry_application.html"
+    "church/church_application.html"
 
     See Also
     --------
-    `ministry:admin_panel`
-    `MinistryEditForm.save` for custom save method
+    `church:admin_panel`
+    `ChurchEditForm.save` for custom save method
     """
     model = Church
     form_class = NewChurchForm
@@ -62,7 +63,7 @@ class CreateMinistry(LoginRequiredMixin, FormMessagesMixin, CreateView):
 
         send_new_church_notification_email(self.request, church)
 
-        _url = reverse('church:view',
+        _url = reverse('church:church_profile',
                        kwargs={'church_id': church.id})
         return HttpResponseRedirect(_url)
 
@@ -172,7 +173,7 @@ class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, Upd
         return super().get_context_data(**kwargs)
 
 
-class DeleteMinistry(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class DeleteChurch(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Church
     pk_url_kwarg = 'church_id'
     raise_exception = True
