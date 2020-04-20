@@ -30,6 +30,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     liked = serializers.SerializerMethodField(required=False)
     auth = serializers.SerializerMethodField(required=False)
 
+    profile_img = serializers.SerializerMethodField()
+
     def __init__(self, *args, **kwargs):
         """
         Allows for the `fields` attribute to be customized.
@@ -53,9 +55,10 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         abstract = True
         fields = ('id', 'name', 'founded', 'description', 'url',
-                  'reps', 'requests', 'tags', 'likes', 'views', 'liked', 'auth')
+                  'reps', 'requests', 'tags', 'likes', 'views', 'liked', 'auth', 'profile_img')
         read_only_fields = ('id', 'name', 'founded', 'description', 'url',
-                            'reps', 'requests', 'tags', 'likes', 'views')
+                            'reps', 'requests', 'tags', 'likes', 'views',
+                            'liked', 'auth', 'profile_img')
 
     def get_liked(self, obj) -> bool:
         """
@@ -79,7 +82,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         try:
             return Like.liked(obj, self.context['request'].user)
         except TypeError:
-            # this is raised if obj is `AnonymousUser`
+            # when there is no `self.context`
             return False
 
     def get_auth(self, obj) -> bool:
@@ -100,4 +103,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         -------
         bool: True if `request.user` is an authorized user of this Ministry
         """
-        return obj.authorized_user(self.context['request'].user)
+        try:
+            return obj.authorized_user(self.context['request'].user)
+        except TypeError:
+            # when there is no `self.context`
+            return False
+
+    def get_profile_img(self, obj):
+        return obj.profile_img.url
