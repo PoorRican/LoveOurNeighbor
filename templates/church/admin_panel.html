@@ -221,7 +221,7 @@
   <!-- Tag Selection & Rep Management -->
   {{ get_obj_json(church) }}
   <script src="{{ static('js/rep_management.js') }}"></script>
-  <script src="{{ static('js/tag_selector.js') }}"></script>
+  <script src="{{ static('js/chip_selector.js') }}"></script>
   <script>
     let rep_selector;
     get_obj_json().then(function (obj) {
@@ -229,7 +229,7 @@
       // tag selector
       const hidden_input = '{{ form.tags.auto_id }}';
       const tags_url = '{{ url_for("tag:tags_json") }}';
-      new TagSelector(hidden_input, tags_url, 'tagSelector', obj.tags);
+      new ChipSelector(hidden_input, tags_url, 'tagSelector', obj.tags);
 
       // rep management
       rep_selector = new RepManager(obj.reps, obj.requests);

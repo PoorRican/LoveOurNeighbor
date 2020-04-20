@@ -1,4 +1,4 @@
-function TagSelector(id, url, el = 'tagSelector', tags = []) {
+function ChipSelector(id, url, el, tags = []) {
   let self = this;
   self.url = url;
   self.hidden_input = document.getElementById(id);
