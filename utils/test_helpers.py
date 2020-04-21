@@ -1,6 +1,7 @@
 from datetime import date
 from os import path
 from random import randint
+from typing import Callable, List
 
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
@@ -12,6 +13,7 @@ from campaign.models import Campaign
 from church.models import Church
 from donation.models import Donation, ccPayment
 from donation.utils import generate_confirmation_id
+from frontend.models import BaseProfile
 from ministry.models import Ministry
 from people.models import User
 from tag.models import Tag
@@ -23,6 +25,9 @@ EMAIL, PASSWORD = "new@test-users.com", "randombasicpassword1234"
 class BaseViewTestCase(TransactionTestCase):
     """ This class has the basic requirements for testing all views in the project. """
     databases = '__all__'
+    object_type: BaseProfile = None
+    default_data_func: Callable[..., dict] = None
+    generator: Callable[..., List] = None
 
     @staticmethod
     def create_user(email: str, password: str, **kwargs) -> User:
@@ -105,6 +110,8 @@ class BaseViewTestCase(TransactionTestCase):
         self.user_email = "user@test.com"
         self.user = self.create_user(self.user_email, self.user_password)
 
+        self.instance = self.__class__.object_type.objects.create(**self.__class__.default_data_func(self.user))
+
         self.volatile = []
 
     def tearDown(self):
@@ -117,7 +124,7 @@ class BaseViewTestCase(TransactionTestCase):
             self.user.delete()
 
     def assert_not_authorized_redirect(self, url: str) -> User:
-        """ Ensures that insufficient permissions trigger a redirect when `url` is accessed.
+        """ Ensures that insufficient permissions triggers a 403 error when `url` is accessed.
 
         Parameters
         ----------
@@ -133,7 +140,7 @@ class BaseViewTestCase(TransactionTestCase):
         self.login(EMAIL, PASSWORD)
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 403)
 
         return new_user
 

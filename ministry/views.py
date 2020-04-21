@@ -169,6 +169,7 @@ class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, Upd
     template_name = "ministry/admin_panel.html"
 
     raise_exception = True
+    redirect_unauthenticated_users = True
     permission_denied_message = "You do not have permissions to edit this ministry"
     form_invalid_message = "Please check the form for errors"
     form_valid_message = "Changes Saved!"
@@ -182,7 +183,8 @@ class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, Upd
         return "Changes saved to %s" % self.object
 
     def get_success_url(self):
-        return self.request.META.get('HTTP_REFERER')
+        return self.request.META.get('HTTP_REFERER') or reverse('ministry:ministry_profile',
+                                                                kwargs={'ministry_id': self.object.id})
 
     def test_func(self, user):
         return self.get_object().authorized_user(user)
@@ -198,10 +200,11 @@ class DeleteMinistry(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Ministry
     pk_url_kwarg = 'ministry_id'
     raise_exception = True
+    redirect_unauthenticated_users = True
     permission_denied_message = "You don't have permissions to be deleting this Ministry!"
 
     def get_success_url(self):
-        return self.request.META.get('HTTP_REFERER')
+        return self.request.META.get('HTTP_REFERER') or reverse('people:user_profile')
 
     def test_func(self, user):
         """ Ensure that only the admin can delete a Ministry """
@@ -245,7 +248,11 @@ class LoginAsMinistry(LoginRequiredMixin, UserPassesTestMixin, MinistryDetail):
     """
 
     raise_exception = True
+    redirect_unauthenticated_users = True
     permission_denied_message = "You do not have permissions to do this..."
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse('ministry:ministry_profile', kwargs={'ministry_id': self.object.id})
 
     def test_func(self, user, **kwargs):
         """ This verifies that the User has appropriate permissions.
@@ -273,6 +280,8 @@ class RepRequest(LoginRequiredMixin, UserPassesTestMixin, RedirectView, SingleOb
     Users who request this status have no permissions until authorization by the ministry admin.
     """
     model = Ministry
+    raise_exception = True
+    redirect_unauthenticated_users = True
     pk_url_kwarg = 'ministry_id'
 
     def __init__(self, **kwargs):
@@ -283,7 +292,8 @@ class RepRequest(LoginRequiredMixin, UserPassesTestMixin, RedirectView, SingleOb
         return not self.get_object().authorized_user(user)
 
     def get_redirect_url(self, *args, **kwargs):
-        return self.request.META.get('HTTP_REFERER')
+        return self.request.META.get('HTTP_REFERER') or reverse('ministry:ministry_profile',
+                                                                kwargs={'ministry_id': self.object.id})
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()

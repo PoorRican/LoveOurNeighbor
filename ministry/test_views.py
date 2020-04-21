@@ -12,32 +12,21 @@ from tag.models import Tag
 from utils.test_helpers import (
     BaseViewTestCase, EMAIL, PASSWORD,
     default_ministry_data,
-    generate_tags,
+    generate_tags, generate_ministries,
     simulate_uploaded_file,
 )
 
+from frontend.utils import generic_profile_img_dir, generic_banner_img_dir
 from people.models import DEFAULT_PROFILE_IMG
 
 from .forms import MinistryEditForm
 from .models import Ministry
-from .utils import ministry_banner_dir, ministry_profile_image_dir, dedicated_ministry_dir, create_ministry_dirs
 
 
-class BaseMinistryProfileTestCase(BaseViewTestCase):
-    def setUp(self):
-        super().setUp()
-
-        data = default_ministry_data(self.user)
-        rmtree(dedicated_ministry_dir(data['name'], settings.MEDIA_ROOT), ignore_errors=True)
-        create_ministry_dirs(data['name'], prepend=settings.MEDIA_ROOT)
-
-        self.obj = Ministry.objects.create(**data)
-
-    def tearDown(self):
-        rmtree(dedicated_ministry_dir(self.obj, settings.MEDIA_ROOT), ignore_errors=True)
-
-
-class BasicMinistryViews(BaseMinistryProfileTestCase):
+class BasicMinistryViews(BaseViewTestCase):
+    default_data_func = default_ministry_data
+    generator = generate_ministries
+    object_type = Ministry
 
     def testCreate_ministry(self):
         _url = reverse('ministry:create_ministry')
@@ -54,7 +43,7 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
                             "ministry/ministry_application")
 
         # assert proper POST data
-        self.obj.delete()
+        self.instance.delete()
         _new = default_ministry_data()
         response = self.client.post(_url, data=_new)
         _min = Ministry.objects.get(name=_new['name'])
@@ -69,13 +58,13 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
         # TODO: test feedback on success
 
     def testAdminPanel(self):
-        _url = reverse('ministry:admin_panel', kwargs={'ministry_id': self.obj.id})
+        _url = reverse('ministry:admin_panel', kwargs={'ministry_id': self.instance.id})
 
         # assert that User must be logged in
         response = self.client.get(_url)
         self.assertRedirects(response,
                              "/people/login?next=%2Fministry%2F"
-                             + "%s/edit" % self.obj.id)
+                             + "%s/edit" % self.instance.id)
 
         # assert correct template after user login
         self.login()
@@ -87,8 +76,8 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
         # TODO: test messages for incorrect permissions
 
         # assert rep permissions
-        self.obj.reps.add(new_user)
-        self.obj.save()
+        self.instance.reps.add(new_user)
+        self.instance.save()
 
         response = self.client.get(_url)
         # TODO: assert messages
@@ -106,10 +95,10 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
             data = default_ministry_data(**{key: val})
             response = self.client.post(_url, data=data)
 
-            # for some reason, self.obj does not reflect changes
-            _min = Ministry.objects.get(id=self.obj.id)
+            # for some reason, self.instance does not reflect changes
+            _min = Ministry.objects.get(id=self.instance.id)
             self.assertEqual(getattr(_min, key), val)
-            self.assertRedirects(response, "/ministry/%s" % self.obj.id)
+            self.assertRedirects(response, "/ministry/%s" % self.instance.id)
 
         # test new tag creation and existing tag relationships
         new_tags = "Tag 1, Tag 2, Tag 3"
@@ -121,21 +110,21 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
         existing_tags = ', '.join([i.name for i in _existing_tags])
 
         for tags in (new_tags, existing_tags, new_tags + ', ' + existing_tags):
-            self.assertFalse(self.obj.has_tags)
+            self.assertFalse(self.instance.has_tags)
 
             data = default_ministry_data(**{'tags': tags})
 
             # TODO: tags aren't being created?
 
             response = self.client.post(_url, data=data)
-            self.assertRedirects(response, "/ministry/%s" % self.obj.id)
+            self.assertRedirects(response, "/ministry/%s" % self.instance.id)
 
-            self.assertTrue(self.obj.has_tags)
+            self.assertTrue(self.instance.has_tags)
             for tag in tags.split(', '):
                 t = Tag.objects.get(name=tag)
-                self.assertIn(t, self.obj.tags.all())
+                self.assertIn(t, self.instance.tags.all())
 
-            self.obj.tags.clear()  # reset
+            self.instance.tags.clear()  # reset
 
         # TODO: test renaming
         # TODO: test malformed POST and redirect on error
@@ -143,13 +132,13 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
 
     def testAdminPanel_media(self):
         """ Tests user uploaded profile/banner images and previously selected profile/images. """
-        _url = reverse('ministry:admin_panel', kwargs={'ministry_id': self.obj.id})
+        _url = reverse('ministry:admin_panel', kwargs={'ministry_id': self.instance.id})
 
         self.login()
 
         _fn = [str(i) + "_" + 'uploaded_file.jpg' for i in range(2)]  # upload multiple images
         _attr = ('profile_img', 'banner_img')
-        _funcs = (ministry_profile_image_dir, ministry_banner_dir)
+        _funcs = (generic_profile_img_dir, generic_banner_img_dir)
 
         # test uploaded image
         for attr, func in zip(_attr, _funcs):
@@ -158,8 +147,8 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
                     img = BytesIO(f.read())
                     img.name = fn
                     response = self.client.post(_url, data=default_ministry_data(**{attr: img}))
-                    self.assertRedirects(response, "/ministry/%s" % self.obj.id)
-                    obj = Ministry.objects.get(id=self.obj.id)
+                    self.assertRedirects(response, "/ministry/%s" % self.instance.id)
+                    obj = Ministry.objects.get(id=self.instance.id)
                     self.assertEqual(func(obj, fn), getattr(obj, attr).name)
 
         # test previous image selection
@@ -167,8 +156,8 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
             img = _fn[0]  # path to previously uploaded image
             data = default_ministry_data(**{post_attr: img})
             response = self.client.post(_url, data=data)
-            self.assertRedirects(response, "/ministry/%s" % self.obj.id)
-            obj = Ministry.objects.get(id=self.obj.id)
+            self.assertRedirects(response, "/ministry/%s" % self.instance.id)
+            obj = Ministry.objects.get(id=self.instance.id)
             self.assertEqual(func(obj, img), getattr(obj, obj_attr).name)
 
     def testDelete_ministry(self):
@@ -179,13 +168,13 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
                                       address="753 Validated Ave")
         self.volatile.append(obj)
 
-        _url = reverse('ministry:delete_ministry', kwargs={'ministry_id': self.obj.id})
+        _url = reverse('ministry:delete_ministry', kwargs={'ministry_id': self.instance.id})
 
         # assert that User must be logged in
         response = self.client.get(_url)
         self.assertRedirects(response,
                              "/people/login?next=%2Fministry%2F"
-                             + "%s/delete" % self.obj.id)
+                             + "%s/delete" % self.instance.id)
 
         # assert denial for reps
         new_user = self.assert_not_authorized_redirect(_url)
@@ -195,24 +184,26 @@ class BasicMinistryViews(BaseMinistryProfileTestCase):
         self.login()
         response = self.client.get(_url)
         self.assertEqual(response.status_code, 302)
-        response = self.client.get(_url, follow=True)
+        self.assertEqual(response.url, reverse("people:user_profile"))
+        # TODO: assert redirect when there is an HTTP_REFERER
         # TODO: test messages
-        self.assertContains(response, "people/profile")
-
         # TODO: test that existing data prevents object deletion
-        # TODO: test feedback on success
-        # TODO: test feedback on error
+
 
     def testMinistry_profile(self):
-        _url = reverse('ministry:ministry_profile', kwargs={'ministry_id': self.obj.id})
+        _url = reverse('ministry:ministry_profile', kwargs={'ministry_id': self.instance.id})
 
         response = self.client.get(_url)
         self.assertContains(response, "ministry/view_ministry")
 
 
-class MinistryJsonViews(BaseMinistryProfileTestCase):
+class MinistryJsonViews(BaseViewTestCase):
+    default_data_func = default_ministry_data
+    generator = generate_ministries
+    object_type = Ministry
+
     def testMinistry_json(self):
-        _url = reverse('ministry:ministry_json', kwargs={'ministry_id': self.obj.id})
+        _url = reverse('ministry:ministry_json', kwargs={'ministry_id': self.instance.id})
         # note that `ministry_json` view function modifies serialized objects
         _attrs = (
             'id', 'name', 'founded', 'reps', 'requests',
@@ -225,7 +216,7 @@ class MinistryJsonViews(BaseMinistryProfileTestCase):
         # TODO: test dict values
 
     def testMinistryBanners_json(self):
-        _url = reverse('ministry:ministry_banners_json', kwargs={'ministry_id': self.obj.id})
+        _url = reverse('ministry:ministry_banners_json', kwargs={'ministry_id': self.instance.id})
         response = self.client.get(_url)
         data = response.json()
 
@@ -239,9 +230,9 @@ class MinistryJsonViews(BaseMinistryProfileTestCase):
         fn1, fn2 = "file1.jpg", "file2.jpg"
         for fn in (fn1, fn2):
             file = simulate_uploaded_file(fn)
-            form = MinistryEditForm(default_ministry_data(), files={'banner_img': file}, instance=self.obj)
+            form = MinistryEditForm(default_ministry_data(), files={'banner_img': file}, instance=self.instance)
             form.save()
-            self.assertTrue(path.isfile(ministry_banner_dir(self.obj, fn, prepend=settings.MEDIA_ROOT)),
+            self.assertTrue(path.isfile(generic_banner_img_dir(self.instance, fn, prepend=settings.MEDIA_ROOT)),
                             msg="'MinistryEditForm' did not save uploaded banner_img to filesystem.")
 
         # Verify returned JSON structure
@@ -273,29 +264,30 @@ class MinistryJsonViews(BaseMinistryProfileTestCase):
         self.fail()
 
 
-class MinistryInteractionViews(BaseMinistryProfileTestCase):
+class MinistryInteractionViews(BaseViewTestCase):
+    default_data_func = default_ministry_data
+    generator = generate_ministries
+    object_type = Ministry
+
     def testLikeMinistry(self):
         self.fail()
 
     def testLogin_as_ministry(self):
-        _url = reverse('ministry:login_as_ministry', kwargs={'ministry_id': self.obj.id})
+        _url = reverse('ministry:login_as_ministry', kwargs={'ministry_id': self.instance.id})
 
         # assert that User must be logged in
         response = self.client.get(_url)
         self.assertRedirects(response,
                              "/people/login?next=%2Fministry%2F"
-                             + "%s/login" % self.obj.id)
+                             + "%s/login" % self.instance.id)
 
         # assert denial for non-associated users
         new_user = self.assert_not_authorized_redirect(_url)
-
-        with self.assertRaises(RedirectCycleError):
-            self.client.get(_url, follow=True)
         # TODO: somehow assert messages
 
         # assert permission for reps
-        self.obj.reps.add(new_user)
-        self.obj.save()
+        self.instance.reps.add(new_user)
+        self.instance.save()
 
         response = self.client.get(_url)
         self.assertEqual(response.status_code, 302)
@@ -319,17 +311,17 @@ class MinistryInteractionViews(BaseMinistryProfileTestCase):
         new_user.save()
 
     def testRequest_to_be_rep(self):
-        _url = reverse('ministry:request_to_be_rep', kwargs={'ministry_id': self.obj.id})
+        _url = reverse('ministry:request_to_be_rep', kwargs={'ministry_id': self.instance.id})
 
         # assert that User must be logged in
         response = self.client.get(_url)
         self.assertRedirects(response, "/people/login?next=%2Fministry%2F"
-                             + "%s/reps/request" % self.obj.id)
+                             + "%s/reps/request" % self.instance.id)
 
         # test denial to admin and reps
         self.login(self.user_email, self.user_password)
         response = self.client.get(_url)
-        self.assertRedirects(response, "/ministry/%s" % self.obj.id)
+        self.assertEqual(response.status_code, 403)
         # TODO: test denial message
 
         # assert denial for reps
@@ -337,12 +329,11 @@ class MinistryInteractionViews(BaseMinistryProfileTestCase):
         self.volatile.append(new_user)
         self.login(EMAIL, PASSWORD)
 
-        self.obj.reps.add(new_user)
-        self.obj.save()
+        self.instance.reps.add(new_user)
+        self.instance.save()
 
         response = self.client.get(_url)
-        self.assertRedirects(response,
-                             "/ministry/%s" % self.obj.id)
+        self.assertEqual(response.status_code, 403)
         # TODO: test denial message
 
         # assert non-associated User
@@ -352,6 +343,6 @@ class MinistryInteractionViews(BaseMinistryProfileTestCase):
 
         response = self.client.get(_url)
         self.assertRedirects(response,
-                             "/ministry/%s" % self.obj.id)
-        self.assertIn(new_user, self.obj.requests.all())
+                             "/ministry/%s" % self.instance.id)
+        self.assertIn(new_user, self.instance.requests.all())
         # TODO: test success message

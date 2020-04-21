@@ -1,7 +1,7 @@
 from datetime import date
 from os.path import isfile
 from random import randint
-from typing import Callable
+from typing import Callable, List
 
 from django.conf import settings
 from django.db import IntegrityError, transaction
@@ -337,7 +337,7 @@ class BaseAggregatorTestCase:
     object_type: BaseProfile = None
     random: Callable[..., QuerySet] = None
     recent: Callable[..., QuerySet] = None
-    generator: Callable[..., dict] = None
+    generator: Callable[..., List] = None
 
     def setUp(self) -> None:
         self.user = User.objects.create(email="test@testing.com")
