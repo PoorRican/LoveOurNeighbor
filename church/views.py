@@ -52,6 +52,7 @@ class CreateChurch(LoginRequiredMixin, FormMessagesMixin, CreateView):
     """
     model = Church
     form_class = NewChurchForm
+    redirect_unauthenticated_users = True
     template_name = "church/church_application.html"
     initial = {'website': 'https://', 'address': ''}
 
@@ -148,6 +149,7 @@ class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, Upd
     template_name = "church/admin_panel.html"
 
     raise_exception = True
+    redirect_unauthenticated_users = True
     permission_denied_message = "You do not have permissions to edit this church profile"
     form_invalid_message = "Please check the form for errors"
     form_valid_message = "Changes Saved!"
@@ -161,7 +163,8 @@ class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, Upd
         return "Changes saved to %s" % self.object
 
     def get_success_url(self):
-        return self.request.META.get('HTTP_REFERER')
+        return self.request.META.get('HTTP_REFERER') or reverse('church:church_profile',
+                                                                kwargs={'church_id': self.object.id})
 
     def test_func(self, user):
         return self.get_object().authorized_user(user)
@@ -177,10 +180,11 @@ class DeleteChurch(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Church
     pk_url_kwarg = 'church_id'
     raise_exception = True
+    redirect_unauthenticated_users = True
     permission_denied_message = "You don't have permissions to be deleting this Church profile!"
 
     def get_success_url(self):
-        return self.request.META.get('HTTP_REFERER')
+        return self.request.META.get('HTTP_REFERER') or reverse('people:user_profile')
 
     def test_func(self, user):
         """ Ensure that only the admin can delete a Ministry """
@@ -202,6 +206,8 @@ class RepRequest(LoginRequiredMixin, UserPassesTestMixin, RedirectView, SingleOb
     Users who request this status have no permissions until authorization by the Church admin.
     """
     model = Church
+    raise_exception = True
+    redirect_unauthenticated_users = True
     pk_url_kwarg = 'church_id'
 
     def __init__(self, **kwargs):
@@ -212,7 +218,8 @@ class RepRequest(LoginRequiredMixin, UserPassesTestMixin, RedirectView, SingleOb
         return not self.get_object().authorized_user(user)
 
     def get_redirect_url(self, *args, **kwargs):
-        return self.request.META.get('HTTP_REFERER')
+        return self.request.META.get('HTTP_REFERER') or reverse('church:church_profile',
+                                                                kwargs={'church_id': self.object.id})
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
