@@ -9,6 +9,7 @@ from django.test import TransactionTestCase, Client
 from django.urls import reverse
 
 from campaign.models import Campaign
+from church.models import Church
 from donation.models import Donation, ccPayment
 from donation.utils import generate_confirmation_id
 from ministry.models import Ministry
@@ -139,6 +140,37 @@ class BaseViewTestCase(TransactionTestCase):
 
 # Default Data
 
+def default_church_data(admin: User = None, **kwargs) -> dict:
+    """ A helper function that creates default church data.
+
+    Parameters
+    ----------
+    admin: User, optional
+       Included in the return dict as the value for 'admin'.
+       Defaults to None.
+
+    kwargs: dict, optional
+        Values to override or supplement in the returned dict
+
+    Returns
+    -------
+    dict
+        Minimal values to create a Ministry object
+    """
+    data = {'name': 'Test Church',
+            'website': 'http://website.com',
+            'address': 'Philadelphia, PA',
+            'phone_number': '(753)777-7777',
+            'staff': 1}
+
+    if admin:
+        data['admin'] = admin
+    for key, val in kwargs.items():
+        data[key] = val
+
+    return data
+
+
 def default_ministry_data(admin: User = None, **kwargs) -> dict:
     """ A helper function that creates default ministry data.
 
@@ -255,6 +287,36 @@ def generate_users(n: int):
         All created users have the format "user_#@test.com", where # is an integer ranging from 0 to `n-1`
     """
     return [User.objects.create(email="user_{}@test.com".format(i)) for i in range(n)]
+
+
+def generate_churches(user: User, n: int = 10):
+    """ Returns a list of new `Church` objects.
+
+    Parameters
+    ----------
+    user : User
+        The admin of all created `Church` objects.
+
+    n : int, optional
+        The number of objects to create and return. Defaults to 10.
+
+    Returns
+    -------
+    List of Church
+        All created objects names have the format "Test Church #", where # is an integer ranging from 0 to `n-1`
+    """
+    name = "Test Church %d"
+    site = "http://test%d.com"
+    address = "%d Front Street"
+
+    churches = []
+    for i in range(n):
+        data = default_church_data(user, **{'name': name % i,
+                                            'website': site % i,
+                                            'phone_number': str(i) * 10,
+                                            'address': address % i})
+        churches.append(Church.objects.create(**data))
+    return churches
 
 
 def generate_ministries(user: User, n: int = 10):

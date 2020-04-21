@@ -10,7 +10,7 @@ def recent(n=10):
 
 
 def random(n=10):
-    # don't show this list if there are too few ministries
+    # don't show this list if there are too few churches
     if Church.objects.count() <= n * 4:
         return False
 
