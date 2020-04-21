@@ -1,5 +1,7 @@
 from django import forms
 
+from church.models import Church
+
 from .models import User
 from .utils import user_profile_img_dir
 
@@ -87,7 +89,8 @@ class UserEditForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UserEditForm, self).__init__(*args, **kwargs)
-        self.fields['selected_profile_img'] = forms.CharField(required=False)
+        self.fields['selected_profile_img'] = forms.CharField(required=False, max_length=128)
+        self.fields['church_association'] = forms.CharField(required=False, max_length=64)
 
     def save(self, commit=True):
         """
@@ -110,6 +113,10 @@ class UserEditForm(forms.ModelForm):
         _img = self.data.get('selected_profile_img', False)
         if _img:
             self.instance.profile_img = user_profile_img_dir(self.instance, _img)
+
+        churches = self.data.get('church_association', [])
+        for c in churches.split(', '):
+            self.instance.church_association.add(Church.objects.get(name=c))
         return super(UserEditForm, self).save(commit=commit)
 
     class Meta:

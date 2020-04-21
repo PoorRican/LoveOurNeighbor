@@ -1,8 +1,8 @@
-{# vim: foldmethod=marker ft=jinja shiftwidth=2 tabstop=2:
+{#- vim: foldmethod=marker ft=jinja shiftwidth=2 tabstop=2:
 
     templates/layout.html
 
-#}
+-#}
 
 {% from "macros/layout/navbar_links.html" import navbar_links %}
 {% from "macros/layout/searchbar.html" import searchbar %}
@@ -125,7 +125,7 @@
   <!-- Initialize Materialize elements -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      let options = {};
+      let options;
       // Initialize Sidebar Component
       let el = document.querySelectorAll('.sidenav');
       M.Sidenav.init(el);

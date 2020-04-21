@@ -1,10 +1,9 @@
-function ChipSelector(id, url, el, tags = []) {
+function ChipSelector(id, url, el, chips = [], placeholder='Enter a Tag', secondaryPlaceholder='+Tag') {
   let self = this;
   self.url = url;
   self.hidden_input = document.getElementById(id);
-  self.tag_input = document.getElementById(el);
-  self.selected_tags = [];
-  self.available_tags = [];
+  self.chip_input = document.getElementById(el);
+  self.selected_chips = [];
 
   // Methods
 
@@ -15,51 +14,65 @@ function ChipSelector(id, url, el, tags = []) {
    *
    * @see https://materializecss.com/chips.html for more info on the Tags component.
    */
-  self.updateTagData = function () {
-    let tags = [];
-    let _tag = {};    // buffer for iteration to unpack `tag`
+  self.updateChipData = function () {
+    let chips = [];
+    let _chip = {};    // buffer for iteration to unpack `tag`
 
     // extract data
-    for (_tag of self.tag_input.M_Chips.chipsData) {
-      tags.push(_tag.tag);
+    for (_chip of self.chip_input.M_Chips.chipsData) {
+      chips.push(_chip.tag);
     }
 
-    self.hidden_input.value = tags.join(', ');
+    self.hidden_input.value = chips.join(', ');
   };
 
   /**
    * @brief Initializes tag input component
    *
-   * @see https://materializecss.com/chips.html for more info on the Tags component
+   * @see https://materializecss.com/chips.html for more info on the Chips component
    *
-   * @param tags JSON array of existing tags
+   * @param chips JSON array of current object chips. Array of String or Array of Objects containing `name` and `image`.
    */
-  self.initTagInput = async function (tags) {
-    let tag = {};   // buffer for iteration
+  self.initChipInput = async function (chips) {
+    let chip = {};   // buffer for iteration
 
-    // Get all available tags and format for autocomplete
+    // TODO: this seems to be one big heuristic... sorry...
+
+    // Get all available chips and format for autocomplete
     const response = await fetch(self.url);
-    const all_tags = await response.json();
+    const all_chips = await response.json();
     const autocompleteOptions = {data: {}};
-    for (tag of all_tags) {
-      autocompleteOptions.data[tag] = null;
+    for (chip of all_chips) {
+      // when `tag` has an image and `all_chips` is an Array of Arrays
+      if (chip.hasOwnProperty('profile_img')) {
+        autocompleteOptions.data[chip.name] = chip.profile_img;
+      }
+      // when `all_chips` is an Array of String
+      else {
+        autocompleteOptions.data[chip] = null;
+      }
     }
 
-    // Format existing tags
-    for (tag of tags) {
-      self.selected_tags.push({'tag': tag});
+    // Format existing chips
+    for (chip of chips) {
+      if (chip.hasOwnProperty('profile_img')) {
+        self.selected_chips.push({'tag': chip.name, 'image': chip.profile_img});
+      }
+      else {
+        self.selected_chips.push({'tag': chip.name});
+      }
     }
 
     const options = {
-      data: self.selected_tags,
+      data: self.selected_chips,
       autocompleteOptions: autocompleteOptions,
-      placeholder: 'Enter a Tag',
-      secondaryPlaceholder: '+Tag',
-      onChipAdd: self.updateTagData,
-      onChipDelete: self.updateTagData
+      placeholder: placeholder,
+      secondaryPlaceholder: secondaryPlaceholder,
+      onChipAdd: self.updateChipData,
+      onChipDelete: self.updateChipData
     };
-    M.Chips.init(self.tag_input, options);
+    M.Chips.init(self.chip_input, options);
   };
 
-  self.initTagInput(tags).then(self.updateTagData);
+  self.initChipInput(chips).then(self.updateChipData);
 }

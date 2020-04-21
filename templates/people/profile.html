@@ -1,7 +1,3 @@
-{# vim: foldmethod=marker tabstop=2 shiftwidth=2:
-    templates/people/profile.html
-#}
-
 {% extends "layout.html" %}
 
 {% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
@@ -10,6 +6,8 @@
 {% from "campaign/campaign_card.html" import campaign_card %}
 {% from "church/church_card.html" import church_card %}
 {% from "ministry/ministry_card.html" import ministry_card %}
+
+{% from "people/parts/church_selector.html" import church_selector %}
 
 {# TODO: total donated amount #}
 {# TODO: campaigns involved in #}
@@ -74,6 +72,8 @@
                       {{ input_field(form.last_name, icon='person_outline') }}<!-- /last_name -->
 
                       {{ input_field(form._location, width='s12', icon='place') }}<!-- /location -->
+
+                      {{ church_selector(form.church_association) }}
 
                     </div><!-- /.row -->
 
@@ -260,6 +260,17 @@
   let profileSelection = new PreviousImageSelection('selected_profile_img', profileURL);
 
   ko.applyBindings(profileSelection, document.getElementById('profile_img_input'));
+</script>
+
+
+<!-- Tag Selection & Rep Management -->
+<script src="{{ static('js/chip_selector.js') }}"></script>
+<script>
+  // church selector
+  {# ignore this syntax error #}
+  const hidden_input = '{{ form.church_association.auto_id }}';
+  const all_churches_url = '{{ url_for("church:church_selection") }}';
+  let chip_selector = new ChipSelector(hidden_input, all_churches_url, 'churchSelector', {{ churches|tojson }}, 'Enter a Church', '+Church');
 </script>
 
 {% endblock %}

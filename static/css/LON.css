@@ -98,6 +98,11 @@
   margin-left: 1em;
 }
 
+/* Church Selector Styling */
+#churchSelector .autocomplete-content.dropdown-content {
+  min-width: 350px !important;
+}
+
 /* FilePond Styling */
 /* refer to https://pqina.nl/filepond/docs/patterns/api/style/ */
 @media (min-width: 30em) {

@@ -20,4 +20,6 @@ urlpatterns = [
 
     path('<int:church_id>/json', views.ChurchJSON.as_view(),
          name='church_json'),
+
+    path('all/json', views.ChurchSelectionJSON.as_view(), name='church_selection')
 ]

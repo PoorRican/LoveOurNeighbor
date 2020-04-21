@@ -9,7 +9,8 @@ class NewMinistryForm(NewProfileForm):
 
 
 class MinistryEditForm(ProfileEditForm):
-    pass
+    class Meta(ProfileEditForm.Meta):
+        model = Ministry
 
 
 class RepManagementForm(BaseRepManagementForm):

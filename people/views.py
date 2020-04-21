@@ -19,6 +19,7 @@ from django.views.generic.edit import CreateView, UpdateView
 
 from campaign.models import Campaign
 from campaign.utils import serialize_campaign
+from church.serializers import ChurchSerializer
 from donation.utils import serialize_donation
 from ministry.utils import serialize_ministry
 from post.models import Post
@@ -127,6 +128,8 @@ class UserProfile(LoginRequiredMixin, UpdateView):
 
         kwargs['donations'] = _donations
         kwargs['likes'] = [i.content_object for i in _likes]
+        kwargs['churches'] = ChurchSerializer(self.user.church_association.all(), many=True,
+                                              fields=('name', 'profile_img')).data
         return super().get_context_data(**kwargs)
 
 
@@ -234,6 +237,8 @@ def verify_user(request, email, confirmation):
         return HttpResponseRedirect(reverse('error'))
 
 
+# JSON Views
+
 @require_safe
 def messages_json(request):
     """ Returns a list of notifications received by User in JSON format.
@@ -302,6 +307,8 @@ def likes_json(request):
         _json['likes'].append(_m)
     return JsonResponse(_json)
 
+
+# User Account Maintenance Action Views
 
 @require_http_methods(["GET", "POST"])
 def reset_password(request, email, confirmation):

@@ -1,0 +1,12 @@
+{# This is a macro allowing the user select what church they attend using Materialize autoselection w/ chips. #}
+{#  Arguments
+    =========
+    field : BoundedField
+    id : HTML id selector to give to element
+#}
+
+{% macro church_selector(field, id="churchSelector") %}
+  {{ field.as_hidden() }}
+  <div id="{{ id }}" class="chips" style="margin-bottom: -8px"></div>
+  <p class="hint">What church(es) do you attend? Start typing to select from existing churches!</p>
+{% endmacro %}

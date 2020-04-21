@@ -8,7 +8,7 @@ from django.views.generic.detail import DetailView
 
 from braces.views import FormMessagesMixin, UserPassesTestMixin, LoginRequiredMixin
 from datetime import datetime
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView
 
 from activity.models import View
 from post.forms import QuickPostForm
@@ -244,3 +244,13 @@ class ChurchJSON(RetrieveAPIView):
     lookup_field = 'id'
     lookup_url_kwarg = 'church_id'
     serializer_class = ChurchSerializer
+
+
+class ChurchSelectionJSON(ListAPIView):
+    queryset = Church.objects.all()
+    serializer_class = ChurchSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        _fields = ('name', 'profile_img')
+        kwargs.update({'fields': _fields})
+        return super().get_serializer(*args, **kwargs)

@@ -23,7 +23,7 @@ class ActivityObjectRelatedField(serializers.RelatedField):
 class ProfileSerializer(serializers.ModelSerializer):
     requests = UserSerializer(many=True, read_only=True)
     reps = UserSerializer(many=True, read_only=True)
-    tags = TagSerializer(many=True)
+    tags = TagSerializer(many=True, required=False)
 
     likes = serializers.IntegerField(source='like_count', read_only=True)
     views = serializers.IntegerField(source='view_count', read_only=True)
