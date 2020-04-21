@@ -61,7 +61,7 @@ class Ministry(BaseProfile):
         # TODO: ministries should be 'scored' by # of overlapping tags
         similar = []
         for t in self.tags.all():
-            for m in t.ministries.all():
+            for m in t.ministry.all():
                 if m not in similar and not (m == self):
                     similar.append(m)
         return similar

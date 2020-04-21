@@ -1,6 +1,6 @@
 from datetime import date
 from os import path
-from random import randint, randrange
+from random import randint
 
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
@@ -10,6 +10,7 @@ from django.urls import reverse
 
 from campaign.models import Campaign
 from donation.models import Donation, ccPayment
+from donation.utils import generate_confirmation_id
 from ministry.models import Ministry
 from people.models import User
 from tag.models import Tag
@@ -119,7 +120,7 @@ class BaseViewTestCase(TransactionTestCase):
 
         Parameters
         ----------
-        url: (str)
+        url : (str)
             URL that is being tested
 
         Returns
@@ -245,7 +246,7 @@ def generate_users(n: int):
 
     Parameters
     ----------
-    n: int
+    n : int
         The number of `User` objects to create and return
 
     Returns
@@ -257,41 +258,56 @@ def generate_users(n: int):
 
 
 def generate_ministries(user: User, n: int = 10):
-    """ Returns a list of new `User` objects.
+    """ Returns a list of new `Ministry` objects.
 
     Parameters
     ----------
-    user: User
+    user : User
         The admin of all created `Ministry` objects.
 
-    n: int, optional
-        The number of `User` objects to create and return. Defaults to 10.
+    n : int, optional
+        The number of `Ministry` objects to create and return. Defaults to 10.
 
     Returns
     -------
     List of Ministry
         All created objects names have the format "Test Ministry #", where # is an integer ranging from 0 to `n-1`
     """
-    name = "Test Ministry {}"
-    site = "http://test{}.com"
-    address = "{} Front Street"
+    name = "Test Ministry %d"
+    site = "http://test%d.com"
+    address = "%d Front Street"
 
     ministries = []
     for i in range(n):
-        data = default_ministry_data(user, **{'name': name.format(i),
-                                              'website': site.format(i),
+        data = default_ministry_data(user, **{'name': name % i,
+                                              'website': site % i,
                                               'phone_number': str(i) * 10,
-                                              'address': address.format(i)})
+                                              'address': address % i})
         ministries.append(Ministry.objects.create(**data))
     return ministries
 
 
 def generate_campaigns(ministry: Ministry, n: int = 10):
-    name = "Test Campaign {}"
+    """ Returns a list of new `Campaign` objects.
+
+    Parameters
+    ----------
+    ministry : Ministry
+        The parent ministry for all created objects
+
+    n : int, optional
+        The number of `Ministry` objects to create and return. Defaults to 10.
+
+    Returns
+    -------
+    List of Ministry
+        All created objects names have the format "Test Ministry #", where # is an integer ranging from 0 to `n-1`
+    """
+    name = "Test Campaign %d"
 
     campaigns = []
     for i in range(n):
-        campaign = {'title': name.format(i),
+        campaign = {'title': name % i,
                     'start_date': date(2020, randint(1, 12), randint(1, 28)),
                     'end_date': date(2025, randint(1, 12), randint(1, 28)),
                     'goal': randint(1000, 9999)}
@@ -301,12 +317,12 @@ def generate_campaigns(ministry: Ministry, n: int = 10):
 
 
 def generate_tags(n: int = 10):
-    """ Returns a list of new `User` objects.
+    """ Returns a list of new `Tag` objects.
 
     Parameters
     ----------
-    n: int, optional
-        The number of `Tag` objects to create and return. Defaults to 10.
+    n : int, optional
+       The number of `Tag` objects to create and return. Defaults to 10.
 
     Returns
     -------
@@ -322,5 +338,6 @@ def generate_donations(user: User, campaign: Campaign, n: int = 10):
     for i in range(n):
         donation = Donation.objects.create(campaign=campaign, user=user)
         donations.append(donation)
-        ccPayment.objects.create(**default_payment_data(donation))
+        ccPayment.objects.create(**default_payment_data(donation),
+                                 confirmation=generate_confirmation_id(campaign))
     return donations

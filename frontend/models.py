@@ -61,9 +61,6 @@ class BaseProfile(models.Model):
     views = GenericRelation(View,
                             content_type_field='content_type', object_id_field='object_id')
 
-    class Meta:
-        abstract = True
-
     def __str__(self):
         return self.name
 
@@ -178,4 +175,7 @@ class BaseProfile(models.Model):
     def feed(self, n=20, page=0):
         """ Abstract function for generating feed for dedicated view. """
         return NotImplemented
+
+    class Meta:
+        abstract = True
 
