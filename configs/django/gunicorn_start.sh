@@ -1,5 +1,9 @@
 #!/bin/bash
 
+$("./local_env.sh")
+
+python manage.py collectstatic --no-input --clear
+
 BIND=0.0.0.0:8000
 WORKERS=2
 LOG_DIR=/var/log/gunicorn

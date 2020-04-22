@@ -65,8 +65,10 @@ RUN python manage.py migrate --noinput
 
 #RUN python populate.py
 
+RUN chmod +x local_env.sh
+
 # collect staticfiles (maybe they should be manually uploaded to CDN)
-RUN python manage.py collectstatic --no-input --clear
+# RUN python manage.py collectstatic --no-input --clear
 
 #RUN python manage.py assets build
 
