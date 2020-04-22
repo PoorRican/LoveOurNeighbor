@@ -3,14 +3,13 @@
 {% from "campaign/campaign_card.html" import campaign_card %}
 {% from "post/post_card.html" import post_card %}
 
-{% from "ministry/parts/ministry_founded_field.html" import founded_field_initialer %}
-{% from "ministry/parts/rep_request_selection.html" import rep_selection %}
-
 {% from "macros/parts/breadcrumbs.html" import breadcrumbs %}
 {% from "macros/parts/confirm_delete.html" import confirm_delete %}
+{% from "macros/parts/founded_field.html" import founded_field_initialer %}
 {% from "macros/parts/get_obj_json.html" import get_obj_json %}
 {% from "macros/parts/input_field.html" import input_field %}
 {% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
+{% from "macros/parts/rep_request_selection.html" import rep_selection %}
 {% from "macros/parts/tag_selection.html" import tag_selection %}
 {% from "macros/parts/transaction_table.html" import transaction_table %}
 {% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
@@ -266,7 +265,7 @@
   <!-- Tag Selection & Rep Management -->
   {{ get_obj_json(ministry) }}
   <script src="{{ static('js/rep_management.js') }}"></script>
-  <script src="{{ static('js/tag_selector.js') }}"></script>
+  <script src="{{ static('js/chip_selector.js') }}"></script>
   <script>
     let rep_selector;
     get_obj_json().then(function (obj) {
@@ -274,7 +273,7 @@
       // tag selector
       const hidden_input = '{{ form.tags.auto_id }}';
       const tags_url = '{{ url_for("tag:tags_json") }}';
-      new TagSelector(hidden_input, tags_url, 'tagSelector', obj.tags);
+      new ChipSelector(hidden_input, tags_url, 'tagSelector', obj.tags);
 
       // rep management
       rep_selector = new RepManager(obj.reps, obj.requests);

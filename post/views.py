@@ -9,8 +9,9 @@ from django_drf_filepond.models import TemporaryUpload
 
 from activity.models import View
 from campaign.models import Campaign
+from church.models import Church
+from ministry.models import Ministry
 from post.forms import PostEditForm, NewPostForm
-from ministry.models import MinistryProfile
 
 from .utils import create_news_post_dir, post_media_dir
 from .models import Post, Media
@@ -19,7 +20,7 @@ from .models import Post, Media
 # CRUD Views
 
 class CreatePost(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin, CreateView):
-    """ Renders form for creating `MinistryProfile` object.
+    """ Renders form for creating `Ministry` object.
 
     Template
     --------
@@ -48,7 +49,9 @@ class CreatePost(LoginRequiredMixin, UserPassesTestMixin, FormMessagesMixin, Cre
         """ Sets `self.content_object` before http dispatch methods called """
         self.obj_type, self.obj_id = kwargs['obj_type'], kwargs['obj_id']
         if self.obj_type == 'ministry':
-            self.content_object = MinistryProfile.objects.get(id=self.obj_id)
+            self.content_object = Ministry.objects.get(id=self.obj_id)
+        elif self.obj_type == 'church':
+            self.content_object = Church.objects.get(id=self.obj_id)
         else:
             self.content_object = Campaign.objects.get(id=self.obj_id)
         return super().setup(request, *args, **kwargs)

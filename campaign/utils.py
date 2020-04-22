@@ -1,9 +1,9 @@
 from datetime import date, datetime, timedelta
 from os import path
 
-from frontend.models import MediaStorage
-from frontend.utils import get_previous_images
-from ministry.utils import serialize_ministry, dedicated_ministry_dir
+from frontend.storage import MediaStorage
+from frontend.utils import get_previous_images, generic_media_dir
+from ministry.utils import serialize_ministry
 
 P_TIME = '%Y-%m-%d'  # when reading/parsing date objects
 F_TIME = '%Y-%m-%dT23:59:59'  # when writing date objects (for JSON)
@@ -51,7 +51,7 @@ def campaign_banner_dir(instance, filename, prepend=''):
     (str):
         Path to dedicated directory
     """
-    return path.join(dedicated_ministry_dir(instance.ministry, prepend=prepend),
+    return path.join(generic_media_dir(instance.ministry, prepend=prepend),
                      'campaign_banners', filename)
 
 

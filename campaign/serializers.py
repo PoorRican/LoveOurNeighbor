@@ -42,7 +42,11 @@ class CampaignSerializer(serializers.ModelSerializer):
         -------
         bool: True if `request.user` is an authorized user of this Campaign
         """
-        return obj.authorized_user(self.context['request'].user)
+        try:
+            return obj.authorized_user(self.context['request'].user)
+        except TypeError:
+            # when there is no `self.context`
+            return False
 
     def get_liked(self, obj) -> bool:
         """
@@ -56,7 +60,7 @@ class CampaignSerializer(serializers.ModelSerializer):
 
         Parameters
         ----------
-        obj: MinistryProfile
+        obj: Ministry
 
         Returns
         -------
@@ -66,5 +70,5 @@ class CampaignSerializer(serializers.ModelSerializer):
         try:
             return Like.liked(obj, self.context['request'].user)
         except TypeError:
-            # this is raised if obj is `AnonymousUser`
+            # when there is no `self.context`
             return False

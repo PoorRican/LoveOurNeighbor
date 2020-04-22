@@ -1,0 +1,330 @@
+{% extends "layout.html" %}
+
+{% from "macros/parts/quick_post.html" import quick_post %}
+{% from "macros/parts/comments_section.html" import comments_section %}
+{% from "macros/parts/gallery.html" import gallery %}
+{% from "macros/parts/like_button.html" import like_button %}
+{% from "macros/parts/tag_chips.html" import tag_chips %}
+
+{% from "campaign/campaign_card.html" import campaign_card %}
+{% from "post/post_card.html" import post_card %}
+
+
+{% set auth = church.authorized_user(request.user) %}
+
+{% block title %}{{ church|string|title }}{% endblock %}
+
+
+{% block metadata %}
+  <meta property="og:type" content="website"/>
+  {% if church.banner_img %}
+    <meta property="og:image" content="https://loveourneighbor.org{{ church.banner_img.url }}">{% endif %}
+  <meta property="og:url" content="https://loveourneighbor.org/{{ church.url }}">
+  <meta property="og:title" content="{{ church|string|title }} on Love Our Neighbor">
+{% endblock %}
+
+
+{% block body %}
+  <!-- church/view_church -->
+
+  <div>
+    <input type="hidden" id="current_object_json" value="{{ church.json }}">
+    <input type="hidden" id="church_id" value="{{ church.id }}">
+
+    {# {{{ Top Section Overlay #}
+    {% if church.banner_img %}
+      <div class="parallax-container" style='height: 250px;'>
+        <div class="parallax">
+          <img src="{{ church.banner_img.url }}" alt="">
+        </div>
+      </div><!-- /.parallax-container -->
+    {% endif %}
+    {# }}} #}
+
+    <div id="churchProfile" class="section">
+      <div class="row">
+
+        <div id="churchInfo" class="col s12 m4 l3"
+             style="position: relative; {% if church.banner_img %}margin-top: -115px;{% endif %}">
+          <div class="row">
+            <div class="col s12 center-align">
+              <img class="circle z-depth-5" src="{{ church.profile_img.url }}" alt="Profile Image"
+                   width="120" height="120">
+              <br>
+
+              {{ like_button("likeButton", request) }}
+
+            </div>
+          </div><!-- profile image area -->
+
+          <div class="row mt-5">
+            <div class="col s6">
+              <h6>Views</h6>
+              <h5>{{ church.views.count() }}</h5>
+            </div>
+            <div class="col s6">
+              <h6>Likes</h6>
+              <h5>{{ church.likes.count() }}</h5>
+            </div>
+          </div><!-- /views & likes -->
+
+          <hr class="grey-text text-lighten-2">
+          {% if church.has_tags %}
+            <div class="row">
+              <div class="col s12">
+                <h6>Tags</h6>
+                {{ tag_chips(church) }}
+              </div>
+            </div>
+            <hr class="grey-text text-lighten-2">
+          {% endif %}
+
+          {% if church.facebook or church.instagram or church.twitter or church.youtube %}
+            <div class="row sm-links">
+              <h6>Social Media</h6>
+              <div class="col s3">
+                {% if church.facebook %}
+                  <a href="{{ church.facebook }}" class="btn blue white-text" rel="nofollow noopener noreferrer">
+                    <i class="fa fa-facebook"></i>
+                  </a>&nbsp;
+                {% endif %}
+              </div><!-- facebook -->
+              <div class="col s3">
+                {% if church.instagram %}
+                  <a href="{{ church.instagram }}" class="btn blue darken-4 white-text"
+                     rel="nofollow noopener noreferrer">
+                    <i class="fa fa-instagram"></i>
+                  </a>
+                {% endif %}
+              </div><!-- instagram -->
+              <div class="col s3">
+                {% if church.twitter %}
+                  <a href="{{ church.twitter }}" class="btn light-blue white-text" rel="nofollow noopener noreferrer">
+                    <i class="fa fa-twitter"></i>
+                  </a>
+                {% endif %}
+              </div><!-- twitter -->
+              <div class="col s3">
+                {% if church.youtube %}
+                  <a href="{{ church.youtube }}" class="btn red white-text" rel="nofollow noopener noreferrer">
+                    <i class="fa fa-youtube"></i>
+                  </a>
+                {% endif %}
+              </div><!-- youtube -->
+            </div><!-- /social media links -->
+            <hr class="grey-text text-lighten-2">
+          {% endif %}
+
+          <div class="row">
+            <div class="col s12">
+              <h6>Website</h6>
+              <a href="{{ church.website }}">{{ church.website.split("://")[1] }}</a><br>
+            </div>
+          </div><!-- /website -->
+
+          <hr class="grey-text text-lighten-2">
+
+          <div class="row">
+            <div class="col s12">
+              <h6>Details</h6>
+              {% set info = {
+                'phone_number': 'Phone',
+                'address': 'Address',
+                'founded': 'Date Founded',
+                'staff': 'Number of Staff Members',
+                'pub_date': 'Profile Created'
+            } %}
+              <blockquote>
+                {% for attr, str in info.items() %}
+                  {% if church.__dict__[attr] %}
+                    <span>{{ str }}:</span>&nbsp;
+                    {% if attr == 'pub_date' %}
+                      {{ f_time(church.__dict__[attr]) }}
+                    {% else %}
+                      {{ church.__dict__[attr] }}
+                    {% endif %}
+                    <br>
+                  {% endif %}
+                {% endfor %}
+              </blockquote>
+            </div>
+          </div><!-- /details -->
+
+          <hr class="grey-text text-lighten-2">
+
+          <div>
+            <div class="row">
+              <div class="col s12">
+                <h6>Staff</h6>
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col s2 mt-2 pr-2 circle pb-2"><img class="responsive-img circle"
+                                                             src="{{ church.admin.profile_img.url }}"
+                                                             alt="Admin Profile Image"></div>
+              <div class="col s10 m-0">{{ church.admin.name }}</div>
+            </div><!-- /admin -->
+
+            {% for staff in church.reps.all() %}
+              <div class="row mt-2">
+                <div class="col s2 mt-2 pr-2 circle pb-2"><img class="responsive-img circle"
+                                                               src="{{ staff.profile_img.url }}"
+                                                               alt="Admin Profile Image"></div>
+                <div class="col s10 m-0">{{ staff.name }}</div>
+              </div>
+            {% endfor %}
+
+          </div><!-- /staff members -->
+
+        </div><!-- /#churchInfo -->
+
+        <div id="churchFeed" class="col s12 m8 l6">
+          <div class="card z-depth-0" style="{% if church.banner_img %}margin-top: -1em;{% endif %}">
+            <div class="card-content">
+
+              <div class="row">
+                <div class="col s12">
+                  <h5 style="font-size: xx-large">
+                    {{ church|string|title }}
+                    {% if auth %}
+                      <a class="btn-flat dropdown-trigger grey-text p-0 ml-1" data-target="church_{{ church.id }}">
+                        <i class="material-icons">more_horiz</i>
+                      </a><!-- /.dropdown-trigger -->
+                    {% endif %}
+                  </h5>
+                  <p style="font-weight: lighter">Member Since: {{ church.pub_date.strftime("%b '%y") }}</p>
+                </div>
+              </div><!-- /church name -->
+
+              {# Admin Dropdown Menu #}
+              {% if auth %}
+                <ul id="church_{{ church.id }}" class="dropdown-content" style="min-width: 8em;">
+                  {% for opt in church_admin_urls(church) %}
+                    <li>
+                      <a href="{{ url_for(opt['reverse_url'], kwargs=opt['kwargs']) }}">
+                        <i class="material-icons">{{ opt['icon'] }}</i>
+                        {{ opt['label'] }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul><!-- /.dropdown-content -->
+              {% endif %}
+
+              {# Sections #}
+              <div class="row">
+                <div class="col s12">
+                  <ul class="tabs mt-4">
+                    <li class="tab col s4 p-0">
+                      <a href="#description">
+                        <i class="material-icons">description</i>
+                        <span class="hide-on-med-and-down">&nbsp;Description</span>
+                      </a>
+                    </li>
+                    <li class="tab col s4 p-0">
+                      <a href="#feed" class="active">
+                        <i class="material-icons">flag</i>
+                        <span class="hide-on-med-and-down">&nbsp;Feed</span>
+                      </a>
+                    </li>
+                    <li class="tab col s4 p-0">
+                      <a href="#gallery">
+                        <i class="material-icons">photo_album</i>
+                        <span class="hide-on-med-and-down">&nbsp;Gallery</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div><!-- /tabs -->
+
+              <div id="description" class="row">
+                <div class="col s12">
+                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">About</h5>
+                  <div class="padding-4 wysiwyg-content">
+                    {{ church.description|safe }}
+                  </div>
+                </div>
+              </div><!-- /#description -->
+
+              <div id="feed" class="row">
+
+                {% if auth %}
+                  {{ quick_post(church.get_post_url(), post_form, csrf=csrf_token) }}
+                {% endif %}
+
+                <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Feed</h5>
+
+                {% for obj in church.feed() %}
+
+                  {{ post_card(obj, auth=auth, wide=True, show_parent=False) }}
+
+                {% endfor %}
+              </div><!-- /#feed -->
+
+              <div id="gallery" class="row">
+                <div class="col s12">
+                  <h5 class="show-on-medium-and-down hide-on-large-only hide-on-extra-large-only">Gallery</h5>
+                  {{ gallery(images) }}
+                </div>
+              </div><!-- /#gallery -->
+
+            </div><!-- /.card-content -->
+          </div><!-- /.card -->
+        </div><!-- /#churchFeed -->
+
+        <div id="churchExtra" class="col s12 m12 l3">
+          <div class="row mt-5">
+          </div><!-- /.row -->
+        </div><!-- /#churchExtra -->
+
+      </div><!-- /.row -->
+    </div><!-- /#churchProfile -->
+  </div>
+{% endblock %}
+
+
+{% block scripts %}
+
+  <!-- filepond.js -->
+  <script src="https://unpkg.com/filepond-plugin-image-preview@4.6.1/dist/filepond-plugin-image-preview.js"></script>
+  <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
+  <script src="https://unpkg.com/jquery-filepond/filepond.jquery.js"></script>
+  <script src="{{ static('js/filepond-init.js') }}"></script>
+
+  <!-- init dynamic card functionality -->
+  <script src="{{ static('js/mini-gallery-init.js') }}"></script>
+
+  <!-- masonry -->
+  <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script>
+    // this initializes all masonry objects on the page
+    let grid = $('.grid').masonry({
+      itemSelector: '.grid-item',
+    });
+  </script>
+
+  <!-- Interactive Functionality -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+  <script src="{{ static('js/like_button.js' % f) }}"></script>
+  <script type="text/javascript">
+    const jsonURL = "{{ church.json }}";
+    const likeURL = "{{ church.like }}";
+    let church = {};
+
+    $.getJSON(jsonURL, function (data) {
+      church = data;
+      likeButton.liked(data['liked']);
+    });
+
+    let likeButton = new likeButtonViewModel(likeURL);
+    ko.applyBindings(likeButton, document.getElementById('likeButton'));
+  </script>
+
+{% endblock %}
+
+
+{% block css %}
+  <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+  <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+{% endblock %}

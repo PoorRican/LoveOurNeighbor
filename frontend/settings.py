@@ -33,6 +33,9 @@ ASSETS_DEBUG = True
 REQUIRE_MINISTRY_VERIFICATION = False  # TODO: implement
 REQUIRE_USER_VERIFICATION = False
 
+# Email Switches
+NEW_PROFILE_EMAILS = False
+
 # Feature Switches
 COMMENTS = False
 
@@ -47,6 +50,7 @@ INSTALLED_APPS = [
 
     'ministry.apps.MinistryConfig',
     'campaign.apps.CampaignConfig',
+    'church.apps.ChurchConfig',
     'post.apps.PostConfig',
 
     'activity.apps.ActivityConfig',
@@ -231,7 +235,7 @@ if USE_S3:
     # s3 static settings
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    DEFAULT_FILE_STORAGE = 'frontend.models.MediaStorage'
+    DEFAULT_FILE_STORAGE = 'frontend.storage.MediaStorage'
     ASSETS_AUTO_BUILD = False
 else:
     STATIC_URL = '/static/'
@@ -304,9 +308,8 @@ SITE_ID = 1
 DJANGO_DRF_FILEPOND_UPLOAD_TMP = os.path.join('/tmp',
                                               'filepond-temp-uploads')  # let the filesystem handle cleanup of temp files
 DJANGO_DRF_FILEPOND_ALLOW_EXTERNAL_UPLOAD_DIR = True
-# DJANGO_DRF_FILEPOND_FILE_STORE_PATH = MEDIA_ROOT
 
-DJANGO_DRF_FILEPOND_STORAGES_BACKEND = 'frontend.models.MediaStorage'
+DJANGO_DRF_FILEPOND_STORAGES_BACKEND = 'frontend.storage.MediaStorage'
 
 # Sentry Config
 sentry_sdk.init(

@@ -11,6 +11,13 @@
 Thank you for your willingness to contribute to the LON codebase. This is a basic guide to the layout of the code,
 and the coding standards.
 
+# Coding style
+
+For python code, please follow the [style guidelines set by Django](https://docs.djangoproject.com/en/dev/internals/contributing/writing-code/coding-style/).
+Consider using [pylint-django](https://github.com/PyCQA/pylint-django) for static analysis.
+
+As for docstrings, please follow the [numpydoc docstring guide](https://numpydoc.readthedocs.io/en/latest/format.html).
+
 # Organization / Descriptions
 
 ## Django App

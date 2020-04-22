@@ -1,0 +1,239 @@
+{% extends "layout.html" %}
+
+{% from "campaign/campaign_card.html" import campaign_card %}
+{% from "post/post_card.html" import post_card %}
+
+{% from "macros/parts/breadcrumbs.html" import breadcrumbs %}
+{% from "macros/parts/confirm_delete.html" import confirm_delete %}
+{% from "macros/parts/founded_field.html" import founded_field_initialer %}
+{% from "macros/parts/get_obj_json.html" import get_obj_json %}
+{% from "macros/parts/input_field.html" import input_field %}
+{% from "macros/parts/input_img_dialog.html" import input_img_dialog %}
+{% from "macros/parts/rep_request_selection.html" import rep_selection %}
+{% from "macros/parts/tag_selection.html" import tag_selection %}
+{% from "macros/parts/transaction_table.html" import transaction_table %}
+{% from "macros/parts/wysiwyg_editor.html" import wysiwyg_editor, wysiwyg_script %}
+
+{# TODO: total donated amount #}
+
+{% block title %}
+  {{ church|string|title }} Admin Panel
+{% endblock %}
+
+{% block body %}
+  <!-- church/admin_panel -->
+
+  <div class="row">
+    <div class="col s12">
+      <div class="container">
+        <section class="tabs-vertical mt-1 section">
+          <div class="row">
+
+            {{ breadcrumbs(church.name, header='Admin Panel', obj=church) }}
+
+            {% if not church.verified %}
+              <div class="col s12">
+                <div class="card-panel orange lighten-5">
+                  <p class="mt-0 mb-0">Your Church Profile has not been verified yet. This may take 1-3 business days.
+                    Your profile will not be visible to the public before then.</p>
+                </div><!-- /.card-panel -->
+              </div>
+            {% endif %}
+
+            <div class="col l4 s12">
+              <div class="card-panel">
+                <ul class="tabs">
+                  <li class="tab">
+                    <a href="#details"><i class="material-icons">info</i>
+                      &nbsp;Details
+                    </a></li><!-- /details -->
+                  <li class="tab">
+                    <a href="#administration"><i class="material-icons">supervisor_account</i>
+                      &nbsp;Administration
+                    </a>
+                  </li><!-- /administration -->
+                  <li class="tab">
+                    <a href="#posts"><i class="material-icons">dynamic_feed</i>
+                      &nbsp;Posts
+                    </a>
+                  </li><!-- /post -->
+                </ul><!-- /.tabs -->
+              </div><!-- /.card-panel -->
+            </div><!-- /.col /tabs -->
+
+            <div class="col s12 l8">
+              <div id="details">
+                <div class="card-panel">
+                  <form method="POST" name="churchForm" id="churchForm"
+                        enctype="multipart/form-data" action="{{ church.edit }}">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                    <div class="row">
+
+                      <h4 class="hide-on-med-and-up">Details</h4>
+                      <br>
+
+                      <div class="col s12" id="imageDialogs">
+                        <div class="row">
+                          <div class="col s12 m6 l3">
+                            {{ input_img_dialog('profile', 'Profile Image',
+                                                imgField=form.profile_img,
+                                                img=church.profile_img) }}
+                          </div>
+                          <div class="col s12 m6 l3">
+                            {{ input_img_dialog('banner', 'Banner Image',
+                                                imgField=form.banner_img,
+                                                img=church.banner_img) }}
+                          </div>
+
+                        </div>
+                      </div><!-- /#imageDialogs -->
+
+                      {{ input_field(form.name, icon='group', width='s12',
+                                     error_text='This name is similar to another church',
+                                     helper_text="Your church's full name") }}
+
+                      {# TODO: render custom address input #}
+                      {{ input_field(form.address, icon='place', width='s12',
+                                     helper_text="Your church's address or city") }}
+
+                      {# TODO: render styled phone number input for any international phone numbers #}
+                      {{ input_field(form.phone_number, icon='phone', width='l6 s12') }}
+
+                      {{ input_field(form.website, icon='explore', width='l6 s12') }}
+
+                      {{ input_field(form.staff, icon='people', width='l6 s12') }}
+
+                      {{ input_field(form.founded, icon='cake', width='l6 s12') }}
+
+                    </div><!-- /details -->
+
+                    <div class="row" id="socialMediaLinks">
+                      <h6>Social Media Links:</h6>
+                      {# TODO: Add social media Icons #}
+
+                      {{ input_field(form.facebook, width='l3 s12') }}
+                      {{ input_field(form.instagram, width='l3 s12') }}
+                      {{ input_field(form.youtube, width='l3 s12') }}
+                      {{ input_field(form.twitter, width='l3 s12') }}
+
+                    </div><!-- /#social-media-links -->
+
+                    <div id="WYSIWYG">
+                      <br>
+                      <i class="material-icons">subject</i>
+                      {{ form.description }}
+                    </div><!-- /#WYSIWYG -->
+
+                    {{ tag_selection(form.tags) }}
+
+                    <div id="form_buttons" class="row">
+                      <div class="col l3 s12">
+                        <button class="btn orange" type="submit">
+                          <i class="material-icons">save</i>
+                          Save
+                        </button>
+                      </div>
+
+                      <div class="col l3 s12">
+                        {{ confirm_delete('church', church.id) }}
+                      </div>
+                    </div><!-- /#form_buttons -->
+
+                  </form>
+
+                </div><!-- /.card-panel -->
+              </div><!-- /#details -->
+
+              <div id="administration">
+                <div class="card-panel">
+                  <form method="POST"
+                        action="{{ url_for('church:rep_management', kwargs={'church_id': church.id}) }}">
+
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    {{ rep_selection(rep_form.reps, rep_form.requests) }}
+
+                    <div id="form_buttons">
+                      <button class="btn orange" type="submit">
+                        <i class="material-icons left">save</i>
+                        Update
+                      </button>
+                    </div><!-- /#form_buttons -->
+
+                  </form>
+                </div><!-- /.card-panel -->
+              </div><!-- /#administration -->
+
+              <div id="posts">
+                <div class="card-panel">
+
+                  <a class="btn blue lighten-2" style="margin-bottom: 12px;"
+                     href="{{ url_for('post:create_post', kwargs={'obj_type': 'church', 'obj_id': church.id}) }}">
+                    <i class="material-icons left">add</i>
+                    Create Post
+                  </a>
+                  <div class="row">
+                    {% for posts in church.posts.all() %}
+                      {{ post_card(posts, auth=True) }}
+                    {% else %}
+                      <p>You have not posted any news for this church.</p>
+                    {% endfor %}
+                  </div>
+                </div><!-- /.card-panel -->
+              </div><!-- /#posts -->
+
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+        </section><!-- /.tabs-section -->
+      </div><!-- /.container -->
+    </div><!-- /.col -->
+  </div><!-- /.row -->
+{% endblock %}
+
+
+{% block scripts %}
+  {{ wysiwyg_script() }}
+
+  {{ founded_field_initialer() }}
+
+  <!-- masonry -->
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+
+  <!-- Knockout.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+
+  <!-- Image/Banner Dialog -->
+  <!--
+  <script src="{{ static('js/image_selection.js') }}"></script>
+  <script>
+    const bannerURL = "{# url_for('church:banner_img_json', kwargs={'church_id': church.id}) #}";
+    const profileURL = "{# url_for('church:profile_img_json', kwargs={'church_id': church.id}) #}";
+
+    let bannerSelection = new PreviousImageSelection('selected_banner_img', bannerURL);
+    let profileSelection = new PreviousImageSelection('selected_profile_img', profileURL);
+
+    ko.applyBindings(bannerSelection, document.getElementById('banner_img_input'));
+    ko.applyBindings(profileSelection, document.getElementById('profile_img_input'));
+  </script>
+  -->
+
+  <!-- Tag Selection & Rep Management -->
+  {{ get_obj_json(church) }}
+  <script src="{{ static('js/rep_management.js') }}"></script>
+  <script src="{{ static('js/chip_selector.js') }}"></script>
+  <script>
+    let rep_selector;
+    get_obj_json().then(function (obj) {
+      console.debug(obj);
+      // tag selector
+      const hidden_input = '{{ form.tags.auto_id }}';
+      const tags_url = '{{ url_for("tag:tags_json") }}';
+      new ChipSelector(hidden_input, tags_url, 'tagSelector', obj.tags);
+
+      // rep management
+      rep_selector = new RepManager(obj.reps, obj.requests);
+      ko.applyBindings(rep_selector, document.getElementById('repUI'));
+    })
+  </script>
+{% endblock %}

@@ -10,7 +10,7 @@ from random import sample
 from secrets import choice
 from string import ascii_letters
 
-from frontend.models import MediaStorage
+from frontend.storage import MediaStorage
 from activity.models import Like, View
 from people.models import User
 
@@ -34,7 +34,7 @@ class Media(models.Model):
 class Post(models.Model):
     # the currently implemented/allowed objects to be as `content_object`
     # this is used to filter values of `obj_type` URL in `.urls.create_post`
-    ALLOWED_OBJECTS = ('ministry', 'campaign')
+    ALLOWED_OBJECTS = ('ministry', 'campaign', 'church')
 
     title = models.CharField(max_length=100, blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -75,7 +75,7 @@ class Post(models.Model):
     def ministry(self):
         if getattr(self, '_ministry').all():
             return getattr(self, '_ministry').all()[0]
-        elif hasattr(self.content_object, 'campaigns'):  # check of content_object is MinistryProfile
+        elif hasattr(self.content_object, 'campaigns'):  # check of content_object is Ministry
             return self.content_object
         else:
             return False

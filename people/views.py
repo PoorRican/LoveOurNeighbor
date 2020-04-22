@@ -19,6 +19,7 @@ from django.views.generic.edit import CreateView, UpdateView
 
 from campaign.models import Campaign
 from campaign.utils import serialize_campaign
+from church.serializers import ChurchSerializer
 from donation.utils import serialize_donation
 from ministry.utils import serialize_ministry
 from post.models import Post
@@ -127,13 +128,15 @@ class UserProfile(LoginRequiredMixin, UpdateView):
 
         kwargs['donations'] = _donations
         kwargs['likes'] = [i.content_object for i in _likes]
+        kwargs['churches'] = ChurchSerializer(self.user.church_association.all(), many=True,
+                                              fields=('name', 'profile_img')).data
         return super().get_context_data(**kwargs)
 
 
 @login_required
 def be_me_again(request):
     """ Allows User to interact as themselves.
-    This 'logs out' of the last MinistryProfile they were using as an alias.
+    This 'logs out' of the last Ministry they were using as an alias.
 
     This performs the same functionality as `clear_previous_ministry_login`
 
@@ -192,11 +195,11 @@ class UserFeed(LoginRequiredMixin, ListView):
         _queryset = set()
         for o in user.likes.all():
             # get Post objects
-            if hasattr(o.content_object, 'goal'):  # distinguish between Campaign/MinistryProfile
+            if hasattr(o.content_object, 'goal'):  # distinguish between Campaign/Ministry
                 q = Q(_campaign=o.content_object)
                 _queryset.add(o.content_object)
             else:
-                # get Campaigns from MinistryProfile
+                # get Campaigns from Ministry
                 q = Q(ministry=o.content_object)
                 _queryset |= set(i for i in Campaign.objects.filter(q).all())
 
@@ -233,6 +236,8 @@ def verify_user(request, email, confirmation):
         # TODO: flag this request, this is an indicator of malicious activity
         return HttpResponseRedirect(reverse('error'))
 
+
+# JSON Views
 
 @require_safe
 def messages_json(request):
@@ -302,6 +307,8 @@ def likes_json(request):
         _json['likes'].append(_m)
     return JsonResponse(_json)
 
+
+# User Account Maintenance Action Views
 
 @require_http_methods(["GET", "POST"])
 def reset_password(request, email, confirmation):

@@ -21,10 +21,10 @@ from post.models import Post
 
 from .aggregators import recent, random
 from .forms import MinistryEditForm, NewMinistryForm, RepManagementForm
-from .models import MinistryProfile
+from .models import Ministry
 from .serializers import MinistrySerializer
 from .utils import (
-    # MinistryProfile utility functions
+    # Ministry utility functions
     prev_profile_imgs, prev_banner_imgs,
     ministry_images,
     send_new_ministry_notification_email
@@ -50,7 +50,7 @@ class MinistryHome(TemplateView):
 # CRUD Views
 
 class CreateMinistry(LoginRequiredMixin, FormMessagesMixin, CreateView):
-    """ Renders form for creating `MinistryProfile` object.
+    """ Renders form for creating `Ministry` object.
 
     Template
     --------
@@ -61,7 +61,7 @@ class CreateMinistry(LoginRequiredMixin, FormMessagesMixin, CreateView):
     `ministry:admin_panel`
     `MinistryEditForm.save` for custom save method
     """
-    model = MinistryProfile
+    model = Ministry
     form_class = NewMinistryForm
     template_name = "ministry/ministry_application.html"
     initial = {'website': 'https://', 'address': ''}
@@ -93,7 +93,7 @@ class CreateMinistry(LoginRequiredMixin, FormMessagesMixin, CreateView):
 
 
 class MinistryDetail(DetailView):
-    """ Primary rendering view for displaying `MinistryProfile` objects.
+    """ Primary rendering view for displaying `Ministry` objects.
 
     News is aggregated to be displayed, and the view counter is incremented.
 
@@ -113,7 +113,7 @@ class MinistryDetail(DetailView):
         will be task intensive, therefore, it should be dynamically rendered
         on the client so that the page has the appearance of loading quicker.
     """
-    model = MinistryProfile
+    model = Ministry
     pk_url_kwarg = 'ministry_id'
     template_name = "ministry/view_ministry.html"
 
@@ -148,7 +148,7 @@ class MinistryDetail(DetailView):
 
 
 class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, UpdateView):
-    """ Renders form for editing `MinistryProfile object.
+    """ Renders form for editing `Ministry object.
 
     Redirects To
     ------------
@@ -163,12 +163,13 @@ class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, Upd
     --------
     `MinistryEditForm.save` for custom save method
     """
-    model = MinistryProfile
+    model = Ministry
     form_class = MinistryEditForm
     pk_url_kwarg = 'ministry_id'
     template_name = "ministry/admin_panel.html"
 
     raise_exception = True
+    redirect_unauthenticated_users = True
     permission_denied_message = "You do not have permissions to edit this ministry"
     form_invalid_message = "Please check the form for errors"
     form_valid_message = "Changes Saved!"
@@ -182,7 +183,8 @@ class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, Upd
         return "Changes saved to %s" % self.object
 
     def get_success_url(self):
-        return self.request.META.get('HTTP_REFERER')
+        return self.request.META.get('HTTP_REFERER') or reverse('ministry:ministry_profile',
+                                                                kwargs={'ministry_id': self.object.id})
 
     def test_func(self, user):
         return self.get_object().authorized_user(user)
@@ -195,13 +197,14 @@ class AdminPanel(LoginRequiredMixin, FormMessagesMixin, UserPassesTestMixin, Upd
 
 
 class DeleteMinistry(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = MinistryProfile
+    model = Ministry
     pk_url_kwarg = 'ministry_id'
     raise_exception = True
+    redirect_unauthenticated_users = True
     permission_denied_message = "You don't have permissions to be deleting this Ministry!"
 
     def get_success_url(self):
-        return self.request.META.get('HTTP_REFERER')
+        return self.request.META.get('HTTP_REFERER') or reverse('people:user_profile')
 
     def test_func(self, user):
         """ Ensure that only the admin can delete a Ministry """
@@ -218,7 +221,7 @@ class DeleteMinistry(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class LoginAsMinistry(LoginRequiredMixin, UserPassesTestMixin, MinistryDetail):
     """ This allows an authorized user to interact with other users
-    using the `MinistryProfile` as an alias.
+    using the `Ministry` as an alias.
 
     Feedback given via django-messages.
 
@@ -245,7 +248,11 @@ class LoginAsMinistry(LoginRequiredMixin, UserPassesTestMixin, MinistryDetail):
     """
 
     raise_exception = True
+    redirect_unauthenticated_users = True
     permission_denied_message = "You do not have permissions to do this..."
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse('ministry:ministry_profile', kwargs={'ministry_id': self.object.id})
 
     def test_func(self, user, **kwargs):
         """ This verifies that the User has appropriate permissions.
@@ -272,7 +279,9 @@ class RepRequest(LoginRequiredMixin, UserPassesTestMixin, RedirectView, SingleOb
 
     Users who request this status have no permissions until authorization by the ministry admin.
     """
-    model = MinistryProfile
+    model = Ministry
+    raise_exception = True
+    redirect_unauthenticated_users = True
     pk_url_kwarg = 'ministry_id'
 
     def __init__(self, **kwargs):
@@ -283,7 +292,8 @@ class RepRequest(LoginRequiredMixin, UserPassesTestMixin, RedirectView, SingleOb
         return not self.get_object().authorized_user(user)
 
     def get_redirect_url(self, *args, **kwargs):
-        return self.request.META.get('HTTP_REFERER')
+        return self.request.META.get('HTTP_REFERER') or reverse('ministry:ministry_profile',
+                                                                kwargs={'ministry_id': self.object.id})
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -301,7 +311,7 @@ class RepRequest(LoginRequiredMixin, UserPassesTestMixin, RedirectView, SingleOb
 
 class RepManagement(AdminPanel):
     """
-    Dedicated view function to manage `MinistryProfile.requests` and `MinistryProfile.reps`
+    Dedicated view function to manage `Ministry.requests` and `Ministry.reps`
 
     `RepManagementForm.save` processes and handles all the data.
     """
@@ -311,7 +321,7 @@ class RepManagement(AdminPanel):
 # JSON Views
 
 class MinistryJSON(RetrieveAPIView):
-    queryset = MinistryProfile.objects.all()
+    queryset = Ministry.objects.all()
     lookup_field = 'id'
     lookup_url_kwarg = 'ministry_id'
     serializer_class = MinistrySerializer
@@ -320,9 +330,9 @@ class MinistryJSON(RetrieveAPIView):
 @require_safe
 def banner_img_json(request, ministry_id):
     """ View that returns all images located in dedicated
-    banner directory for MinistryProfile
+    banner directory for Ministry
     """
-    ministry = MinistryProfile.objects.get(pk=ministry_id)
+    ministry = Ministry.objects.get(pk=ministry_id)
 
     _json = {'available': prev_banner_imgs(ministry)}
 
@@ -337,9 +347,9 @@ def banner_img_json(request, ministry_id):
 @require_safe
 def profile_img_json(request, ministry_id):
     """ View that returns all images located in dedicated
-    profile_img directory for MinistryProfile
+    profile_img directory for Ministry
     """
-    ministry = MinistryProfile.objects.get(pk=ministry_id)
+    ministry = Ministry.objects.get(pk=ministry_id)
 
     _json = {'available': prev_profile_imgs(ministry)}
 
@@ -354,14 +364,14 @@ def profile_img_json(request, ministry_id):
 @require_safe
 def ministry_gallery_json(request, ministry_id):
     """ Return a JSON dict of all used images associated
-    to the MinistryProfile selected by `ministry_id`.
+    to the Ministry selected by `ministry_id`.
 
     The list that is returned is not exhaustive and
         uses images from all NewsPosts with an `attachment` image
-        from both `MinistryProfile.posts` and `Campaign.posts`,
+        from both `Ministry.posts` and `Campaign.posts`,
         and `Campaign.banner_imgs`
     """
-    ministry = MinistryProfile.objects.get(pk=ministry_id)
+    ministry = Ministry.objects.get(pk=ministry_id)
 
     return JsonResponse({'gallery': ministry_images(ministry)})
 
@@ -374,7 +384,7 @@ class DonationsJSON(LoginRequiredMixin, UserPassesTestMixin, ListAPIView):
     raise_exception = True
 
     def test_func(self, user):
-        return MinistryProfile.objects.get(**{self.lookup_field: self.kwargs[self.lookup_url_kwarg]}).authorized_user(
+        return Ministry.objects.get(**{self.lookup_field: self.kwargs[self.lookup_url_kwarg]}).authorized_user(
             user)
 
     def get_queryset(self):

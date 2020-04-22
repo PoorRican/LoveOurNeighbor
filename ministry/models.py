@@ -1,80 +1,18 @@
-from os import path
-from shutil import move
-from typing import Union
-
-from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.urls import reverse
 
 from activity.models import Like, View
-from frontend.settings import DEFAULT_PROFILE_IMG
+from frontend.models import BaseProfile
 from people.models import User
 from post.models import Post
 from tag.models import Tag
 
-from .utils import (
-    ministry_banner_dir,
-    ministry_profile_image_dir,
-)
 
-
-# Backend Functionality
-class MinistryProfile(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    verified = models.BooleanField(default=False)
-
-    # Administration
-    admin = models.ForeignKey(User, related_name='administers',
-                              on_delete=models.CASCADE)
-    reps = models.ManyToManyField(User, blank=True,
-                                  related_name='represents')
-    requests = models.ManyToManyField(User, blank=True,
-                                      related_name='rep_requests')
-    # TODO: allow the admin to enter rep emails before User creation
-    # I guess this would be best implemented by proto-User class
-    # this would also solve the problem of allowing donations without sign-up
-
-    # Ministry Details
-    address = models.CharField(max_length=256, unique=True)
-    # TODO: enable multiple addresses
-    phone_number = models.CharField(max_length=20, unique=True)
-    website = models.URLField(unique=True)
-    founded = models.DateField(blank=True, null=True)
-    pub_date = models.DateField('Date Created', auto_now_add=True)
-    staff = models.SmallIntegerField(default=1)
-
-    # Ministry Content
-    description = models.TextField(blank=True, null=True)
-    tags = models.ManyToManyField(Tag, related_name='ministries',
-                                  blank=True, )
-    profile_img = models.ImageField('Profile Image',
-                                    default=DEFAULT_PROFILE_IMG,
-                                    null=True, blank=True,
-                                    upload_to=ministry_profile_image_dir)
-    banner_img = models.ImageField('Banner Image', blank=True, null=True,
-                                   upload_to=ministry_banner_dir)
-
-    # Social Media Links
-    facebook = models.URLField('Facebook', blank=True, null=True)
-    instagram = models.URLField('Instagram', blank=True, null=True)
-    youtube = models.URLField('YouTube', blank=True, null=True)
-    twitter = models.URLField('Twitter', blank=True, null=True)
-
-    # Generic Relations
-    posts = GenericRelation(Post, related_query_name='_ministry',
-                            content_type_field='content_type', object_id_field='object_id')
-    likes = GenericRelation(Like,
-                            content_type_field='content_type', object_id_field='object_id')
-    views = GenericRelation(View,
-                            content_type_field='content_type', object_id_field='object_id')
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    # Properties
+class Ministry(BaseProfile):
+    media_dir_root = 'ministries'
+    obj_type = 'ministry'
 
     @property
     def donated(self):
@@ -91,6 +29,8 @@ class MinistryProfile(models.Model):
                 _donations.append(d)
         return _donations
 
+    # URL Properties
+
     @property
     def url(self):
         return reverse('ministry:ministry_profile',
@@ -106,114 +46,25 @@ class MinistryProfile(models.Model):
         return reverse('ministry:ministry_json',
                        kwargs={'ministry_id': self.id})
 
-    @property
-    def like(self):
-        return reverse('activity:like', kwargs={'object': 'ministry', 'pk': self.pk})
-
-    @property
-    def has_tags(self):
-        if self.tags.count():
-            return True
-        else:
-            return False
-
-    @property
-    def like_count(self):
-        return self.likes.count()
-
-    @property
-    def view_count(self):
-        return self.views.count()
-
-    # Representative Management
-
-    def add_representative(self, user: Union[User, str]):
-        """
-        Adds a User as a representative.
-        Email must first exist in `self.requests`.
-
-        Parameters
-        ----------
-        user: str
-            email of User to pull from `self.requests`
-        """
-        if not hasattr(user, 'email'):
-            user = User.objects.get(email=user)
-        self.requests.remove(user)
-        self.reps.add(user)
-        self.save()
-
-    def remove_representative(self, user: Union[User, str]):
-        """
-        Removes the given User as a representative and places the User in `self.requests`.
-        Email must first exist in `self.reps`.
-
-        Parameters
-        ----------
-        user: User or str
-            email User to remove from `self.reps`
-        """
-        if not hasattr(user, 'email'):
-            user = User.objects.get(email=user)
-        self.reps.remove(user)
-        self.requests.add(user)
-        self.save()
-
-    def add_request(self, user: Union[User, str]):
-        """
-        Adds the given User to the list of requests to be approved by Ministry Admin
-
-        Parameters
-        ----------
-        user: User or str
-            User to add to `self.requests`.
-            If the value is a str, it queries along the email column.
-        """
-        # TODO: email ministry admin/reps
-        if not hasattr(user, 'email'):
-            user = User.objects.get(email=user)
-        self.requests.add(user)
-        self.save()
-
-    def delete_request(self, user: Union[User, str]):
-        """
-        deletes the given representative request.
-
-        parameters
-        ----------
-        user: User or str
-            `User` or user.email to remove from `self.requests`
-        """
-        if not hasattr(user, 'email'):
-            user = self.requests.get(email=user)
-        self.requests.remove(user)
-        self.save()
-
     # Member Functions
 
     def similar_ministries(self):
         """
-        Traverses along tags to fetch related `MinistryProfile` objects.
+        Traverses along tags to fetch related `Ministry` objects.
 
         Returns
         -------
-        List of `MinistryProfile`
+        List of `Ministry`
 
         """
         # TODO: use a `Q` to perform this query
         # TODO: ministries should be 'scored' by # of overlapping tags
         similar = []
         for t in self.tags.all():
-            for m in t.ministries.all():
+            for m in t.ministry.all():
                 if m not in similar and not (m == self):
                     similar.append(m)
         return similar
-
-    def authorized_user(self, user):
-        if user in self.reps.all() or user == self.admin:
-            return True
-        else:
-            return False
 
     def feed(self, n=20, page=0):
         """ Returns a paginated stream of Post and Campaign objects to return
@@ -234,10 +85,41 @@ class MinistryProfile(models.Model):
         # slicing a list out-of-bounds returns a truncated slice, or an empty list
         return _objects[start:end]
 
-    def get_absolute_url(self):
-        return self.url
 
-    def get_post_url(self):
-        """ Return a URL for creating a Post object """
-        return reverse('post:create_post', kwargs={'obj_type': 'ministry',
-                                                   'obj_id': self.id})
+class MinistryRelationship(models.Model):
+    """ Base model abstracting the relationships between Ministries and other objects.
+
+    This will open the doors much functionality such as Ministry "sponsorship" (whether by Church or Ministry).
+
+    For obvious reasons, this reciprocating object should "approve" of this relationship,
+    similar to the `rep` / `request` functionality between a Ministry and Users.
+    """
+    allowed = ('church', 'ministry')
+
+    ministry = models.ForeignKey(Ministry, related_name='%(class)ss', on_delete=models.CASCADE)
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    @classmethod
+    def create(cls, ministry: Ministry, obj):
+        """ Shortcut for creating relationships.
+        This will create a model of whatever class inherits this. """
+        cls.objects.create(ministry=ministry, content_object=obj)
+
+    class Meta:
+        abstract = True
+
+
+class Sponsor(MinistryRelationship):
+    """ Abstracts `Ministry` sponsorships by `Churches` or other `Ministry` objects.
+
+    Similar to `campaign.models.Sponsor`, any algorithms should consider the members of this model to be
+    "similar" and be fed to UI elements such as searching, and "suggested" objects (eg: "You May Also Like",
+    feed injections, etc).
+
+    In the object pointed to by `ministry`, represents the object sponsored, and the reverse relationship
+    should be accessible by the `sponsorships` attribute.
+    """
+    pass

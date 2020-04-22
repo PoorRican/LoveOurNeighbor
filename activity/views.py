@@ -1,18 +1,16 @@
-from django.contrib.contenttypes.models import ContentType
-from django.views.generic.base import View, ContextMixin
-from django.views.generic.edit import CreateView
-from django.http import HttpResponse
+from django.views.generic.base import View
 
-from braces.views import FormMessagesMixin, UserPassesTestMixin, JSONResponseMixin
+from braces.views import JSONResponseMixin
 
 from campaign.models import Campaign
-from ministry.models import MinistryProfile
+from church.models import Church
+from ministry.models import Ministry
 
 from .models import Like
 
 
 class LikeView(View, JSONResponseMixin):
-    """ Encapsulates both 'like' and 'unlike' functionality relating `User` to `MinistryProfile`
+    """ Encapsulates both 'like' and 'unlike' functionality relating `User` to `Ministry`
 
     Returns
     -------
@@ -23,8 +21,9 @@ class LikeView(View, JSONResponseMixin):
 
     def get(self, request, *args, **kwargs):
         # TODO: implement Post
-        _objects = {'ministry': MinistryProfile,
-                    'campaign': Campaign}
+        _objects = {'ministry': Ministry,
+                    'campaign': Campaign,
+                    'church': Church}
         obj = _objects[kwargs.get('object')]
         obj = obj.objects.get(pk=kwargs.get('pk'))
 

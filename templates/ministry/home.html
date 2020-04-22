@@ -23,7 +23,7 @@
         {% endfor %}
       </div>
     {% else %}
-      <h6 class="grey-text text-darken-2 mt-2 ml-1">There don't seem to be any new ministries at the moment</h6>
+      <h6 class="grey-text text-darken-2 mt-2 ml-1 mb-4">There don't seem to be any new ministries at the moment</h6>
     {% endif %}
 
     {% if random_ministries %}
@@ -34,12 +34,14 @@
       {% endfor %}
     {% endif %}
 
+    {% if other_campaigns %}
         <h6 class="grey-text text-darken-2 mb-2 mt-2">Be sure to find out about these campaigns and share!</h6>
         <div class="row grid">
           {% for campaign in other_campaigns %}
             {{ campaign_card(campaign, request=request) }}
       {% endfor %}
     </div>
+    {% endif %}
 
   </div><!-- /.wrapper .section -->
 {% endblock %}

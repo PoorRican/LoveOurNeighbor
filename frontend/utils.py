@@ -79,6 +79,23 @@ def campaign_admin_urls(campaign):
     return urls
 
 
+def church_admin_urls(church):
+    # TODO: implement user permissions checking to implement deletion
+    urls = [
+        {'label': 'Admin Panel',
+         'icon': 'build',
+         'reverse_url': 'church:admin_panel',
+         'kwargs': {'church_id': church.id},
+         },
+        {'label': 'Post News',
+         'icon': 'post_add',
+         'reverse_url': 'post:create_post',
+         'kwargs': {'obj_type': 'church',
+                    'obj_id': church.id},
+         }]
+    return urls
+
+
 def ministry_admin_urls(ministry):
     # TODO: implement user permissions checking to implement deletion
     urls = [
@@ -232,6 +249,79 @@ def render_jinja_template(template_path, context):
     return Template(t).render(context)
 
 
+def generic_media_dir(instance: Model, prepend='') -> str:
+    """ Dynamically returns the root path to dedicated directory for all Model media.
+
+    This organizes and partitions user uploaded content per object.
+
+    Arguments
+    =========
+    instance: Model
+        Must be a campaign object, or the name of. Must have `media_dir_root`
+
+    prepend: str, optional
+        Desired str to prepend to path
+
+    Returns
+    =======
+    str:
+        Path to object-specific media directory
+
+    See Also
+    ========
+    `BaseProfile`: for `media_dir_root`
+    `Church`
+    `Ministry`
+    """
+    return path.join(prepend, instance.media_dir_root, str(instance))
+
+
+def generic_banner_img_dir(instance: Model, filename: str, prepend=''):
+    """ Dynamically returns the root path for user uploaded content for `banner_img`.
+
+    Arguments
+    =========
+    instance: Model
+        Must be a campaign object to pass to `generic_media_dir`
+
+    filename: str
+        Desired filename of `banner_img`. Is appended to returned path.
+
+    prepend: str, optional
+        Desired str to prepend to path. This is passed to `generic_media_dir`.
+
+    Returns
+    =======
+    str:
+        Full path to dedicated directory for instance's banner images.
+    """
+    return path.join(generic_media_dir(instance, prepend=prepend),
+                     'banners', filename)
+
+
+def generic_profile_img_dir(instance: Model, filename: str, prepend=''):
+    """ Dynamically returns the root path for user uploaded content for `profile_img`.
+
+    Arguments
+    =========
+    instance: Model
+        Must be a campaign object to pass to `generic_media_dir`
+
+    filename: str
+        Desired filename of `profile_img`. Is appended to returned path.
+
+    prepend: str, optional
+        Desired str to prepend to path. This is passed to `generic_media_dir`.
+
+    Returns
+    =======
+    str:
+        Full path to dedicated directory for instance's profile images.
+    """
+    return path.join(generic_media_dir(instance, prepend=prepend),
+                     'profile_images', filename)
+
+
 def get_previous_images(img_dir_func: Callable[[Model, str, str], str],
                         instance: Model, prepend: str = settings.MEDIA_URL):
     """
@@ -262,7 +352,7 @@ def get_previous_images(img_dir_func: Callable[[Model, str, str], str],
     """
     imgs = []
     try:
-        imgs = listdir(img_dir_func(instance, '', settings.MEDIA_ROOT))
+        imgs = listdir(img_dir_func(instance, '', prepend))
     except FileNotFoundError:
         pass
 

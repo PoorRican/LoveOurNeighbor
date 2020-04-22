@@ -136,6 +136,6 @@ class UserTestCase(TestCase):
         self.fail()
 
     def testLikeUtility(self):
-        """ Tests that like can handle "like/dislike" for both Campaigns and MinistryProfile
+        """ Tests that like can handle "like/dislike" for both Campaigns and Ministry
         This is a test for a utility function that does not exist yet."""
         self.fail()

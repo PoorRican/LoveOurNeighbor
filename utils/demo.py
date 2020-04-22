@@ -234,24 +234,24 @@ def create_demo_ministry():
     t = ", ".join(t)
 
     try:
-        m = MinistryProfile.objects.create(name=name,
-                                           admin=admin,
-                                           description=desc,
-                                           address=loc,
-                                           founded=found,
-                                           phone_number=pn,
-                                           website=site,)
+        m = Ministry.objects.create(name=name,
+                                    admin=admin,
+                                    description=desc,
+                                    address=loc,
+                                    founded=found,
+                                    phone_number=pn,
+                                    website=site, )
 
         Tag.process_tags(m, t)
     except IntegrityError:
         name = "%s %d" % (name, randint(0, 5))
-        m = MinistryProfile.objects.create(name=name,
-                                           admin=admin,
-                                           description=desc,
-                                           address=loc,
-                                           founded=found,
-                                           phone_number=pn,
-                                           website=site,)
+        m = Ministry.objects.create(name=name,
+                                    admin=admin,
+                                    description=desc,
+                                    address=loc,
+                                    founded=found,
+                                    phone_number=pn,
+                                    website=site, )
 
         Tag.process_tags(m, t)
 
@@ -309,7 +309,7 @@ def sim_likes(obj):
 
 if __name__ == "__main__":
     from people.models import User
-    from ministry.models import MinistryProfile
+    from ministry.models import Ministry
     from campaign.models import Campaign
     from tag.models import Tag
     from news.models import Post
@@ -320,7 +320,7 @@ if __name__ == "__main__":
         create_demo_user()
     print("Created Users!\n")
 
-    print("Creating MinistryProfile, Campaign, Post objects...\
+    print("Creating Ministry, Campaign, Post objects...\
 (this might take a while)")
     count = 0
     ministry_iter = 100

@@ -14,11 +14,13 @@ part: int
 
 {# Create the arguments to pass to `url_for` #}
 {% if type == 'campaign' %}
-{% set url_args = ('campaign:delete_campaign', {'campaign_id': id}) %}
+  {% set url_args = ('campaign:delete_campaign', {'campaign_id': id}) %}
+{% elif type == 'church' %}
+  {% set url_args = ('church:delete_church', {'church_id': id}) %}
 {% elif type == 'ministry' %}
-{% set url_args = ('ministry:delete_ministry', {'ministry_id': id}) %}
+  {% set url_args = ('ministry:delete_ministry', {'ministry_id': id}) %}
 {% elif type == 'post' %}
-{% set url_args = ('post:delete_post', {'post_id': id}) %}
+  {% set url_args = ('post:delete_post', {'post_id': id}) %}
 {% endif %}
 
 {% if part == -1 or part == 0 %}

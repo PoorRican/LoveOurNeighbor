@@ -1,9 +1,8 @@
 import os
 import hmac
 import time
-from base64 import b64encode
 from hashlib import md5, sha1
-from uuid import uuid4
+from random import SystemRandom
 
 from people.models import User
 
@@ -99,11 +98,17 @@ def generate_payeezy_hash(login, tx_key, amount='', currency='USD', digest='sha1
 
 
 def generate_confirmation_id(campaign=None):
-    """ Generates string to be used as internal confirmation id for Donation objects """
+    """ Generates string to be used as internal confirmation id for Donation objects
+
+    Warnings
+    ========
+    This does not generate a secure string! However, it's sufficiently random and shouldn't
+    have any collisions.
+    """
     _ = ''
     if campaign:
         _ = 'C' + str(campaign.id) + '-'
-    return _ + str(b64encode(uuid4().bytes))[2:-3]
+    return _ + ''.join([SystemRandom().choice('abcdefhijklmnopqrstuvwxyz0123456789') for i in range(18)])
 
 
 def check_anonymous_donation(request, email):

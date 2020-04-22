@@ -1,10 +1,10 @@
-from hashlib import md5
 from uuid import uuid4
 
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import UserManager
-from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -17,9 +17,6 @@ from frontend.utils import send_email
 from explore.models import GeoLocation
 
 from .utils import user_profile_img_dir, verification_required
-
-
-BLANK_AVATAR = 'https://gravatar.com/avatar/blank'
 
 
 class MyUserManager(UserManager):
@@ -69,7 +66,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     # TODO: implement last login
     # TODO: implement login history TextField
-    logged_in_as = models.ForeignKey('ministry.MinistryProfile',
+    logged_in_as = models.ForeignKey('ministry.Ministry',
                                      blank=True, null=True,
                                      on_delete=models.PROTECT,
                                      related_name='+')
@@ -77,6 +74,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_img = models.ImageField('Profile Image', blank=True, null=True,
                                     default=DEFAULT_PROFILE_IMG,
                                     upload_to=user_profile_img_dir)
+
+    church_association = models.ManyToManyField('church.Church', blank=True, null=True,
+                                                related_name='people')
 
     confirmation = models.UUIDField(default=uuid4, blank=True, null=True)
 
@@ -189,48 +189,66 @@ class User(AbstractBaseUser, PermissionsMixin):
         return request.build_absolute_uri(url)
 
 
-def set_initial_user_names(request, user, sociallogin=None, **kwargs):
+class UserRelationship(models.Model):
+    """ Base model abstracting the relationships between Users and other objects.
+
+    This will open the doors much functionality such as relationships such as "staff", "volunteer", etc.
+
+    For obvious reasons, this reciprocating object should "approve" of this relationship,
+    similar to the `rep` / `request` functionality between a Ministry and Users.
+
+    Attributes
+    ==========
+    user : User
+    title : str
+        This is an optional title of the relationship (eg: "Director", "Founder", "Pastor", etc)
+    content_object : models.Model
+        This is the generalized relationship that this model points to.
     """
-    When a social account is created successfully and this signal is received,
-    django-allauth passes in the sociallogin param, giving access to metadata on the remote account, e.g.:
+    allowed = ('church', 'campaign', 'ministry')
 
-    sociallogin.account.provider  # e.g. 'twitter'
-    sociallogin.account.get_avatar_url()
-    sociallogin.account.get_profile_url()
-    sociallogin.account.extra_data['screen_name']
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s')
+    title = models.CharField(max_length=64, null=True, blank=True)
 
-    See the socialaccount_socialaccount table for more in the 'extra_data' field.
-    From http://birdhouse.org/blog/2013/12/03/django-allauth-retrieve-firstlast-names-from-fb-twitter-google/comment-page-1/
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name='%(class)ss')
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    @classmethod
+    def create(cls, user: User, obj: models.Model, title: str = None):
+        """ Shortcut for creating relationships.
+
+        This performs type checking on `obj`.
+
+        This will create a model of whatever class inherits this.
+        """
+        if obj.__name__.lower() in cls.allowed:
+            return cls.objects.create(user=user, content_object=obj, title=title)
+        else:
+            raise ValueError(f'A relationship with type "{obj.__name__}" not allowed with "{cls.__name__}"')
+
+    class Meta:
+        abstract = True
+
+
+class Attendee(UserRelationship):
+    """ Abstracts the relationship of a church congregation.
+
+    Should this be hidden? Or somehow obfuscated? For personal security reasons?
+
+    This should not be as restricted as the other relationships.
     """
+    allowed = 'church'
+    pass
 
-    preferred_avatar_size_pixels = 256
 
-    picture_url = "http://www.gravatar.com/avatar/{0}?s={1}".format(
-        md5(user.email.encode('UTF-8')).hexdigest(),
-        preferred_avatar_size_pixels
-    )
+class Volunteer(UserRelationship):
+    """ Abstracts the `Church` and `Ministry` volunteers, and allows for a `User` to
+    volunteer for a `Campaign`.
+    """
+    pass
 
-    if sociallogin:
-        # Extract first / last names from social nets and store on User record
-        if sociallogin.account.provider == 'twitter':
-            name = sociallogin.account.extra_data['name']
-            user.first_name = name.split()[0]
-            user.last_name = name.split()[1]
 
-        if sociallogin.account.provider == 'facebook':
-            user.first_name = sociallogin.account.extra_data['first_name']
-            user.last_name = sociallogin.account.extra_data['last_name']
-            # verified = sociallogin.account.extra_data['verified']
-            picture_url = "http://graph.facebook.com/{0}/picture?width={1}&height={1}".format(
-                sociallogin.account.uid, preferred_avatar_size_pixels)
-
-        if sociallogin.account.provider == 'google':
-            user.first_name = sociallogin.account.extra_data['given_name']
-            user.last_name = sociallogin.account.extra_data['family_name']
-            # verified = sociallogin.account.extra_data['verified_email']
-            picture_url = sociallogin.account.extra_data['picture']
-
-    profile = UserProfile(user=user, avatar_url=picture_url)
-    profile.save()
-    user.guess_display_name()
-    user.save()
+class StaffMember(UserRelationship):
+    """ Abstracts the `Church` and `Ministry` staff. """
+    pass

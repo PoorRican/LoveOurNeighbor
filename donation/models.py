@@ -1,12 +1,8 @@
 from django.db import models
 from django.urls import reverse
 
-from yaml import load
 from datetime import datetime
 
-from .utils import generate_confirmation_id
-
-from campaign.models import Campaign
 from people.models import User
 
 

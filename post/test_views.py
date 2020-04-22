@@ -2,7 +2,7 @@ from datetime import date
 
 from .models import Post
 
-from ministry.models import MinistryProfile
+from ministry.models import Ministry
 from campaign.models import Campaign
 from utils.test_helpers import BaseViewTestCase
 
@@ -12,11 +12,11 @@ class TestNewsPostViews(BaseViewTestCase):
         BaseViewTestCase.setUp(self)
 
         self.min_name = "Test Ministry"
-        self.min = MinistryProfile.objects.create(name=self.min_name,
-                                                  admin=self.user,
-                                                  website="justawebsite.com",
-                                                  phone_number="(753)753-7777",
-                                                  address="777 validate me ct")
+        self.min = Ministry.objects.create(name=self.min_name,
+                                           admin=self.user,
+                                           website="justawebsite.com",
+                                           phone_number="(753)753-7777",
+                                           address="777 validate me ct")
         self.cam_name = "Test Campaign"
         self.cam = Campaign.objects.create(title=self.cam_name,
                                            ministry=self.min,
@@ -34,7 +34,7 @@ class TestNewsPostViews(BaseViewTestCase):
     def testCreateNews_ministry(self):
         _url_base = "/post/%s/%s/create"
 
-        # test Post for MinistryProfile
+        # test Post for Ministry
         _url = _url_base % ("ministry", self.min.id)
 
         # assert User must be logged in
