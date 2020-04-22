@@ -23,11 +23,6 @@ sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-po
 ```
 
 
-# How to Backup and Restore MySQL database
-
-[this tutorial](https://www.thegeekdiary.com/how-to-backup-and-restore-mysql-database/)
-
-
 # Renewing Certbot Certificates:
 
 Because auto-renew is not setup in docker image (yet):

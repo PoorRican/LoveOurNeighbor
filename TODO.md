@@ -9,8 +9,14 @@
 * Integrate [Infinite Scroll](https://infinite-scroll.com/)
 * Loading animation on page load; set opacity of inside content to 0.
 * Show description/content on ministry/campaign cards
-* Expand the features available in TinyMCE
-    
+* Expand the features available in TinyMCE (admin panel)
+* In Tag Selector, tag shows up as 'object Object'
+* HTTP-escape URLs for media filenames
+* In Post Gallery, make a single image look big
+* Improve menu in Post View
+* Change TZ to EST
+* Fix django admin-site functionality for Post objects
+* Convert `Tag` to contenttype relation
 
 
 # Metadata / 3rd-party Integration:
@@ -20,6 +26,7 @@
 - Show banner image in ograph metadata for media sharing
 - Add [Facebook Like buttons](https://www.dummies.com/web-design-development/site-development/how-to-add-facebook-connect-to-your-website/)
 - Implement [social media authentication](https://auth0.com)
+- Implement [Autotrack](https://github.com/googleanalytics/autotrack/) for more in-depth analytics
 - Google Analytics events:
     * User Created
     * Donation Button Clicked
